@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/handler/StartSessionHandler.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/handler</a> - StartSessionHandler.cpp<span style="font-size: 80%;"> (source / <a href="StartSessionHandler.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">47</td>
+            <td class="headerCovTableEntry">50</td>
+            <td class="headerCovTableEntryHi">94.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;StartSessionHandler.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;OttVenueManager.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;CmeNodeProvider.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;CspLoad.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspAssert.h&quot;
+<a name="6"><span class="lineNum">       6 </span>            : #include &quot;CmeServiceProperties.h&quot;</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          3 : CStartSessionHandler::CStartSessionHandler(boost::asio::io_service&amp; inIoService, const RestNetwork::RestRequestSharedPtr&amp; inRequest, const NotifyFunction&amp; inComplete)</span>
+<span class="lineNum">       9 </span><span class="lineCov">          9 : : IRequestHandler(inRequest, inComplete)</span>
+<span class="lineNum">      10 </span>            : {
+<a name="11"><span class="lineNum">      11 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span><span class="lineCov">          2 : void CStartSessionHandler::Start()</span>
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span><span class="lineCov">          2 :     SafariResult ret = ParseRequest();</span>
+<span class="lineNum">      16 </span><span class="lineCov">          2 :     if (SAFARI_FAILED(ret)) {</span>
+<span class="lineNum">      17 </span><span class="lineCov">         15 :         OTTER_ERROR_THIS(&quot;CStartSessionHandler::Start, parse request error, ret:&quot; &lt;&lt; ret);</span>
+<span class="lineNum">      18 </span><span class="lineCov">          1 :         Json::Value body;</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :         body[JSON_KEY_RESULT]= ret;</span>
+<span class="lineNum">      20 </span><span class="lineCov">          3 :         body[JSON_KEY_MESSAGE] = &quot;OTTER_START_SESSION_ERROR: &quot; + std::to_string(ret);</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :         Complete(HTTP_STATUS_OK, body);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">      23 </span>            :     }
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">          1 :     StartSession();</span>
+<a name="26"><span class="lineNum">      26 </span>            : }</a>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineCov">          3 : SafariResult CStartSessionHandler::ParseRequest()</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span><span class="lineCov">          3 :     const Json::Value&amp; context = m_restRequest-&gt;GetBody();</span>
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span><span class="lineCov">         20 :     ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_SESSION_TYPE]);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          6 :     ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_SESSION_ID]);</span>
+<span class="lineNum">      34 </span><span class="lineCov">          6 :     ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_CONFERENCE_ID]);</span>
+<span class="lineNum">      35 </span><span class="lineCov">          6 :     ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_HIPPO_BASE_URL]);</span>
+<span class="lineNum">      36 </span><span class="lineCov">          6 :     ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_EXTEND_INFO][JSON_KEY_EUREKA_INFO][JSON_KEY_CB_ADDR]);</span>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineCov">          2 :     CSP_ASSERT_RETURN(JSON_IS_A_VALID_ARRAY(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_PRIMARY]) || JSON_IS_A_VALID_ARRAY(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_BACKUP]), SAFARI_ERROR_INVALID_PARAMETER);</span>
+<span class="lineNum">      39 </span><span class="lineCov">          2 :     if (JSON_IS_A_VALID_ARRAY(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_PRIMARY]))</span>
+<span class="lineNum">      40 </span><span class="lineCov">          6 :         ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_PRIMARY][0][JSON_KEY_WSS_URL]);</span>
+<span class="lineNum">      41 </span><span class="lineCov">          2 :     if (JSON_IS_A_VALID_ARRAY(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_BACKUP]))</span>
+<span class="lineNum">      42 </span><span class="lineCov">          6 :         ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_COMPOSITING_ENGINE_LIST][JSON_KEY_BACKUP][0][JSON_KEY_WSS_URL]);</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineCov">          2 :     if(context.isMember(JSON_KEY_SESSION_STATE))</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :         ENSURE_JSON_IS_A_VALID_STRING(context[JSON_KEY_SESSION_STATE]);</span>
+<span class="lineNum">      46 </span><span class="lineCov">          2 :     if(context.isMember(JSON_KEY_SEQUENCE))</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         ENSURE_JSON_IS_A_VALID_INT(context[JSON_KEY_SEQUENCE]);</span>
+<span class="lineNum">      48 </span>            :     
+<span class="lineNum">      49 </span><span class="lineCov">          2 :     m_context = context;</span>
+<span class="lineNum">      50 </span><span class="lineCov">          4 :     m_confId = context[JSON_KEY_CONFERENCE_ID].asString();</span>
+<span class="lineNum">      51 </span><span class="lineCov">          4 :     m_sessionType = context[JSON_KEY_SESSION_TYPE].asString();</span>
+<span class="lineNum">      52 </span><span class="lineCov">          4 :     m_sessionId = context[JSON_KEY_SESSION_ID].asString();</span>
+<span class="lineNum">      53 </span><span class="lineCov">          2 :     auto cmeServiceProperties = CCmeServiceProperties::GetCmeServiceProperties(m_sessionType);</span>
+<span class="lineNum">      54 </span><span class="lineCov">          2 :     if(!CCmeNodeProvider::Instance().SetCmeNodeList(cmeServiceProperties.GetMediaServiceId(), context[JSON_KEY_COMPOSITING_ENGINE_LIST]))</span>
+<span class="lineNum">      55 </span>            :         return SAFARI_ERROR_OTTER_NO_AVAILABLE_CME_NODE;
+<span class="lineNum">      56 </span><span class="lineCov">          2 :     return SAFARI_OK;</span>
+<a name="57"><span class="lineNum">      57 </span>            : }</a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          2 : void CStartSessionHandler::StartSession()</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">          2 :     COttVenueManager::Instance().UpdateLoad(CCspLoad::GetOtterDeltaLoad());</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         //start session case: change param enableFollowSyncedLayout type to bool before sending to Otter
+<span class="lineNum">      64 </span><span class="lineCov">          2 :     if(m_context[JSON_KEY_EXTEND_INFO].isMember(JSON_KEY_VIDEO_COMPOSE_KEY_LIST) &amp;&amp; JSON_IS_A_VALID_ARRAY(m_context[JSON_KEY_EXTEND_INFO][JSON_KEY_VIDEO_COMPOSE_KEY_LIST]))</span>
+<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :         CCspVideoComposeKey::ChangeEnableFollowSyncedLayoutToBool(m_context[JSON_KEY_EXTEND_INFO][JSON_KEY_VIDEO_COMPOSE_KEY_LIST]);</span></a>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineCov">          6 :     COttVenueManager::Instance().StartSession(m_context, [this](SafariResult inResult, const std::string&amp; inMessage) {</span>
+<span class="lineNum">      68 </span><span class="lineCov">          4 :         Json::Value body;</span>
+<span class="lineNum">      69 </span><span class="lineCov">          4 :         body[JSON_KEY_RESULT] = inResult;</span>
+<span class="lineNum">      70 </span><span class="lineCov">          4 :         if (SAFARI_FAILED(inResult))</span>
+<span class="lineNum">      71 </span>            :         {
+<span class="lineNum">      72 </span><span class="lineCov">         46 :             OTTER_WARNING_THIS(&quot;CStartSessionHandler::StartSession, failed! confId:&quot; &lt;&lt; m_confId &lt;&lt; &quot; sessionType:&quot; &lt;&lt; m_sessionType &lt;&lt; &quot; sessionId:&quot; &lt;&lt; m_sessionId &lt;&lt; &quot; result:&quot; &lt;&lt; inResult &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">      73 </span><span class="lineCov">          2 :             body[JSON_KEY_MESSAGE] = inMessage;</span>
+<span class="lineNum">      74 </span>            :         }
+<span class="lineNum">      75 </span>            :         else
+<span class="lineNum">      76 </span><span class="lineCov">         38 :             OTTER_INFO_THIS(&quot;CStartSessionHandler::StartSession OK. confId:&quot; &lt;&lt; m_confId &lt;&lt; &quot; sessionType:&quot; &lt;&lt; m_sessionType &lt;&lt; &quot; sessionId:&quot; &lt;&lt; m_sessionId);</span>
+<span class="lineNum">      77 </span>            : 
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          4 :         Complete(HTTP_STATUS_OK, body);</span></a>
+<span class="lineNum">      79 </span><span class="lineCov">         10 :     });</span>
+<span class="lineNum">      80 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">      81 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

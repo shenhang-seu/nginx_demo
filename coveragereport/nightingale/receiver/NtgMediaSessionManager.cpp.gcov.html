@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/NtgMediaSessionManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - NtgMediaSessionManager.cpp<span style="font-size: 80%;"> (source / <a href="NtgMediaSessionManager.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">57</td>
+            <td class="headerCovTableEntry">68</td>
+            <td class="headerCovTableEntryMed">83.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryHi">93.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;NtgMediaSessionManager.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">         44 : CNtgMediaSessionManager::CNtgMediaSessionManager()</span>
+<span class="lineNum">       4 </span>            : {
+<span class="lineNum">       5 </span><span class="lineCov">        660 :     NIGHTINGALE_INFO_THIS(&quot;CNtgMediaSessionManager::CNtgMediaSessionManager&quot;);</span>
+<a name="6"><span class="lineNum">       6 </span><span class="lineCov">         44 : }</span></a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         80 : CNtgMediaSessionManager::~CNtgMediaSessionManager()</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span><span class="lineCov">        680 :     NIGHTINGALE_INFO_THIS(&quot;CNtgMediaSessionManager::~CNtgMediaSessionManager, size():&quot; &lt;&lt; m_mediaSessionMap.size());</span>
+<a name="11"><span class="lineNum">      11 </span><span class="lineCov">         40 : }</span></a>
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span><span class="lineCov">          3 : void CNtgMediaSessionManager::JoinSession(EMediaSessionType inType)</span>
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span><span class="lineCov">          3 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      16 </span><span class="lineCov">          3 :     if (session.get())</span>
+<span class="lineNum">      17 </span><span class="lineCov">          3 :         session-&gt;JoinSession();</span>
+<a name="18"><span class="lineNum">      18 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span><span class="lineCov">          2 : void CNtgMediaSessionManager::JoinSessionResponse(EMediaSessionType inType, EMediaSessionStatus inStatus)</span>
+<span class="lineNum">      21 </span>            : {
+<span class="lineNum">      22 </span><span class="lineCov">          2 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      23 </span><span class="lineCov">          2 :     if (session.get())</span>
+<span class="lineNum">      24 </span><span class="lineCov">          2 :         session-&gt;JoinSessionResponse(inStatus);</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          6 : void CNtgMediaSessionManager::GetSessionStatistics(EMediaSessionType inType, uint32_t&amp; outDuration, uint32_t&amp; outFailCount, uint32_t&amp; outLeaveCount, EMediaSessionStatus&amp; outLastStatus</span>
+<span class="lineNum">      28 </span>            :                 , uint32_t&amp; outFrameZeroTotalCount, uint32_t&amp; outContinueFrameZeroMaxCount)
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span><span class="lineCov">          6 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          6 :     if (session.get())</span>
+<span class="lineNum">      32 </span><span class="lineCov">          6 :         session-&gt;GetSessionStatistics(outDuration, outFailCount, outLeaveCount, outLastStatus, outFrameZeroTotalCount, outContinueFrameZeroMaxCount);</span>
+<span class="lineNum">      33 </span>            :     else
+<span class="lineNum">      34 </span>            :     {
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :         outDuration = 0;</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :         outFailCount = 0;</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         outLeaveCount = 0;</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         outLastStatus = MEDIA_SESSION_JOIN_SUCCESS;</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         outFrameZeroTotalCount = 0;</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         outContinueFrameZeroMaxCount = 0;</span>
+<span class="lineNum">      41 </span>            :     }
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 : void CNtgMediaSessionManager::SetSessionReconnectStatus(EMediaSessionType inType, bool inStatus)</span>
+<span class="lineNum">      45 </span>            : {
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :     if (session.get())</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :         session-&gt;SetSessionReconnectStatus(inStatus);</span>
+<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">          2 : bool CNtgMediaSessionManager::IsSessionReconnectStatus(EMediaSessionType inType)</span>
+<span class="lineNum">      52 </span>            : {
+<span class="lineNum">      53 </span><span class="lineCov">          2 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      54 </span><span class="lineCov">          2 :     if (session.get())</span>
+<span class="lineNum">      55 </span><span class="lineCov">          2 :         return session-&gt;IsSessionReconnectStatus();</span>
+<span class="lineNum">      56 </span>            :     return false;
+<a name="57"><span class="lineNum">      57 </span>            : }</a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          1 : void CNtgMediaSessionManager::FrameZeroStatistics(EMediaSessionType inType, uint32_t inFrame)</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">          1 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      62 </span><span class="lineCov">          1 :     if (session.get())</span>
+<span class="lineNum">      63 </span><span class="lineCov">          1 :         session-&gt;FrameZeroStatistics(inFrame);</span>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineCov">          1 : bool CNtgMediaSessionManager::TryToSetSessionReconnectStatus(EMediaSessionType inType)</span>
+<span class="lineNum">      67 </span>            : {
+<span class="lineNum">      68 </span><span class="lineCov">          1 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      69 </span><span class="lineCov">          1 :     if (session.get())</span>
+<span class="lineNum">      70 </span><span class="lineCov">          1 :         return session-&gt;TryToSetSessionReconnectStatus();</span>
+<span class="lineNum">      71 </span>            :     return false;
+<a name="72"><span class="lineNum">      72 </span>            : }</a>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          2 : void CNtgMediaSessionManager::ResetSessionContinuousJoinFailCount(EMediaSessionType inType)</span>
+<span class="lineNum">      75 </span>            : {
+<span class="lineNum">      76 </span><span class="lineCov">          2 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      77 </span><span class="lineCov">          2 :     if (session.get())</span>
+<span class="lineNum">      78 </span><span class="lineCov">          2 :         session-&gt;ResetSessionContinuousJoinFailCount();</span>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">          3 : void CNtgMediaSessionManager::Reset()</span>
+<span class="lineNum">      82 </span>            : {
+<span class="lineNum">      83 </span><span class="lineCov">         18 :     for(auto&amp; item : m_mediaSessionMap)</span>
+<span class="lineNum">      84 </span><span class="lineCov">          6 :         item.second-&gt;Reset();</span>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineCov">          2 : void CNtgMediaSessionManager::Reset(EMediaSessionType inType)</span>
+<span class="lineNum">      88 </span>            : {
+<span class="lineNum">      89 </span><span class="lineCov">          2 :     NtgMediaSessionSharedPtr session = GetSession(inType);</span>
+<span class="lineNum">      90 </span><span class="lineCov">          2 :     if (session.get())</span>
+<span class="lineNum">      91 </span><span class="lineCov">          2 :         session-&gt;Reset();</span>
+<a name="92"><span class="lineNum">      92 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span><span class="lineCov">         19 : NtgMediaSessionSharedPtr CNtgMediaSessionManager::GetSession(EMediaSessionType inType)</span>
+<span class="lineNum">      95 </span>            : {
+<span class="lineNum">      96 </span><span class="lineCov">         19 :     NtgMediaSessionSharedPtr session;</span>
+<span class="lineNum">      97 </span><span class="lineCov">         38 :     NtpMediaSessionMap::iterator iter = m_mediaSessionMap.find(inType);</span>
+<span class="lineNum">      98 </span><span class="lineCov">         38 :     if (iter != m_mediaSessionMap.end())</span>
+<span class="lineNum">      99 </span>            :     {
+<span class="lineNum">     100 </span><span class="lineCov">          4 :         session = iter-&gt;second;</span>
+<span class="lineNum">     101 </span>            :     }
+<span class="lineNum">     102 </span>            :     else
+<span class="lineNum">     103 </span>            :     {
+<span class="lineNum">     104 </span><span class="lineCov">         15 :         session = std::make_shared&lt;CNtgMediaSession&gt;();</span>
+<span class="lineNum">     105 </span><span class="lineCov">         15 :         m_mediaSessionMap[inType] = session;</span>
+<a name="106"><span class="lineNum">     106 </span>            :     }</a>
+<span class="lineNum">     107 </span><span class="lineCov">         19 :     return session;</span>
+<span class="lineNum">     108 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     109 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

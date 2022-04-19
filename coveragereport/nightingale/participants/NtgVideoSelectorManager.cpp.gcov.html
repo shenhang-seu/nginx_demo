@@ -1,0 +1,505 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/NtgVideoSelectorManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - NtgVideoSelectorManager.cpp<span style="font-size: 80%;"> (source / <a href="NtgVideoSelectorManager.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">174</td>
+            <td class="headerCovTableEntry">228</td>
+            <td class="headerCovTableEntryMed">76.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntry">39</td>
+            <td class="headerCovTableEntryLo">74.4 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;utility&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">       3 </span>            : #include &quot;NtgVideoSelectorManager.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;CmeServiceProperties.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">       9 </span>            : /// class CNtgVideoSelectorManager
+<a name="10"><span class="lineNum">      10 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">        117 : CNtgVideoSelectorManager::CNtgVideoSelectorManager()</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span><span class="lineCov">        585 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::CNtgVideoSelectorManager&quot;);</span>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">         39 : }</span></a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">        312 : CNtgVideoSelectorManager::~CNtgVideoSelectorManager()</span>
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span><span class="lineCov">        585 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::~CNtgVideoSelectorManager&quot;);</span>
+<span class="lineNum">      20 </span><span class="lineCov">         39 : }</span>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">         36 : void CNtgVideoSelectorManager::Initialize(const UpdateSubscriptionFunc&amp; inUpdateSubscriptionFunc, const UpdateRealActiveSpeakerFunc&amp; inUpdateRealActiveSpeakerFunc)</span>
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span><span class="lineCov">         36 :     m_updateSubscriptionFunc = inUpdateSubscriptionFunc;</span>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">         72 :     UpdateSelectorSubscriptionFunc asSubscriptionFunc = std::bind(&amp;CNtgVideoSelectorManager::HandleAsSubscription, this, std::placeholders::_1, std::placeholders::_2);</span>
+<span class="lineNum">      27 </span><span class="lineCov">         72 :     UpdateSelectorSubscriptionFunc rsSubscriptionFunc = std::bind(&amp;CNtgVideoSelectorManager::HandleRsSubscription, this, std::placeholders::_1, std::placeholders::_2);</span>
+<span class="lineNum">      28 </span><span class="lineCov">        108 :     m_videoAsSelector = NtgVideoAsSelectorSharedPtr(new CNtgVideoAsSelector(asSubscriptionFunc));</span>
+<span class="lineNum">      29 </span><span class="lineCov">        108 :     m_videoRsSelector = NtgVideoRsSelectorSharedPtr(new CNtgVideoRsSelector(rsSubscriptionFunc));</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">         72 :     NtgCmeVideoRsScrParseResultFunc rsScrParseResultFunc = std::bind(&amp;CNtgVideoSelectorManager::HandleCmeRsScrParseResult, this, std::placeholders::_1);</span>
+<span class="lineNum">      32 </span><span class="lineCov">         72 :     NtgCmeVideoAsScrParseResultFunc asScrParseResultFunc = std::bind(&amp;CNtgVideoSelectorManager::HandleCmeAsScrParseResult, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);</span>
+<span class="lineNum">      33 </span><span class="lineCov">        108 :     m_scrContextMgr.Initialize(rsScrParseResultFunc, asScrParseResultFunc);</span>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineCov">        108 :     m_layoutMgr = NtgLayoutMgrSharedPtr(new CNtgLayoutManager());</span>
+<span class="lineNum">      36 </span><span class="lineCov">        144 :     m_videoAsSelector-&gt;SetLayoutMgr(m_layoutMgr);</span>
+<span class="lineNum">      37 </span><span class="lineCov">        144 :     m_videoAsSelector-&gt;SetCmeVideoScrMgr(m_scrContextMgr.GetAsScrContext());</span>
+<span class="lineNum">      38 </span><span class="lineCov">        144 :     m_videoRsSelector-&gt;SetLayoutMgr(m_layoutMgr);</span>
+<span class="lineNum">      39 </span><span class="lineCov">        144 :     m_videoRsSelector-&gt;SetCmeVideoScrMgr(m_scrContextMgr.GetRsScrContext());</span>
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::Release()</span>
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :     m_scrContextMgr.Release();</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :     m_videoAsSelector-&gt;Release();</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :     m_videoRsSelector-&gt;Release();</span>
+<a name="47"><span class="lineNum">      47 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 : JsonValue CNtgVideoSelectorManager::ToJson() const</span>
+<span class="lineNum">      50 </span>            : {
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :     JsonValue info;</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :     return info;</span>
+<a name="53"><span class="lineNum">      53 </span>            : }</a>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">         11 : void CNtgVideoSelectorManager::AddVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      56 </span>            : {
+<span class="lineNum">      57 </span><span class="lineCov">         11 :     m_videoAsSelector-&gt;AddVideoComposeKey(inVideoComposeKey);</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">         11 : }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">          8 : void CNtgVideoSelectorManager::RemoveVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineCov">          8 :     m_videoAsSelector-&gt;RemoveVideoComposeKey(inVideoComposeKey);</span>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::UpdateVideoComposeKey(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey)</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :     m_videoAsSelector-&gt;UpdateVideoComposeKey(inOldVideoComposeKey, inNewVideoComposeKey);</span>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          6 : void CNtgVideoSelectorManager::UpdateCmeVideoScrWithContentSharingState(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount, bool inContentSharing)</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span><span class="lineCov">          6 :     m_layoutMgr-&gt;UpdateContentSharingStatus(inContentSharing);</span>
+<span class="lineNum">      73 </span><span class="lineCov">          6 :     UpdateCmeVideoScr(inRequests, inRequestCount);</span>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineCov">         16 : void CNtgVideoSelectorManager::UpdateCmeVideoScr(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">      77 </span>            : {
+<span class="lineNum">      78 </span><span class="lineCov">         16 :     SetWaitSubscription(true);</span>
+<span class="lineNum">      79 </span><span class="lineCov">         16 :     m_scrContextMgr.ParseScr(inRequests, inRequestCount);</span>
+<span class="lineNum">      80 </span>            :     //need force update sca to edonus
+<span class="lineNum">      81 </span><span class="lineCov">         16 :     TriggerWaitSubscription(true);</span>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">         16 : }</span></a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineCov">        114 : void CNtgVideoSelectorManager::AddParticipant(const NtgParticipantSharedPtr&amp; inParticipant)</span>
+<span class="lineNum">      85 </span>            : {
+<span class="lineNum">      86 </span><span class="lineCov">       2166 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::AddParticipant, nodeId:&quot; &lt;&lt; inParticipant-&gt;GetNodeId() &lt;&lt; &quot; nodeName:&quot; &lt;&lt; inParticipant-&gt;GetNodeName());</span>
+<span class="lineNum">      87 </span><span class="lineCov">        342 :     if (IsParticipantInSelectedList(inParticipant-&gt;GetNodeId()))</span>
+<span class="lineNum">      88 </span>            :     {
+<span class="lineNum">      89 </span><span class="lineCov">          1 :         m_videoRsSelector-&gt;AddParticipant(inParticipant);</span>
+<span class="lineNum">      90 </span>            :     }
+<span class="lineNum">      91 </span>            :     else
+<span class="lineNum">      92 </span>            :     {
+<span class="lineNum">      93 </span><span class="lineCov">        113 :         m_videoAsSelector-&gt;AddParticipant(inParticipant);</span>
+<span class="lineNum">      94 </span>            :     }
+<a name="95"><span class="lineNum">      95 </span><span class="lineCov">        114 : }</span></a>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineCov">         87 : void CNtgVideoSelectorManager::RemoveParticipants(const NodeIdTypeVector&amp; inNodeIdVector)</span>
+<span class="lineNum">      98 </span>            : {
+<span class="lineNum">      99 </span><span class="lineCov">        551 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::RemoveParticipants, count:&quot; &lt;&lt; inNodeIdVector.size());</span>
+<span class="lineNum">     100 </span>            :     NodeIdTypeVector asNodeIds;
+<span class="lineNum">     101 </span>            :     NodeIdTypeVector rsNodeIds;
+<span class="lineNum">     102 </span><span class="lineCov">         58 :     bool rsParticipantsEmpty = m_videoRsSelector-&gt;IsParticipantEmpty();</span>
+<span class="lineNum">     103 </span><span class="lineCov">         29 :     if (!rsParticipantsEmpty)</span>
+<span class="lineNum">     104 </span>            :     {
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         for (auto nodeId : inNodeIdVector)</span>
+<span class="lineNum">     106 </span>            :         {
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :             if (IsParticipantInRsSelector(nodeId))</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 rsNodeIds.push_back(nodeId);</span>
+<span class="lineNum">     109 </span>            :             else
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                 asNodeIds.push_back(nodeId);</span>
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span>            :     }
+<span class="lineNum">     113 </span>            :     //rs selector
+<span class="lineNum">     114 </span><span class="lineCov">         29 :     if (!rsNodeIds.empty())</span>
+<span class="lineNum">     115 </span>            :     {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :         SetWaitSubscription(true);</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;RemoveParticipants(rsNodeIds);</span>
+<span class="lineNum">     118 </span>            :     }
+<span class="lineNum">     119 </span>            :     //as selector
+<span class="lineNum">     120 </span><span class="lineCov">         29 :     if (rsParticipantsEmpty)</span>
+<span class="lineNum">     121 </span><span class="lineCov">         29 :         m_videoAsSelector-&gt;RemoveParticipants(inNodeIdVector);</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :     else if (!asNodeIds.empty())</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :         m_videoAsSelector-&gt;RemoveParticipants(asNodeIds);</span>
+<span class="lineNum">     124 </span>            :         
+<span class="lineNum">     125 </span>            :     //check and trigger wait subscription
+<span class="lineNum">     126 </span><span class="lineCov">         29 :     TriggerWaitSubscription();</span>
+<a name="127"><span class="lineNum">     127 </span><span class="lineCov">         29 : }</span></a>
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span><span class="lineCov">          1 : void CNtgVideoSelectorManager::ClearAllParticipants()</span>
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span><span class="lineCov">         13 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::ClearAllParticipants&quot;);</span>
+<span class="lineNum">     132 </span><span class="lineCov">          1 :     ResetActiveSpeaker();</span>
+<span class="lineNum">     133 </span><span class="lineCov">          1 :     SetWaitSubscription(true);</span>
+<span class="lineNum">     134 </span><span class="lineCov">          1 :     m_videoRsSelector-&gt;ClearAllParticipants();</span>
+<span class="lineNum">     135 </span><span class="lineCov">          1 :     m_videoAsSelector-&gt;ClearAllParticipants();</span>
+<span class="lineNum">     136 </span><span class="lineCov">          2 :     m_stageView = nullptr;</span>
+<span class="lineNum">     137 </span>            :      //check and trigger wait subscription
+<span class="lineNum">     138 </span><span class="lineCov">          1 :     TriggerWaitSubscription();</span>
+<a name="139"><span class="lineNum">     139 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     140 </span>            :  
+<span class="lineNum">     141 </span><span class="lineCov">         99 : void CNtgVideoSelectorManager::AddMmpInfo(NodeIdType inNodeId, const NtgMmpInfoSharedPtr&amp; inMmpInfo, bool inIsTpCallback)</span>
+<span class="lineNum">     142 </span>            : {
+<span class="lineNum">     143 </span><span class="lineCov">         99 :     bool isRsParticipant = IsParticipantInRsSelector(inNodeId);</span>
+<span class="lineNum">     144 </span><span class="lineCov">       2178 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::AddMmpInfo, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; videoCSI:&quot; &lt;&lt; inMmpInfo-&gt;GetVideoCsi() </span>
+<span class="lineNum">     145 </span>            :         &lt;&lt; &quot; isTpCallback:&quot; &lt;&lt; inIsTpCallback &lt;&lt; &quot;, isRsParticipant:&quot; &lt;&lt; isRsParticipant);
+<span class="lineNum">     146 </span>            :     
+<span class="lineNum">     147 </span><span class="lineCov">         99 :     if (isRsParticipant)</span>
+<span class="lineNum">     148 </span>            :     {
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;AddMmpInfo(inNodeId, inMmpInfo, inIsTpCallback);</span>
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span>            :     else
+<span class="lineNum">     152 </span>            :     {
+<span class="lineNum">     153 </span><span class="lineCov">         99 :         m_videoAsSelector-&gt;AddMmpInfo(inNodeId, inMmpInfo, inIsTpCallback);</span>
+<span class="lineNum">     154 </span>            :     }
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">         99 : }</span></a>
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span><span class="lineCov">          8 : void CNtgVideoSelectorManager::AddTpCallbackInfo(NodeIdType inNodeId, const NtgTpInfoSharedPtr&amp; inTpInfo)</span>
+<span class="lineNum">     158 </span>            : {
+<span class="lineNum">     159 </span><span class="lineCov">          8 :     bool isRsParticipant = IsParticipantInRsSelector(inNodeId);</span>
+<span class="lineNum">     160 </span><span class="lineCov">        144 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::AddTpCallbackInfo, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot;, isRsParticipant:&quot; &lt;&lt; isRsParticipant);</span>
+<span class="lineNum">     161 </span>            :     
+<span class="lineNum">     162 </span><span class="lineCov">          8 :     if (isRsParticipant)</span>
+<span class="lineNum">     163 </span>            :     {
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;AddTpCallbackInfo(inNodeId, inTpInfo);</span>
+<span class="lineNum">     165 </span>            :     }
+<span class="lineNum">     166 </span>            :     else
+<span class="lineNum">     167 </span>            :     {
+<span class="lineNum">     168 </span><span class="lineCov">          8 :         m_videoAsSelector-&gt;AddTpCallbackInfo(inNodeId, inTpInfo);</span>
+<span class="lineNum">     169 </span>            :     }
+<a name="170"><span class="lineNum">     170 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span><span class="lineCov">          1 : void CNtgVideoSelectorManager::RemoveTpCallbackInfo(NodeIdType inNodeId)</span>
+<span class="lineNum">     173 </span>            : {
+<span class="lineNum">     174 </span><span class="lineCov">          1 :     bool isRsParticipant = IsParticipantInRsSelector(inNodeId);</span>
+<span class="lineNum">     175 </span><span class="lineCov">         18 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::RemoveTpCallbackInfo, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot;, isRsParticipant:&quot; &lt;&lt; isRsParticipant);</span>
+<span class="lineNum">     176 </span>            :     
+<span class="lineNum">     177 </span><span class="lineCov">          1 :     if (isRsParticipant)</span>
+<span class="lineNum">     178 </span>            :     {
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;RemoveTpCallbackInfo(inNodeId);</span>
+<span class="lineNum">     180 </span>            :     }
+<span class="lineNum">     181 </span>            :     else
+<span class="lineNum">     182 </span>            :     {
+<span class="lineNum">     183 </span><span class="lineCov">          1 :         m_videoAsSelector-&gt;RemoveTpCallbackInfo(inNodeId);</span>
+<span class="lineNum">     184 </span>            :     }
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineCov">         26 : void CNtgVideoSelectorManager::UpdateActiveSpeaker(NodeIdType inActiveSpeakerNodeId)</span>
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineCov">         26 :     bool isChanged = (m_activeSpeakerNodeId != inActiveSpeakerNodeId);</span>
+<span class="lineNum">     190 </span><span class="lineCov">         26 :     m_activeSpeakerNodeId = inActiveSpeakerNodeId;</span>
+<span class="lineNum">     191 </span><span class="lineCov">         26 :     if (IsParticipantInRsSelector(inActiveSpeakerNodeId))</span>
+<span class="lineNum">     192 </span>            :     {
+<span class="lineNum">     193 </span>            :         //force update active video
+<span class="lineNum">     194 </span><span class="lineCov">          1 :         if (isChanged)</span>
+<span class="lineNum">     195 </span>            :         {
+<span class="lineNum">     196 </span><span class="lineCov">         16 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::UpdateActiveSpeaker, force update active video because participant in rs selector inActiveSpeakerNodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     197 </span><span class="lineCov">          4 :             m_updateSubscriptionFunc(m_activeSpeakerNodeId, NtgVideoSourceSet(), NtgVideoSourceSet(), WBXScrRequestMap());</span>
+<span class="lineNum">     198 </span>            :         }
+<span class="lineNum">     199 </span>            :     }
+<span class="lineNum">     200 </span>            :     else
+<span class="lineNum">     201 </span>            :     {
+<span class="lineNum">     202 </span><span class="lineCov">         25 :         bool isSameAsAsSelector = (m_videoAsSelector-&gt;GetActiveSpeaker() == m_activeSpeakerNodeId);</span>
+<span class="lineNum">     203 </span><span class="lineCov">         25 :         m_videoAsSelector-&gt;UpdateActiveSpeaker(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     204 </span><span class="lineCov">         25 :         if (isSameAsAsSelector &amp;&amp; isChanged)</span>
+<span class="lineNum">     205 </span>            :         {
+<span class="lineNum">     206 </span><span class="lineCov">         32 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::UpdateActiveSpeaker, force update active video because real active video same as previous inActiveSpeakerNodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     207 </span><span class="lineCov">          8 :             m_updateSubscriptionFunc(m_activeSpeakerNodeId, NtgVideoSourceSet(), NtgVideoSourceSet(), WBXScrRequestMap());</span>
+<span class="lineNum">     208 </span>            :         }
+<span class="lineNum">     209 </span>            :     }
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">         26 : }</span></a>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::UpdateActiveSpeakerHistory(NodeIdType inActiveSpeakerNodeId)</span>
+<span class="lineNum">     213 </span>            : {
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :     m_videoAsSelector-&gt;UpdateHistoryActiveSerialNum(inActiveSpeakerNodeId);</span>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">         31 : void CNtgVideoSelectorManager::UpdateVideoSourceStatus(NodeIdType inNodeId, bool inIsOpen)</span>
+<span class="lineNum">     218 </span>            : {
+<span class="lineNum">     219 </span><span class="lineCov">         31 :     bool isRsParticipant = IsParticipantInRsSelector(inNodeId);</span>
+<span class="lineNum">     220 </span><span class="lineCov">        620 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::UpdateVideoSourceStatus, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; inIsOpen:&quot; &lt;&lt; inIsOpen &lt;&lt; &quot;, isRsParticipant:&quot; &lt;&lt; isRsParticipant);</span>
+<span class="lineNum">     221 </span>            :     
+<span class="lineNum">     222 </span><span class="lineCov">         31 :     if (isRsParticipant)</span>
+<span class="lineNum">     223 </span>            :     {
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;UpdateVideoSourceStatus(inNodeId, inIsOpen);</span>
+<span class="lineNum">     225 </span>            :     }
+<span class="lineNum">     226 </span>            :     else
+<span class="lineNum">     227 </span>            :     {
+<span class="lineNum">     228 </span><span class="lineCov">         31 :         m_videoAsSelector-&gt;UpdateVideoSourceStatus(inNodeId, inIsOpen);</span>
+<span class="lineNum">     229 </span>            :     }
+<a name="230"><span class="lineNum">     230 </span><span class="lineCov">         31 : }</span></a>
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span><span class="lineCov">          2 : bool CNtgVideoSelectorManager::UpdateStageView(NtgStageViewSharedPtr inStageView)</span>
+<span class="lineNum">     233 </span>            : {
+<span class="lineNum">     234 </span><span class="lineCov">          4 :     if (inStageView == nullptr)</span>
+<span class="lineNum">     235 </span>            :     {
+<span class="lineNum">     236 </span><span class="lineCov">          2 :         if (m_stageView == nullptr)//previous is nulllptr</span>
+<span class="lineNum">     237 </span>            :             return false;
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :         else if (m_stageView-&gt;IsImportParticipantsEmpty())//previous is empty</span>
+<span class="lineNum">     239 </span>            :             return false;
+<span class="lineNum">     240 </span>            :     }
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            :     //for only showActive(video/content) param changed case, need resub MMP
+<span class="lineNum">     243 </span><span class="lineCov">          3 :     if (inStageView!=nullptr &amp;&amp; m_stageView!=nullptr)</span>
+<span class="lineNum">     244 </span>            :     {
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :         if (m_stageView-&gt;Compare(inStageView))</span>
+<span class="lineNum">     246 </span>            :         {
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :             m_stageView = inStageView;</span>
+<span class="lineNum">     248 </span>            :             SetStageViewLayout(false);
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :             SetWaitSubscription(true);</span>
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :             m_videoRsSelector-&gt;ForceSubscribtion();</span>
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :             m_videoAsSelector-&gt;ForceSubscribtion();</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :             TriggerWaitSubscription();</span>
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :             return true;</span>
+<span class="lineNum">     256 </span>            :         }
+<span class="lineNum">     257 </span>            :     }
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span><span class="lineCov">          1 :     m_stageView = inStageView;</span>
+<span class="lineNum">     260 </span><span class="lineCov">          1 :     return true;</span>
+<span class="lineNum">     261 </span>            : }
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">         10 : void CNtgVideoSelectorManager::InitializeRsControls2Otter(JsonValue&amp; outData)</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span><span class="lineCov">         10 :     if(m_stageView)</span>
+<span class="lineNum">     266 </span>            :     {
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :         m_stageView-&gt;FormatControls(true, std::bind(&amp;CNtgVideoSelectorManager::GetParticipant, this, std::placeholders::_1), outData);</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :         m_videoRsSelector-&gt;RecordToHistory(m_stageView-&gt;GetNodeIdCsis());</span>
+<span class="lineNum">     269 </span>            :     }
+<span class="lineNum">     270 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span><span class="lineCov">          1 : bool CNtgVideoSelectorManager::GetRsControls2Otter(JsonValue&amp; outData)</span>
+<span class="lineNum">     273 </span>            : {
+<span class="lineNum">     274 </span><span class="lineCov">          3 :     if(m_stageView)</span>
+<span class="lineNum">     275 </span>            :     {
+<span class="lineNum">     276 </span><span class="lineCov">          4 :         m_stageView-&gt;FormatControls(false, std::bind(&amp;CNtgVideoSelectorManager::GetParticipant, this, std::placeholders::_1), outData);</span>
+<span class="lineNum">     277 </span><span class="lineCov">          2 :         m_videoRsSelector-&gt;RecordToHistory(m_stageView-&gt;GetNodeIdCsis());</span>
+<span class="lineNum">     278 </span>            :     }
+<span class="lineNum">     279 </span>            :     else
+<span class="lineNum">     280 </span>            :         GetRsStopControls2Otter(outData);
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span><span class="lineCov">          1 :     return true;</span>
+<a name="283"><span class="lineNum">     283 </span>            : }</a>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::GetRsStopControls2Otter(JsonValue&amp; outData)</span>
+<span class="lineNum">     286 </span>            : {
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :     CNtgStageView::FormatStopControls(outData);</span>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::AdjustSubcribeForRealActiveSpeakerChange(NodeIdType newRealActiveSpeaker, NodeIdType oldRealActiveSpeaker)</span>
+<span class="lineNum">     291 </span>            : {
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :     m_videoAsSelector-&gt;AdjustSubcribeForRealActiveSpeakerChange(newRealActiveSpeaker, oldRealActiveSpeaker);</span>
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineCov">         16 : void CNtgVideoSelectorManager::HandleCmeAsScrParseResult(const VidVector&amp; inAddedVids, const VidVector&amp; inModifiedVids, const VidVector&amp; inRemovedVids)</span>
+<span class="lineNum">     296 </span>            : {
+<span class="lineNum">     297 </span><span class="lineCov">         16 :     m_videoAsSelector-&gt;HandleCmeVideoScrParseResult(inAddedVids, inModifiedVids, inRemovedVids);</span>
+<a name="298"><span class="lineNum">     298 </span><span class="lineCov">         16 : }</span></a>
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span><span class="lineCov">         17 : void CNtgVideoSelectorManager::HandleCmeRsScrParseResult(const NtpRsVidCsiMap&amp; inVidCsis)</span>
+<span class="lineNum">     301 </span>            : {
+<span class="lineNum">     302 </span>            :     //set layout
+<span class="lineNum">     303 </span><span class="lineCov">         17 :     SetStageViewLayout(inVidCsis.empty());</span>
+<span class="lineNum">     304 </span>            :     NodeIdTypeVector rsAddNodeIds;
+<span class="lineNum">     305 </span>            :     NtgParticipantMap rsAddParticipants;
+<span class="lineNum">     306 </span>            :     NtgParticipantMap rsRemoveParticipants;
+<span class="lineNum">     307 </span>            :     //compare previous scr, adjust participant(as----&gt;rs, rs----&gt;as)
+<span class="lineNum">     308 </span>            :     NtgRsNodeIdCsiMap rsNodeIdCsis;
+<span class="lineNum">     309 </span>            :     GetRsSelectedParticipants(rsNodeIdCsis);
+<span class="lineNum">     310 </span><span class="lineCov">         51 :     m_videoRsSelector-&gt;AdjustParticipants(inVidCsis, rsNodeIdCsis, rsAddNodeIds, rsRemoveParticipants);</span>
+<span class="lineNum">     311 </span>            :     //as selector
+<span class="lineNum">     312 </span><span class="lineCov">         18 :     m_videoAsSelector-&gt;AdjustParticipants(rsRemoveParticipants, rsAddNodeIds, rsAddParticipants);</span>
+<span class="lineNum">     313 </span>            :     //check active speaker whether move from rs ---&gt; as
+<span class="lineNum">     314 </span><span class="lineCov">         51 :     if (rsRemoveParticipants.end() != rsRemoveParticipants.find(m_activeSpeakerNodeId))</span>
+<span class="lineNum">     315 </span>            :     {
+<span class="lineNum">     316 </span><span class="lineCov">          2 :         m_videoAsSelector-&gt;UpdateActiveSpeaker(m_activeSpeakerNodeId, true);</span>
+<span class="lineNum">     317 </span>            :     }
+<span class="lineNum">     318 </span>            :     //rs selector
+<span class="lineNum">     319 </span><span class="lineCov">         51 :     m_videoRsSelector-&gt;AddParticipants(rsAddParticipants);</span>
+<span class="lineNum">     320 </span><span class="lineCov">         34 :     m_videoRsSelector-&gt;HandleCmeVideoScrParseResult(inVidCsis);</span>
+<span class="lineNum">     321 </span><span class="lineCov">        340 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::HandleCmeRsScrParseResult, move participant from rs to as size:&quot; &lt;&lt; rsRemoveParticipants.size()</span>
+<span class="lineNum">     322 </span>            :             &lt;&lt; &quot; move from as to rs size:&quot; &lt;&lt; rsAddParticipants.size());
+<a name="323"><span class="lineNum">     323 </span><span class="lineCov">         17 : }</span></a>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">         11 : void CNtgVideoSelectorManager::HandleAsSubscription(const NtgVideoSourceSet&amp; inRemovedVideoSources, const NtgVideoSourceSet&amp; inAddedVideoSources)</span>
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span><span class="lineCov">         11 :     if (IsWaitSubscription())</span>
+<span class="lineNum">     328 </span><span class="lineCov">          1 :         AddToWaitSubscription(inRemovedVideoSources, inAddedVideoSources);</span>
+<span class="lineNum">     329 </span>            :     else
+<span class="lineNum">     330 </span><span class="lineCov">         10 :         HandleSubscription(inRemovedVideoSources, inAddedVideoSources);</span>
+<a name="331"><span class="lineNum">     331 </span><span class="lineCov">         11 : }</span></a>
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::HandleRsSubscription(const NtgVideoSourceSet&amp; inRemovedVideoSources, const NtgVideoSourceSet&amp; inAddedVideoSources)</span>
+<span class="lineNum">     334 </span>            : {
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :     if (IsWaitSubscription())</span>
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :         AddToWaitSubscription(inRemovedVideoSources, inAddedVideoSources);</span>
+<span class="lineNum">     337 </span>            :     else
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         HandleSubscription(inRemovedVideoSources, inAddedVideoSources);</span>
+<a name="339"><span class="lineNum">     339 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span><span class="lineCov">          1 : void CNtgVideoSelectorManager::AddToWaitSubscription(const NtgVideoSourceSet&amp; inRemovedVideoSources, const NtgVideoSourceSet&amp; inAddedVideoSources)</span>
+<span class="lineNum">     342 </span>            : {
+<span class="lineNum">     343 </span><span class="lineCov">          1 :     m_removedVideoSources.insert(inRemovedVideoSources.begin(), inRemovedVideoSources.end());</span>
+<span class="lineNum">     344 </span><span class="lineCov">          1 :     m_addedVideoSources.insert(inAddedVideoSources.begin(), inAddedVideoSources.end());</span>
+<a name="345"><span class="lineNum">     345 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span><span class="lineCov">         46 : void CNtgVideoSelectorManager::TriggerWaitSubscription(bool inForce)</span>
+<span class="lineNum">     348 </span>            : {
+<span class="lineNum">     349 </span><span class="lineCov">         46 :     if (IsWaitSubscription())</span>
+<span class="lineNum">     350 </span>            :     {
+<span class="lineNum">     351 </span><span class="lineCov">         17 :         HandleSubscription(m_removedVideoSources, m_addedVideoSources, inForce);</span>
+<span class="lineNum">     352 </span><span class="lineCov">         17 :         SetWaitSubscription(false);</span>
+<span class="lineNum">     353 </span><span class="lineCov">         17 :         m_removedVideoSources.clear();</span>
+<span class="lineNum">     354 </span><span class="lineCov">         17 :         m_addedVideoSources.clear();</span>
+<span class="lineNum">     355 </span>            :     }
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">         46 : }</span></a>
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span><span class="lineCov">         27 : void CNtgVideoSelectorManager::HandleSubscription(const NtgVideoSourceSet&amp; inRemovedVideoSources, const NtgVideoSourceSet&amp; inAddedVideoSources, bool inForce)</span>
+<span class="lineNum">     359 </span>            : {
+<span class="lineNum">     360 </span><span class="lineCov">         27 :     std::stringstream strAdded;</span>
+<span class="lineNum">     361 </span><span class="lineCov">        117 :     for(auto addedVideoSource : inAddedVideoSources)</span>
+<span class="lineNum">     362 </span>            :     {
+<span class="lineNum">     363 </span><span class="lineCov">          9 :         strAdded &lt;&lt; &quot; (vid:&quot;;</span>
+<span class="lineNum">     364 </span><span class="lineCov">         49 :         for(auto addedVid : addedVideoSource-&gt;GetVidArray())</span>
+<span class="lineNum">     365 </span>            :         {
+<span class="lineNum">     366 </span><span class="lineCov">         13 :             strAdded &lt;&lt; (int)addedVid &lt;&lt; &quot; &quot;;</span>
+<span class="lineNum">     367 </span>            :         }
+<span class="lineNum">     368 </span><span class="lineCov">         18 :         strAdded &lt;&lt; &quot;nodeId:&quot; &lt;&lt; (NodeIdType)addedVideoSource-&gt;GetNodeId() &lt;&lt; &quot;)&quot;;</span>
+<span class="lineNum">     369 </span>            :     }
+<span class="lineNum">     370 </span><span class="lineCov">         54 :     std::stringstream strRemoved;</span>
+<span class="lineNum">     371 </span><span class="lineCov">        111 :     for(auto removedVideoSource : inRemovedVideoSources)</span>
+<span class="lineNum">     372 </span>            :     {
+<span class="lineNum">     373 </span><span class="lineCov">          3 :         strRemoved &lt;&lt; &quot; nodeId:&quot; &lt;&lt; (NodeIdType)removedVideoSource-&gt;GetNodeId();</span>
+<span class="lineNum">     374 </span>            :     }
+<span class="lineNum">     375 </span><span class="lineCov">        648 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::HandleSubscription, added[&quot; &lt;&lt; strAdded.str() &lt;&lt; &quot;]&quot; &lt;&lt; &quot; removed[&quot; &lt;&lt; strRemoved.str() &lt;&lt; &quot;]&quot; &lt;&lt; &quot;, inForce:&quot; &lt;&lt; inForce);</span>
+<span class="lineNum">     376 </span><span class="lineCov">         47 :     if(inForce || !inRemovedVideoSources.empty() || !inAddedVideoSources.empty())</span>
+<span class="lineNum">     377 </span><span class="lineCov">         53 :         m_updateSubscriptionFunc(GetActiveSpeaker(), inRemovedVideoSources, inAddedVideoSources, m_scrContextMgr.GetRequests());</span>
+<a name="378"><span class="lineNum">     378 </span><span class="lineCov">         27 : }</span></a>
+<span class="lineNum">     379 </span>            : 
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::SetStageViewLayout(bool inRsScrEmpty)</span>
+<span class="lineNum">     381 </span>            : {
+<span class="lineNum">     382 </span><span class="lineCov">         20 :     m_layoutMgr-&gt;SetStageViewLayout(!inRsScrEmpty);//nullptr != m_stageView</span>
+<span class="lineNum">     383 </span><span class="lineCov">         19 :     if (m_stageView)</span>
+<span class="lineNum">     384 </span>            :     {
+<span class="lineNum">     385 </span><span class="lineCov">          2 :         m_layoutMgr-&gt;SetStageLockAttendeeParamter(m_stageView-&gt;IsOnlyShowStageUser());</span>
+<span class="lineNum">     386 </span><span class="lineCov">          3 :         m_layoutMgr-&gt;SetStageShowActiveInVideo(m_stageView-&gt;IsShowActiveInVideo());</span>
+<span class="lineNum">     387 </span><span class="lineCov">          3 :         m_layoutMgr-&gt;SetStageShowActiveInSharing(m_stageView-&gt;IsShowActiveInContent());</span>
+<span class="lineNum">     388 </span>            :     }
+<a name="389"><span class="lineNum">     389 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 : void CNtgVideoSelectorManager::GetRsSelectedParticipants(NtgRsNodeIdCsiMap&amp; outNodeIdCsis)</span>
+<span class="lineNum">     392 </span>            : {
+<span class="lineNum">     393 </span><span class="lineCov">         17 :     if (m_stageView)</span>
+<span class="lineNum">     394 </span><span class="lineCov">          1 :         outNodeIdCsis = m_stageView-&gt;GetNodeIdCsis();</span>
+<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span><span class="lineCov">          1 : NtgParticipantSharedPtr CNtgVideoSelectorManager::GetParticipant(NodeIdType inNodeId)</span>
+<span class="lineNum">     398 </span>            : {
+<span class="lineNum">     399 </span><span class="lineCov">          1 :     NtgParticipantSharedPtr participant = m_videoAsSelector-&gt;GetParticipant(inNodeId);</span>
+<span class="lineNum">     400 </span><span class="lineCov">          2 :     if (participant == nullptr)</span>
+<span class="lineNum">     401 </span><span class="lineCov">          2 :         participant = m_videoRsSelector-&gt;GetParticipant(inNodeId);</span>
+<span class="lineNum">     402 </span>            :     
+<span class="lineNum">     403 </span><span class="lineCov">          1 :     return participant;</span>
+<a name="404"><span class="lineNum">     404 </span>            : }</a>
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span><span class="lineCov">         26 : const NodeIdType CNtgVideoSelectorManager::GetActiveSpeaker() const </span>
+<span class="lineNum">     407 </span>            : {
+<span class="lineNum">     408 </span><span class="lineCov">         26 :     NodeIdType asActiveNodeId = m_videoAsSelector-&gt;GetActiveSpeaker();</span>
+<span class="lineNum">     409 </span><span class="lineCov">         26 :     if ((0 != m_activeSpeakerNodeId) &amp;&amp; (asActiveNodeId != m_activeSpeakerNodeId))</span>
+<span class="lineNum">     410 </span>            :     {
+<span class="lineNum">     411 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO_THIS(&quot;CNtgVideoSelectorManager::GetActiveSpeaker, asActiveNodeId:&quot; &lt;&lt; asActiveNodeId &lt;&lt; &quot; activeSpeakerNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId);</span>
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :         return m_activeSpeakerNodeId;</span>
+<span class="lineNum">     413 </span>            :     }
+<span class="lineNum">     414 </span>            :     else
+<span class="lineNum">     415 </span>            :         return asActiveNodeId;
+<a name="416"><span class="lineNum">     416 </span>            : }</a>
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span><span class="lineCov">        165 : bool CNtgVideoSelectorManager::IsParticipantInRsSelector(NodeIdType inNodeId)</span>
+<span class="lineNum">     419 </span>            : {
+<span class="lineNum">     420 </span><span class="lineCov">        495 :     return (nullptr != m_videoRsSelector-&gt;GetParticipant(inNodeId));</span>
+<a name="421"><span class="lineNum">     421 </span>            : }</a>
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 : bool CNtgVideoSelectorManager::IsParticipantInSelectedList(NodeIdType inNodeId)</span>
+<span class="lineNum">     424 </span>            : {
+<span class="lineNum">     425 </span><span class="lineCov">        114 :     if (m_stageView)</span>
+<span class="lineNum">     426 </span><span class="lineCov">          2 :         return m_stageView-&gt;IsParticipantInStage(inNodeId);</span>
+<a name="427"><span class="lineNum">     427 </span>            : </a>
+<span class="lineNum">     428 </span>            :     return false;
+<span class="lineNum">     429 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

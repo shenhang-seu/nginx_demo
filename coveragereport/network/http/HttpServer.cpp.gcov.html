@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/http/HttpServer.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/http</a> - HttpServer.cpp<span style="font-size: 80%;"> (source / <a href="HttpServer.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntry">69</td>
+            <td class="headerCovTableEntryMed">84.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntryMed">77.8 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;cpprest/http_listener.h&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;exception&gt;
+<span class="lineNum">       3 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">       4 </span>            : #include &lt;thread&gt;
+<span class="lineNum">       5 </span>            : #include &quot;http/HttpServer.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;HttpRequestImpl.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;HttpResponseImpl.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;HttpUtilities.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : using namespace web::http;
+<span class="lineNum">      12 </span>            : using namespace web::http::experimental::listener;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      15 </span>            : /// class CHttpServerFactory
+<span class="lineNum">      16 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">         19 : std::shared_ptr&lt;CHttpServer&gt; CHttpServerFactory::CreateHttpServer(boost::asio::io_service&amp; inIoService, const std::string&amp; inBaseUrl)</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">         38 :         return std::shared_ptr&lt;CHttpServer&gt;(new CHttpServer(inIoService, inBaseUrl));</span>
+<span class="lineNum">      21 </span>            : }
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      25 </span>            : /// class CHttpServerImpl
+<span class="lineNum">      26 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : class CHttpServerImpl: public std::enable_shared_from_this&lt;CHttpServerImpl&gt;
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span>            : public:
+<span class="lineNum">      31 </span>            :         CHttpServerImpl(boost::asio::io_service&amp; inIoService, const std::string&amp; inBaseUrl);
+<span class="lineNum">      32 </span>            :         ~CHttpServerImpl();
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         void SetRequestHandler(const std::function&lt;void(const HttpRequestHandle&amp;, const CHttpRequest&amp;)&gt;&amp; inRequestHandler);
+<span class="lineNum">      35 </span>            :         SafariResult Open();
+<span class="lineNum">      36 </span>            :         void Close();
+<span class="lineNum">      37 </span>            :         SafariResult SendResponse(const HttpRequestHandle&amp; inHandle, const CHttpResponse&amp; inResponse);
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : private:
+<span class="lineNum">      40 </span>            :         void HandleRequestN(http_request inRequestMessage);
+<span class="lineNum">      41 </span>            :         void HandleRequestU(http_request inRequestMessage);
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : private:
+<span class="lineNum">      44 </span>            :         boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">      45 </span>            :         bool m_isOpen;
+<span class="lineNum">      46 </span>            :         http_listener m_httpListener;
+<span class="lineNum">      47 </span>            :         typedef std::map&lt;HttpRequestHandle, std::shared_ptr&lt;CHttpRequestImpl&gt;&gt; HttpRequestMap;
+<span class="lineNum">      48 </span>            :         HttpRequestMap m_httpRequests;
+<span class="lineNum">      49 </span>            :         std::function&lt;void(const HttpRequestHandle&amp;, const CHttpRequest&amp;)&gt; m_requestHandler;
+<span class="lineNum">      50 </span>            :         std::mutex m_mutex;
+<span class="lineNum">      51 </span>            :     //debug log
+<span class="lineNum">      52 </span>            :     uint32_t m_requestCountInNetworkThread = 0;
+<span class="lineNum">      53 </span>            :     uint32_t m_requestCountInUserThread = 0;
+<span class="lineNum">      54 </span>            : };
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineCov">         19 : CHttpServerImpl::CHttpServerImpl(boost::asio::io_service&amp; inIoService, const std::string&amp; inBaseUrl)</span>
+<span class="lineNum">      57 </span>            :         : m_ioService(inIoService)
+<span class="lineNum">      58 </span>            :         , m_isOpen(false)
+<span class="lineNum">      59 </span><span class="lineCov">         95 :         , m_httpListener(inBaseUrl)</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">        304 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::CHttpServerImpl, url: &quot;&lt;&lt;inBaseUrl);</span>
+<span class="lineNum">      62 </span><span class="lineCov">         19 : }</span>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 : CHttpServerImpl::~CHttpServerImpl()</span>
+<span class="lineNum">      65 </span>            : {
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::~CHttpServerImpl&quot;);</span>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      68 </span>            : 
+<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 : void CHttpServerImpl::SetRequestHandler(const std::function&lt;void(const HttpRequestHandle&amp;, const CHttpRequest&amp;)&gt;&amp; inRequestHandler)</span></a>
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span><span class="lineCov">         23 :         m_requestHandler = inRequestHandler;</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">         19 : SafariResult CHttpServerImpl::Open()</span>
+<span class="lineNum">      75 </span>            : {
+<span class="lineNum">      76 </span><span class="lineCov">        304 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::Open, m_isOpen:&quot; &lt;&lt; m_isOpen);</span>
+<span class="lineNum">      77 </span><span class="lineCov">         19 :         if (m_isOpen)</span>
+<span class="lineNum">      78 </span>            :                 return SAFARI_OK;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">        114 :         m_httpListener.support(std::bind(&amp;CHttpServerImpl::HandleRequestN, shared_from_this(), std::placeholders::_1));</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         try {
+<span class="lineNum">      83 </span><span class="lineCov">         38 :                 m_httpListener.open().wait();</span>
+<span class="lineNum">      84 </span><span class="lineCov">         19 :                 m_isOpen = true;</span>
+<span class="lineNum">      85 </span><span class="lineCov">         19 :                 return SAFARI_OK;</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :         } catch (const std::exception&amp; e) {</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                 HTTP_ERROR_LOG_THIS(&quot;CHttpServerImpl::Open, exception: \&quot;&quot; &lt;&lt; e.what() &lt;&lt; &quot;\&quot; url: &quot; &lt;&lt; m_httpListener.uri().to_string());</span>
+<span class="lineNum">      88 </span>            :                 return SAFARI_ERROR_HTTP_LISTENER_OPEN_FAILURE;
+<span class="lineNum">      89 </span>            :         }       
+<span class="lineNum">      90 </span>            : }
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineCov">         20 : void CHttpServerImpl::Close()</span>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineCov">        320 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::Close, m_isOpen:&quot; &lt;&lt; m_isOpen);</span>
+<span class="lineNum">      95 </span><span class="lineCov">         20 :         if (!m_isOpen)</span>
+<span class="lineNum">      96 </span><span class="lineCov">         20 :                 return;</span>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span><span class="lineCov">         19 :         m_isOpen = false;</span>
+<span class="lineNum">      99 </span><span class="lineCov">         19 :         m_requestHandler = nullptr;</span>
+<span class="lineNum">     100 </span><span class="lineCov">         38 :         m_httpListener.close();</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :         // sync version made application not exit when CTRL+C
+<span class="lineNum">     103 </span>            :         // m_httpListener.close().wait();
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span><span class="lineCov">         18 : SafariResult CHttpServerImpl::SendResponse(const HttpRequestHandle&amp; inHandle, const CHttpResponse&amp; inResponse)</span>
+<span class="lineNum">     108 </span>            : {
+<span class="lineNum">     109 </span><span class="lineCov">         18 :         if (!m_isOpen)</span>
+<span class="lineNum">     110 </span>            :         {
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                 HTTP_WARNING_LOG_THIS(&quot;CHttpServerImpl::SendResponse, http server is not open!&quot;);</span>
+<span class="lineNum">     112 </span>            :                 return SAFARI_OK;
+<span class="lineNum">     113 </span>            :         }
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">         36 :         HttpRequestMap::iterator it = m_httpRequests.find(inHandle);</span>
+<span class="lineNum">     116 </span><span class="lineCov">         36 :         if (it == m_httpRequests.end())</span>
+<span class="lineNum">     117 </span>            :         {
+<span class="lineNum">     118 </span><span class="lineCov">         16 :                 HTTP_ERROR_LOG_THIS(&quot;CHttpServerImpl::SendResponse, httpRequest not found! inHandle: &quot; &lt;&lt; inHandle);</span>
+<span class="lineNum">     119 </span>            :                 return SAFARI_ERROR_NOT_FOUND;
+<span class="lineNum">     120 </span>            :         }
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineCov">         51 :         it-&gt;second-&gt;GetRequestMessage().reply(inResponse.GetImpl()-&gt;GetResponseMessage());</span>
+<span class="lineNum">     123 </span><span class="lineCov">         17 :         m_httpRequests.erase(it);</span>
+<span class="lineNum">     124 </span><span class="lineCov">         17 :         return SAFARI_OK;</span>
+<span class="lineNum">     125 </span>            : }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineCov">         19 : void CHttpServerImpl::HandleRequestN(http_request inRequestMessage)</span>
+<span class="lineNum">     128 </span>            : {
+<span class="lineNum">     129 </span>            :     //only for debug
+<span class="lineNum">     130 </span><span class="lineCov">         19 :     if (0 == ((m_requestCountInNetworkThread++)%2))</span>
+<span class="lineNum">     131 </span><span class="lineCov">        238 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::HandleRequestN, requet count:&quot; &lt;&lt; m_requestCountInNetworkThread);</span>
+<span class="lineNum">     132 </span>            :     
+<span class="lineNum">     133 </span>            :         inRequestMessage.content_ready()
+<span class="lineNum">     134 </span><span class="lineCov">         19 :         .then([this](http_request inRequestMessage)</span>
+<span class="lineNum">     135 </span>            :         {
+<span class="lineNum">     136 </span><span class="lineCov">        114 :                 CThreadPoster(m_ioService,std::bind(&amp;CHttpServerImpl::HandleRequestU, shared_from_this(), inRequestMessage));</span>
+<span class="lineNum">     137 </span><span class="lineCov">         76 :         });</span>
+<span class="lineNum">     138 </span><span class="lineCov">         19 : }</span>
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span><span class="lineCov">         19 : void CHttpServerImpl::HandleRequestU(http_request inRequestMessage)</span>
+<span class="lineNum">     141 </span>            : {
+<span class="lineNum">     142 </span>            :     //only for debug
+<span class="lineNum">     143 </span><span class="lineCov">         19 :     if (0 == ((m_requestCountInUserThread++)%2))</span>
+<span class="lineNum">     144 </span><span class="lineCov">        272 :         HTTP_INFO_LOG_THIS(&quot;CHttpServerImpl::HandleRequestU, requet count:&quot; &lt;&lt; m_requestCountInUserThread);</span>
+<span class="lineNum">     145 </span>            :     
+<span class="lineNum">     146 </span><span class="lineCov">         19 :         if (!m_isOpen)</span>
+<span class="lineNum">     147 </span>            :         {
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                 HTTP_WARNING_LOG_THIS(&quot;CHttpServerImpl::HandleRequestU, http server is not open!&quot;);</span>
+<span class="lineNum">     149 </span><span class="lineCov">         19 :                 return;</span>
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span>            :         
+<span class="lineNum">     152 </span><span class="lineCov">         38 :         if (m_requestHandler)</span>
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span>            :                 std::shared_ptr&lt;CHttpRequestImpl&gt; httpRequestImpl = std::make_shared&lt;CHttpRequestImpl&gt;(inRequestMessage);
+<span class="lineNum">     155 </span><span class="lineCov">         19 :                 HttpRequestHandle requestHandle = httpRequestImpl.get();</span>
+<span class="lineNum">     156 </span><span class="lineCov">         57 :                 m_httpRequests.insert(std::make_pair(requestHandle, httpRequestImpl));</span>
+<span class="lineNum">     157 </span><span class="lineCov">         38 :                 CHttpRequest httpRequest(httpRequestImpl);</span>
+<span class="lineNum">     158 </span><span class="lineCov">         19 :                 m_requestHandler(requestHandle, httpRequest);</span>
+<span class="lineNum">     159 </span>            :         }
+<span class="lineNum">     160 </span>            : }
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     163 </span>            : /// class CHttpServer
+<span class="lineNum">     164 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">         23 : void CHttpServer::SetRequestHandler(const std::function&lt;void(const HttpRequestHandle&amp;, const CHttpRequest&amp;)&gt;&amp; inRequestHandler)</span>
+<span class="lineNum">     167 </span>            : {
+<span class="lineNum">     168 </span><span class="lineCov">         23 :         m_impl-&gt;SetRequestHandler(inRequestHandler);</span>
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineCov">         19 : SafariResult CHttpServer::Open()</span>
+<span class="lineNum">     172 </span>            : {
+<span class="lineNum">     173 </span><span class="lineCov">         19 :         return m_impl-&gt;Open();</span>
+<a name="174"><span class="lineNum">     174 </span>            : }</a>
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineCov">         20 : void CHttpServer::Close()</span>
+<span class="lineNum">     177 </span>            : {
+<span class="lineNum">     178 </span><span class="lineCov">         20 :         m_impl-&gt;Close();</span>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">         20 : }</span></a>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">         18 : SafariResult CHttpServer::SendResponse(const HttpRequestHandle&amp; inHandle, const CHttpResponse&amp; inResponse)</span>
+<span class="lineNum">     182 </span>            : {
+<span class="lineNum">     183 </span><span class="lineCov">         18 :         return m_impl-&gt;SendResponse(inHandle, inResponse);</span>
+<a name="184"><span class="lineNum">     184 </span>            : }</a>
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 : CHttpServer::CHttpServer(boost::asio::io_service&amp; inIoService, const std::string&amp; inBaseUrl)</span>
+<span class="lineNum">     187 </span>            :         : m_impl(std::make_shared&lt;CHttpServerImpl&gt;(inIoService, inBaseUrl))
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">         19 : CHttpServer::~CHttpServer()</span>
+<a name="192"><span class="lineNum">     192 </span>            : {</a>
+<span class="lineNum">     193 </span>            :         
+<span class="lineNum">     194 </span><span class="lineCov">          6 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

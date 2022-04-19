@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/network/websocket/CspWebsocketMessage.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/network/websocket</a> - CspWebsocketMessage.h<span style="font-size: 80%;"> (source / <a href="CspWebsocketMessage.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CSP_WEBSOCKET_MESSAGE_H</a>
+<span class="lineNum">       2 </span>            : #define CSP_WEBSOCKET_MESSAGE_H
+<span class="lineNum">       3 </span>            : namespace Websocket{
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : /*
+<span class="lineNum">       6 </span>            : Ps: decriped by websocket RFC https://tools.ietf.org/html/rfc6455#section-1.3
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : Defines the interpretation of the &quot;Payload data&quot;.  If an unknown
+<span class="lineNum">       9 </span>            : opcode is received, the receiving endpoint MUST _Fail the
+<span class="lineNum">      10 </span>            : WebSocket Connection_.  The following values are defined.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : *  %x0 denotes a continuation frame
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : *  %x1 denotes a text frame
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : *  %x2 denotes a binary frame
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : *  %x3-7 are reserved for further non-control frames
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : *  %x8 denotes a connection close
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : *  %x9 denotes a ping
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : *  %xA denotes a pong
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : *  %xB-F are reserved for further control frames
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : */
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">         22 : class CCspWebsocketMessage</span>
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span>            : public:
+<span class="lineNum">      33 </span>            :     CCspWebsocketMessage(const std::string&amp; inBody,EWebsocketMessageType inType)
+<span class="lineNum">      34 </span>            :     :m_body(inBody)
+<span class="lineNum">      35 </span>            :     ,m_messageType(inType){}
+<span class="lineNum">      36 </span>            :     //
+<span class="lineNum">      37 </span><span class="lineCov">         14 :     CCspWebsocketMessage(){}</span>
+<span class="lineNum">      38 </span><span class="lineCov">         14 :     void SetMessage(const std::string&amp; inMessage){m_body = inMessage;}</span>
+<span class="lineNum">      39 </span><span class="lineCov">         14 :     void SetMessageType(EWebsocketMessageType inType){m_messageType = inType;}</span>
+<span class="lineNum">      40 </span>            :     const std::string&amp; GetMessage() const {return m_body;}
+<span class="lineNum">      41 </span>            :     EWebsocketMessageType GetMessageType() const {return m_messageType;}
+<span class="lineNum">      42 </span>            :     std::size_t GetLength() const {return m_body.size();}
+<span class="lineNum">      43 </span>            : private:
+<span class="lineNum">      44 </span>            :     std::string m_body;
+<span class="lineNum">      45 </span>            :     EWebsocketMessageType m_messageType;
+<span class="lineNum">      46 </span>            : };
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

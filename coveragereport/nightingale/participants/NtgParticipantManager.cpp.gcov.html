@@ -1,0 +1,590 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/NtgParticipantManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - NtgParticipantManager.cpp<span style="font-size: 80%;"> (source / <a href="NtgParticipantManager.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">187</td>
+            <td class="headerCovTableEntry">262</td>
+            <td class="headerCovTableEntryLo">71.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntryMed">75.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;utility&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">       3 </span>            : #include &quot;NtgParticipantManager.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;CmeServiceProperties.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">       9 </span>            : /// class CNtgParticipantManager
+<a name="10"><span class="lineNum">      10 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">         36 : CNtgParticipantManager::CNtgParticipantManager(</span>
+<span class="lineNum">      13 </span>            :         const ConfIdType&amp; inConfId,
+<span class="lineNum">      14 </span>            :         const UpdateRosterList2OtterFunc&amp; inUpdateRosterListFunc, 
+<span class="lineNum">      15 </span>            :         const UpdateSubscriptionFunc&amp; inUpdateSubscriptionFunc,
+<span class="lineNum">      16 </span>            :         const UpdateRealActiveSpeakerFunc&amp; inUpdateRealActiveSpeakerFunc)
+<span class="lineNum">      17 </span>            : : m_updateRosterListFunc(inUpdateRosterListFunc)
+<span class="lineNum">      18 </span>            : , m_updateRealActiveSpeakerFunc(inUpdateRealActiveSpeakerFunc)
+<span class="lineNum">      19 </span><span class="lineCov">        108 : , m_confId(inConfId)</span>
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span><span class="lineCov">         36 :     m_cmeVideoSelectorMgr.Initialize(inUpdateSubscriptionFunc, inUpdateRealActiveSpeakerFunc);</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">        576 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::CNtgParticipantManager, confId:&quot; &lt;&lt; inConfId);</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">        252 : CNtgParticipantManager::~CNtgParticipantManager()</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span><span class="lineCov">        540 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::~CNtgParticipantManager&quot;);</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::Release()</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.Release();</span>
+<a name="34"><span class="lineNum">      34 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">        145 : JsonValue CNtgParticipantManager::ToJson() const</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineCov">        145 :     JsonValue info;</span>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">        290 :     JsonValue jsonCmeSendonlySessionIds(Json::arrayValue);</span>
+<span class="lineNum">      41 </span><span class="lineCov">        691 :     for (const auto&amp; cmeSessionId : m_cmeSendonlySessionIds)</span>
+<span class="lineNum">      42 </span>            :     {
+<span class="lineNum">      43 </span><span class="lineCov">        111 :         jsonCmeSendonlySessionIds.append(cmeSessionId);</span>
+<span class="lineNum">      44 </span>            :     }
+<span class="lineNum">      45 </span><span class="lineCov">        145 :     info[&quot;cmeSendonlySessionIds&quot;] = jsonCmeSendonlySessionIds;</span>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :     /*info[&quot;activeSpeakerNodeId&quot;] = m_activeSpeakerNodeId;
+<span class="lineNum">      48 </span>            :     info[&quot;numParticipants&quot;] = m_participants.size();
+<span class="lineNum">      49 </span>            :     info[&quot;numPickedVideoSources&quot;] = m_pickedVideoSources.size();
+<span class="lineNum">      50 </span>            :     //disable scr, too many log
+<span class="lineNum">      51 </span>            :     //info[&quot;cmeVideoScrContext&quot;] = m_cmeVideoScrContext.ToJson();
+<span class="lineNum">      52 </span>            :     info[&quot;shareStarted&quot;] = m_shareStarted;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :     JsonValue jsonLayouts(Json::arrayValue);
+<span class="lineNum">      55 </span>            :     for (const auto&amp; videoComposeKey : m_videoComposeKeys)
+<span class="lineNum">      56 </span>            :     {
+<span class="lineNum">      57 </span>            :         JsonValue jsonLayout;
+<span class="lineNum">      58 </span>            :         jsonLayout[&quot;video&quot;] = videoComposeKey.GetVideoLayout();
+<span class="lineNum">      59 </span>            :         jsonLayout[&quot;content&quot;] = videoComposeKey.GetContentLayout();
+<span class="lineNum">      60 </span>            :         jsonLayouts.append(jsonLayout);
+<span class="lineNum">      61 </span>            :     }
+<span class="lineNum">      62 </span>            :     info[&quot;layouts&quot;] = jsonLayouts;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :     JsonValue jsonParticipants(Json::arrayValue);
+<span class="lineNum">      65 </span>            :     for (const auto&amp; participant : m_participants)
+<span class="lineNum">      66 </span>            :     {
+<span class="lineNum">      67 </span>            :         jsonParticipants.append(participant.second-&gt;ToJson());
+<span class="lineNum">      68 </span>            :     }
+<span class="lineNum">      69 </span>            :     info[&quot;participants&quot;] = jsonParticipants;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     JsonValue jsonPickedList(Json::arrayValue);
+<span class="lineNum">      72 </span>            :     for (const auto&amp; videoSource : m_pickedVideoSources)
+<span class="lineNum">      73 </span>            :     {
+<span class="lineNum">      74 </span>            :         jsonPickedList.append(videoSource.second-&gt;ToJson());
+<span class="lineNum">      75 </span>            :     }
+<span class="lineNum">      76 </span>            :     info[&quot;pickedList&quot;] = jsonPickedList;*/
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineCov">        145 :     return info;</span>
+<a name="79"><span class="lineNum">      79 </span>            : }</a>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">         10 : void CNtgParticipantManager::HandleCmeSendonlySessionOpen(const CmeSessionIdType&amp; inCmeSessionId, const CmeMediaServiceIdType&amp; inCmeMediaServiceId)</span>
+<span class="lineNum">      82 </span>            : {
+<span class="lineNum">      83 </span><span class="lineCov">        180 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::HandleCmeSendonlySessionOpen, inCmeSessionId:&quot; &lt;&lt; inCmeSessionId &lt;&lt; &quot; inCmeMediaServiceId:&quot; &lt;&lt; inCmeMediaServiceId);</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">         10 :     if (!CCmeServiceProperties::EnableSendSignalling(inCmeMediaServiceId))</span>
+<span class="lineNum">      86 </span><span class="lineCov">         10 :         return;</span>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">         20 :     CSP_ASSERT(m_cmeSendonlySessionIds.empty()); /* Note: currently only one SOS session is expected here, otherwise, it must be identified that where SCR messages are coming from. */</span>
+<span class="lineNum">      89 </span><span class="lineCov">         10 :     m_cmeSendonlySessionIds.insert(inCmeSessionId);</span>
+<span class="lineNum">      90 </span><span class="lineCov">         10 :     InitializeRostersAndControls2Otter(inCmeSessionId);</span>
+<span class="lineNum">      91 </span><span class="lineCov">         10 :     InitializeAudioRosterList2Otter();</span>
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span><span class="lineCov">         10 :     DumpSnapshot();</span>
+<a name="94"><span class="lineNum">      94 </span>            : }</a>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::HandleCmeSendonlySessionClose(const CmeSessionIdType&amp; inCmeSessionId)</span>
+<span class="lineNum">      97 </span>            : {
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::HandleCmeSendonlySessionClose, inCmeSessionId:&quot; &lt;&lt; inCmeSessionId);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :     m_cmeSendonlySessionIds.erase(inCmeSessionId);</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :     CSP_ASSERT(m_cmeSendonlySessionIds.empty());</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.UpdateCmeVideoScr(nullptr, 0);</span>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineCov">         11 : void CNtgParticipantManager::AddVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">     105 </span>            : {
+<span class="lineNum">     106 </span><span class="lineCov">         11 :     m_cmeVideoSelectorMgr.AddVideoComposeKey(inVideoComposeKey);</span>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">         11 : }</span></a>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">          8 : void CNtgParticipantManager::RemoveVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">     110 </span>            : {
+<span class="lineNum">     111 </span><span class="lineCov">          8 :     m_cmeVideoSelectorMgr.RemoveVideoComposeKey(inVideoComposeKey);</span>
+<a name="112"><span class="lineNum">     112 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::UpdateVideoComposeKey(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey)</span>
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.UpdateVideoComposeKey(inOldVideoComposeKey, inNewVideoComposeKey);</span>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">          6 : void CNtgParticipantManager::UpdateCmeVideoScrWithContentSharingState(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount, bool inContentSharing)</span>
+<span class="lineNum">     120 </span>            : {
+<span class="lineNum">     121 </span><span class="lineCov">          6 :     m_cmeVideoSelectorMgr.UpdateCmeVideoScrWithContentSharingState(inRequests, inRequestCount, inContentSharing);</span>
+<a name="122"><span class="lineNum">     122 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::UpdateCmeVideoScr(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.UpdateCmeVideoScr(inRequests, inRequestCount);</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span><span class="lineCov">        110 : void CNtgParticipantManager::AddParticipant(const NtgParticipantSharedPtr&amp; inParticipant)</span>
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span><span class="lineCov">       1870 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::AddParticipant, nodeId:&quot; &lt;&lt; inParticipant-&gt;GetNodeId() &lt;&lt; &quot; nodeName:&quot; &lt;&lt; inParticipant-&gt;GetNodeName());</span>
+<span class="lineNum">     132 </span><span class="lineCov">        440 :     m_participants.insert(std::make_pair(inParticipant-&gt;GetNodeId(), inParticipant));</span>
+<span class="lineNum">     133 </span><span class="lineCov">        110 :     UpdateRosterInfo2Otter(inParticipant, true);</span>
+<span class="lineNum">     134 </span>            :     //video selector AddParticipant
+<span class="lineNum">     135 </span><span class="lineCov">        110 :     m_cmeVideoSelectorMgr.AddParticipant(inParticipant);</span>
+<span class="lineNum">     136 </span><span class="lineCov">        110 :     DumpSnapshot();</span>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">        110 : }</span></a>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">         29 : void CNtgParticipantManager::RemoveParticipant(NodeIdType inNodeId)</span>
+<span class="lineNum">     140 </span>            : {
+<span class="lineNum">     141 </span><span class="lineCov">        464 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::RemoveParticipant, nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     142 </span><span class="lineCov">         58 :     RemoveParticipants(NodeIdTypeVector(1, inNodeId));</span>
+<a name="143"><span class="lineNum">     143 </span><span class="lineCov">         29 : }</span></a>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineCov">        145 : void CNtgParticipantManager::RemoveParticipants(const NodeIdTypeVector&amp; inNodeIdVector)</span>
+<span class="lineNum">     146 </span>            : {
+<span class="lineNum">     147 </span><span class="lineCov">        551 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::RemoveParticipants, num:&quot; &lt;&lt; inNodeIdVector.size());</span>
+<span class="lineNum">     148 </span>            :     //find and remove participants
+<span class="lineNum">     149 </span>            :     NtgParticipantVector removedParticipants;
+<span class="lineNum">     150 </span><span class="lineCov">         87 :     removedParticipants.reserve(inNodeIdVector.size());</span>
+<span class="lineNum">     151 </span><span class="lineCov">        145 :     for (auto nodeId : inNodeIdVector)</span>
+<span class="lineNum">     152 </span>            :     {
+<span class="lineNum">     153 </span><span class="lineCov">         58 :         const auto iter = m_participants.find(nodeId);</span>
+<span class="lineNum">     154 </span><span class="lineCov">         58 :         if (iter != m_participants.end())</span>
+<span class="lineNum">     155 </span>            :         {
+<span class="lineNum">     156 </span><span class="lineCov">         29 :             removedParticipants.push_back(iter-&gt;second);</span>
+<span class="lineNum">     157 </span><span class="lineCov">         29 :             m_participants.erase(iter);</span>
+<span class="lineNum">     158 </span>            :         }
+<span class="lineNum">     159 </span>            :     }
+<span class="lineNum">     160 </span>            :     //video selector RemoveParticipants
+<span class="lineNum">     161 </span><span class="lineCov">         29 :     m_cmeVideoSelectorMgr.RemoveParticipants(inNodeIdVector);</span>
+<span class="lineNum">     162 </span>            :     //report roster and stage view controllers
+<span class="lineNum">     163 </span><span class="lineCov">         29 :     if (!removedParticipants.empty())</span>
+<span class="lineNum">     164 </span>            :     {
+<span class="lineNum">     165 </span><span class="lineCov">         29 :         UpdateRosterList2Otter(removedParticipants, false);</span>
+<span class="lineNum">     166 </span><span class="lineCov">         29 :     }</span>
+<span class="lineNum">     167 </span><span class="lineCov">         29 : }</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">          1 : void CNtgParticipantManager::ClearAllParticipants()</span>
+<span class="lineNum">     170 </span>            : {
+<span class="lineNum">     171 </span><span class="lineCov">         17 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::ClearAllParticipants, num:&quot; &lt;&lt; m_participants.size());</span>
+<span class="lineNum">     172 </span>            :     //video selector ClearAllParticipants
+<span class="lineNum">     173 </span><span class="lineCov">          3 :     bool isChanged = m_cmeVideoSelectorMgr.UpdateStageView(nullptr);</span>
+<span class="lineNum">     174 </span><span class="lineCov">          1 :     m_cmeVideoSelectorMgr.ClearAllParticipants();</span>
+<span class="lineNum">     175 </span>            :     //report roster and stage view controllers
+<span class="lineNum">     176 </span>            :     NtgParticipantVector removedParticipants;
+<span class="lineNum">     177 </span><span class="lineCov">          2 :     removedParticipants.reserve(m_participants.size());</span>
+<span class="lineNum">     178 </span><span class="lineCov">          5 :     for (const auto&amp; participant : m_participants)</span>
+<span class="lineNum">     179 </span>            :     {
+<span class="lineNum">     180 </span><span class="lineCov">          1 :         removedParticipants.push_back(participant.second);</span>
+<span class="lineNum">     181 </span>            :     }
+<span class="lineNum">     182 </span><span class="lineCov">          1 :     m_participants.clear();</span>
+<span class="lineNum">     183 </span><span class="lineCov">          1 :     if (!removedParticipants.empty())</span>
+<span class="lineNum">     184 </span>            :     {
+<span class="lineNum">     185 </span><span class="lineCov">          1 :         UpdateRosterList2Otter(removedParticipants, false);</span>
+<span class="lineNum">     186 </span>            :     }
+<span class="lineNum">     187 </span>            :     //rs controls
+<span class="lineNum">     188 </span><span class="lineCov">          1 :     if (isChanged)</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :         UpdateRsStopControls2Otter();</span>
+<span class="lineNum">     190 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span><span class="lineCov">          2 : void CNtgParticipantManager::UpdateAvatarUrl(NodeIdType inNodeId, const std::string&amp; inAvatarUrl)</span>
+<span class="lineNum">     193 </span>            : {
+<span class="lineNum">     194 </span><span class="lineCov">          2 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     195 </span><span class="lineCov">          4 :     if (participant == nullptr)</span>
+<span class="lineNum">     196 </span>            :     {
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::UpdateAvatarUrl, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     198 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">     199 </span>            :     }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span><span class="lineCov">         32 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::UpdateAvatarUrl, nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     202 </span><span class="lineCov">          2 :     participant-&gt;UpdateAvatarUrl(inAvatarUrl);</span>
+<span class="lineNum">     203 </span><span class="lineCov">          2 :     UpdateRosterInfo2Otter(participant, true);</span>
+<span class="lineNum">     204 </span>            : }
+<span class="lineNum">     205 </span>            :  
+<span class="lineNum">     206 </span><span class="lineCov">         99 : void CNtgParticipantManager::AddMmpInfo(NodeIdType inNodeId, const NtgMmpInfoSharedPtr&amp; inMmpInfo, bool inIsTpCallback)</span>
+<span class="lineNum">     207 </span>            : {
+<span class="lineNum">     208 </span><span class="lineCov">         99 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     209 </span><span class="lineCov">        198 :     if (participant == nullptr)</span>
+<span class="lineNum">     210 </span>            :     {
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AddMmpInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; videoCSI:&quot; &lt;&lt; inMmpInfo-&gt;GetVideoCsi() &lt;&lt; &quot; isTpCallback:&quot; &lt;&lt; inIsTpCallback);</span>
+<span class="lineNum">     212 </span>            :         return;
+<span class="lineNum">     213 </span>            :     }
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">        107 :     if (inIsTpCallback &amp;&amp; !participant-&gt;IsTpCallback())</span>
+<span class="lineNum">     216 </span>            :     {
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :         NIGHTINGALE_ERROR_THIS(&quot;CNtgParticipantManager::AddMmpInfo, TpCallbackInfo not found! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; videoCSI:&quot; &lt;&lt; inMmpInfo-&gt;GetVideoCsi() &lt;&lt; &quot; isTpCallback:&quot; &lt;&lt; inIsTpCallback);</span>
+<span class="lineNum">     218 </span>            :         return;
+<span class="lineNum">     219 </span>            :     }
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineCov">         99 :     if (inIsTpCallback)</span>
+<span class="lineNum">     222 </span>            :     {
+<span class="lineNum">     223 </span><span class="lineCov">          8 :         participant-&gt;GetTpCallbackInfo()-&gt;UpdateTpCallbackMmpInfo(inMmpInfo);</span>
+<span class="lineNum">     224 </span>            :     }
+<span class="lineNum">     225 </span>            :     else
+<span class="lineNum">     226 </span>            :     {
+<span class="lineNum">     227 </span><span class="lineCov">         91 :         participant-&gt;UpdateMmpInfo(inMmpInfo);</span>
+<span class="lineNum">     228 </span>            :     }
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span><span class="lineCov">         99 :     auto videoSourceType = participant-&gt;GetVideoSourceType();</span>
+<span class="lineNum">     231 </span><span class="lineCov">         99 :     if (videoSourceType == CNtgParticipant::VS_LEGACY_WEBEX)</span>
+<span class="lineNum">     232 </span>            :     {
+<span class="lineNum">     233 </span>            :         /* Update video CSI to CME nodes. */
+<span class="lineNum">     234 </span><span class="lineCov">         74 :         UpdateRosterInfo2Otter(participant, true);</span>
+<span class="lineNum">     235 </span>            :     }
+<span class="lineNum">     236 </span>            :     else
+<span class="lineNum">     237 </span><span class="lineCov">         25 :         DumpSnapshot();</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :     /*
+<span class="lineNum">     240 </span>            :      * Do nothing for TP call-in participants and TP call-back participants as there is no change on their CSIs. 
+<span class="lineNum">     241 </span>            :      * TP call-in participant's CSI lists in CNtgParticipant::m_tpCallinVideoCsiVector
+<span class="lineNum">     242 </span>            :      * TP call-back participant's CSI lists in CNtgParticipant::m_tpCallbackInfo-&gt;GetTpCallbackEurekaInfo()-&gt;GetTpVideoCsiVector()
+<span class="lineNum">     243 </span>            :      */
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span>            :     //video selector AddMmpInfo
+<span class="lineNum">     246 </span><span class="lineCov">         99 :     m_cmeVideoSelectorMgr.AddMmpInfo(inNodeId, inMmpInfo, inIsTpCallback);</span>
+<span class="lineNum">     247 </span>            : }
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineCov">          8 : void CNtgParticipantManager::AddTpCallbackInfo(NodeIdType inNodeId, const NtgTpInfoSharedPtr&amp; inTpInfo)</span>
+<span class="lineNum">     250 </span>            : {
+<span class="lineNum">     251 </span><span class="lineCov">          8 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     252 </span><span class="lineCov">         16 :     if (participant == nullptr)</span>
+<span class="lineNum">     253 </span>            :     {
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AddTpCallbackInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     255 </span><span class="lineCov">          8 :         return;</span>
+<span class="lineNum">     256 </span>            :     }
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span><span class="lineCov">          8 :     participant-&gt;AddTpCallbackInfo(inTpInfo);</span>
+<span class="lineNum">     259 </span><span class="lineCov">          8 :     participant-&gt;UpdateVideoSourceStatus(false); /* Reset video source status. */</span>
+<span class="lineNum">     260 </span>            :     
+<span class="lineNum">     261 </span><span class="lineCov">          8 :     UpdateRosterInfo2Otter(participant, true); /* Update video CSI to Edonus. */</span>
+<span class="lineNum">     262 </span>            :     //video selector AddTpCallbackInfo
+<span class="lineNum">     263 </span><span class="lineCov">          8 :     m_cmeVideoSelectorMgr.AddTpCallbackInfo(inNodeId, inTpInfo);</span>
+<span class="lineNum">     264 </span>            : }
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span><span class="lineCov">          1 : void CNtgParticipantManager::RemoveTpCallbackInfo(NodeIdType inNodeId)</span>
+<span class="lineNum">     267 </span>            : {
+<span class="lineNum">     268 </span><span class="lineCov">          1 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     269 </span><span class="lineCov">          2 :     if (participant == nullptr)</span>
+<span class="lineNum">     270 </span>            :     {
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::RemoveTpCallbackInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     272 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">     273 </span>            :     }
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineCov">          1 :     participant-&gt;RemoveTpCallbackInfo();</span>
+<span class="lineNum">     276 </span><span class="lineCov">          1 :     participant-&gt;UpdateVideoSourceStatus(false); /* Reset video source status. */</span>
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span><span class="lineCov">          1 :     UpdateRosterInfo2Otter(participant, true); /* Update video CSI to Edonus. */</span>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            :     //video selector RemoveTpCallbackInfo
+<span class="lineNum">     281 </span><span class="lineCov">          1 :     m_cmeVideoSelectorMgr.RemoveTpCallbackInfo(inNodeId);</span>
+<a name="282"><span class="lineNum">     282 </span>            : }</a>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">         23 : void CNtgParticipantManager::UpdateActiveSpeaker(NodeIdType inActiveSpeakerNodeId)</span>
+<span class="lineNum">     285 </span>            : {
+<span class="lineNum">     286 </span>            :     //video selector UpdateActiveSpeaker
+<span class="lineNum">     287 </span><span class="lineCov">         23 :     m_cmeVideoSelectorMgr.UpdateActiveSpeaker(inActiveSpeakerNodeId);;</span>
+<a name="288"><span class="lineNum">     288 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::UpdateActiveSpeakerHistory(NodeIdType inActiveSpeakerNodeId)</span>
+<span class="lineNum">     291 </span>            : {
+<span class="lineNum">     292 </span>            :     //video selector UpdateActiveSpeakerHistory
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.UpdateActiveSpeakerHistory(inActiveSpeakerNodeId);;</span>
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     295 </span><span class="lineCov">         41 : void CNtgParticipantManager::UpdateVideoSourceStatus(NodeIdType inNodeId, bool inIsOpen)</span>
+<span class="lineNum">     296 </span>            : {
+<span class="lineNum">     297 </span><span class="lineCov">         41 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     298 </span><span class="lineCov">         82 :     if (participant == nullptr)</span>
+<span class="lineNum">     299 </span>            :     {
+<span class="lineNum">     300 </span><span class="lineCov">        180 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::UpdateVideoSourceStatus, participant not found! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; isOpen:&quot; &lt;&lt; inIsOpen);</span>
+<span class="lineNum">     301 </span><span class="lineCov">         41 :         return;</span>
+<span class="lineNum">     302 </span>            :     }
+<span class="lineNum">     303 </span>            :     //video selector UpdateVideoSourceStatus
+<span class="lineNum">     304 </span><span class="lineCov">         31 :     m_cmeVideoSelectorMgr.UpdateVideoSourceStatus(inNodeId, inIsOpen);</span>
+<span class="lineNum">     305 </span>            : }
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span><span class="lineCov">          1 : NtgMmpInfoSharedPtr CNtgParticipantManager::GetParticipantMmpInfo(NodeIdType inNodeId)</span>
+<span class="lineNum">     308 </span>            : {
+<span class="lineNum">     309 </span><span class="lineCov">          1 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     310 </span><span class="lineCov">          2 :     if (participant == nullptr)</span>
+<span class="lineNum">     311 </span>            :     {
+<span class="lineNum">     312 </span><span class="lineCov">         16 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::GetParticipantMmpInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     313 </span><span class="lineCov">          1 :         return nullptr;</span>
+<span class="lineNum">     314 </span>            :     }
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :     const auto videoSource = participant-&gt;GenerateVideoSource();</span>
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 :     if(videoSource &amp;&amp; videoSource-&gt;GetMmpInfo())</span>
+<span class="lineNum">     317 </span>            :     {   
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         return videoSource-&gt;GetMmpInfo();</span>
+<span class="lineNum">     319 </span>            :     }
+<span class="lineNum">     320 </span><span class="lineNoCov">          0 :     NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::GetParticipantMmpInfo, mmpinfo not exist! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :     return nullptr;</span>
+<span class="lineNum">     322 </span>            : }
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 : bool CNtgParticipantManager::GetParticipantMmpInfo(NodeIdType inNodeId, EMediaUserType&amp; outUserType, unsigned long&amp; outUserNodeID)</span>
+<span class="lineNum">     325 </span>            : {
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :     const auto&amp; mmpInfo = GetParticipantMmpInfo(inNodeId);</span>
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :     if(mmpInfo == nullptr)</span>
+<span class="lineNum">     328 </span>            :     {   
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::GetParticipantMediaUserType, mmpinfo not exist! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     330 </span>            :         return false;
+<span class="lineNum">     331 </span>            :     }
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :     outUserType = mmpInfo-&gt;GetUserType();</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :     outUserNodeID = mmpInfo-&gt;GetNodeId();</span>
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::GetParticipantMediaUserType, nodeId:&quot; &lt;&lt; inNodeId&lt;&lt;&quot; media tyep &quot;&lt;&lt;outUserType &lt;&lt;&quot; mmp node id &quot;&lt;&lt;outUserNodeID);</span>
+<span class="lineNum">     336 </span>            :     return true; 
+<span class="lineNum">     337 </span>            : }
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange(NodeIdType newRealActiveSpeaker, NodeIdType oldRealActiveSpeaker)</span>
+<span class="lineNum">     340 </span>            : {
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :     if (newRealActiveSpeaker == 0)</span>
+<span class="lineNum">     342 </span>            :     {
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange, newRealActiveSpeaker is 0! old:&quot; &lt;&lt; oldRealActiveSpeaker);</span>
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     345 </span>            :     }
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span>            :     UpdateActiveSpeakerHistory(newRealActiveSpeaker);
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :     if (newRealActiveSpeaker == oldRealActiveSpeaker)</span>
+<span class="lineNum">     350 </span>            :     {
+<span class="lineNum">     351 </span>            :         return;
+<span class="lineNum">     352 </span>            :     }
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :     const auto participant = GetParticipant(newRealActiveSpeaker);</span>
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :     if (participant == nullptr)</span>
+<span class="lineNum">     356 </span>            :     {
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange, candidate not found! old:&quot; &lt;&lt; oldRealActiveSpeaker &lt;&lt; &quot; new:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     358 </span>            :         return;
+<span class="lineNum">     359 </span>            :     }
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :     if (!participant-&gt;IsPickable())</span>
+<span class="lineNum">     361 </span>            :     {
+<span class="lineNum">     362 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange, candidate not pickable! old:&quot; &lt;&lt; oldRealActiveSpeaker &lt;&lt; &quot; new:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     363 </span>            :         return;
+<span class="lineNum">     364 </span>            :     }
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange, old:&quot; &lt;&lt; oldRealActiveSpeaker &lt;&lt; &quot; new:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :     if (m_cmeVideoSelectorMgr.IsAsPickedVideoSourceEmpty())</span>
+<span class="lineNum">     367 </span>            :     {
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::AdjustSubcribeForRealActiveSpeakerChange, m_pickedVideoSources is empty (which may be due to not receiving SCR from CME node)! nodeId:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     369 </span>            :         return;
+<span class="lineNum">     370 </span>            :     }
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 :     m_updateRealActiveSpeakerFunc();</span>
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.AdjustSubcribeForRealActiveSpeakerChange(newRealActiveSpeaker, oldRealActiveSpeaker);</span>
+<span class="lineNum">     374 </span>            : }
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span><span class="lineCov">          1 : void CNtgParticipantManager::UpdateStageView(NtgStageViewSharedPtr inStageView)</span>
+<span class="lineNum">     377 </span>            : {
+<span class="lineNum">     378 </span><span class="lineCov">          2 :     if (m_cmeVideoSelectorMgr.UpdateStageView(inStageView))</span>
+<span class="lineNum">     379 </span><span class="lineCov">          1 :         UpdateRsControls2Otter();</span>
+<span class="lineNum">     380 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span><span class="lineCov">          4 : void CNtgParticipantManager::UpdateAudioParticipant(NodeIdType inNodeId, CsiType inCsi, const std::string&amp; inName)</span>
+<span class="lineNum">     383 </span>            : {
+<span class="lineNum">     384 </span><span class="lineCov">          4 :     NtgAudioParticipantSharedPtr participant;</span>
+<span class="lineNum">     385 </span><span class="lineCov">          8 :     auto iter = m_auidoParticipants.find(inNodeId);</span>
+<span class="lineNum">     386 </span><span class="lineCov">          8 :     if (iter != m_auidoParticipants.end())</span>
+<span class="lineNum">     387 </span>            :     {
+<span class="lineNum">     388 </span><span class="lineCov">          1 :         participant = iter-&gt;second;</span>
+<span class="lineNum">     389 </span><span class="lineCov">          1 :         if (participant-&gt;GetCsi() == inCsi)</span>
+<span class="lineNum">     390 </span><span class="lineCov">          4 :             return;</span>
+<span class="lineNum">     391 </span>            :         else
+<span class="lineNum">     392 </span><span class="lineCov">          1 :             participant-&gt;SetCsi(inCsi);</span>
+<span class="lineNum">     393 </span>            :     }
+<span class="lineNum">     394 </span>            :     else
+<span class="lineNum">     395 </span>            :     {
+<span class="lineNum">     396 </span><span class="lineCov">          3 :         participant = std::make_shared&lt;CNtgAudioParticipant&gt;(inNodeId, inCsi, inName);</span>
+<span class="lineNum">     397 </span><span class="lineCov">          3 :         m_auidoParticipants[inNodeId] = participant;</span>
+<span class="lineNum">     398 </span>            :     }
+<span class="lineNum">     399 </span><span class="lineCov">          8 :     UpdateAudioRosterInfo2Otter(participant);</span>
+<a name="400"><span class="lineNum">     400 </span>            : }</a>
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span><span class="lineCov">         10 : void CNtgParticipantManager::InitializeRostersAndControls2Otter(const CmeSessionIdType&amp; inCmeSessionId)</span>
+<span class="lineNum">     403 </span>            : {
+<span class="lineNum">     404 </span><span class="lineCov">         10 :     JsonValue data;</span>
+<span class="lineNum">     405 </span><span class="lineCov">         10 :     InitializeRosterList2Otter(inCmeSessionId, data);</span>
+<span class="lineNum">     406 </span>            :     InitializeRsControls2Otter(inCmeSessionId, data);
+<span class="lineNum">     407 </span><span class="lineCov">         10 :     data[&quot;simpleDelta&quot;] = false;</span>
+<span class="lineNum">     408 </span><span class="lineCov">         10 :     m_updateRosterListFunc(false, inCmeSessionId, data);</span>
+<a name="409"><span class="lineNum">     409 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span><span class="lineCov">         10 : void CNtgParticipantManager::InitializeRosterList2Otter(const CmeSessionIdType&amp; inCmeSessionId, JsonValue&amp; outData)</span>
+<span class="lineNum">     412 </span>            : {
+<span class="lineNum">     413 </span><span class="lineCov">         10 :     JsonValue jsonParticipants(Json::arrayValue);</span>
+<span class="lineNum">     414 </span><span class="lineCov">         40 :     for (const auto&amp; participant : m_participants)</span>
+<span class="lineNum">     415 </span>            :     {
+<span class="lineNum">     416 </span><span class="lineNoCov">          0 :         if (!participant.second-&gt;IsPickable())</span>
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 :             continue;</span>
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :         JsonValue jsonParticipant = participant.second-&gt;GetJsonDto(&quot;JOINED&quot;);</span>
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         jsonParticipants.append(jsonParticipant);</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :     }</span>
+<span class="lineNum">     421 </span>            : 
+<span class="lineNum">     422 </span><span class="lineCov">         10 :     outData[&quot;participants&quot;] = jsonParticipants;</span>
+<a name="423"><span class="lineNum">     423 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span><span class="lineCov">        195 : void CNtgParticipantManager::UpdateRosterInfo2Otter(const NtgParticipantSharedPtr&amp; inParticipant, bool inJoined)</span>
+<span class="lineNum">     426 </span>            : {
+<span class="lineNum">     427 </span><span class="lineCov">        195 :     NtgParticipantVector participants(1, inParticipant);</span>
+<span class="lineNum">     428 </span><span class="lineCov">        195 :     UpdateRosterList2Otter(participants, inJoined);</span>
+<a name="429"><span class="lineNum">     429 </span><span class="lineCov">        195 : }</span></a>
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span><span class="lineCov">        225 : void CNtgParticipantManager::UpdateRosterList2Otter(const NtgParticipantVector&amp; inParticipants, bool inJoined)</span>
+<span class="lineNum">     432 </span>            : {
+<span class="lineNum">     433 </span><span class="lineCov">        225 :     JsonValue jsonParticipants(Json::arrayValue);</span>
+<span class="lineNum">     434 </span><span class="lineCov">       1125 :     for (const auto&amp; participant : inParticipants)</span>
+<span class="lineNum">     435 </span>            :     {
+<span class="lineNum">     436 </span><span class="lineCov">        373 :         if (inJoined &amp;&amp; !participant-&gt;IsPickable())</span>
+<span class="lineNum">     437 </span><span class="lineCov">         77 :             continue; /* Skip over those unpickable participants. */</span>
+<span class="lineNum">     438 </span><span class="lineCov">        444 :         JsonValue jsonParticipant = participant-&gt;GetJsonDto(inJoined ? &quot;JOINED&quot; : &quot;LEFT&quot;);</span>
+<span class="lineNum">     439 </span><span class="lineCov">        148 :         jsonParticipants.append(jsonParticipant);</span>
+<span class="lineNum">     440 </span><span class="lineCov">        148 :     }</span>
+<span class="lineNum">     441 </span>            : 
+<span class="lineNum">     442 </span><span class="lineCov">        225 :     if (jsonParticipants.empty())</span>
+<span class="lineNum">     443 </span><span class="lineCov">         77 :         return;</span>
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span><span class="lineCov">        296 :     JsonValue data;</span>
+<span class="lineNum">     446 </span><span class="lineCov">        148 :     data[&quot;participants&quot;] = jsonParticipants;</span>
+<span class="lineNum">     447 </span><span class="lineCov">        148 :     data[&quot;simpleDelta&quot;] = true;</span>
+<span class="lineNum">     448 </span><span class="lineCov">        444 :     m_updateRosterListFunc(true, &quot;&quot;, data);</span>
+<a name="449"><span class="lineNum">     449 </span>            : }</a>
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::InitializeRsControls2Otter(const CmeSessionIdType&amp; inCmeSessionId, JsonValue&amp; outData)</span>
+<span class="lineNum">     452 </span>            : {
+<span class="lineNum">     453 </span><span class="lineCov">         10 :     m_cmeVideoSelectorMgr.InitializeRsControls2Otter(outData);</span>
+<a name="454"><span class="lineNum">     454 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineCov">          1 : void CNtgParticipantManager::UpdateRsControls2Otter()</span>
+<span class="lineNum">     457 </span>            : {
+<span class="lineNum">     458 </span><span class="lineCov">          1 :     JsonValue data;</span>
+<span class="lineNum">     459 </span><span class="lineCov">          1 :     m_cmeVideoSelectorMgr.GetRsControls2Otter(data);</span>
+<span class="lineNum">     460 </span><span class="lineCov">          2 :     m_updateRosterListFunc(true, &quot;&quot;, data);</span>
+<a name="461"><span class="lineNum">     461 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     462 </span>            : 
+<span class="lineNum">     463 </span><span class="lineNoCov">          0 : void CNtgParticipantManager::UpdateRsStopControls2Otter()</span>
+<span class="lineNum">     464 </span>            : {
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :     JsonValue data;</span>
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :     m_cmeVideoSelectorMgr.GetRsStopControls2Otter(data);</span>
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :     m_updateRosterListFunc(true, &quot;&quot;, data);    </span>
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span><span class="lineCov">         10 : void CNtgParticipantManager::InitializeAudioRosterList2Otter()</span>
+<span class="lineNum">     471 </span>            : {
+<span class="lineNum">     472 </span><span class="lineCov">         20 :     if (!m_auidoParticipants.empty())</span>
+<span class="lineNum">     473 </span>            :     {
+<span class="lineNum">     474 </span><span class="lineNoCov">          0 :         JsonValue data;</span>
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :         data[JSON_KEY_IS_AUDIO_PARTICIPANT] = true;</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :         JsonValue participants;</span>
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :         for (auto participant : m_auidoParticipants)</span>
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :             participants.append(participant.second-&gt;ToJson());</span>
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :         data[&quot;participants&quot;] = participants;</span>
+<span class="lineNum">     480 </span><span class="lineNoCov">          0 :         m_updateRosterListFunc(true, &quot;&quot;, data);</span>
+<span class="lineNum">     481 </span>            :     }
+<a name="482"><span class="lineNum">     482 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">     483 </span>            : 
+<span class="lineNum">     484 </span><span class="lineCov">          4 : void CNtgParticipantManager::UpdateAudioRosterInfo2Otter(NtgAudioParticipantSharedPtr inParticipant)</span>
+<span class="lineNum">     485 </span>            : {
+<span class="lineNum">     486 </span><span class="lineCov">          4 :     JsonValue data;</span>
+<span class="lineNum">     487 </span><span class="lineCov">          4 :     data[JSON_KEY_IS_AUDIO_PARTICIPANT] = true;</span>
+<span class="lineNum">     488 </span><span class="lineCov">          8 :     JsonValue participants;</span>
+<span class="lineNum">     489 </span><span class="lineCov">          4 :     participants.append(inParticipant-&gt;ToJson());</span>
+<span class="lineNum">     490 </span><span class="lineCov">          4 :     data[&quot;participants&quot;] = participants;</span>
+<span class="lineNum">     491 </span><span class="lineCov">         12 :     m_updateRosterListFunc(true, &quot;&quot;, data);</span>
+<span class="lineNum">     492 </span><span class="lineCov">          4 : }</span>
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span><span class="lineCov">        152 : NtgParticipantSharedPtr CNtgParticipantManager::GetParticipant(NodeIdType inNodeId)</span>
+<span class="lineNum">     495 </span>            : {
+<span class="lineNum">     496 </span><span class="lineCov">        304 :     auto iter = m_participants.find(inNodeId);</span>
+<span class="lineNum">     497 </span><span class="lineCov">        304 :     if (iter == m_participants.end())</span>
+<span class="lineNum">     498 </span><span class="lineCov">         11 :         return nullptr;</span>
+<span class="lineNum">     499 </span><span class="lineCov">        141 :     return iter-&gt;second;</span>
+<span class="lineNum">     500 </span>            : }
+<span class="lineNum">     501 </span>            : 
+<span class="lineNum">     502 </span><span class="lineNoCov">          0 : const NtgParticipantSharedPtr CNtgParticipantManager::GetParticipant(NodeIdType inNodeId) const</span>
+<span class="lineNum">     503 </span>            : {
+<span class="lineNum">     504 </span><span class="lineNoCov">          0 :     const auto iter = m_participants.find(inNodeId);</span>
+<span class="lineNum">     505 </span><span class="lineNoCov">          0 :     if (iter == m_participants.end())</span>
+<span class="lineNum">     506 </span><span class="lineNoCov">          0 :         return nullptr;</span>
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :     return iter-&gt;second;</span>
+<a name="508"><span class="lineNum">     508 </span>            : }</a>
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineCov">        145 : void CNtgParticipantManager::DumpSnapshot() const</span>
+<span class="lineNum">     511 </span>            : {
+<a name="512"><span class="lineNum">     512 </span>            :     // TODO: remove the log in official release.</a>
+<span class="lineNum">     513 </span><span class="lineCov">       2610 :     NIGHTINGALE_INFO_THIS(&quot;CNtgParticipantManager::DumpSnapshot - &quot; &lt;&lt; ::Desensitize(JsonWriter().write(ToJson())));</span>
+<span class="lineNum">     514 </span><span class="lineCov">        148 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

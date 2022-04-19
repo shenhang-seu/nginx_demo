@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/network/rest/RestResponse.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/network/rest</a> - RestResponse.h<span style="font-size: 80%;"> (source / <a href="RestResponse.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef REST_RESPONSE_INTERFACE_H</a>
+<span class="lineNum">       2 </span>            : #define REST_RESPONSE_INTERFACE_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;RestDefines.h&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : namespace RestNetwork {
+<span class="lineNum">       7 </span>            :     class IRestResponse{
+<a name="8"><span class="lineNum">       8 </span>            :     public:</a>
+<span class="lineNum">       9 </span><span class="lineCov">         99 :         IRestResponse() {}</span>
+<span class="lineNum">      10 </span><span class="lineCov">         97 :         virtual ~IRestResponse() {}</span>
+<span class="lineNum">      11 </span>            :         virtual HttpStatus GetStatus() const=0;
+<span class="lineNum">      12 </span>            :         virtual std::string GetHeader(const std::string&amp; inKey) const=0;
+<span class="lineNum">      13 </span>            :         virtual const JsonValue&amp; GetBody() const=0;
+<span class="lineNum">      14 </span>            :     };
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            :     typedef std::shared_ptr&lt;IRestResponse&gt; RestResponseImpl;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">        144 :     class CRestResponse:public IRestResponse{</span>
+<span class="lineNum">      19 </span>            :     public:
+<span class="lineNum">      20 </span>            :         CRestResponse(const CHttpResponse&amp; inHttpResponse);
+<span class="lineNum">      21 </span>            :         CRestResponse(SafariResult inResult, const std::string&amp; inTrackingId);
+<span class="lineNum">      22 </span>            :         HttpStatus GetStatus() const override;
+<span class="lineNum">      23 </span>            :         std::string GetHeader(const std::string&amp; inKey) const override;
+<span class="lineNum">      24 </span>            :         const JsonValue&amp; GetBody() const override;
+<span class="lineNum">      25 </span>            :         SafariResult GetErrorCode() const;
+<span class="lineNum">      26 </span>            :     private:
+<span class="lineNum">      27 </span>            :         RestResponseImpl m_impl;
+<span class="lineNum">      28 </span>            :         SafariResult m_errorCode;
+<span class="lineNum">      29 </span>            :     };
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :     typedef std::shared_ptr&lt;const CRestResponse&gt; RestResponseSharedPtr;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :     #define REST_RESPONSE_SUCCEEDED(restResponse) (SAFARI_SUCCEEDED(restResponse-&gt;GetErrorCode()) \
+<span class="lineNum">      34 </span>            :         &amp;&amp; HTTP_STATUS_OK == restResponse-&gt;GetStatus() \
+<span class="lineNum">      35 </span>            :         &amp;&amp; restResponse-&gt;GetBody()[JSON_KEY_RESULT].isInt() \
+<span class="lineNum">      36 </span>            :         &amp;&amp; SAFARI_SUCCEEDED(restResponse-&gt;GetBody()[JSON_KEY_RESULT].asInt()))
+<span class="lineNum">      37 </span>            :     #define REST_RESPONSE_FAILED(restResponse) (!REST_RESPONSE_SUCCEEDED(restResponse))
+<span class="lineNum">      38 </span>            :     #define REST_RESPONSE_WITH_ERROR_CODE(restResponse, errorCode) (SAFARI_SUCCEEDED(restResponse-&gt;GetErrorCode()) \
+<span class="lineNum">      39 </span>            :         &amp;&amp; HTTP_STATUS_OK == restResponse-&gt;GetStatus() \
+<span class="lineNum">      40 </span>            :         &amp;&amp; restResponse-&gt;GetBody()[JSON_KEY_RESULT].isInt() \
+<span class="lineNum">      41 </span>            :         &amp;&amp; restResponse-&gt;GetBody()[JSON_KEY_RESULT].asInt() == errorCode)
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :     #define REST_RESPONSE_TRUE(restResponse) (SAFARI_SUCCEEDED(restResponse-&gt;GetErrorCode()) \
+<span class="lineNum">      44 </span>            :         &amp;&amp; HTTP_STATUS_OK == restResponse-&gt;GetStatus() \
+<span class="lineNum">      45 </span>            :         &amp;&amp; restResponse-&gt;GetBody()[JSON_KEY_RESULT].isBool() \
+<span class="lineNum">      46 </span>            :         &amp;&amp; restResponse-&gt;GetBody()[JSON_KEY_RESULT].asBool() == true)
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

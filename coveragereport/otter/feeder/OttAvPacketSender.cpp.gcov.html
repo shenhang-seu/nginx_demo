@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/feeder/OttAvPacketSender.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/feeder</a> - OttAvPacketSender.cpp<span style="font-size: 80%;"> (source / <a href="OttAvPacketSender.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">120</td>
+            <td class="headerCovTableEntry">154</td>
+            <td class="headerCovTableEntryMed">77.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntryMed">83.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;OttAvPacketSender.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">         21 : COttAvPacketSender::COttAvPacketSender(CSerialTaskQueue&amp; inRtmpSerialTaskQueue, const ResultCallback&amp; inErrorCallback)</span>
+<span class="lineNum">       4 </span>            : : m_outputContext(nullptr)
+<span class="lineNum">       5 </span>            : , m_sendBufferSize(0)
+<span class="lineNum">       6 </span><span class="lineCov">         21 : , m_maxSendBufferSize(MAX_MEMORY_PER_CONNECTION)</span>
+<span class="lineNum">       7 </span>            : , m_rtmpSerialTaskQueue(inRtmpSerialTaskQueue)
+<span class="lineNum">       8 </span>            : , m_errorCallback(inErrorCallback)
+<span class="lineNum">       9 </span>            : , m_dropMode(DROP_NONE)
+<span class="lineNum">      10 </span>            : #ifdef ENABLE_DUMP_MEDIA
+<span class="lineNum">      11 </span>            : , m_h264File(nullptr)
+<span class="lineNum">      12 </span><span class="lineCov">         84 : , m_audioFormatContext(nullptr)</span>
+<span class="lineNum">      13 </span>            : #endif
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span><span class="lineCov">        294 :     OTTER_INFO_THIS(&quot;COttAvPacketSender::COttAvPacketSender&quot;);</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         21 : }</span></a>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">         84 : COttAvPacketSender::~COttAvPacketSender()</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">        294 :     OTTER_INFO_THIS(&quot;COttAvPacketSender::~COttAvPacketSender&quot;);</span>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">         21 : }</span></a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          4 : IN_RTMP_THREAD void COttAvPacketSender::Release(SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span><span class="lineCov">         68 :     OTTER_INFO_THIS(&quot;COttAvPacketSender::Release, inErrorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; inMessage:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          4 :     m_outputContext = nullptr;</span>
+<span class="lineNum">      27 </span>            : #ifdef ENABLE_DUMP_MEDIA
+<span class="lineNum">      28 </span><span class="lineCov">          4 :     if (m_h264File)</span>
+<span class="lineNum">      29 </span>            :     {
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :         fclose(m_h264File);</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :         m_h264File = nullptr;</span>
+<span class="lineNum">      32 </span>            :     }
+<span class="lineNum">      33 </span><span class="lineCov">          4 :     if (m_audioFormatContext)</span>
+<span class="lineNum">      34 </span>            :     {
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :         av_write_trailer(m_audioFormatContext);</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :         avio_closep(&amp;m_audioFormatContext-&gt;pb);</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         avformat_free_context(m_audioFormatContext);</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         m_audioFormatContext = nullptr;</span>
+<span class="lineNum">      39 </span>            :     }
+<span class="lineNum">      40 </span>            : #endif
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">          5 : IN_STREAM_THREAD void COttAvPacketSender::ClearPacketQueue()</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">         70 :     OTTER_DEBUG_THIS(&quot;COttAvPacketSender::ClearPacketQueue&quot;);</span>
+<span class="lineNum">      46 </span><span class="lineCov">          5 :     uint32_t mediaSize = 0;</span>
+<span class="lineNum">      47 </span><span class="lineCov">          5 :     uint32_t mediaPackets = 0;</span>
+<span class="lineNum">      48 </span><span class="lineCov">          5 :     std::lock_guard&lt;std::mutex&gt; lockGuard(m_packetQueueMutex);</span>
+<span class="lineNum">      49 </span><span class="lineCov">         12 :     while(!m_packetQueue.empty()) {</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :         AVPacket packet = m_packetQueue.front();</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :         m_packetQueue.pop();</span>
+<span class="lineNum">      52 </span><span class="lineCov">          1 :         mediaSize += packet.size;</span>
+<span class="lineNum">      53 </span><span class="lineCov">          1 :         mediaPackets++;</span>
+<span class="lineNum">      54 </span><span class="lineCov">          1 :         av_packet_unref(&amp;packet);</span>
+<span class="lineNum">      55 </span>            :     }
+<span class="lineNum">      56 </span><span class="lineCov">          5 :     DecreaseSendBufferSize(mediaSize, mediaPackets);</span>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          2 : IN_STREAM_THREAD void COttAvPacketSender::SetOutputContext(AVFormatContext* inOutputContext)</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">         30 :     OTTER_INFO_THIS(&quot;COttAvPacketSender::SetOutputContext, inOutputContext:&quot; &lt;&lt; inOutputContext);</span>
+<span class="lineNum">      62 </span><span class="lineCov">          2 :     m_outputContext = inOutputContext;</span>
+<span class="lineNum">      63 </span><span class="lineCov">          2 :     ClearPacketQueue();</span>
+<span class="lineNum">      64 </span><span class="lineCov">          2 :     if (GetSendBufferSize() != 0)</span>
+<span class="lineNum">      65 </span>            :     {
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         OTTER_ERROR_THIS(&quot;COttAvPacketSender::SetOutputContext, send buffer not empty! size:&quot; &lt;&lt; GetSendBufferSize() &lt;&lt; &quot; empty:&quot; &lt;&lt; m_packetQueue.empty());</span>
+<span class="lineNum">      67 </span>            :     }
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          4 : IN_STREAM_THREAD void COttAvPacketSender::SendAvPacket(AVPacket&amp; inPacket, bool inIsVideo)</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span>            :     AVPacket packetCopy;
+<span class="lineNum">      73 </span><span class="lineCov">          4 :     av_init_packet(&amp;packetCopy);</span>
+<span class="lineNum">      74 </span><span class="lineCov">          4 :     av_packet_ref(&amp;packetCopy, &amp;inPacket);</span>
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineCov">          4 :     SetDropMode();</span>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineCov">          4 :     bool dropThePacket = false;</span>
+<span class="lineNum">      79 </span><span class="lineCov">          4 :     if (inIsVideo)</span>
+<span class="lineNum">      80 </span>            :     {
+<span class="lineNum">      81 </span><span class="lineCov">          3 :         if (IsKeyFrame(packetCopy) &amp;&amp; DROP_END == m_dropMode) </span>
+<span class="lineNum">      82 </span><span class="lineCov">          1 :             m_dropMode = DROP_NONE;</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :         // Drop all video frames, including keyframes. 
+<span class="lineNum">      85 </span><span class="lineCov">          3 :         dropThePacket = (DROP_NONE != m_dropMode);</span>
+<span class="lineNum">      86 </span>            :     }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">          4 :     if (CSP_BUILD_UNLIKELY(dropThePacket)) </span>
+<span class="lineNum">      89 </span>            :     {
+<span class="lineNum">      90 </span><span class="lineCov">          1 :         av_packet_unref(&amp;packetCopy);</span>
+<span class="lineNum">      91 </span><span class="lineCov">          1 :         ++m_numDroppedPackets;</span>
+<span class="lineNum">      92 </span><span class="lineCov">          5 :         return;</span>
+<span class="lineNum">      93 </span>            :     }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            :     {
+<span class="lineNum">      96 </span><span class="lineCov">          3 :         std::lock_guard&lt;std::mutex&gt; lockGuard(m_packetQueueMutex);</span>
+<span class="lineNum">      97 </span><span class="lineCov">          3 :         m_packetQueue.push(packetCopy);</span>
+<span class="lineNum">      98 </span><span class="lineCov">          3 :         IncreaseSendBufferSize(packetCopy.size);</span>
+<span class="lineNum">      99 </span>            :     }
+<span class="lineNum">     100 </span><span class="lineCov">          3 :     if (GetSendBufferSize() == (uint32_t)packetCopy.size) </span>
+<span class="lineNum">     101 </span>            :     {
+<span class="lineNum">     102 </span>            :         /* This is the only packet in the buffer, need to post an event to the rtmp thread. */
+<span class="lineNum">     103 </span>            :         m_rtmpSerialTaskQueue.Post([this]() {
+<span class="lineNum">     104 </span><span class="lineCov">          3 :             LoopRtmpThread();</span>
+<span class="lineNum">     105 </span><span class="lineCov">          6 :         });</span>
+<span class="lineNum">     106 </span>            :     }
+<a name="107"><span class="lineNum">     107 </span>            : }</a>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">          1 : void COttAvPacketSender::HandleStatisticsTimer(bool inIsOneMinute)</span>
+<span class="lineNum">     110 </span>            : {
+<span class="lineNum">     111 </span><span class="lineCov">          1 :     if (inIsOneMinute)</span>
+<span class="lineNum">     112 </span>            :     {
+<span class="lineNum">     113 </span><span class="lineCov">          1 :         PrintMediaStatistics();</span>
+<span class="lineNum">     114 </span>            :     }
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span><span class="lineCov">          6 : void COttAvPacketSender::SetDropMode()</span>
+<span class="lineNum">     118 </span>            : {
+<span class="lineNum">     119 </span><span class="lineCov">         11 :     if (DROP_BEGIN != m_dropMode &amp;&amp; GetSendBufferSize() &gt; m_maxSendBufferSize) {</span>
+<span class="lineNum">     120 </span><span class="lineCov">         18 :         OTTER_INFO_THIS(&quot;COttAvPacketSender::SetDropMode, set as DROP_BEGIN, m_sendBufferSize=&quot; &lt;&lt; GetSendBufferSize() &lt;&lt; &quot;, m_maxSendBufferSize=&quot; &lt;&lt; m_maxSendBufferSize);</span>
+<span class="lineNum">     121 </span><span class="lineCov">          1 :         m_dropMode = DROP_BEGIN;</span>
+<span class="lineNum">     122 </span><span class="lineCov">          1 :         PrintMediaStatistics();</span>
+<span class="lineNum">     123 </span><span class="lineCov">          7 :         return;</span>
+<span class="lineNum">     124 </span>            :     }
+<span class="lineNum">     125 </span><span class="lineCov">          6 :     if (DROP_BEGIN == m_dropMode &amp;&amp; GetSendBufferSize() &lt; m_maxSendBufferSize/2) {</span>
+<span class="lineNum">     126 </span><span class="lineCov">         18 :         OTTER_INFO_THIS(&quot;COttAvPacketSender::SetDropMode, set as DROP_END, m_sendBufferSize=&quot; &lt;&lt; GetSendBufferSize() &lt;&lt; &quot;, m_maxSendBufferSize=&quot; &lt;&lt; m_maxSendBufferSize);</span>
+<span class="lineNum">     127 </span><span class="lineCov">          1 :         m_dropMode = DROP_END;</span>
+<span class="lineNum">     128 </span><span class="lineCov">          1 :         PrintMediaStatistics();</span>
+<span class="lineNum">     129 </span>            :     }
+<span class="lineNum">     130 </span>            : }
+<span class="lineNum">     131 </span>            : 
+<a name="132"><span class="lineNum">     132 </span>            : #define IS_VIDEO_MEDIA(avPacket) (m_outputContext-&gt;streams[avPacket.stream_index]-&gt;codecpar-&gt;codec_type == AVMEDIA_TYPE_VIDEO)</a>
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span><span class="lineCov">          5 : IN_RTMP_THREAD void COttAvPacketSender::LoopRtmpThread()</span>
+<span class="lineNum">     135 </span>            : {
+<span class="lineNum">     136 </span><span class="lineCov">          5 :     int ret = 0;</span>
+<span class="lineNum">     137 </span>            :     AVPacket packet;
+<span class="lineNum">     138 </span><span class="lineCov">          5 :     bool isPacketQueueEmpty = false;</span>
+<span class="lineNum">     139 </span><span class="lineCov">         15 :     while (m_outputContext &amp;&amp; !isPacketQueueEmpty)</span>
+<span class="lineNum">     140 </span>            :     {
+<span class="lineNum">     141 </span><span class="lineCov">          5 :         std::queue&lt;AVPacket&gt; packetQueue;</span>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :         {
+<span class="lineNum">     144 </span><span class="lineCov">          5 :             std::lock_guard&lt;std::mutex&gt; lockGuard(m_packetQueueMutex);</span>
+<span class="lineNum">     145 </span><span class="lineCov">          5 :             m_packetQueue.swap(packetQueue);</span>
+<span class="lineNum">     146 </span>            :         }
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineCov">         10 :         while (!packetQueue.empty())</span>
+<span class="lineNum">     149 </span>            :         {
+<span class="lineNum">     150 </span><span class="lineCov">          5 :             packet = packetQueue.front();</span>
+<span class="lineNum">     151 </span>            :             packetQueue.pop();
+<span class="lineNum">     152 </span><span class="lineCov">          5 :             DecreaseSendBufferSize(packet.size);</span>
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span><span class="lineCov">          5 :             if (CSP_BUILD_UNLIKELY(m_outputContext == nullptr)) </span>
+<span class="lineNum">     155 </span>            :             {
+<span class="lineNum">     156 </span>            :                 // m_outputContext could be nullptr if m_errorCallback is invoked. 
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 OTTER_WARNING_THIS(&quot;COttAvPacketSender::LoopRtmpThread, m_outputContext is NULL.&quot;);</span>
+<span class="lineNum">     158 </span>            :             } 
+<span class="lineNum">     159 </span>            :             else 
+<span class="lineNum">     160 </span>            :             {
+<span class="lineNum">     161 </span><span class="lineCov">          5 :                 AVRational oldTimeBase =  (AVRational){ 1, 1000 }; /* in milliseconds */</span>
+<span class="lineNum">     162 </span>            :                 // OTTER_INFO_THIS(&quot;1 &quot; &lt;&lt; (IS_VIDEO_MEDIA(packet)?&quot;VIDEO&quot;:&quot;AUDIO&quot;) &lt;&lt; &quot; DTS:&quot; &lt;&lt; packet.dts);
+<span class="lineNum">     163 </span><span class="lineCov">          5 :                 av_packet_rescale_ts(&amp;packet, oldTimeBase, m_outputContext-&gt;streams[packet.stream_index]-&gt;time_base);</span>
+<span class="lineNum">     164 </span>            :                 // OTTER_INFO_THIS(&quot;2 &quot; &lt;&lt; (IS_VIDEO_MEDIA(packet)?&quot;VIDEO&quot;:&quot;AUDIO&quot;) &lt;&lt; &quot; DTS:&quot; &lt;&lt; packet.dts);
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            : #ifdef ENABLE_DUMP_MEDIA
+<span class="lineNum">     167 </span><span class="lineCov">          5 :                 if (COtterConfig::EnableDumpMedia())</span>
+<span class="lineNum">     168 </span>            :                 {
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                     if (IS_VIDEO_MEDIA(packet))</span>
+<span class="lineNum">     170 </span>            :                     {
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                         if (nullptr == m_h264File)</span>
+<span class="lineNum">     172 </span>            :                         {
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                             char file[1024] = {0};</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                             sprintf(file, &quot;/opt/webex/csp/bin/AvPacketSender_%ld.h264&quot;, (unsigned long)this);</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                             m_h264File = fopen(file, &quot;wb&quot;);</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                             OTTER_INFO_THIS(&quot;COttAvPacketSender::LoopRtmpThread, dump H264 file=&quot;&lt;&lt;file);</span>
+<span class="lineNum">     177 </span>            :                         }
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                         fwrite(packet.data, 1, packet.size, m_h264File);</span>
+<span class="lineNum">     180 </span>            :                     }
+<span class="lineNum">     181 </span>            :                     else
+<span class="lineNum">     182 </span>            :                     {
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                         if (nullptr == m_audioFormatContext)</span>
+<span class="lineNum">     184 </span>            :                         {
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :                             char file[1024] = {0};</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                             sprintf(file, &quot;/opt/webex/csp/bin/AvPacketSender_%ld.aac&quot;, (unsigned long)this);</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                             avformat_alloc_output_context2(&amp;m_audioFormatContext, nullptr, nullptr, file);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                             auto audioStream = avformat_new_stream(m_audioFormatContext, avcodec_find_encoder(AV_CODEC_ID_AAC));</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                             audioStream-&gt;time_base = m_outputContext-&gt;streams[packet.stream_index]-&gt;time_base;</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                             audioStream-&gt;start_time = audioStream-&gt;first_dts = audioStream-&gt;cur_dts = m_outputContext-&gt;streams[packet.stream_index]-&gt;start_time;</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                             avcodec_parameters_copy(audioStream-&gt;codecpar, m_outputContext-&gt;streams[packet.stream_index]-&gt;codecpar);</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                             avio_open(&amp;m_audioFormatContext-&gt;pb, file, AVIO_FLAG_WRITE);</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                             OTTER_INFO_THIS(&quot;COttAvPacketSender::LoopRtmpThread, dump aac file=&quot;&lt;&lt;file);</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                             if (avformat_write_header(m_audioFormatContext, nullptr) != 0)</span>
+<span class="lineNum">     195 </span>            :                             {
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                                 OTTER_ERROR_THIS(&quot;COttAvPacketSender::LoopRtmpThread, avformat_write_header failed!&quot;);</span>
+<span class="lineNum">     197 </span>            :                             }
+<span class="lineNum">     198 </span>            :                         }
+<span class="lineNum">     199 </span>            :                         AVPacket packetCopy;
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                         av_init_packet(&amp;packetCopy);</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                         av_packet_ref(&amp;packetCopy, &amp;packet);</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                         av_interleaved_write_frame(m_audioFormatContext, &amp;packetCopy);</span>
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                         av_packet_unref(&amp;packetCopy);</span>
+<span class="lineNum">     204 </span>            :                     }
+<span class="lineNum">     205 </span>            :                 }
+<span class="lineNum">     206 </span>            : #endif // ENABLE_DUMP_MEDIA
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineCov">          5 :                 ret = av_interleaved_write_frame(m_outputContext, &amp;packet);</span>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">          5 :                 if (CSP_BUILD_UNLIKELY(ret &lt; 0)) </span></a>
+<span class="lineNum">     210 </span>            :                 {
+<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 :                     OTTER_WARNING_THIS(&quot;COttAvPacketSender::LoopRtmpThread, av_interleaved_write_frame failed! ret:&quot; &lt;&lt; FFMPEG_ERROR_MESSAGE(ret));</span></a>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                     if (m_errorCallback) </span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                         m_errorCallback(SAFARI_ERROR_RTMP_SEND_FAILED, &quot;av_interleaved_write_frame() return &quot; + FFMPEG_ERROR_MESSAGE(ret));</span>
+<span class="lineNum">     214 </span>            :                 }
+<span class="lineNum">     215 </span>            :             }
+<span class="lineNum">     216 </span><span class="lineCov">          5 :             av_packet_unref(&amp;packet);</span>
+<span class="lineNum">     217 </span>            :         }
+<span class="lineNum">     218 </span>            :         {
+<span class="lineNum">     219 </span><span class="lineCov">          5 :             std::lock_guard&lt;std::mutex&gt; lockGuard(m_packetQueueMutex);</span>
+<span class="lineNum">     220 </span><span class="lineCov">         10 :             isPacketQueueEmpty = m_packetQueue.empty();</span>
+<span class="lineNum">     221 </span>            :         }
+<span class="lineNum">     222 </span>            :     }
+<a name="223"><span class="lineNum">     223 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineCov">          2 : bool COttAvPacketSender::IsKeyFrame(AVPacket&amp; inPacket)</span>
+<span class="lineNum">     226 </span>            : {
+<span class="lineNum">     227 </span><span class="lineCov">          5 :     return (inPacket.flags &amp; AV_PKT_FLAG_KEY);</span>
+<a name="228"><span class="lineNum">     228 </span>            : }</a>
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span><span class="lineCov">          3 : void COttAvPacketSender::IncreaseSendBufferSize(uint32_t inSize, uint32_t inPackets)</span>
+<span class="lineNum">     231 </span>            : {
+<span class="lineNum">     232 </span>            :     {
+<span class="lineNum">     233 </span><span class="lineCov">          3 :         std::lock_guard&lt;std::mutex&gt; lockGuard(m_sendMediaMutex);</span>
+<span class="lineNum">     234 </span><span class="lineCov">          3 :         m_sendMediaSize += inSize;</span>
+<span class="lineNum">     235 </span><span class="lineCov">          3 :         m_sendMediaPackets += inPackets;</span>
+<span class="lineNum">     236 </span><span class="lineCov">          3 :         m_inputMediaSize += inSize;</span>
+<span class="lineNum">     237 </span><span class="lineCov">          3 :         m_inputMediaPackets += inPackets;</span>
+<span class="lineNum">     238 </span>            :     }
+<span class="lineNum">     239 </span><span class="lineCov">          3 :     m_sendBufferSize.fetch_add(inSize, std::memory_order_relaxed);</span>
+<a name="240"><span class="lineNum">     240 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">         10 : void COttAvPacketSender::DecreaseSendBufferSize(uint32_t inSize, uint32_t inPackets)</span>
+<span class="lineNum">     243 </span>            : {
+<span class="lineNum">     244 </span>            :     {
+<span class="lineNum">     245 </span><span class="lineCov">         10 :         std::lock_guard&lt;std::mutex&gt; lockGuard(m_sendMediaMutex);</span>
+<span class="lineNum">     246 </span><span class="lineCov">         10 :         m_sendMediaSize = (m_sendMediaSize &gt; inSize ? (m_sendMediaSize - inSize) : 0);</span>
+<span class="lineNum">     247 </span><span class="lineCov">         10 :         m_sendMediaPackets = (m_sendMediaPackets &gt; inPackets ? (m_sendMediaPackets - inPackets) : 0);</span>
+<span class="lineNum">     248 </span><span class="lineCov">         10 :         m_outputMediaSize += inSize;</span>
+<span class="lineNum">     249 </span><span class="lineCov">         10 :         m_outputMediaPackets += inPackets;</span>
+<span class="lineNum">     250 </span>            :     }
+<span class="lineNum">     251 </span><span class="lineCov">         10 :     m_sendBufferSize.fetch_sub(inSize, std::memory_order_relaxed);</span>
+<a name="252"><span class="lineNum">     252 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span><span class="lineCov">          3 : void COttAvPacketSender::PrintMediaStatistics()</span>
+<span class="lineNum">     255 </span>            : {
+<span class="lineNum">     256 </span><span class="lineCov">          3 :     uint32_t sendMediaSize = 0;</span>
+<span class="lineNum">     257 </span><span class="lineCov">          3 :         uint32_t sendMediaPackets = 0;</span>
+<span class="lineNum">     258 </span><span class="lineCov">          3 :     uint32_t inputMediaSize = 0;</span>
+<span class="lineNum">     259 </span><span class="lineCov">          3 :     uint32_t inputMediaPackets = 0;</span>
+<span class="lineNum">     260 </span><span class="lineCov">          3 :     uint32_t outputMediaSize = 0;</span>
+<span class="lineNum">     261 </span><span class="lineCov">          3 :     uint32_t outputMediaPackets = 0;</span>
+<span class="lineNum">     262 </span>            :     {
+<span class="lineNum">     263 </span><span class="lineCov">          3 :         std::lock_guard&lt;std::mutex&gt; lockGuard(m_sendMediaMutex);</span>
+<span class="lineNum">     264 </span><span class="lineCov">          3 :         sendMediaSize = m_sendMediaSize;</span>
+<span class="lineNum">     265 </span><span class="lineCov">          3 :             sendMediaPackets = m_sendMediaPackets;</span>
+<span class="lineNum">     266 </span><span class="lineCov">          3 :         inputMediaSize = m_inputMediaSize;</span>
+<span class="lineNum">     267 </span><span class="lineCov">          3 :         inputMediaPackets = m_inputMediaPackets;</span>
+<span class="lineNum">     268 </span><span class="lineCov">          3 :         outputMediaSize = m_outputMediaSize;</span>
+<span class="lineNum">     269 </span><span class="lineCov">          3 :         outputMediaPackets = m_outputMediaPackets;</span>
+<span class="lineNum">     270 </span>            :     }
+<span class="lineNum">     271 </span><span class="lineCov">         84 :     OTTER_INFO_THIS(&quot;COttAvPacketSender::PrintMediaStatistics, inputMediaSize=&quot; &lt;&lt; inputMediaSize &lt;&lt; &quot;, inputMediaPackets=&quot; &lt;&lt; inputMediaPackets</span>
+<span class="lineNum">     272 </span>            :         &lt;&lt; &quot;, outputMediaSize=&quot; &lt;&lt; outputMediaSize &lt;&lt; &quot;, outputMediaPackets=&quot; &lt;&lt; outputMediaPackets
+<a name="273"><span class="lineNum">     273 </span>            :         &lt;&lt; &quot;, sendMediaSize=&quot; &lt;&lt; sendMediaSize &lt;&lt; &quot;, sendMediaPackets=&quot; &lt;&lt; sendMediaPackets</a>
+<span class="lineNum">     274 </span>            :         &lt;&lt; &quot;, sendBufferSize=&quot; &lt;&lt; GetSendBufferSize());
+<span class="lineNum">     275 </span><span class="lineCov">          6 : }</span>
+<span class="lineNum">     276 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

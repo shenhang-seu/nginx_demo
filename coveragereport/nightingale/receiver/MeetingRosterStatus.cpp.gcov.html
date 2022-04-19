@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/MeetingRosterStatus.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - MeetingRosterStatus.cpp<span style="font-size: 80%;"> (source / <a href="MeetingRosterStatus.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">106</td>
+            <td class="headerCovTableEntry">138</td>
+            <td class="headerCovTableEntryMed">76.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryMed">83.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;MeetingRosterStatus.h&quot;</a>
+<a name="2"><span class="lineNum">       2 </span>            : #include &quot;NightingaleDefine.h&quot;</a>
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span><span class="lineCov">         10 : CMeetingRosterStatus::CMeetingRosterStatus()</span>
+<span class="lineNum">       5 </span>            : {
+<span class="lineNum">       6 </span><span class="lineCov">         10 :         m_ccpFlag = false;</span>
+<span class="lineNum">       7 </span><span class="lineCov">         10 :         m_updateFlag = false;</span>
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span><span class="lineCov">        150 :         NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::CMeetingRosterStatus&quot;);</span>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">         13 : void CMeetingRosterStatus::InitUserJson()</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span><span class="lineCov">         13 :     m_rosters = m_head;</span>
+<span class="lineNum">      15 </span><span class="lineCov">         13 :     m_data = Json::Value();</span>
+<span class="lineNum">      16 </span><span class="lineCov">         13 :     m_participants = Json::Value();</span>
+<span class="lineNum">      17 </span><span class="lineCov">         13 :     m_updateFlag = false;</span>
+<a name="18"><span class="lineNum">      18 </span><span class="lineCov">         13 : }</span></a>
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span><span class="lineCov">          7 : void CMeetingRosterStatus::AddUserJson(bool inIsJoined, WbxUserInfo&amp; ioUser)</span>
+<span class="lineNum">      21 </span>            : {
+<span class="lineNum">      22 </span><span class="lineCov">          7 :     if (!m_ccpFlag)</span>
+<span class="lineNum">      23 </span><span class="lineCov">          1 :         return ;</span>
+<span class="lineNum">      24 </span>            :     
+<span class="lineNum">      25 </span><span class="lineCov">          6 :     Json::Value user;</span>
+<span class="lineNum">      26 </span><span class="lineCov">         12 :     Json::Value person;</span>
+<span class="lineNum">      27 </span><span class="lineCov">         12 :     Json::Value csis;</span>
+<span class="lineNum">      28 </span><span class="lineCov">         12 :     Json::Value csiList;</span>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">          6 :     if (inIsJoined)</span>
+<span class="lineNum">      31 </span><span class="lineCov">          5 :         user[&quot;state&quot;] = &quot;JOINED&quot;;</span>
+<span class="lineNum">      32 </span>            :     else
+<span class="lineNum">      33 </span><span class="lineCov">          1 :         user[&quot;state&quot;] = &quot;LEFT&quot;;</span>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineCov">          6 :     if (ioUser.isMeetingUserLive || ioUser.isPhoneUserLive) //webex user or pure telephone user</span>
+<span class="lineNum">      36 </span><span class="lineCov">         18 :         user[&quot;id&quot;] = std::to_string(ioUser.meetingUserInfo.nodeID);</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :     else if (ioUser.isVideoUserLive) //tandberg user</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         user[&quot;id&quot;] = std::to_string(ioUser.videoUserInfo.ulUserNodeID);</span>
+<span class="lineNum">      39 </span>            :     else
+<span class="lineNum">      40 </span>            :     {
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         user[&quot;id&quot;] = std::to_string(ioUser.meetingUserInfo.nodeID);//default</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         NIGHTINGALE_ERROR_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;);</span>
+<span class="lineNum">      43 </span>            :     }
+<span class="lineNum">      44 </span>            :     
+<span class="lineNum">      45 </span><span class="lineCov">          6 :     person[&quot;name&quot;] = ioUser.meetingUserInfo.nodeName;</span>
+<span class="lineNum">      46 </span><span class="lineCov">          6 :     person[&quot;avatarUrl&quot;] = ioUser.meetingUserInfo.avatarUrl;</span>
+<span class="lineNum">      47 </span><span class="lineCov">          6 :     user[&quot;person&quot;] = person;</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          6 :     if (inIsJoined)</span>
+<span class="lineNum">      50 </span>            :     {
+<span class="lineNum">      51 </span>            :         //if (MEDIA_STATUS_SOURCE_SENDING == ioUser.videoUserInfo.sendStatus)
+<span class="lineNum">      52 </span><span class="lineCov">          5 :         if (ioUser.isVideoUserLive)</span>
+<span class="lineNum">      53 </span>            :         {
+<span class="lineNum">      54 </span><span class="lineCov">          2 :             csiList.append(ioUser.videoUserInfo.ulCSI);</span>
+<span class="lineNum">      55 </span>            :         }
+<span class="lineNum">      56 </span><span class="lineCov">          3 :         else if (ioUser.isPhoneUserLive)</span>
+<span class="lineNum">      57 </span><span class="lineCov">          1 :             csiList.append(ioUser.audioUserInfo.csi);</span>
+<span class="lineNum">      58 </span>            :         
+<span class="lineNum">      59 </span><span class="lineCov">          5 :         if (ioUser.isAudioUserLive)</span>
+<span class="lineNum">      60 </span>            :         {
+<span class="lineNum">      61 </span><span class="lineCov">          2 :             csiList.append(ioUser.audioUserInfo.csi);</span>
+<span class="lineNum">      62 </span>            :         }
+<span class="lineNum">      63 </span>            :     }
+<span class="lineNum">      64 </span>            :     
+<span class="lineNum">      65 </span><span class="lineCov">          6 :     csis[&quot;csis&quot;] = csiList;</span>
+<span class="lineNum">      66 </span><span class="lineCov">          6 :     user[&quot;status&quot;] = csis;</span>
+<span class="lineNum">      67 </span>            :     
+<span class="lineNum">      68 </span><span class="lineCov">          6 :     m_participants.append(user);</span>
+<span class="lineNum">      69 </span><span class="lineCov">          6 :     m_updateFlag = true;</span>
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineCov">        120 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;&lt;&lt;m_ccpFlag&lt;&lt;&quot;, user=&quot;&lt;&lt;user.toStyledString());</span>
+<a name="72"><span class="lineNum">      72 </span>            : }</a>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">         56 : void CMeetingRosterStatus::AddUserJson(bool inIsJoined, const std::string&amp; inName, unsigned int inNodeId, unsigned int inVideoCSI,  unsigned int inAudioCSI)</span>
+<span class="lineNum">      75 </span>            : {
+<span class="lineNum">      76 </span><span class="lineCov">       1008 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;&lt;&lt;m_ccpFlag&lt;&lt;&quot;,self inNodeId=&quot;&lt;&lt;inNodeId);</span>
+<span class="lineNum">      77 </span><span class="lineCov">         56 :     if (!m_ccpFlag)</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :         return ;</span>
+<span class="lineNum">      79 </span>            :     
+<span class="lineNum">      80 </span><span class="lineCov">         56 :     Json::Value user;</span>
+<span class="lineNum">      81 </span><span class="lineCov">        112 :     Json::Value person;</span>
+<span class="lineNum">      82 </span><span class="lineCov">        112 :     Json::Value csis;</span>
+<span class="lineNum">      83 </span><span class="lineCov">        112 :     Json::Value csiList;</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">         56 :     if (inIsJoined)</span>
+<span class="lineNum">      86 </span><span class="lineCov">         56 :         user[&quot;state&quot;] = &quot;JOINED&quot;;</span>
+<span class="lineNum">      87 </span>            :     else
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         user[&quot;state&quot;] = &quot;LEFT&quot;;</span>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineCov">        112 :     user[&quot;id&quot;] = std::to_string(inNodeId);</span>
+<span class="lineNum">      91 </span>            :     
+<span class="lineNum">      92 </span><span class="lineCov">         56 :     person[&quot;name&quot;] = inName;</span>
+<span class="lineNum">      93 </span><span class="lineCov">         56 :     person[&quot;avatarUrl&quot;] = &quot;&quot;;</span>
+<span class="lineNum">      94 </span><span class="lineCov">         56 :     user[&quot;person&quot;] = person;</span>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">         56 :     if (inIsJoined)</span>
+<span class="lineNum">      97 </span>            :     {
+<span class="lineNum">      98 </span><span class="lineCov">         56 :         csiList.append(inVideoCSI);</span>
+<span class="lineNum">      99 </span><span class="lineCov">         56 :         csiList.append(inAudioCSI);</span>
+<span class="lineNum">     100 </span>            :     }
+<span class="lineNum">     101 </span>            :     
+<span class="lineNum">     102 </span><span class="lineCov">         56 :     csis[&quot;csis&quot;] = csiList;</span>
+<span class="lineNum">     103 </span><span class="lineCov">         56 :     user[&quot;status&quot;] = csis;</span>
+<span class="lineNum">     104 </span>            :     
+<span class="lineNum">     105 </span><span class="lineCov">         56 :     m_participants.append(user);</span>
+<span class="lineNum">     106 </span><span class="lineCov">         56 :     m_updateFlag = true;</span>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineCov">       1120 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;&lt;&lt;m_ccpFlag&lt;&lt;&quot;, user=&quot;&lt;&lt;user.toStyledString());</span>
+<a name="109"><span class="lineNum">     109 </span>            : }</a>
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span><span class="lineCov">          6 : void CMeetingRosterStatus::AddUserJson(bool inIsJoined, unsigned int inNodeId, unsigned int inAsCSI, unsigned int inVideoCSI,  unsigned int inAudioCSI)</span>
+<span class="lineNum">     112 </span>            : {
+<span class="lineNum">     113 </span><span class="lineCov">        108 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;&lt;&lt;m_ccpFlag&lt;&lt;&quot;,self inNodeId=&quot;&lt;&lt;inNodeId);</span>
+<span class="lineNum">     114 </span><span class="lineCov">          6 :     if (!m_ccpFlag)</span>
+<span class="lineNum">     115 </span><span class="lineCov">          1 :         return ;</span>
+<span class="lineNum">     116 </span>            :     
+<span class="lineNum">     117 </span><span class="lineCov">          5 :     Json::Value user;</span>
+<span class="lineNum">     118 </span><span class="lineCov">         10 :     Json::Value person;</span>
+<span class="lineNum">     119 </span><span class="lineCov">         10 :     Json::Value csis;</span>
+<span class="lineNum">     120 </span><span class="lineCov">         10 :     Json::Value csiList;</span>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineCov">          5 :     if (inIsJoined)</span>
+<span class="lineNum">     123 </span><span class="lineCov">          4 :         user[&quot;state&quot;] = &quot;JOINED&quot;;</span>
+<span class="lineNum">     124 </span>            :     else
+<span class="lineNum">     125 </span><span class="lineCov">          1 :         user[&quot;state&quot;] = &quot;LEFT&quot;;</span>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineCov">         10 :     user[&quot;id&quot;] = std::to_string(inNodeId);</span>
+<span class="lineNum">     128 </span>            :     
+<span class="lineNum">     129 </span><span class="lineCov">          5 :     person[&quot;name&quot;] = &quot;&quot;;</span>
+<span class="lineNum">     130 </span><span class="lineCov">          5 :     person[&quot;avatarUrl&quot;] = &quot;&quot;;</span>
+<span class="lineNum">     131 </span><span class="lineCov">          5 :     user[&quot;person&quot;] = person;</span>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineCov">          5 :     if (inIsJoined)</span>
+<span class="lineNum">     134 </span>            :     {
+<span class="lineNum">     135 </span><span class="lineCov">          4 :         csiList.append(inAsCSI);</span>
+<span class="lineNum">     136 </span><span class="lineCov">          4 :         csiList.append(inVideoCSI);</span>
+<span class="lineNum">     137 </span><span class="lineCov">          4 :         csiList.append(inAudioCSI);</span>
+<span class="lineNum">     138 </span>            :     }
+<span class="lineNum">     139 </span>            :     
+<span class="lineNum">     140 </span><span class="lineCov">          5 :     csis[&quot;csis&quot;] = csiList;</span>
+<span class="lineNum">     141 </span><span class="lineCov">          5 :     user[&quot;status&quot;] = csis;</span>
+<span class="lineNum">     142 </span>            :     
+<span class="lineNum">     143 </span><span class="lineCov">          5 :     m_participants.append(user);</span>
+<span class="lineNum">     144 </span><span class="lineCov">          5 :     m_updateFlag = true;</span>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineCov">        100 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::AddUserJson, ccpFlag=&quot;&lt;&lt;m_ccpFlag&lt;&lt;&quot;, user=&quot;&lt;&lt;user.toStyledString());</span>
+<a name="147"><span class="lineNum">     147 </span>            : }</a>
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span><span class="lineCov">          8 : void CMeetingRosterStatus::EndJson(bool inSimpleDelta)</span>
+<span class="lineNum">     150 </span>            : {
+<span class="lineNum">     151 </span><span class="lineCov">          8 :     if (!m_ccpFlag)</span>
+<span class="lineNum">     152 </span><span class="lineCov">          8 :         return ;</span>
+<span class="lineNum">     153 </span>            :     
+<span class="lineNum">     154 </span><span class="lineCov">          8 :     m_data[&quot;participants&quot;] = m_participants;</span>
+<span class="lineNum">     155 </span><span class="lineCov">          8 :     m_data[&quot;simpleDelta&quot;] = inSimpleDelta;</span>
+<span class="lineNum">     156 </span><span class="lineCov">          8 :     m_rosters[&quot;data&quot;] = m_data;</span>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">        136 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::EndJson, rosters=&quot;&lt;&lt;m_rosters.toStyledString());</span>
+<a name="159"><span class="lineNum">     159 </span>            : }</a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">          9 : void CMeetingRosterStatus::SetCCP(bool inCCP, const std::string&amp; inConferenceId)</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineCov">        162 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::SetCCP, inCCP=&quot;&lt;&lt;inCCP&lt;&lt;&quot;, inConferenceId=&quot;&lt;&lt;inConferenceId);</span>
+<span class="lineNum">     164 </span>            :     
+<span class="lineNum">     165 </span><span class="lineCov">          9 :     if (inCCP)</span>
+<span class="lineNum">     166 </span>            :     {
+<span class="lineNum">     167 </span><span class="lineCov">          9 :         m_head[&quot;action&quot;] = &quot;UPDATE_ROSTER_LIST&quot;;</span>
+<span class="lineNum">     168 </span><span class="lineCov">          9 :             m_head[&quot;conferenceId&quot;] = inConferenceId;</span>
+<span class="lineNum">     169 </span>            :     }
+<span class="lineNum">     170 </span><span class="lineCov">          9 :     m_ccpFlag = inCCP;</span>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">         10 : bool CMeetingRosterStatus::GetRoster(Json::Value&amp; outValue, bool inForce)</span>
+<span class="lineNum">     174 </span>            : {
+<span class="lineNum">     175 </span><span class="lineCov">         10 :     bool result = false;</span>
+<span class="lineNum">     176 </span><span class="lineCov">         10 :     if (m_ccpFlag &amp;&amp; (inForce || m_updateFlag))</span>
+<span class="lineNum">     177 </span>            :     {
+<span class="lineNum">     178 </span><span class="lineCov">          8 :         outValue = m_rosters;</span>
+<span class="lineNum">     179 </span><span class="lineCov">          8 :         result = true;</span>
+<span class="lineNum">     180 </span><span class="lineCov">        152 :         NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::GetRoster, result=&quot;&lt;&lt;result&lt;&lt;&quot;, outValue=&quot;&lt;&lt;outValue.toStyledString());</span>
+<span class="lineNum">     181 </span>            :     }
+<span class="lineNum">     182 </span>            :     
+<span class="lineNum">     183 </span><span class="lineCov">         10 :     m_updateFlag = false;</span>
+<span class="lineNum">     184 </span><span class="lineCov">         10 :     return result;</span>
+<a name="185"><span class="lineNum">     185 </span>            : }</a>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 : bool CMeetingRosterStatus::CheckUserCount(unsigned int inJoinedCount, unsigned int inLeftCount)</span>
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :     unsigned int joinedCount = 0;</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :     unsigned int leftCount = 0;</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :     unsigned int total = 0;</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :     std::string joined = std::string(&quot;JOINED&quot;);</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :     std::string left = std::string(&quot;LEFT&quot;);</span>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :     if (m_participants.isArray())</span>
+<span class="lineNum">     196 </span>            :     {
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :         total = m_participants.size();</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :         for (unsigned int i = 0; i &lt; m_participants.size(); i++)</span>
+<span class="lineNum">     199 </span>            :         {
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :            Json::Value&amp; roster = m_participants[i];</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :            if (roster.isMember(&quot;state&quot;) &amp;&amp; roster[&quot;state&quot;].isString())</span>
+<span class="lineNum">     202 </span>            :             {
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                 std::string state = roster[&quot;state&quot;].asString();</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                 if (joined == state)</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                     joinedCount++;</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 else if (left == state)</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                     leftCount++;</span>
+<span class="lineNum">     208 </span>            :             }
+<span class="lineNum">     209 </span>            :         }
+<span class="lineNum">     210 </span>            :     }
+<span class="lineNum">     211 </span>            :     
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :     NIGHTINGALE_INFO_THIS(&quot;CMeetingRosterStatus::CheckUserCount, joinedCount=&quot;&lt;&lt;joinedCount&lt;&lt;&quot;, leftCount=&quot;&lt;&lt;leftCount&lt;&lt;&quot;, total size=&quot;&lt;&lt;total);</span>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :     if ( (inJoinedCount == joinedCount) &amp;&amp; (inLeftCount == leftCount) &amp;&amp; (leftCount+joinedCount == total))</span>
+<span class="lineNum">     215 </span>            :         return true;
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :     return false;</span>
+<a name="217"><span class="lineNum">     217 </span>            : }</a>
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 : bool CMeetingRosterStatus::CheckUserJson(bool inIsJoined, unsigned int inNodeId)</span>
+<span class="lineNum">     220 </span>            : {
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :     std::string state = (inIsJoined ? std::string(&quot;JOINED&quot;) : std::string(&quot;LEFT&quot;));</span>
+<span class="lineNum">     222 </span>            :     std::string nodeId = std::to_string(inNodeId);
+<span class="lineNum">     223 </span>            :     
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :     if (m_participants.isArray())</span>
+<span class="lineNum">     225 </span>            :     {
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :         for (unsigned int i = 0; i &lt; m_participants.size(); i++)</span>
+<span class="lineNum">     227 </span>            :         {
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :            Json::Value&amp; roster = m_participants[i];</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :            if (roster.isMember(&quot;id&quot;) &amp;&amp; roster[&quot;id&quot;].isString() &amp;&amp; roster.isMember(&quot;state&quot;) &amp;&amp; roster[&quot;state&quot;].isString())</span>
+<span class="lineNum">     230 </span>            :             {
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                 if ( (nodeId == roster[&quot;id&quot;].asString()) &amp;&amp; (state ==roster[&quot;state&quot;].asString()))</span>
+<span class="lineNum">     232 </span>            :                     return true;
+<span class="lineNum">     233 </span>            :             }
+<span class="lineNum">     234 </span>            :         }
+<span class="lineNum">     235 </span>            :     }
+<a name="236"><span class="lineNum">     236 </span>            :     </a>
+<span class="lineNum">     237 </span>            :     return false;
+<span class="lineNum">     238 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     239 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

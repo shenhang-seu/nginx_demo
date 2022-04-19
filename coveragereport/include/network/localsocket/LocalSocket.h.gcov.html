@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/network/localsocket/LocalSocket.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/network/localsocket</a> - LocalSocket.h<span style="font-size: 80%;"> (source / <a href="LocalSocket.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * UNIX DOMAIN SOCKET API(local socket)
+<span class="lineNum">       3 </span>            :  * provide both client/server version, use for local JSON and Media APIs
+<span class="lineNum">       4 </span>            :  *
+<span class="lineNum">       5 </span>            :  * Author: Rossl@cisco.com
+<span class="lineNum">       6 </span>            :  * Date: 20170904, initial version
+<span class="lineNum">       7 </span>            :  * Data: 20171027, Add a length TCP socket support for safari
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * Logic:
+<span class="lineNum">      10 </span>            :  * (1) Call CreateLocalSocket Client/Server to create instance
+<span class="lineNum">      11 </span>            :  * (2) Configure Socket instance, set callback,  SetDataHandler/ SetErrorHandler/ SetReadyHandler
+<span class="lineNum">      12 </span>            :  * (3) Call Api to start work
+<span class="lineNum">      13 </span>            :  *                      LocalSocketClient: Connect
+<span class="lineNum">      14 </span>            :  *          LocalSocketServer: Start
+<span class="lineNum">      15 </span>            :  * (4) When connection is build up, there will be a callback to ReadyHandler
+<span class="lineNum">      16 </span>            :  *     When connection is fail, there will be a callback to ErrorHandler
+<span class="lineNum">      17 </span>            :  * (5) Save current LocalSocketHandlerPtr, if callback is ready
+<span class="lineNum">      18 </span>            :  *     If it is server side, it can update current LocalSocketHandlerPtr's callback also
+<span class="lineNum">      19 </span>            :  * (6) If data receive, there will be callback DataHandler
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #ifndef __LOCAL_SOCKET_HEADER__
+<span class="lineNum">      23 </span>            : #define __LOCAL_SOCKET_HEADER__
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;string&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/shared_ptr.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : namespace LOCALSOCKET
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span>            : class ILocalSocketHandler;
+<span class="lineNum">      32 </span>            : class ILocalSocketClient;
+<span class="lineNum">      33 </span>            : class ILocalSocketServer;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : typedef boost::shared_ptr&lt;ILocalSocketHandler&gt; LocalSocketHandlerPtr;
+<span class="lineNum">      36 </span>            : typedef boost::shared_ptr&lt;ILocalSocketClient&gt; LocalSocketClientPtr;
+<span class="lineNum">      37 </span>            : typedef boost::shared_ptr&lt;ILocalSocketServer&gt; LocalSocketServerPtr;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : typedef boost::shared_ptr&lt;char[]&gt; LocalSocketBufferPtr;
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : typedef std::function&lt;void(const char* /*data*/, std::size_t /*dataSize*/, const LocalSocketHandlerPtr&amp;/*handler*/)&gt; DataHandler;
+<span class="lineNum">      42 </span>            : typedef std::function&lt;void(const boost::system::error_code&amp;/*code*/, const LocalSocketHandlerPtr&amp;/*handler*/)&gt; ErrorHandler;
+<span class="lineNum">      43 </span>            : typedef std::function&lt;void(const LocalSocketHandlerPtr&amp;/*handler*/)&gt; ReadyHandler;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineCov">         55 : class ILocalSocket</span>
+<a name="46"><span class="lineNum">      46 </span>            : {</a>
+<span class="lineNum">      47 </span>            : public:
+<span class="lineNum">      48 </span><span class="lineCov">         53 :         virtual ~ILocalSocket() {return ;}</span>
+<span class="lineNum">      49 </span>            :         virtual void SetDataHandler(const DataHandler&amp; inHandler) = 0;
+<span class="lineNum">      50 </span>            :         virtual void SetErrorHandler(const ErrorHandler&amp; inHandler) = 0;
+<span class="lineNum">      51 </span>            :         virtual void SetReadyHandler(const ReadyHandler&amp; inHandler) = 0;
+<span class="lineNum">      52 </span>            :         virtual void ClearHandlers() = 0;
+<span class="lineNum">      53 </span>            : };
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">         73 : class ILocalSocketHandler</span>
+<a name="56"><span class="lineNum">      56 </span>            : {</a>
+<span class="lineNum">      57 </span>            : public:
+<span class="lineNum">      58 </span><span class="lineCov">         60 :         virtual ~ILocalSocketHandler() {return ;}</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         virtual void Send(const std::string&amp; inMessage) = 0;
+<span class="lineNum">      61 </span>            :         virtual void Send(const char* inBuffer, std::size_t inSize) = 0;
+<span class="lineNum">      62 </span>            :         virtual void Close() = 0;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :         /*
+<span class="lineNum">      65 </span>            :          * Call for Socket Server, to reassign callback to another module
+<span class="lineNum">      66 </span>            :          */
+<span class="lineNum">      67 </span>            :         virtual void UpdateDataHandler(const DataHandler&amp; inHandler) = 0;
+<span class="lineNum">      68 </span>            :         virtual void UpdateErrorHandler(const ErrorHandler&amp; inHandler) = 0;
+<span class="lineNum">      69 </span>            : };
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineCov">        106 : class ILocalSocketClient : public ILocalSocket</span>
+<span class="lineNum">      72 </span>            : {
+<span class="lineNum">      73 </span>            : public:
+<span class="lineNum">      74 </span>            :         virtual bool Connect() = 0;
+<span class="lineNum">      75 </span>            :         virtual void Disconnect() = 0;
+<span class="lineNum">      76 </span>            : };
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineCov">         57 : class ILocalSocketServer : public ILocalSocket</span>
+<span class="lineNum">      79 </span>            : {
+<span class="lineNum">      80 </span>            : public:
+<span class="lineNum">      81 </span>            :         virtual bool Start() = 0;
+<span class="lineNum">      82 </span>            :         virtual void Stop() = 0;
+<span class="lineNum">      83 </span>            : };
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : LocalSocketClientPtr CreateLocalSocketClient(boost::asio::io_service&amp; inIoService, const std::string&amp; inFile, int inBufferSize=1024*5);
+<span class="lineNum">      86 </span>            : LocalSocketServerPtr CreateLocalSocketServer(boost::asio::io_service&amp; inIoService, const std::string&amp; inFile, int inBufferSize=1024*5);
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : /**
+<span class="lineNum">      89 </span>            :  * LocalSocketPack Client/Server is with feature length TCP socket,
+<span class="lineNum">      90 </span>            :  * which will assure all callback data is a full packet
+<span class="lineNum">      91 </span>            :  */
+<span class="lineNum">      92 </span>            : LocalSocketClientPtr CreateLocalSocketPackClient(boost::asio::io_service&amp; inIoService, const std::string&amp; inFile, int inBufferSize=2048*5);
+<span class="lineNum">      93 </span>            : LocalSocketServerPtr CreateLocalSocketPackServer(boost::asio::io_service&amp; inIoService, const std::string&amp; inFile, int intBufferSize=2048*5);
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : }; //namespace LOCALSOCKET
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : #endif //__LOCAL_SOCKET_HEADER__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

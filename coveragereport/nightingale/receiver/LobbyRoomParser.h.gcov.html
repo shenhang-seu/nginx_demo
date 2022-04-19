@@ -1,0 +1,847 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/LobbyRoomParser.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - LobbyRoomParser.h<span style="font-size: 80%;"> (source / <a href="LobbyRoomParser.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">163</td>
+            <td class="headerCovTableEntry">180</td>
+            <td class="headerCovTableEntryHi">90.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryHi">92.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef LOBBY_ROOM_PARSER_H</a>
+<span class="lineNum">       2 </span>            : #define LOBBY_ROOM_PARSER_H
+<span class="lineNum">       3 </span>            : #include &lt;string&gt;
+<span class="lineNum">       4 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       5 </span>            : #include &lt;set&gt;
+<span class="lineNum">       6 </span>            : #include &lt;functional&gt;
+<span class="lineNum">       7 </span>            : #include &lt;string.h&gt;
+<span class="lineNum">       8 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;json/json.h&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : typedef std::function&lt;void(const std::set&lt;NodeIdType&gt;&amp;, const std::set&lt;NodeIdType&gt;&amp;)&gt;  UpdateLobbyRoomUser;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #define JsonValue Json::Value
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; key, JsonValue&amp; value);
+<span class="lineNum">      17 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const char* key, JsonValue&amp; value);
+<span class="lineNum">      18 </span>            : bool parseJsonFieldArray(JsonValue&amp; cJsonValue, const char* key, JsonValue** value);
+<span class="lineNum">      19 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; strKey, int&amp; iField);
+<span class="lineNum">      20 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; strKey, uint64_t&amp; lField);
+<span class="lineNum">      21 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; strKey, bool&amp; bField);
+<span class="lineNum">      22 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; strKey, std::string&amp; strField);
+<span class="lineNum">      23 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const char* strKey, std::string&amp; strField);
+<span class="lineNum">      24 </span>            : bool parseJsonField(JsonValue&amp; cJsonValue, const std::string&amp; strKey, uint32_t&amp; lField);
+<span class="lineNum">      25 </span>            : bool parseJsonFieldStringArray(JsonValue&amp; cJsonValue, const std::string&amp; strKey, std::vector&lt;std::string&gt;&amp; fields);
+<span class="lineNum">      26 </span>            : bool JsonNewReader(const std::string&amp; json_str, Json::Value&amp; root);
+<span class="lineNum">      27 </span>            : std::string JsonNewFastWriter(Json::Value&amp; root);
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #define JSON_STATE              &quot;states&quot;
+<span class="lineNum">      30 </span>            : #define JSON_NEW_STATE          &quot;newStates&quot;
+<span class="lineNum">      31 </span>            : #define JSON_NODE_ACTION        &quot;action&quot;
+<span class="lineNum">      32 </span>            : #define JSON_NODE_ID            &quot;nodeId&quot;
+<span class="lineNum">      33 </span>            : #define JSON_APE_NODE_ID        &quot;apeNodeId&quot;
+<span class="lineNum">      34 </span>            : #define JSON_USER_ID            &quot;userId&quot;
+<span class="lineNum">      35 </span>            : #define JSON_ATTENDEE_ID        &quot;attendeeId&quot;
+<span class="lineNum">      36 </span>            : #define JSON_VERSION            &quot;version&quot;
+<span class="lineNum">      37 </span>            : #define JSON_LOBBY_STATE        &quot;isInLobby&quot;
+<span class="lineNum">      38 </span>            : #define JSON_COHOST             &quot;cohost&quot;
+<span class="lineNum">      39 </span>            : #define JSON_RAISE_HAND         &quot;raiseHand&quot;
+<span class="lineNum">      40 </span>            : #define JSON_IS_PHONE           &quot;isPhone&quot;
+<span class="lineNum">      41 </span>            : #define JSON_IS_PURE_PHONE              &quot;isPurePhone&quot;
+<span class="lineNum">      42 </span>            : #define JSON_BIND_CLIENT_NODE_ID &quot;bindClientNodeId&quot;
+<span class="lineNum">      43 </span>            : #define JSON_CAPABILITY_INFO    &quot;capabilityInfo&quot;
+<span class="lineNum">      44 </span>            : #define JSON_CAPABILITY_30FPS_SHARING   &quot;capabilityHigh30fpsSharing&quot;
+<span class="lineNum">      45 </span>            : #define JSON_USER_IDS           &quot;userIds&quot;
+<span class="lineNum">      46 </span>            : #define JSON_ROLE_TYPE          &quot;roleType&quot;
+<span class="lineNum">      47 </span>            : #define JSON_ROLE_TYPE_REASON   &quot;roleTypeReason&quot;
+<span class="lineNum">      48 </span>            : #define JSON_NODE_TYPE          &quot;nodeType&quot;
+<span class="lineNum">      49 </span>            : #define JSON_ENROLL_FLAG                &quot;enrollFlag&quot;
+<span class="lineNum">      50 </span>            : #define JSON_USER_NAME          &quot;userName&quot;
+<span class="lineNum">      51 </span>            : #define JSON_HIDE_IN_ROSTER      &quot;hideInRoster&quot;
+<span class="lineNum">      52 </span>            : #define JSON_IS_VISIBLE_TO_ALL   &quot;isVisibleToAll&quot;
+<span class="lineNum">      53 </span>            : #define JSON_MUTED         &quot;muted&quot;
+<span class="lineNum">      54 </span>            : #define JSON_PRIVILEGES     &quot;privileges&quot;
+<span class="lineNum">      55 </span>            : #define JSON_PSTN_PRIVILEGES     &quot;pstnPrivilege&quot;
+<span class="lineNum">      56 </span>            : #define JSON_INTERPRETATION_STATE     &quot;interpretation&quot;
+<span class="lineNum">      57 </span>            : #define JSON_INTERPRETATION_LANGUAGE_STATE     &quot;interpretationLanguage&quot;
+<span class="lineNum">      58 </span>            : #define JSON_EMAIL &quot;email&quot;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : #define JSON_AUDIO_TYPE     &quot;audioType&quot;
+<span class="lineNum">      61 </span>            : #define JSON_STATE_JOIN_STATE &quot;joinState&quot;
+<span class="lineNum">      62 </span>            : #define JSON_IS_ROLE_CHANGE &quot;isRoleChange&quot;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : #define JSON_CAPABILITY_ENABLE_NORMAL_SHARE_ON_MCS   &quot;enableNormalShareOnMCS&quot;
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #define JSON_LOCAL_RECORD_STATE         &quot;mp4LocalRecord&quot;
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #define JSON_PARTICIPANT_ID                     &quot;participantId&quot;
+<span class="lineNum">      70 </span>            : #define PARTICIPANT_STATE_DEVICE_URL_ARRARY &quot;deviceUrlArray&quot;
+<span class="lineNum">      71 </span>            : #define JSON_DEVICE_URL_ARRARY          PARTICIPANT_STATE_DEVICE_URL_ARRARY
+<span class="lineNum">      72 </span>            : #define JSON_DEVICE_URL             &quot;deviceUrl&quot;
+<span class="lineNum">      73 </span>            : #define JSON_CORRELATION_ID                     &quot;correlationId&quot;
+<span class="lineNum">      74 </span>            : #define JSON_LOCUS_ID           &quot;locusId&quot;
+<span class="lineNum">      75 </span>            : #define JSON_LOCUS_LASTACTIVE           &quot;locusLastActive&quot;
+<span class="lineNum">      76 </span>            : #define JSON_IS_LOGIN           &quot;isLogin&quot;
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : #define JSON_STATE_UNKNOWN                      &quot;unknown&quot;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : #define JSON_CAPABILITY_CLOUD_PROXIMITY &quot;capabilityCloudProximity&quot;
+<span class="lineNum">      81 </span>            : #define JSON_CAPABILITY_MAX_FS &quot;capabilityMaxFs&quot;
+<span class="lineNum">      82 </span>            : #define JSON_CAPABILITY_HARD_MUTE       &quot;capabilityHardMute&quot;
+<span class="lineNum">      83 </span>            : #define JSON_CAPABILITY_COHOST &quot;capabilityCoHost&quot;
+<span class="lineNum">      84 </span>            : #define JSON_CONTROLLER &quot;controller&quot;
+<span class="lineNum">      85 </span>            : #define JSON_ATTID &quot;attId&quot;
+<span class="lineNum">      86 </span>            : #define JSON_CAPABILITY_BO &quot;capabilityBo&quot;
+<span class="lineNum">      87 </span>            : #define JSON_CAPABILITY_BO_HOST &quot;capabilityBoHost&quot;
+<span class="lineNum">      88 </span>            : #define JSON_CAPABILITY_BO_PRE_ASSIGN &quot;capabilityBoPreAssign&quot;
+<span class="lineNum">      89 </span>            : #define JSON_CAPABILITY_BO_DYNAMIC_ASSIGN &quot;capabilityBoDynamicAssign&quot;
+<span class="lineNum">      90 </span>            : #define JSON_CAPABILITY_FIRST_MEETING_ATTENDEE &quot;capabilityFirstMeetingAttendee&quot;
+<span class="lineNum">      91 </span>            : #define JSON_CAPABILITY_BE_INTERPRETER &quot;capabilityBeInterpreter&quot;
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : #define NODE_RECORD_EX_ACTION_ADD       1
+<span class="lineNum">      94 </span>            : #define NODE_RECORD_EX_ACTION_MODIFY    2
+<span class="lineNum">      95 </span>            : #define NODE_RECORD_EX_ACTION_REMOVE    3
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : #define LOGIN_FLAG_INVALID      -1
+<span class="lineNum">      98 </span>            : #define COHOST_INVALID_VALUE    -1
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : #define NODE_RECORD_TYPE_STATE_ALL      &quot;all&quot;
+<span class="lineNum">     101 </span>            : #define NODE_RECORD_STATE_MULTIPLE      &quot;multiple&quot;
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : //bo session
+<span class="lineNum">     104 </span>            : #define JSON_BO_SESSION &quot;boSession&quot;
+<span class="lineNum">     105 </span>            : #define JSON_BO_SESSION_ID &quot;boSessionId&quot;
+<span class="lineNum">     106 </span>            : #define JSON_BO_SESSION_STATE &quot;state&quot;
+<span class="lineNum">     107 </span>            : #define JSON_BO_SESSION_TELE_CONF_KEY &quot;teleConfKey&quot;
+<span class="lineNum">     108 </span>            : #define JSON_BO_SESSION_IS_PRESENTER &quot;isPresenter&quot;
+<span class="lineNum">     109 </span>            : #define JSON_BO_SESSION_DYNAMIC_BO_ID &quot;dynamicBoSessionId&quot;
+<span class="lineNum">     110 </span>            : #define JSON_BO_SESSION_TYPE &quot;type&quot;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : //bo pre_assign
+<span class="lineNum">     113 </span>            : #define JSON_BO_PRE_ASSIGN_UUID &quot;boPreAssignUUID&quot;
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : #define BO_SESSION_STATE_JOINED &quot;JOINED&quot;
+<span class="lineNum">     116 </span>            : #define BO_SESSION_STATE_LEFT &quot;LEFT&quot;
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : #define JSON_JOIN_STATE &quot;joinState&quot;
+<span class="lineNum">     119 </span>            : #define JSON_JOIN_STATE_IS_IN_MEETING &quot;isInMeeting&quot;
+<span class="lineNum">     120 </span>            : #define JSON_JOIN_STATE_IN_LOBBY_REASON &quot;inLobbyReason&quot;
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : #define LOBBY_REASON_PRE_MEETING_LOBBY_STRING &quot;PRE_MEETING_LOBBY&quot;
+<span class="lineNum">     123 </span>            : #define LOBBY_REASON_LOCKED_LOBBY_STRING &quot;LOCKED_LOBBY&quot;
+<span class="lineNum">     124 </span>            : #define LOBBY_REASON_SECURE_LOBBY_STRING &quot;SECURE_LOBBY&quot;
+<span class="lineNum">     125 </span>            : #define LOBBY_REASON_MOVED2LOBBY_STRING &quot;MOVED2LOBBY&quot;
+<span class="lineNum">     126 </span>            : #define LOBBY_REASON_NOT_INITED_STRING &quot;NotInited&quot;
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            : #define PARTICIPANT_STATE_ASSOCIATE_WITH  &quot;associateWith&quot;
+<span class="lineNum">     129 </span>            : typedef struct
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span>            : public:
+<span class="lineNum">     132 </span>            :         bool high_30fps_sharing_;
+<span class="lineNum">     133 </span>            :         bool support_cloud_proximity_;
+<span class="lineNum">     134 </span>            :         bool support_hard_mute_;
+<span class="lineNum">     135 </span>            :         bool enable_normal_share_on_mcs_;
+<span class="lineNum">     136 </span>            :         bool support_consistent_locked_lobby_;
+<span class="lineNum">     137 </span>            :         uint32_t max_fs_;
+<span class="lineNum">     138 </span>            :         bool support_cohost_;
+<span class="lineNum">     139 </span>            :         bool support_bo_;
+<span class="lineNum">     140 </span>            :         bool support_bo_host_;
+<span class="lineNum">     141 </span>            :         bool support_bo_pre_assign_;
+<span class="lineNum">     142 </span>            :         bool support_bo_dynamic_assign_;
+<span class="lineNum">     143 </span>            :         bool support_first_meeting_attendee_;
+<span class="lineNum">     144 </span>            :         bool support_to_be_interpreter_;
+<a name="145"><span class="lineNum">     145 </span>            : } Capability_t;</a>
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 : class BoSession_t</span>
+<a name="148"><span class="lineNum">     148 </span>            : {</a>
+<span class="lineNum">     149 </span>            : public:
+<span class="lineNum">     150 </span><span class="lineCov">          4 :         BoSession_t() {</span>
+<span class="lineNum">     151 </span><span class="lineCov">          1 :                 state_ = &quot;&quot;;</span>
+<span class="lineNum">     152 </span><span class="lineCov">          1 :                 bo_session_id_ = &quot;&quot;;</span>
+<span class="lineNum">     153 </span><span class="lineCov">          1 :                 tele_conf_key_ = 0;</span>
+<span class="lineNum">     154 </span><span class="lineCov">          1 :                 is_presenter_ = false;</span>
+<span class="lineNum">     155 </span><span class="lineCov">          1 :                 dynamic_bo_session_id_ = &quot;&quot;;</span>
+<span class="lineNum">     156 </span><span class="lineCov">          1 :                 type_ = &quot;&quot;;</span>
+<span class="lineNum">     157 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :         BoSession_t&amp; operator=(const BoSession_t&amp; bo_session) {
+<span class="lineNum">     160 </span>            :                 this-&gt;state_ = bo_session.state_;
+<span class="lineNum">     161 </span>            :                 this-&gt;bo_session_id_ = bo_session.bo_session_id_;
+<span class="lineNum">     162 </span>            :                 this-&gt;tele_conf_key_ = bo_session.tele_conf_key_;
+<span class="lineNum">     163 </span>            :                 this-&gt;is_presenter_ = bo_session.is_presenter_;
+<span class="lineNum">     164 </span>            :                 this-&gt;dynamic_bo_session_id_ = bo_session.dynamic_bo_session_id_;
+<span class="lineNum">     165 </span>            :                 this-&gt;type_ = bo_session.type_;
+<span class="lineNum">     166 </span>            :                 return *this;
+<span class="lineNum">     167 </span>            :         }
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :         std::string state_;
+<span class="lineNum">     170 </span>            :         std::string bo_session_id_;
+<span class="lineNum">     171 </span>            :         uint32_t tele_conf_key_;
+<span class="lineNum">     172 </span>            :         bool is_presenter_;
+<span class="lineNum">     173 </span>            :         std::string dynamic_bo_session_id_;
+<span class="lineNum">     174 </span>            :         std::string type_;
+<a name="175"><span class="lineNum">     175 </span>            : };</a>
+<span class="lineNum">     176 </span>            : 
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 : class JoinState {</span></a>
+<span class="lineNum">     178 </span>            : public:
+<span class="lineNum">     179 </span><span class="lineCov">          1 :         JoinState() {</span>
+<span class="lineNum">     180 </span><span class="lineCov">          1 :                 is_in_meeting_ = false;</span>
+<span class="lineNum">     181 </span><span class="lineCov">          1 :                 in_lobby_reason_ = &quot;NotSet&quot;;</span>
+<span class="lineNum">     182 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :         JoinState&amp; operator=(const JoinState&amp; join_state) {
+<span class="lineNum">     185 </span>            :                 is_in_meeting_ = join_state.is_in_meeting_;
+<span class="lineNum">     186 </span>            :                 in_lobby_reason_ = join_state.in_lobby_reason_;
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :                 return *this;
+<span class="lineNum">     189 </span>            :         }
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :         bool is_in_meeting_;
+<span class="lineNum">     192 </span>            :         std::string in_lobby_reason_;
+<span class="lineNum">     193 </span>            : };
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : class AudioType_t {
+<span class="lineNum">     196 </span>            : public:
+<span class="lineNum">     197 </span><span class="lineCov">          2 :         AudioType_t() : is_audio_type_set_(false) {}</span>
+<span class="lineNum">     198 </span>            :         std::string audio_type_;
+<span class="lineNum">     199 </span>            :         bool is_audio_type_set_;
+<span class="lineNum">     200 </span>            : };
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : class RaiseHand_t {
+<span class="lineNum">     203 </span>            : public:
+<span class="lineNum">     204 </span><span class="lineCov">          2 :         RaiseHand_t() : timestamp(0), initiator_node_id(0) {</span>
+<span class="lineNum">     205 </span>            :         }
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :         std::string status;  //raise, lower
+<span class="lineNum">     208 </span>            :         uint64_t timestamp;  //time_t
+<span class="lineNum">     209 </span>            :         uint32_t initiator_node_id;
+<span class="lineNum">     210 </span>            :         std::string subconf;
+<span class="lineNum">     211 </span>            : };
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            : class Muted_t {
+<span class="lineNum">     214 </span>            : public:
+<span class="lineNum">     215 </span><span class="lineCov">          1 :         Muted_t() : muted(true), reason(&quot;CB Init&quot;), is_muted_set_(false) {</span>
+<span class="lineNum">     216 </span>            :         }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            :         bool muted;
+<span class="lineNum">     219 </span>            :         std::string reason;
+<span class="lineNum">     220 </span>            :         bool is_muted_set_;
+<span class="lineNum">     221 </span>            : };
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            : class Privileges {
+<span class="lineNum">     224 </span>            : public:
+<span class="lineNum">     225 </span>            :         Privileges() :
+<span class="lineNum">     226 </span>            :                 audio_sending(true),
+<span class="lineNum">     227 </span>            :                 video_sending(true),
+<span class="lineNum">     228 </span>            :                 start_sharing(true),
+<span class="lineNum">     229 </span>            :                 qa(true),
+<span class="lineNum">     230 </span>            :                 polling(true),
+<span class="lineNum">     231 </span>            :                 private_chat(true),
+<span class="lineNum">     232 </span>            :                 public_chat(true),
+<span class="lineNum">     233 </span>            :                 file_transfer(true),
+<span class="lineNum">     234 </span><span class="lineCov">          1 :                 remote_control(true)</span>
+<span class="lineNum">     235 </span>            :         {}
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span>            :         void Encode(Json::Value&amp; root) {
+<span class="lineNum">     238 </span>            :                 Json::Value&amp; privileges = root[JSON_PRIVILEGES];
+<span class="lineNum">     239 </span>            :                 privileges = Json::Value(Json::objectValue);
+<span class="lineNum">     240 </span>            :                 // privileges[&quot;audioSending&quot;] = privileges_.audio_sending;
+<span class="lineNum">     241 </span>            :                 // privileges[&quot;videoSending&quot;] = privileges_.video_sending;
+<span class="lineNum">     242 </span>            :                 if (!start_sharing)
+<span class="lineNum">     243 </span>            :                         privileges[&quot;startShare&quot;] = start_sharing;
+<span class="lineNum">     244 </span>            :                 if (!qa)
+<span class="lineNum">     245 </span>            :                         privileges[&quot;questionAndAnswer&quot;] = qa;
+<span class="lineNum">     246 </span>            :                 if (!polling)
+<span class="lineNum">     247 </span>            :                         privileges[&quot;polling&quot;] = polling;
+<span class="lineNum">     248 </span>            :                 if (!private_chat)
+<span class="lineNum">     249 </span>            :                         privileges[&quot;privateChat&quot;] = private_chat;
+<span class="lineNum">     250 </span>            :                 if (!public_chat)
+<span class="lineNum">     251 </span>            :                         privileges[&quot;publicChat&quot;] = public_chat;
+<span class="lineNum">     252 </span>            :                 if (!remote_control)
+<span class="lineNum">     253 </span>            :                         privileges[&quot;remoteControl&quot;] = remote_control;
+<span class="lineNum">     254 </span>            :                 if (!file_transfer)
+<a name="255"><span class="lineNum">     255 </span>            :                         privileges[&quot;fileTransfer&quot;] = file_transfer;</a>
+<span class="lineNum">     256 </span>            :         }
+<span class="lineNum">     257 </span><span class="lineCov">          1 :         void Decode(Json::Value&amp; root) {</span>
+<span class="lineNum">     258 </span><span class="lineCov">          1 :                 Json::Value&amp; json_privileges = root[JSON_PRIVILEGES];</span>
+<span class="lineNum">     259 </span>            :                 //parseJsonField(json_privileges, &quot;audioSending&quot;, privileges_.audio_sending);
+<span class="lineNum">     260 </span>            :                 //parseJsonField(json_privileges, &quot;videoSending&quot;, privileges_.video_sending);
+<span class="lineNum">     261 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;startShare&quot;, start_sharing);</span>
+<span class="lineNum">     262 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;questionAndAnswer&quot;, qa);</span>
+<span class="lineNum">     263 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;polling&quot;, polling);</span>
+<span class="lineNum">     264 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;privateChat&quot;, private_chat);</span>
+<span class="lineNum">     265 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;publicChat&quot;, public_chat);</span>
+<span class="lineNum">     266 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;fileTransfer&quot;, file_transfer);</span>
+<span class="lineNum">     267 </span><span class="lineCov">          2 :                 parseJsonField(json_privileges, &quot;remoteControl&quot;, remote_control);</span>
+<span class="lineNum">     268 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :         bool audio_sending;
+<span class="lineNum">     271 </span>            :         bool video_sending;
+<span class="lineNum">     272 </span>            :         bool start_sharing;
+<span class="lineNum">     273 </span>            :         bool qa;
+<span class="lineNum">     274 </span>            :         bool polling;
+<span class="lineNum">     275 </span>            :         bool private_chat;
+<span class="lineNum">     276 </span>            :         bool public_chat;
+<span class="lineNum">     277 </span>            :         bool file_transfer;
+<span class="lineNum">     278 </span>            :         bool remote_control;
+<span class="lineNum">     279 </span>            : };
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : typedef struct
+<span class="lineNum">     282 </span>            : {
+<span class="lineNum">     283 </span>            :         uint32_t attId;
+<span class="lineNum">     284 </span>            :         bool controller;
+<span class="lineNum">     285 </span>            : }ASSOCIATE_WITH;
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            : class InterpretationLanguageState
+<span class="lineNum">     288 </span>            : {
+<span class="lineNum">     289 </span>            : public:
+<span class="lineNum">     290 </span><span class="lineCov">          2 :         InterpretationLanguageState() {</span>
+<span class="lineNum">     291 </span>            :         }
+<span class="lineNum">     292 </span>            :         void Encode(Json::Value&amp; root) {
+<span class="lineNum">     293 </span>            :                 Json::Value&amp; interpreter = root[JSON_INTERPRETATION_LANGUAGE_STATE];
+<span class="lineNum">     294 </span>            :                 interpreter = Json::Value(Json::objectValue);
+<span class="lineNum">     295 </span>            :                 interpreter[&quot;sourceLanguage&quot;] = source_language_;
+<span class="lineNum">     296 </span>            :                 interpreter[&quot;targetLanguage&quot;] = target_language_;
+<span class="lineNum">     297 </span>            :         }
+<span class="lineNum">     298 </span>            :         void Decode(Json::Value&amp; root) {
+<span class="lineNum">     299 </span>            :                 Json::Value&amp; json_interpreter = root[JSON_INTERPRETATION_LANGUAGE_STATE];
+<span class="lineNum">     300 </span>            :                 parseJsonField(json_interpreter, &quot;sourceLanguage&quot;, source_language_);
+<span class="lineNum">     301 </span>            :                 parseJsonField(json_interpreter, &quot;targetLanguage&quot;, target_language_);
+<span class="lineNum">     302 </span>            :         }
+<span class="lineNum">     303 </span>            : public:
+<span class="lineNum">     304 </span>            :         std::string source_language_;
+<span class="lineNum">     305 </span>            :         std::string target_language_;
+<span class="lineNum">     306 </span>            : };
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            : class InterpretationState
+<span class="lineNum">     309 </span>            : {
+<span class="lineNum">     310 </span>            : public:
+<span class="lineNum">     311 </span><span class="lineCov">          3 :         InterpretationState() :is_interpreter_(false), is_active_worker_(false), sequence_num_(0) {</span>
+<span class="lineNum">     312 </span>            :         }
+<span class="lineNum">     313 </span>            :         void Encode(Json::Value&amp; root) {
+<span class="lineNum">     314 </span>            :                 Json::Value&amp; interpreter = root[JSON_INTERPRETATION_STATE];
+<span class="lineNum">     315 </span>            :                 interpreter = Json::Value(Json::objectValue);
+<span class="lineNum">     316 </span>            :                 interpreter[&quot;isInterpreter&quot;] = is_interpreter_;
+<span class="lineNum">     317 </span>            :                 interpreter[&quot;sourceLanguage&quot;] = source_language_;
+<span class="lineNum">     318 </span>            :                 interpreter[&quot;targetLanguage&quot;] = target_language_;
+<span class="lineNum">     319 </span>            :                 interpreter[&quot;sequenceNum&quot;] = sequence_num_;
+<span class="lineNum">     320 </span>            :                 interpreter[&quot;isActiveWorker&quot;] = is_active_worker_;
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<span class="lineNum">     322 </span>            :         }
+<span class="lineNum">     323 </span><span class="lineCov">          1 :         void Decode(Json::Value&amp; root) {</span>
+<span class="lineNum">     324 </span><span class="lineCov">          1 :                 Json::Value&amp; json_interpreter = root[JSON_INTERPRETATION_STATE];</span>
+<span class="lineNum">     325 </span><span class="lineCov">          2 :                 parseJsonField(json_interpreter, &quot;isInterpreter&quot;, is_interpreter_);</span>
+<span class="lineNum">     326 </span><span class="lineCov">          2 :                 parseJsonField(json_interpreter, &quot;isActiveWorker&quot;, is_active_worker_);</span>
+<span class="lineNum">     327 </span><span class="lineCov">          1 :                 parseJsonField(json_interpreter, &quot;sourceLanguage&quot;, source_language_);</span>
+<span class="lineNum">     328 </span><span class="lineCov">          1 :                 parseJsonField(json_interpreter, &quot;targetLanguage&quot;, target_language_);</span>
+<span class="lineNum">     329 </span><span class="lineCov">          2 :                 parseJsonField(json_interpreter, &quot;sequenceNum&quot;, sequence_num_);</span>
+<span class="lineNum">     330 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     331 </span>            : public:
+<span class="lineNum">     332 </span>            :         bool is_interpreter_;
+<span class="lineNum">     333 </span>            :         bool is_active_worker_;
+<span class="lineNum">     334 </span>            :         std::string source_language_;
+<span class="lineNum">     335 </span>            :         std::string target_language_;
+<span class="lineNum">     336 </span>            :         uint32_t sequence_num_;
+<span class="lineNum">     337 </span>            : };
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span><span class="lineCov">         16 : class GCC_Node_Record_States {</span>
+<span class="lineNum">     342 </span>            : public:
+<span class="lineNum">     343 </span>            :         enum LobbyState {
+<span class="lineNum">     344 </span>            :                 LobbyState_InMeeting = 0,
+<span class="lineNum">     345 </span>            :                 LobbyState_InLobby,
+<span class="lineNum">     346 </span>            :                 LobbyState_AdmitToLobby,
+<span class="lineNum">     347 </span>            :                 LobbyState_Init,
+<span class="lineNum">     348 </span>            :         };
+<span class="lineNum">     349 </span>            :         std::string GetLobbyStateDesc()
+<span class="lineNum">     350 </span>            :         {
+<span class="lineNum">     351 </span>            :                 switch (lobby_state_) {
+<span class="lineNum">     352 </span>            :                 case LobbyState_InMeeting:
+<span class="lineNum">     353 </span>            :                         return &quot;InMeeting&quot;;
+<span class="lineNum">     354 </span>            :                 case LobbyState_InLobby:
+<span class="lineNum">     355 </span>            :                         return &quot;InLobby&quot;;
+<span class="lineNum">     356 </span>            :                 case LobbyState_AdmitToLobby:
+<span class="lineNum">     357 </span>            :                         return &quot;MoveToLobby&quot;;
+<span class="lineNum">     358 </span>            :                 case LobbyState_Init:
+<span class="lineNum">     359 </span>            :                         return &quot;NotInited&quot;;
+<span class="lineNum">     360 </span>            :                 default:
+<span class="lineNum">     361 </span>            :                         return &quot;&quot;;
+<a name="362"><span class="lineNum">     362 </span>            :                 }</a>
+<span class="lineNum">     363 </span>            :         }
+<span class="lineNum">     364 </span><span class="lineCov">          1 :         LobbyState GetLobbyStateCode(const std::string&amp; desc)</span>
+<span class="lineNum">     365 </span>            :         {
+<span class="lineNum">     366 </span><span class="lineCov">          1 :                 if (desc == &quot;InMeeting&quot;) {</span>
+<span class="lineNum">     367 </span>            :                         return LobbyState_InMeeting;
+<span class="lineNum">     368 </span>            :                 }
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :                 else if (desc == &quot;InLobby&quot;) {</span>
+<span class="lineNum">     370 </span>            :                         return LobbyState_InLobby;
+<span class="lineNum">     371 </span>            :                 }
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 :                 else if (desc == &quot;MoveToLobby&quot;) {</span>
+<span class="lineNum">     373 </span>            :                         return LobbyState_AdmitToLobby;
+<span class="lineNum">     374 </span>            :                 }
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :                 else if (desc == &quot;NotInited&quot;) {</span>
+<span class="lineNum">     376 </span>            :                         return LobbyState_Init;
+<span class="lineNum">     377 </span>            :                 }
+<span class="lineNum">     378 </span>            :                 return LobbyState_InMeeting;
+<span class="lineNum">     379 </span>            :         }
+<span class="lineNum">     380 </span>            :         std::string new_state_;
+<span class="lineNum">     381 </span>            :         std::string role_type_;
+<span class="lineNum">     382 </span>            :         std::string role_type_reason_;
+<span class="lineNum">     383 </span>            :         std::set&lt;std::string&gt; states_set_;
+<span class="lineNum">     384 </span>            :         uint32_t  action_;
+<span class="lineNum">     385 </span>            :         uint32_t        node_id_;
+<span class="lineNum">     386 </span>            :         uint32_t  user_id_;
+<span class="lineNum">     387 </span>            :         uint32_t  attendee_id_;
+<span class="lineNum">     388 </span>            :         Capability_t    capability_info_;
+<span class="lineNum">     389 </span>            :         uint32_t        version_;
+<span class="lineNum">     390 </span>            :         LobbyState  lobby_state_;
+<span class="lineNum">     391 </span>            :         bool  is_phone_;
+<span class="lineNum">     392 </span>            :         bool is_pure_phone_;
+<span class="lineNum">     393 </span>            :         uint32_t bind_client_node_id_;
+<span class="lineNum">     394 </span>            : 
+<span class="lineNum">     395 </span>            :         int login_flag_; // 0:nonlogin; 1:login; -1:invalid
+<span class="lineNum">     396 </span>            :         int cohost_; // 0: not co-host 1: co-host -1: invalid
+<span class="lineNum">     397 </span>            :         std::string     local_record_state_;
+<span class="lineNum">     398 </span>            :         std::string participant_id_;
+<span class="lineNum">     399 </span>            :         std::string correlationId;
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span>            :         std::vector&lt;ASSOCIATE_WITH&gt;       associate_with_;
+<span class="lineNum">     402 </span>            :         BoSession_t bo_session_;
+<span class="lineNum">     403 </span>            :         uint32_t bo_pre_assign_uuid_;
+<span class="lineNum">     404 </span>            :         std::set&lt;std::string&gt; device_url_arrary_;
+<span class="lineNum">     405 </span>            :         JoinState join_state_;
+<span class="lineNum">     406 </span>            :         Privileges privileges_;
+<span class="lineNum">     407 </span>            :         Muted_t muted_;
+<span class="lineNum">     408 </span>            :         AudioType_t audio_type_;
+<span class="lineNum">     409 </span>            :         RaiseHand_t raise_hand_;
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span>            :         bool is_pstn_privilege_set_;
+<span class="lineNum">     412 </span>            :         uint32_t pstn_privilege_;
+<span class="lineNum">     413 </span>            :         InterpretationState interpretation_;
+<a name="414"><span class="lineNum">     414 </span>            :         InterpretationLanguageState interpretation_language_;</a>
+<span class="lineNum">     415 </span>            : public:
+<span class="lineNum">     416 </span><span class="lineCov">          1 :         bool Decode(const char* json_body, uint32_t json_body_size) {</span>
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span>            :                 std::string json;
+<span class="lineNum">     419 </span><span class="lineCov">          1 :                 json.assign(json_body, json_body_size);</span>
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span><span class="lineCov">          2 :                 Json::Value json_value;</span>
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineCov">          1 :                 if (!JsonNewReader(json, json_value)) {</span>
+<span class="lineNum">     424 </span>            :                         return false;
+<span class="lineNum">     425 </span>            :                 }
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_NEW_STATE, new_state_);</span>
+<span class="lineNum">     428 </span>            :                 
+<span class="lineNum">     429 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_ROLE_TYPE, role_type_);</span>
+<span class="lineNum">     430 </span>            :                 
+<span class="lineNum">     431 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_ROLE_TYPE_REASON, role_type_reason_);</span>
+<span class="lineNum">     432 </span>            :                 
+<span class="lineNum">     433 </span>            : 
+<span class="lineNum">     434 </span><span class="lineCov">          1 :                 std::vector&lt;std::string&gt; fields;</span>
+<span class="lineNum">     435 </span><span class="lineCov">          2 :                 parseJsonFieldStringArray(json_value, JSON_STATE, fields);</span>
+<span class="lineNum">     436 </span><span class="lineCov">          1 :                 std::set&lt;std::string&gt; s(fields.begin(), fields.end());</span>
+<span class="lineNum">     437 </span><span class="lineCov">          1 :                 states_set_ = s;</span>
+<span class="lineNum">     438 </span>            : 
+<span class="lineNum">     439 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_NODE_ACTION, action_);</span>
+<span class="lineNum">     440 </span>            :                 
+<span class="lineNum">     441 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_NODE_ID, node_id_);</span>
+<span class="lineNum">     442 </span>            :                 
+<span class="lineNum">     443 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_USER_ID, user_id_);</span>
+<span class="lineNum">     444 </span>            :                 
+<span class="lineNum">     445 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_ATTENDEE_ID, attendee_id_);</span>
+<span class="lineNum">     446 </span>            :                 
+<span class="lineNum">     447 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_VERSION, version_);</span>
+<span class="lineNum">     448 </span>            :                 
+<span class="lineNum">     449 </span>            :                 std::string value;
+<span class="lineNum">     450 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_LOBBY_STATE, value);</span>
+<span class="lineNum">     451 </span>            :                 
+<span class="lineNum">     452 </span><span class="lineCov">          1 :                 lobby_state_ = GetLobbyStateCode(value);</span>
+<span class="lineNum">     453 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_IS_PHONE, is_phone_);</span>
+<span class="lineNum">     454 </span>            :                 
+<span class="lineNum">     455 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_IS_PURE_PHONE, is_pure_phone_);</span>
+<span class="lineNum">     456 </span>            :                 
+<span class="lineNum">     457 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_BIND_CLIENT_NODE_ID, bind_client_node_id_);</span>
+<span class="lineNum">     458 </span>            :                 
+<span class="lineNum">     459 </span>            :                 bool loginFlag;
+<span class="lineNum">     460 </span><span class="lineCov">          2 :                 if (parseJsonField(json_value, JSON_IS_LOGIN, loginFlag))</span>
+<span class="lineNum">     461 </span><span class="lineCov">          1 :                         login_flag_ = loginFlag ? 1 : 0;</span>
+<span class="lineNum">     462 </span>            : 
+<span class="lineNum">     463 </span><span class="lineCov">          1 :                 DecodeCapabilityInfo(json_value);</span>
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_LOCAL_RECORD_STATE, local_record_state_);</span>
+<span class="lineNum">     466 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_PARTICIPANT_ID, participant_id_);</span>
+<span class="lineNum">     467 </span>            : 
+<span class="lineNum">     468 </span><span class="lineCov">          1 :                 parseJsonField(json_value, JSON_CORRELATION_ID, correlationId);</span>
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span>            : 
+<span class="lineNum">     471 </span><span class="lineCov">          1 :                 if (json_value.isMember(PARTICIPANT_STATE_ASSOCIATE_WITH)) {</span>
+<span class="lineNum">     472 </span><span class="lineCov">          1 :                         Json::Value&amp; json_associate_with = json_value[PARTICIPANT_STATE_ASSOCIATE_WITH];</span>
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :                         for (int count = 0; count &lt; (int)json_associate_with.size(); count++)</span>
+<span class="lineNum">     474 </span>            :                         {
+<span class="lineNum">     475 </span>            :                                 ASSOCIATE_WITH associate_tmp;
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :                                 parseJsonField(json_associate_with[count], JSON_ATTID, associate_tmp.attId);</span>
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :                                 parseJsonField(json_associate_with[count], JSON_CONTROLLER, associate_tmp.controller);</span>
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :                                 associate_with_.push_back(associate_tmp);</span>
+<span class="lineNum">     479 </span>            :                         }
+<span class="lineNum">     480 </span>            :                 }
+<span class="lineNum">     481 </span>            : 
+<span class="lineNum">     482 </span>            :                 /*
+<span class="lineNum">     483 </span>            :                 if (json_value.isMember(JSON_BO_SESSION)) {
+<span class="lineNum">     484 </span>            :                         Json::Value&amp; json_bo_session = json_value[JSON_BO_SESSION];
+<span class="lineNum">     485 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_ID, bo_session_.bo_session_id_);
+<span class="lineNum">     486 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_STATE, bo_session_.state_);
+<span class="lineNum">     487 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_TELE_CONF_KEY, bo_session_.tele_conf_key_);
+<span class="lineNum">     488 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_IS_PRESENTER, bo_session_.is_presenter_);
+<span class="lineNum">     489 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_DYNAMIC_BO_ID, bo_session_.dynamic_bo_session_id_);
+<span class="lineNum">     490 </span>            :                         parseJsonField(json_bo_session, JSON_BO_SESSION_TYPE, bo_session_.type_);
+<span class="lineNum">     491 </span>            :                 }
+<span class="lineNum">     492 </span>            :                 */
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span><span class="lineCov">          2 :                 Json::Value device_url_array_json_value;</span>
+<span class="lineNum">     495 </span><span class="lineCov">          1 :                 if (parseJsonField(json_value, JSON_DEVICE_URL_ARRARY, device_url_array_json_value)) {</span>
+<span class="lineNum">     496 </span><span class="lineCov">          1 :                         for (int count = 0; count &lt; (int)device_url_array_json_value.size(); count++)</span>
+<span class="lineNum">     497 </span>            :                         {
+<span class="lineNum">     498 </span>            :                                 std::string device_url_value;
+<span class="lineNum">     499 </span><span class="lineCov">          2 :                                 if (!parseJsonField(device_url_array_json_value[count], JSON_DEVICE_URL, device_url_value) || device_url_value.empty()) {</span>
+<span class="lineNum">     500 </span>            :                                         continue;
+<span class="lineNum">     501 </span>            :                                 }
+<span class="lineNum">     502 </span><span class="lineCov">          1 :                                 device_url_arrary_.insert(device_url_value);</span>
+<span class="lineNum">     503 </span>            :                         }
+<span class="lineNum">     504 </span>            :                 }
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            :                 bool cohost;
+<span class="lineNum">     507 </span><span class="lineCov">          2 :                 if (parseJsonField(json_value, JSON_COHOST, cohost)) {</span>
+<span class="lineNum">     508 </span><span class="lineCov">          1 :                         cohost_ = cohost ? 1 : 0;</span>
+<span class="lineNum">     509 </span>            :                 }
+<span class="lineNum">     510 </span>            : 
+<span class="lineNum">     511 </span>            :                 /*
+<span class="lineNum">     512 </span>            :                 if (json_value.isMember(JSON_RAISE_HAND)) {
+<span class="lineNum">     513 </span>            :                         Json::Value&amp; json_raise_hand = json_value[JSON_RAISE_HAND];
+<span class="lineNum">     514 </span>            :                         parseJsonField(json_raise_hand, &quot;status&quot;, raise_hand_.status);
+<span class="lineNum">     515 </span>            :                         parseJsonField(json_raise_hand, &quot;timestamp&quot;, raise_hand_.timestamp);
+<span class="lineNum">     516 </span>            :                         parseJsonField(json_raise_hand, &quot;initiatorNodeId&quot;, raise_hand_.initiator_node_id);
+<span class="lineNum">     517 </span>            :                         parseJsonField(json_raise_hand, &quot;subconf&quot;, raise_hand_.subconf);
+<span class="lineNum">     518 </span>            :                 }
+<span class="lineNum">     519 </span>            :                 */
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span>            :                 /*
+<span class="lineNum">     522 </span>            :                 if (json_value.isMember(JSON_MUTED)) {
+<span class="lineNum">     523 </span>            :                         Json::Value&amp; json_muted = json_value[JSON_MUTED];
+<span class="lineNum">     524 </span>            :                         parseJsonField(json_muted, &quot;muted&quot;, muted_.muted);
+<span class="lineNum">     525 </span>            :                         parseJsonField(json_muted, &quot;reason&quot;, muted_.reason);
+<span class="lineNum">     526 </span>            :                         muted_.is_muted_set_ = true;
+<span class="lineNum">     527 </span>            :                 }
+<span class="lineNum">     528 </span>            :                 */
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :                 /*
+<span class="lineNum">     531 </span>            :                 if (parseJsonField(json_value, JSON_AUDIO_TYPE, audio_type_.audio_type_))
+<span class="lineNum">     532 </span>            :                 {
+<span class="lineNum">     533 </span>            :                         audio_type_.is_audio_type_set_ = true;
+<span class="lineNum">     534 </span>            :                 }
+<span class="lineNum">     535 </span>            :                 */
+<span class="lineNum">     536 </span>            : 
+<span class="lineNum">     537 </span><span class="lineCov">          2 :                 parseJsonField(json_value, JSON_BO_PRE_ASSIGN_UUID, bo_pre_assign_uuid_);</span>
+<span class="lineNum">     538 </span>            :                 
+<span class="lineNum">     539 </span>            :                 /*
+<span class="lineNum">     540 </span>            :                 if (json_value.isMember(JSON_JOIN_STATE)) {
+<span class="lineNum">     541 </span>            :                         Json::Value&amp; json_join_state = json_value[JSON_JOIN_STATE];
+<span class="lineNum">     542 </span>            :                         parseJsonField(json_join_state, JSON_JOIN_STATE_IS_IN_MEETING, join_state_.is_in_meeting_);
+<span class="lineNum">     543 </span>            :                         parseJsonField(json_join_state, JSON_JOIN_STATE_IN_LOBBY_REASON, join_state_.in_lobby_reason_);
+<span class="lineNum">     544 </span>            :                 }
+<span class="lineNum">     545 </span>            :                 */
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span>            :                 /*
+<span class="lineNum">     548 </span>            :                 if (parseJsonField(json_value, JSON_PSTN_PRIVILEGES, pstn_privilege_)) {
+<span class="lineNum">     549 </span>            :                         is_pstn_privilege_set_ = true;
+<span class="lineNum">     550 </span>            :                 }
+<span class="lineNum">     551 </span>            :                 */
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span><span class="lineCov">          1 :                 if (json_value.isMember(JSON_PRIVILEGES)) {</span>
+<span class="lineNum">     554 </span>            :                         DecodePrivileges(json_value);
+<span class="lineNum">     555 </span>            :                 }
+<span class="lineNum">     556 </span><span class="lineCov">          1 :                 if (json_value.isMember(JSON_INTERPRETATION_STATE)) {</span>
+<span class="lineNum">     557 </span>            :                         DecodeInterpretation(json_value);
+<span class="lineNum">     558 </span>            :                 }
+<span class="lineNum">     559 </span>            : 
+<span class="lineNum">     560 </span>            :                 /*
+<span class="lineNum">     561 </span>            :                 if (json_value.isMember(JSON_INTERPRETATION_LANGUAGE_STATE)) {
+<span class="lineNum">     562 </span>            :                         DecodeInterpretationLanguage(json_value);
+<span class="lineNum">     563 </span>            :                 }
+<span class="lineNum">     564 </span>            :                 */
+<span class="lineNum">     565 </span>            :         
+<span class="lineNum">     566 </span>            :                 return true;
+<span class="lineNum">     567 </span>            :         }
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span>            :         void DecodePrivileges(JsonValue&amp; root) {
+<span class="lineNum">     570 </span><span class="lineCov">          1 :                 privileges_.Decode(root);</span>
+<span class="lineNum">     571 </span>            :         }
+<span class="lineNum">     572 </span>            : 
+<span class="lineNum">     573 </span>            :         void DecodeInterpretationLanguage(JsonValue&amp; root) {
+<span class="lineNum">     574 </span>            :                 interpretation_language_.Decode(root);
+<span class="lineNum">     575 </span>            :         }
+<span class="lineNum">     576 </span>            : 
+<span class="lineNum">     577 </span>            :         void DecodeInterpretation(JsonValue&amp; root) {
+<span class="lineNum">     578 </span><span class="lineCov">          1 :                 interpretation_.Decode(root);</span>
+<a name="579"><span class="lineNum">     579 </span>            :         }</a>
+<span class="lineNum">     580 </span>            : 
+<span class="lineNum">     581 </span><span class="lineCov">          1 :         void DecodeCapabilityInfo(JsonValue&amp; json_value)</span>
+<span class="lineNum">     582 </span>            :         {
+<span class="lineNum">     583 </span><span class="lineCov">          1 :                 if (!json_value.isMember(JSON_CAPABILITY_INFO)) {</span>
+<span class="lineNum">     584 </span><span class="lineCov">          1 :                         return;</span>
+<span class="lineNum">     585 </span>            :                 }
+<span class="lineNum">     586 </span><span class="lineCov">          1 :                 Json::Value&amp; json_value_capability = json_value[JSON_CAPABILITY_INFO];</span>
+<span class="lineNum">     587 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_30FPS_SHARING, capability_info_.high_30fps_sharing_);</span>
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_CLOUD_PROXIMITY, capability_info_.support_cloud_proximity_);</span>
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_MAX_FS, capability_info_.max_fs_);</span>
+<span class="lineNum">     592 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_HARD_MUTE, capability_info_.support_hard_mute_);</span>
+<span class="lineNum">     593 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_COHOST, capability_info_.support_cohost_);</span>
+<span class="lineNum">     594 </span>            : 
+<span class="lineNum">     595 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_BO, capability_info_.support_bo_);</span>
+<span class="lineNum">     596 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_BO_HOST, capability_info_.support_bo_host_);</span>
+<span class="lineNum">     597 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_BO_PRE_ASSIGN, capability_info_.support_bo_pre_assign_);</span>
+<span class="lineNum">     598 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_BO_DYNAMIC_ASSIGN, capability_info_.support_bo_dynamic_assign_);</span>
+<span class="lineNum">     599 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_ENABLE_NORMAL_SHARE_ON_MCS, capability_info_.enable_normal_share_on_mcs_);</span>
+<span class="lineNum">     600 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_FIRST_MEETING_ATTENDEE, capability_info_.support_first_meeting_attendee_);</span>
+<span class="lineNum">     601 </span><span class="lineCov">          2 :                 parseJsonField(json_value_capability, JSON_CAPABILITY_BE_INTERPRETER, capability_info_.support_to_be_interpreter_);</span>
+<span class="lineNum">     602 </span>            :         }
+<span class="lineNum">     603 </span>            : };
+<span class="lineNum">     604 </span>            : class CLobbyRoomParser {
+<span class="lineNum">     605 </span>            : public:
+<a name="606"><span class="lineNum">     606 </span><span class="lineCov">         44 :         CLobbyRoomParser() {}</span></a>
+<span class="lineNum">     607 </span>            : 
+<span class="lineNum">     608 </span><span class="lineCov">         40 :         ~CLobbyRoomParser() </span>
+<span class="lineNum">     609 </span><span class="lineCov">         40 :         {</span>
+<span class="lineNum">     610 </span><span class="lineCov">         40 :                 delete[] node_rec_ex_list;</span>
+<a name="611"><span class="lineNum">     611 </span><span class="lineCov">         40 :         }</span></a>
+<span class="lineNum">     612 </span>            : 
+<span class="lineNum">     613 </span><span class="lineCov">          1 :         void Reset()</span>
+<span class="lineNum">     614 </span>            :         {       
+<span class="lineNum">     615 </span><span class="lineCov">          1 :                 if(nullptr != node_rec_ex_list)</span>
+<span class="lineNum">     616 </span>            :                 {
+<span class="lineNum">     617 </span><span class="lineNoCov">          0 :                         delete[] node_rec_ex_list;</span>
+<span class="lineNum">     618 </span><span class="lineNoCov">          0 :                         node_rec_ex_list = nullptr;</span>
+<span class="lineNum">     619 </span><span class="lineNoCov">          0 :                         node_rec_ex_list_size = 0;</span>
+<span class="lineNum">     620 </span>            :                 }
+<span class="lineNum">     621 </span><span class="lineCov">          1 :                 size = 0;</span>
+<span class="lineNum">     622 </span><span class="lineCov">          1 :             cur_pos = 0;</span>
+<span class="lineNum">     623 </span><span class="lineCov">          1 :             buf_size = 0;</span>
+<span class="lineNum">     624 </span><span class="lineCov">          1 :             buf = nullptr;</span>
+<span class="lineNum">     625 </span><span class="lineCov">          1 :             g_need_init = true;</span>
+<span class="lineNum">     626 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     627 </span>            : 
+<span class="lineNum">     628 </span>            :         void SetData(const uint8_t* inData)
+<span class="lineNum">     629 </span>            :     {
+<span class="lineNum">     630 </span><span class="lineCov">          1 :         buf = inData;</span>
+<span class="lineNum">     631 </span>            :     }
+<span class="lineNum">     632 </span>            :  
+<span class="lineNum">     633 </span>            :     void SetLength(uint32_t inLen)
+<span class="lineNum">     634 </span>            :     {
+<span class="lineNum">     635 </span><span class="lineCov">          1 :         buf_size = inLen;</span>
+<span class="lineNum">     636 </span>            :         //NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::CLobbyRoomParser buf_size:&quot; &lt;&lt; buf_size);
+<span class="lineNum">     637 </span>            :     }
+<span class="lineNum">     638 </span>            : 
+<span class="lineNum">     639 </span><span class="lineCov">         44 :         void SetUpdateLobbyRoomUser(UpdateLobbyRoomUser inUpdateLobbyRoomUser) { m_updateLobbyRoomUser = inUpdateLobbyRoomUser;}</span>
+<span class="lineNum">     640 </span>            : 
+<span class="lineNum">     641 </span>            :         //Eureka SDK
+<a name="642"><span class="lineNum">     642 </span>            :         void read(void* data, uint32_t length)</a>
+<a name="643"><span class="lineNum">     643 </span>            :         {</a>
+<span class="lineNum">     644 </span><span class="lineCov">          1 :                 if (length == 0)return;</span>
+<span class="lineNum">     645 </span><span class="lineCov">          3 :                 memcpy((uint8_t*)data, this-&gt;buf + this-&gt;cur_pos, length);</span>
+<span class="lineNum">     646 </span><span class="lineCov">          3 :                 this-&gt;cur_pos += length;</span>
+<span class="lineNum">     647 </span>            :                 //NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::read length:&quot; &lt;&lt; length);
+<span class="lineNum">     648 </span>            :                 //NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::read cur_pos:&quot; &lt;&lt; this-&gt;cur_pos);
+<a name="649"><span class="lineNum">     649 </span>            :         }</a>
+<span class="lineNum">     650 </span>            : 
+<span class="lineNum">     651 </span><span class="lineCov">          2 :         void swap(void* data, int length)</span>
+<span class="lineNum">     652 </span>            :     {
+<span class="lineNum">     653 </span><span class="lineCov">          2 :         if (g_need_init)</span>
+<span class="lineNum">     654 </span>            :         {
+<span class="lineNum">     655 </span><span class="lineCov">          1 :                 init();</span>
+<span class="lineNum">     656 </span>            :         }
+<span class="lineNum">     657 </span>            : 
+<span class="lineNum">     658 </span><span class="lineCov">          2 :         if (s_is_little_endian)</span>
+<span class="lineNum">     659 </span>            :         {
+<span class="lineNum">     660 </span>            :                 uint8_t* pch = (uint8_t*)data;
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span><span class="lineCov">          2 :                 for (int i = 0; i &lt; length / 2; i++)</span>
+<span class="lineNum">     663 </span>            :                 {
+<span class="lineNum">     664 </span>            :                 uint8_t ch_temp;
+<span class="lineNum">     665 </span><span class="lineCov">          2 :                 ch_temp = pch[i];</span>
+<span class="lineNum">     666 </span><span class="lineCov">          2 :                 pch[i] = pch[length-1-i];</span>
+<span class="lineNum">     667 </span><span class="lineCov">          2 :                 pch[length-1-i] = ch_temp;</span>
+<span class="lineNum">     668 </span>            :                 }
+<span class="lineNum">     669 </span>            :         }
+<span class="lineNum">     670 </span><span class="lineCov">          2 :         }</span>
+<span class="lineNum">     671 </span>            : 
+<span class="lineNum">     672 </span>            :         void init()
+<span class="lineNum">     673 </span>            :         {
+<span class="lineNum">     674 </span><span class="lineCov">          1 :         g_need_init = false;</span>
+<span class="lineNum">     675 </span>            : 
+<span class="lineNum">     676 </span><span class="lineCov">          1 :         uint16_t test = 0x55aa;</span>
+<span class="lineNum">     677 </span>            : 
+<span class="lineNum">     678 </span>            :         if (*(uint8_t*)&amp;test == 0xaa)
+<span class="lineNum">     679 </span><span class="lineCov">          1 :                 s_is_little_endian = true;</span>
+<span class="lineNum">     680 </span>            :         else
+<span class="lineNum">     681 </span>            :                 s_is_little_endian = false;
+<span class="lineNum">     682 </span>            :         }
+<span class="lineNum">     683 </span>            : 
+<span class="lineNum">     684 </span><span class="lineCov">          1 :         void parser()</span>
+<span class="lineNum">     685 </span>            :         {
+<span class="lineNum">     686 </span><span class="lineCov">          1 :                 if(0 == buf_size || nullptr == buf) return;</span>
+<span class="lineNum">     687 </span><span class="lineCov">          1 :                 read(&amp;size, sizeof(uint16_t));</span>
+<span class="lineNum">     688 </span><span class="lineCov">          1 :                 swap(&amp;size, sizeof(uint16_t));</span>
+<span class="lineNum">     689 </span>            :                 
+<span class="lineNum">     690 </span><span class="lineCov">          1 :                 node_rec_ex_list = new GCC_Node_Record_States*[size];</span>
+<span class="lineNum">     691 </span><span class="lineCov">          1 :                 memset(node_rec_ex_list, 0, size * sizeof(GCC_Node_Record_States*));</span>
+<span class="lineNum">     692 </span><span class="lineCov">          1 :                 node_rec_ex_list_size = size;</span>
+<span class="lineNum">     693 </span>            : 
+<span class="lineNum">     694 </span>            :                 std::set&lt;NodeIdType&gt;addToLobbyRoomUserSet, removeFromLobbyRoomUserSet;
+<span class="lineNum">     695 </span>            : 
+<span class="lineNum">     696 </span><span class="lineCov">          2 :                 for (uint16_t i = 0; i &lt; size; i++)</span>
+<span class="lineNum">     697 </span>            :                 {
+<span class="lineNum">     698 </span><span class="lineCov">          1 :                         GCC_Node_Record_States* node = new GCC_Node_Record_States();</span>
+<span class="lineNum">     699 </span><span class="lineCov">          1 :                         char* json_body = read_string();</span>
+<span class="lineNum">     700 </span>            : 
+<span class="lineNum">     701 </span><span class="lineCov">          1 :                         if (json_body) {</span>
+<span class="lineNum">     702 </span><span class="lineCov">          1 :                                 std::string json(json_body);</span>
+<span class="lineNum">     703 </span>            : 
+<span class="lineNum">     704 </span>            : 
+<span class="lineNum">     705 </span><span class="lineCov">          2 :                                 Json::Value jsonMessage;</span>
+<span class="lineNum">     706 </span><span class="lineCov">          1 :                                 bool successful = Json::Reader().parse(json, jsonMessage);</span>
+<span class="lineNum">     707 </span><span class="lineCov">          1 :                                 if (successful)</span>
+<span class="lineNum">     708 </span>            :                                 {
+<span class="lineNum">     709 </span><span class="lineCov">         17 :                                         NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::parser, json_body:&quot; &lt;&lt; ::Desensitize(json));</span>
+<span class="lineNum">     710 </span>            :                                 }
+<span class="lineNum">     711 </span>            : 
+<span class="lineNum">     712 </span>            :                                 
+<span class="lineNum">     713 </span><span class="lineCov">          1 :                                 node-&gt;Decode(json.c_str(), json.size());</span>
+<span class="lineNum">     714 </span>            : 
+<span class="lineNum">     715 </span>            :                                 //check lobby room user
+<span class="lineNum">     716 </span><span class="lineCov">          1 :                                 if(GCC_Node_Record_States::LobbyState_AdmitToLobby == node-&gt;lobby_state_)</span>
+<span class="lineNum">     717 </span>            :                                 {
+<span class="lineNum">     718 </span><span class="lineNoCov">          0 :                                         addToLobbyRoomUserSet.insert(node-&gt;node_id_);</span>
+<span class="lineNum">     719 </span><span class="lineNoCov">          0 :                                         NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::parser, current lobby state: MoveToLobby, nodeId:&quot; &lt;&lt; node-&gt;node_id_);</span>
+<span class="lineNum">     720 </span>            :                                 }
+<span class="lineNum">     721 </span><span class="lineCov">          1 :                                 if(GCC_Node_Record_States::LobbyState_InLobby == node-&gt;lobby_state_)</span>
+<span class="lineNum">     722 </span>            :                                 {
+<span class="lineNum">     723 </span><span class="lineNoCov">          0 :                                         addToLobbyRoomUserSet.insert(node-&gt;node_id_);</span>
+<span class="lineNum">     724 </span><span class="lineNoCov">          0 :                                         NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::parser, current lobby state: InLobby, nodeId:&quot; &lt;&lt; node-&gt;node_id_);</span>
+<span class="lineNum">     725 </span>            :                                 }
+<span class="lineNum">     726 </span><span class="lineCov">          1 :                                 if(GCC_Node_Record_States::LobbyState_InMeeting == node-&gt;lobby_state_)</span>
+<span class="lineNum">     727 </span>            :                                 {
+<span class="lineNum">     728 </span><span class="lineCov">          1 :                                         removeFromLobbyRoomUserSet.insert(node-&gt;node_id_);</span>
+<span class="lineNum">     729 </span><span class="lineCov">         16 :                                         NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::parser, current lobby state: InMeeting, nodeId:&quot; &lt;&lt; node-&gt;node_id_);</span>
+<span class="lineNum">     730 </span>            :                                 }
+<span class="lineNum">     731 </span><span class="lineCov">          1 :                                 if(GCC_Node_Record_States::LobbyState_Init == node-&gt;lobby_state_)</span>
+<span class="lineNum">     732 </span>            :                                 {
+<span class="lineNum">     733 </span><span class="lineNoCov">          0 :                                         NIGHTINGALE_INFO_THIS(&quot;CLobbyRoomParser::parser, current lobby state: NotInited, nodeId:&quot; &lt;&lt; node-&gt;node_id_);</span>
+<span class="lineNum">     734 </span>            :                                 }
+<span class="lineNum">     735 </span>            : 
+<span class="lineNum">     736 </span>            :                         }
+<span class="lineNum">     737 </span>            : 
+<span class="lineNum">     738 </span><span class="lineCov">          1 :                         delete[] json_body;</span>
+<span class="lineNum">     739 </span><span class="lineCov">          1 :                         node_rec_ex_list[i] = node;</span>
+<span class="lineNum">     740 </span>            :                 }
+<span class="lineNum">     741 </span>            :                 //update lobby room user
+<span class="lineNum">     742 </span><span class="lineCov">          1 :         m_updateLobbyRoomUser(addToLobbyRoomUserSet, removeFromLobbyRoomUserSet);</span>
+<span class="lineNum">     743 </span>            :         }
+<span class="lineNum">     744 </span><span class="lineCov">          1 :         char* read_string()</span>
+<span class="lineNum">     745 </span>            :         {
+<span class="lineNum">     746 </span><span class="lineCov">          1 :                 char* str = NULL;</span>
+<span class="lineNum">     747 </span><span class="lineCov">          1 :                 uint16_t len = 0;</span>
+<span class="lineNum">     748 </span><span class="lineCov">          1 :                 read(&amp;len, sizeof(uint16_t));</span>
+<span class="lineNum">     749 </span><span class="lineCov">          1 :                 swap(&amp;len, sizeof(uint16_t));</span>
+<span class="lineNum">     750 </span><span class="lineCov">          1 :                 if (len &gt; 0)</span>
+<span class="lineNum">     751 </span>            :                 {
+<span class="lineNum">     752 </span><span class="lineCov">          1 :                         str = new char[len + 1];</span>
+<span class="lineNum">     753 </span><span class="lineCov">          1 :                         read((void*)str, len);</span>
+<span class="lineNum">     754 </span><span class="lineCov">          1 :                         str[len] = 0;</span>
+<span class="lineNum">     755 </span>            :                 }
+<span class="lineNum">     756 </span><span class="lineCov">          1 :                 return str;</span>
+<span class="lineNum">     757 </span>            :         }
+<span class="lineNum">     758 </span>            :         //private:
+<span class="lineNum">     759 </span>            :         uint16_t size = 0;
+<span class="lineNum">     760 </span>            :         uint32_t cur_pos = 0;
+<span class="lineNum">     761 </span>            :         uint32_t buf_size = 0;
+<span class="lineNum">     762 </span>            :         const uint8_t* buf = nullptr;
+<span class="lineNum">     763 </span>            :         GCC_Node_Record_States** node_rec_ex_list = nullptr;
+<span class="lineNum">     764 </span>            :         uint16_t node_rec_ex_list_size = 0;
+<span class="lineNum">     765 </span>            :         bool g_need_init = true;
+<span class="lineNum">     766 </span>            :         bool s_is_little_endian;
+<span class="lineNum">     767 </span>            : 
+<span class="lineNum">     768 </span>            :         UpdateLobbyRoomUser m_updateLobbyRoomUser;
+<span class="lineNum">     769 </span>            : };
+<span class="lineNum">     770 </span>            : 
+<span class="lineNum">     771 </span>            : #endif //LOBBY_ROOM_PARSER_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

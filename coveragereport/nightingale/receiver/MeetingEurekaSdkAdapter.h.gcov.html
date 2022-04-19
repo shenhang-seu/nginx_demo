@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/MeetingEurekaSdkAdapter.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - MeetingEurekaSdkAdapter.h<span style="font-size: 80%;"> (source / <a href="MeetingEurekaSdkAdapter.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef MEETING_EUREKA_SDK_ADAPTER_H_</a>
+<span class="lineNum">       2 </span>            : #define MEETING_EUREKA_SDK_ADAPTER_H_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;WbxEurekaSDKDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;WbxEurekaSDKInterface.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #define WBX_H264_DATA_TYPE_KEY_FRAME 1
+<span class="lineNum">       9 </span>            : #define WBX_H264_DATA_TYPE_NORMAL_FRAME 2
+<span class="lineNum">      10 </span>            : #define WBX_PD_KEYFRAME_TRIGED_MAX_COUNT 5
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<span class="lineNum">      12 </span>            : typedef std::function&lt;void(WbxSDKEurekaRtpDataEvent* inEvent)&gt; NtgPliTriggerFunc;
+<span class="lineNum">      13 </span><span class="lineCov">        244 : class CNtgPliTrigger</span>
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span>            : public:
+<span class="lineNum">      16 </span>            :         CNtgPliTrigger();
+<span class="lineNum">      17 </span>            :         void Initialize(NtgPliTriggerFunc inFun);
+<span class="lineNum">      18 </span>            :         void Release();
+<span class="lineNum">      19 </span>            :     void UpdateKeyFrame(WbxSDKEurekaRtpDataEvent* inKeyFrame);
+<span class="lineNum">      20 </span>            :     void RequestKeyFrame();
+<span class="lineNum">      21 </span>            :         void OneSecond();
+<span class="lineNum">      22 </span>            :         void ResetStatus(){ Reset();}
+<span class="lineNum">      23 </span>            : private:
+<span class="lineNum">      24 </span>            :         void Copy(unsigned char* inFrame, unsigned int inFrameLen);
+<span class="lineNum">      25 </span>            :         bool Trigger()const;
+<span class="lineNum">      26 </span>            :         bool KeyFrameNotEmpty();
+<span class="lineNum">      27 </span>            :         void Reset();
+<span class="lineNum">      28 </span>            :         //status
+<span class="lineNum">      29 </span>            :         uint32_t m_seconds = 0;
+<span class="lineNum">      30 </span>            :         uint32_t m_trigedCount = 0;
+<span class="lineNum">      31 </span>            :         bool m_forceKeyFrame = false;
+<span class="lineNum">      32 </span>            :         //keyframe data
+<span class="lineNum">      33 </span>            :         std::string m_keyFrame;
+<span class="lineNum">      34 </span>            :         WbxSDKEurekaRtpDataEvent m_keyFrameEvent;
+<span class="lineNum">      35 </span>            :         NtgPliTriggerFunc m_callbackFun = nullptr;
+<span class="lineNum">      36 </span>            : };
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : class CMeetingEurekaSdkAdapter : public IWbxMeeting, public IWbxMeetingSink
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span>            : public:
+<span class="lineNum">      41 </span>            :         CMeetingEurekaSdkAdapter();
+<span class="lineNum">      42 </span>            :         virtual ~CMeetingEurekaSdkAdapter();
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         bool Initialize(ConfIdType inConfId, IWbxMeetingSink* inSink);
+<span class="lineNum">      45 </span>            :         void Release();
+<span class="lineNum">      46 </span>            :     //IWbxMeeting
+<span class="lineNum">      47 </span>            :         virtual long JoinMeeting(const EurekaSDKParameter&amp; inParameter);
+<span class="lineNum">      48 </span>            :     virtual long LeaveMeeting(unsigned int inReason);
+<span class="lineNum">      49 </span>            :     virtual long RequestKeyFrame(EWbxSessionProtocolType inProtocolType, bool force);
+<span class="lineNum">      50 </span>            :     virtual long JoinSession(EWbxSessionProtocolType inProtocolType, unsigned int inSessionId);
+<span class="lineNum">      51 </span>            :     virtual long LeaveSession(EWbxSessionProtocolType inProtocolType, unsigned int inSessionId);
+<span class="lineNum">      52 </span>            :         //IWbxMeetingSink
+<span class="lineNum">      53 </span>            :         virtual void OnMeetingSignalEvent(WbxEurekaSDKCommonEvent* inSignalEvent);
+<span class="lineNum">      54 </span>            :         virtual void OnMeetingDataEvent(WbxEurekaSDKCommonEvent* inDataEvent);
+<span class="lineNum">      55 </span>            :         void OnTimeout(bool isOneSecond=true);
+<span class="lineNum">      56 </span>            :         void OnPliTrigger(WbxSDKEurekaRtpDataEvent* inEvent);
+<span class="lineNum">      57 </span>            :         bool IsMeetingLive()const { return (nullptr != m_meetingInstance);}
+<span class="lineNum">      58 </span>            :     void AddSessionType(const std::string&amp; inCspSessionType);
+<span class="lineNum">      59 </span>            :     void RemoveSessionType(const std::string&amp; inCspSessionType);
+<span class="lineNum">      60 </span>            :     void OnNbrSessionPause();
+<span class="lineNum">      61 </span>            :         //webex-148259,when edonus failover, should resend Idr
+<span class="lineNum">      62 </span>            :         void OnOpenCmeSendonlySession();
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : private:
+<span class="lineNum">      65 </span>            :         bool ProcessMeetingSessionStatus(EWbxSessionProtocolType inProtocolType, unsigned int inSessionId, EWbxMeeingSessionStatus inStatus);
+<span class="lineNum">      66 </span>            :         bool ProcessPdSessionData(WbxSDKEurekaRtpDataEvent* inFrame);
+<span class="lineNum">      67 </span>            :         bool CreatePdSession();
+<span class="lineNum">      68 </span>            :     void ClosePdSession();
+<span class="lineNum">      69 </span>            :         void SendPdSessionStatus(EWbxMeeingSessionStatus inStatus);
+<span class="lineNum">      70 </span>            :         bool HaveSession(const std::string&amp; inCspSessionType) const;
+<span class="lineNum">      71 </span><span class="lineCov">          1 :         bool IsDocSwitchToMeetingInfo(unsigned char inAction, unsigned int inDocId)const { return (WBX_PD_ACTION_SWITCHTO == inAction) &amp;&amp; (WBX_PD_MEETING_INFO_DOC_ID == inDocId);}</span>
+<span class="lineNum">      72 </span><span class="lineCov">          1 :         bool IsKeyFrame(unsigned int inFrameType)const { return (WBX_H264_DATA_TYPE_KEY_FRAME == inFrameType);}</span>
+<span class="lineNum">      73 </span>            :         bool IsPdSessionOpen()const { return m_pdSessionOpen;}
+<span class="lineNum">      74 </span>            :         bool IsPdSessionCreate()const { return m_pdSessionCreate;}
+<span class="lineNum">      75 </span>            :         bool IsAsSessionCreate()const { return m_asSessionCreate;}
+<span class="lineNum">      76 </span>            :         const ConfIdType&amp; GetConferenceId()const { return m_confId;}
+<span class="lineNum">      77 </span>            :         
+<span class="lineNum">      78 </span>            : private:
+<span class="lineNum">      79 </span>            :         ConfIdType m_confId;
+<span class="lineNum">      80 </span>            :         uint32_t m_pdSessionId = 0;
+<span class="lineNum">      81 </span>            :         bool m_pdSessionOpen = false;
+<span class="lineNum">      82 </span>            :         bool m_pdSessionCreate = false;
+<span class="lineNum">      83 </span>            :         bool m_asSessionCreate = false;
+<span class="lineNum">      84 </span>            :         IWbxMeetingSink* m_sink = nullptr;
+<span class="lineNum">      85 </span>            :         IWbxMeeting* m_meetingInstance = nullptr;
+<span class="lineNum">      86 </span>            :         CNtgPliTrigger m_pliTrigger;
+<span class="lineNum">      87 </span>            :     std::set&lt;std::string&gt; m_cspSessionTypes;
+<span class="lineNum">      88 </span>            : };
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

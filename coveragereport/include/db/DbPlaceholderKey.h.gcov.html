@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/db/DbPlaceholderKey.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/db</a> - DbPlaceholderKey.h<span style="font-size: 80%;"> (source / <a href="DbPlaceholderKey.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryMed">79.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef DB_PLACEHOLDER_KEY_H</a>
+<span class="lineNum">       2 </span>            : #define DB_PLACEHOLDER_KEY_H
+<span class="lineNum">       3 </span>            : #include&lt;vector&gt;
+<span class="lineNum">       4 </span>            : #include&lt;memory&gt;
+<span class="lineNum">       5 </span>            : #include&lt;string&gt;
+<span class="lineNum">       6 </span>            : namespace oracle
+<span class="lineNum">       7 </span>            : {
+<span class="lineNum">       8 </span>            :     namespace occi
+<span class="lineNum">       9 </span>            :     {
+<span class="lineNum">      10 </span>            :         class Statement;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :     }
+<span class="lineNum">      13 </span>            : }
+<span class="lineNum">      14 </span>            : using DbStatement=oracle::occi::Statement;
+<span class="lineNum">      15 </span>            : class IDbPlaceholderKey;
+<span class="lineNum">      16 </span>            : using DbPlaceholderKeySharedPtr = std::shared_ptr&lt;IDbPlaceholderKey&gt;;
+<span class="lineNum">      17 </span><span class="lineCov">        390 : class  IDbPlaceholderKey</span>
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span>            : public:
+<span class="lineNum">      20 </span>            :     virtual void SetPlaceholderKey(DbStatement* inStatement,uint  inParamIndex)=0;
+<span class="lineNum">      21 </span>            :     virtual void ToString(std::string&amp; outStr) = 0;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :     template&lt;typename T&gt;
+<span class="lineNum">      24 </span>            :     static DbPlaceholderKeySharedPtr CreateDbPlaceholderKey(const T&amp; inValue);
+<span class="lineNum">      25 </span>            : };
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">        343 : class CDbPlaceholderKeyString : public  IDbPlaceholderKey</span>
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span>            : using Parrent=IDbPlaceholderKey;
+<span class="lineNum">      30 </span>            : public:
+<span class="lineNum">      31 </span>            :     CDbPlaceholderKeyString(const std::string&amp; inValue)
+<span class="lineNum">      32 </span>            :     : Parrent()
+<span class="lineNum">      33 </span><span class="lineCov">        686 :     , m_value(inValue){}</span>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :     virtual void SetPlaceholderKey(DbStatement* inStatement,uint  inParamIndex) override;
+<span class="lineNum">      36 </span>            :     virtual void ToString(std::string&amp; outStr) override;
+<span class="lineNum">      37 </span>            : private:
+<span class="lineNum">      38 </span>            :     std::string  m_value;
+<span class="lineNum">      39 </span>            : };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : class CDbPlaceholderKeyInt : public  IDbPlaceholderKey
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span>            : using Parrent=IDbPlaceholderKey;
+<span class="lineNum">      44 </span>            : public:
+<span class="lineNum">      45 </span>            :     CDbPlaceholderKeyInt(int inValue)
+<span class="lineNum">      46 </span>            :     : Parrent()
+<span class="lineNum">      47 </span><span class="lineCov">         76 :     , m_value(inValue){}</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :     virtual void SetPlaceholderKey(DbStatement* inStatement,uint  inParamIndex) override;
+<span class="lineNum">      50 </span>            :     virtual void ToString(std::string&amp; outStr) override;
+<span class="lineNum">      51 </span>            : private:
+<span class="lineNum">      52 </span>            :     int  m_value;
+<span class="lineNum">      53 </span>            : };
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : class CDbPlaceholderKeyUInt : public  IDbPlaceholderKey
+<span class="lineNum">      56 </span>            : {
+<span class="lineNum">      57 </span>            : using Parrent=IDbPlaceholderKey;
+<span class="lineNum">      58 </span>            : public:
+<span class="lineNum">      59 </span>            :     CDbPlaceholderKeyUInt(uint inValue)
+<span class="lineNum">      60 </span>            :     : Parrent()
+<span class="lineNum">      61 </span><span class="lineCov">         18 :     , m_value(inValue){}</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :     virtual void SetPlaceholderKey(DbStatement* inStatement,uint  inParamIndex) override;
+<span class="lineNum">      64 </span>            :     virtual void ToString(std::string&amp; outStr) override;
+<span class="lineNum">      65 </span>            : private:
+<span class="lineNum">      66 </span>            :     uint  m_value;
+<span class="lineNum">      67 </span>            : };
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : class CDbPlaceholderKeyDouble  : public  IDbPlaceholderKey
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span>            : using Parrent=IDbPlaceholderKey;
+<span class="lineNum">      73 </span>            : public:
+<span class="lineNum">      74 </span>            :     CDbPlaceholderKeyDouble(double inValue)
+<span class="lineNum">      75 </span>            :     : Parrent()
+<span class="lineNum">      76 </span>            :     , m_value(inValue){}
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :     virtual void SetPlaceholderKey(DbStatement* inStatement,uint  inParamIndex) override;
+<span class="lineNum">      79 </span>            :     virtual void ToString(std::string&amp; outStr) override;
+<span class="lineNum">      80 </span>            : private:
+<span class="lineNum">      81 </span>            :     double  m_value;
+<span class="lineNum">      82 </span>            : };
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : //not support unSpecialized version
+<span class="lineNum">      85 </span>            : template&lt;typename T&gt; 
+<span class="lineNum">      86 </span>            : inline DbPlaceholderKeySharedPtr IDbPlaceholderKey::CreateDbPlaceholderKey(const T&amp; inValue)
+<span class="lineNum">      87 </span>            : {
+<span class="lineNum">      88 </span>            :     return nullptr;
+<span class="lineNum">      89 </span>            : }
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : template&lt;&gt; 
+<a name="92"><span class="lineNum">      92 </span>            : inline  DbPlaceholderKeySharedPtr IDbPlaceholderKey::CreateDbPlaceholderKey(const int&amp; inValue)</a>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineCov">         38 :     return std::make_shared&lt;CDbPlaceholderKeyInt&gt;(inValue);</span>
+<span class="lineNum">      95 </span>            : }
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : template&lt;&gt; 
+<a name="98"><span class="lineNum">      98 </span>            : inline  DbPlaceholderKeySharedPtr IDbPlaceholderKey::CreateDbPlaceholderKey(const uint&amp; inValue)</a>
+<span class="lineNum">      99 </span>            : {
+<span class="lineNum">     100 </span><span class="lineCov">          9 :     return std::make_shared&lt;CDbPlaceholderKeyUInt&gt;(inValue);</span>
+<span class="lineNum">     101 </span>            : }
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : template&lt;&gt; 
+<a name="105"><span class="lineNum">     105 </span>            : inline DbPlaceholderKeySharedPtr IDbPlaceholderKey::CreateDbPlaceholderKey(const std::string&amp; inValue)</a>
+<span class="lineNum">     106 </span>            : {
+<span class="lineNum">     107 </span><span class="lineCov">        343 :     return std::make_shared&lt;CDbPlaceholderKeyString&gt;(inValue);</span>
+<span class="lineNum">     108 </span>            : }
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : template&lt;&gt; 
+<span class="lineNum">     111 </span>            : inline DbPlaceholderKeySharedPtr IDbPlaceholderKey::CreateDbPlaceholderKey(const double&amp; inValue)
+<span class="lineNum">     112 </span>            : {
+<span class="lineNum">     113 </span>            :     return std::make_shared&lt;CDbPlaceholderKeyDouble&gt;(inValue);
+<span class="lineNum">     114 </span>            : }
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : class CDbPlaceholderKeyManager;
+<span class="lineNum">     118 </span>            : using DbPlaceholderKeyManagerSharedPtr  =  std::shared_ptr&lt;CDbPlaceholderKeyManager&gt;;
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">        112 : class CDbPlaceholderKeyManager</span>
+<span class="lineNum">     121 </span>            : {
+<span class="lineNum">     122 </span>            : public:
+<span class="lineNum">     123 </span><span class="lineCov">        123 :     CDbPlaceholderKeyManager(){};</span>
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :     static DbPlaceholderKeyManagerSharedPtr CreatePlaceholder()
+<span class="lineNum">     126 </span>            :     {
+<span class="lineNum">     127 </span>            :         return std::make_shared&lt;CDbPlaceholderKeyManager&gt;();
+<span class="lineNum">     128 </span>            :     }
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineCov">        343 :     void AddPlaceholderKeys(const std::string&amp; inValue)</span>
+<span class="lineNum">     131 </span>            :     {
+<span class="lineNum">     132 </span>            :         DbPlaceholderKeySharedPtr pkeyPtr = IDbPlaceholderKey::CreateDbPlaceholderKey(inValue);
+<span class="lineNum">     133 </span>            :         //assert;
+<span class="lineNum">     134 </span><span class="lineCov">        343 :         m_placeholderKeys.emplace_back(pkeyPtr);</span>
+<span class="lineNum">     135 </span><span class="lineCov">        343 :     }</span>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">         38 :     void AddPlaceholderKeys(int inValue)</span>
+<span class="lineNum">     138 </span>            :     {
+<span class="lineNum">     139 </span>            :         DbPlaceholderKeySharedPtr pkeyPtr = IDbPlaceholderKey::CreateDbPlaceholderKey(inValue);
+<span class="lineNum">     140 </span>            :         //assert;
+<span class="lineNum">     141 </span><span class="lineCov">         38 :         m_placeholderKeys.emplace_back(pkeyPtr);</span>
+<span class="lineNum">     142 </span><span class="lineCov">         38 :     }</span>
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span><span class="lineCov">          9 :     void AddPlaceholderKeys(uint inValue)</span>
+<span class="lineNum">     145 </span>            :     {
+<span class="lineNum">     146 </span>            :         DbPlaceholderKeySharedPtr pkeyPtr = IDbPlaceholderKey::CreateDbPlaceholderKey(inValue);
+<span class="lineNum">     147 </span>            :         //assert;
+<span class="lineNum">     148 </span><span class="lineCov">          9 :         m_placeholderKeys.emplace_back(pkeyPtr);</span>
+<span class="lineNum">     149 </span><span class="lineCov">          9 :     }</span>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :     void AddPlaceholderKeys(double inValue)
+<span class="lineNum">     152 </span>            :     {
+<span class="lineNum">     153 </span>            :         DbPlaceholderKeySharedPtr pkeyPtr = IDbPlaceholderKey::CreateDbPlaceholderKey(inValue);
+<span class="lineNum">     154 </span>            :         //assert;
+<span class="lineNum">     155 </span>            :         m_placeholderKeys.emplace_back(pkeyPtr);
+<a name="156"><span class="lineNum">     156 </span>            :     }</a>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :     void SetPlaceholderKey(DbStatement* inStatement)</span>
+<span class="lineNum">     159 </span>            :     {
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         if(inStatement  == nullptr)</span>
+<span class="lineNum">     161 </span>            :         {
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :             return;</span>
+<span class="lineNum">     163 </span>            :         }
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         for(uint i=0;i&lt;m_placeholderKeys.size();++i)</span>
+<span class="lineNum">     165 </span>            :         {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :             m_placeholderKeys[i]-&gt;SetPlaceholderKey(inStatement,i+1);</span>
+<span class="lineNum">     167 </span>            :         }
+<span class="lineNum">     168 </span>            :     }
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            :     std::string ToString() const;
+<span class="lineNum">     171 </span>            : private:
+<span class="lineNum">     172 </span>            :     std::vector&lt;DbPlaceholderKeySharedPtr&gt; m_placeholderKeys;
+<span class="lineNum">     173 </span>            : };
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : std::ostream&amp; operator &lt;&lt; (std::ostream&amp; inOs, const CDbPlaceholderKeyManager&amp; inKeys);
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : /*
+<span class="lineNum">     180 </span>            : template&lt;typename T&gt;
+<span class="lineNum">     181 </span>            : class CDbPlaceholderKeyImpl
+<span class="lineNum">     182 </span>            : {
+<span class="lineNum">     183 </span>            :     using Value=T;
+<span class="lineNum">     184 </span>            : public:
+<span class="lineNum">     185 </span>            :     //CDbPlaceholderKey(int* value);
+<span class="lineNum">     186 </span>            :     //CDbPlaceholderKey(std::string* value);
+<span class="lineNum">     187 </span>            :     CDbPlaceholderKeyImpl(const Value&amp; inValue)
+<span class="lineNum">     188 </span>            :     :m_value(inValue)
+<span class="lineNum">     189 </span>            :     {}
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :     void SetPlaceholderKey(uint  inParamIndex,DbStatement* inStatement)
+<span class="lineNum">     192 </span>            :     {
+<span class="lineNum">     193 </span>            :         return SetPlaceholderKeyToStatement(inStatement,inParamIndex,m_value);
+<span class="lineNum">     194 </span>            :         //return SetPlaceholderKeyImpl&lt;T&gt;(inParamIndex,inStatement);
+<span class="lineNum">     195 </span>            :     }
+<span class="lineNum">     196 </span>            : private:
+<span class="lineNum">     197 </span>            :     Value m_value;
+<span class="lineNum">     198 </span>            : };
+<span class="lineNum">     199 </span>            : */
+<span class="lineNum">     200 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

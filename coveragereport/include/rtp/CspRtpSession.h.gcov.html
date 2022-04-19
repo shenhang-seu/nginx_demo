@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/rtp/CspRtpSession.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/rtp</a> - CspRtpSession.h<span style="font-size: 80%;"> (source / <a href="CspRtpSession.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CSP_RTP_SESSION_H</a>
+<span class="lineNum">       2 </span>            : #define CSP_RTP_SESSION_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;WbxMMPSDKDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;WmeRtpSessionInterface.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;SdpUtilities.h&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      10 </span>            : #include &lt;list&gt;
+<span class="lineNum">      11 </span>            : #include &lt;map&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : // #define CSP_DUMP_NAL_DATA
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : class ICspJitterBuffer;
+<span class="lineNum">      16 </span>            : typedef std::shared_ptr&lt;ICspJitterBuffer&gt; CspJitterBufferSharedPtr;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">         66 : class ICspRtpSessionSink</span>
+<a name="19"><span class="lineNum">      19 </span>            : {</a>
+<span class="lineNum">      20 </span>            : public:
+<span class="lineNum">      21 </span><span class="lineCov">         66 :         virtual ~ICspRtpSessionSink() {}</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :     virtual void OnSubscribe(EMediaSessionType inType, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount) = 0;
+<span class="lineNum">      24 </span>            :     virtual void OnAnnounce(EMediaSessionType inType, const WBXSubsessionChannelAnnounce&amp; inAnnounce) = 0;
+<span class="lineNum">      25 </span>            :         virtual void OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel) = 0;
+<span class="lineNum">      26 </span>            :         virtual void OnOutputRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcpPacket) = 0;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :         virtual void OnOutputRtpPacket(EMediaSessionType inType, const std::string&amp; inRtpPacket) = 0;
+<span class="lineNum">      29 </span>            :         virtual void OnOutputAudioFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, const std::string&amp; inAudioFrame) = 0;
+<span class="lineNum">      30 </span>            :         virtual void OnOutputVideoFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, bool inIsIdr, const std::string&amp; inVideoFrame) = 0;
+<span class="lineNum">      31 </span>            :         virtual void OnRtpPacketLoss(uint32_t inSsrc, uint32_t inLossCount) = 0;
+<span class="lineNum">      32 </span>            : };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : typedef std::map&lt;IWMEMediaRtpChannel*, WMESourceKey&gt; CspRtpChannelMap;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : class CCspRtpSession: public std::enable_shared_from_this&lt;CCspRtpSession&gt;
+<span class="lineNum">      37 </span>            :                             , public IWmeRtcpHandlerSink
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            : public:
+<span class="lineNum">      40 </span>            :         CCspRtpSession(EMediaSessionType inType, boost::asio::io_service* inIoService, bool inCallback2MmpSdkThread = false, bool inEnableMultistream = true);
+<span class="lineNum">      41 </span>            :         virtual ~CCspRtpSession();
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :         bool Initialize(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp, ICspRtpSessionSink* inSink);
+<span class="lineNum">      44 </span>            :         void Release();
+<span class="lineNum">      45 </span>            :     Json::Value ToJson() const;
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :     bool Subscribe(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">      48 </span>            :     bool Announce(const WBXSubsessionChannelAnnounce&amp; inRnnounce, bool inNeedAck);
+<span class="lineNum">      49 </span>            :     void PictureLossIndication(uint32_t inSsrc);
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :         void InputRtpPacket(const std::string&amp; inRtpPacket);
+<span class="lineNum">      52 </span>            :         void InputRtcpPacket(const std::string&amp; inRtcpPacket);
+<span class="lineNum">      53 </span>            :         
+<span class="lineNum">      54 </span>            :         IWMEMediaRtpChannel* CreateRtpChannel(uint32_t inCsi, const WMERtpExtend&amp; inRtpExtend);
+<span class="lineNum">      55 </span>            :     void RemoveRtpChannel(const IWMEMediaRtpChannel* inRtpChannel);
+<span class="lineNum">      56 </span>            :         //media statistics
+<span class="lineNum">      57 </span>            :         void GetSessionStatistics(MediaOneSecondSample* outSendSample, MediaOneSecondSample* outRecvSample);
+<span class="lineNum">      58 </span>            :         uint32_t GetRtpCount()const{ return m_rtpCount;}
+<span class="lineNum">      59 </span>            :         uint32_t GetRtcpSsrc()const{ return m_rtcpSsrc;}
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : public:
+<span class="lineNum">      62 </span>            :         //IWmeRtcpHandlerSink
+<span class="lineNum">      63 </span>            :         virtual void OnPictureLossIndication(uint32_t inMediaSourceId, uint32_t inStreamId, WBXPLIInfo* inInfo);
+<span class="lineNum">      64 </span>            :     virtual void OnAnnounce(const WBXSubsessionChannelAnnounce&amp; inAnnounce);
+<span class="lineNum">      65 </span>            :     virtual void OnSubscribe(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">      66 </span>            :         
+<span class="lineNum">      67 </span>            :         void OnRtpPacketLoss(uint32_t inSsrc, uint32_t inLossCount);
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         static const char* GetMediaTypeString(EMediaSessionType inMediaType);
+<span class="lineNum">      70 </span>            :         static SeqIdType GetSeqIdFromRtpPacket(const std::string&amp; inRtpPacket);
+<span class="lineNum">      71 </span>            :         static uint32_t GetSsrcFromRtpPacket(const std::string&amp; inRtpPacket);
+<span class="lineNum">      72 </span>            :         static uint32_t GetSsrcFromRtcpPacket(const std::string&amp; inRtcpPacket);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : private:
+<span class="lineNum">      75 </span>            :         void OnMediaRtpData(void* inData, unsigned int inLen);
+<span class="lineNum">      76 </span>            :     void OnMediaRtcpData(void* inData, unsigned int inLen);
+<span class="lineNum">      77 </span>            :         void OnMediaAudioNal(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, uint32_t inSampleTimestamp, bool inIsRecovered, const std::string&amp; inNal, uint32_t inSeqId);
+<span class="lineNum">      78 </span>            :         void OnMediaVideoNal(unsigned int inSsrc, uint32_t inTimestamp, uint32_t inSampleTimestamp, bool inIsRecovered, bool inIsIdr, bool inIsEnd, const std::string&amp; inNal, uint32_t inSeqId, uint32_t inCount);
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         IWMEMediaRtpChannel* CreateRtpChannel(EWMEMediaDirection inDir, const WMESourceKey&amp; inSourceKey);
+<span class="lineNum">      81 </span>            :         
+<span class="lineNum">      82 </span>            :         bool GetSrtpSendPara(WBXSecurityConfiguration&amp; outPara);
+<span class="lineNum">      83 </span>            :         bool GetSrtpRecvPara(WBXSecurityConfiguration&amp; outPara);
+<span class="lineNum">      84 </span>            :         bool GetSrtpPara(const SdpMediaAttribute&amp; inSdp, WBXSecurityConfiguration&amp; outPara);
+<span class="lineNum">      85 </span>            :         
+<span class="lineNum">      86 </span>            :         EWBXStreamDirection ConvertSdpToWbxDirection(unsigned int inDir);
+<span class="lineNum">      87 </span>            :         EWBXSCRRequestPolicyType ConvertSdpToWbxPolicy(const std::string&amp; inPolicy);
+<span class="lineNum">      88 </span>            :         ESdpMediaSessionType GetSdpSessionType();
+<span class="lineNum">      89 </span>            :         EWBXStreamDirection GetSessionStatus(const std::string&amp; inOfferSdp);
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">          1 :         uint32_t GetSsrcId(){ return (m_ssrcId++);}</span>
+<span class="lineNum">      92 </span>            :         void BufferRtpPacket(const std::string&amp; inRtpPacket);
+<span class="lineNum">      93 </span>            :         bool InputBufferedRtpPackets();
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : private:
+<span class="lineNum">      96 </span>            :         bool m_stopFlag;
+<span class="lineNum">      97 </span>            :         bool m_release;
+<span class="lineNum">      98 </span>            :         EMediaSessionType m_mediaType;
+<span class="lineNum">      99 </span>            :         uint32_t m_ssrcId;
+<span class="lineNum">     100 </span>            :         
+<span class="lineNum">     101 </span>            :         boost::asio::io_service* m_ioService;
+<span class="lineNum">     102 </span>            :         bool m_callback2MmpSdkThread;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :         //for nal to rtp
+<span class="lineNum">     105 </span>            :         CspRtpChannelMap m_rtpChannelMap;
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :         ICspRtpSessionSink* m_sink;
+<span class="lineNum">     108 </span>            :         std::shared_ptr&lt;IWMERtpSession&gt; m_rtpSession;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         SdpMediaAttribute m_offerSdp;
+<span class="lineNum">     111 </span>            :     SdpMediaAttribute m_answerSdp;
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :         CspJitterBufferSharedPtr m_jitterBuffer;
+<span class="lineNum">     114 </span>            :     bool m_hasRtcpHandlerReceivedSrPacket;
+<span class="lineNum">     115 </span>            :     std::string m_firstSrPacket;
+<span class="lineNum">     116 </span>            :         std::list&lt;std::string&gt; m_inputRtpBuffer;
+<span class="lineNum">     117 </span>            :         uint32_t m_numOfBufferedRtpPacketToInput = 1; // Slowly start inputing buffered RTP packets in order to reduce the issue of generating 0-timestamp NALs.
+<span class="lineNum">     118 </span>            :     //multistream flag
+<span class="lineNum">     119 </span>            :         bool m_enableMultistream;
+<span class="lineNum">     120 </span>            : #ifdef CSP_DUMP_NAL_DATA
+<span class="lineNum">     121 </span>            :                 FILE* m_file;
+<span class="lineNum">     122 </span>            :         FILE* m_audioFile;
+<span class="lineNum">     123 </span>            : #endif
+<span class="lineNum">     124 </span>            :     uint32_t m_rtpCount;
+<span class="lineNum">     125 </span>            :     uint32_t m_rtcpCount;
+<span class="lineNum">     126 </span>            :     uint32_t m_nalCount;
+<span class="lineNum">     127 </span>            :         uint32_t m_rtcpSsrc;
+<span class="lineNum">     128 </span>            : };
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

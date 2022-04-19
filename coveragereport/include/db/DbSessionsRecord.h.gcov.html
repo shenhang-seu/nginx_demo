@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/db/DbSessionsRecord.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/db</a> - DbSessionsRecord.h<span style="font-size: 80%;"> (source / <a href="DbSessionsRecord.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntryLo">15.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntryLo">17.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * DbSessionsRecord.h
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  *  Created on: 2017/8/14
+<span class="lineNum">       5 </span>            :  *      Author: xinxzhu
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #ifndef SRC_INCLUDE_DB_DBSESSIONSRECORD_H_
+<span class="lineNum">       9 </span>            : #define SRC_INCLUDE_DB_DBSESSIONSRECORD_H_
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DbRecord.h&quot;
+<span class="lineNum">      12 </span>            : #include &lt;boost/optional.hpp&gt;
+<span class="lineNum">      13 </span>            : 
+<a name="14"><span class="lineNum">      14 </span>            : class CDbSessionsRecord;</a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 : class CDbSessionsPrimKey : public IDbKey</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span>            : public:
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :     CDbSessionsPrimKey(){ };</span>
+<span class="lineNum">      20 </span>            :     CDbSessionsPrimKey(const std::string&amp; inSessId)
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">          2 :     :m_sessId(inSessId){};</span></a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const{</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;SESSIONID&quot;, EDbValueType::STRING, (void*)&amp;m_sessId, true);</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 :         return outMetadata;</span>
+<span class="lineNum">      26 </span>            :     };
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :     const std::string&amp; SessionID() const {return m_sessId;};
+<span class="lineNum">      29 </span>            :     void SetSessionID(const std::string&amp; inId) {m_sessId = inId;};
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : private:
+<span class="lineNum">      32 </span>            :     std::string m_sessId;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :     friend class CDbSessionsRecord;
+<a name="35"><span class="lineNum">      35 </span>            : };</a>
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 : class CDbSessionsConfIDTypeKey : public IDbKey</span>
+<span class="lineNum">      38 </span>            : {
+<a name="39"><span class="lineNum">      39 </span>            : public:</a>
+<span class="lineNum">      40 </span>            :     CDbSessionsConfIDTypeKey(){ };
+<span class="lineNum">      41 </span><span class="lineCov">          1 :     CDbSessionsConfIDTypeKey(const std::string&amp; inConfId, const std::string&amp; inType)</span>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          2 :     :m_confId(inConfId), m_type(inType){};</span></a>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const{</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;CONFERENCEID&quot;, EDbValueType::STRING, (void*)&amp;m_confId);</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;SESSIONTYPE&quot;, EDbValueType::STRING, (void*)&amp;m_type);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         return outMetadata;</span>
+<span class="lineNum">      48 </span>            :     };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :     std::string m_confId;
+<span class="lineNum">      51 </span>            :     std::string m_type;
+<a name="52"><span class="lineNum">      52 </span>            : };</a>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">          4 : class CDbSessionsStateKey : public IDbKey</span>
+<span class="lineNum">      55 </span>            : {
+<a name="56"><span class="lineNum">      56 </span>            : public:</a>
+<span class="lineNum">      57 </span>            :     CDbSessionsStateKey(){ };
+<span class="lineNum">      58 </span><span class="lineCov">          1 :     CDbSessionsStateKey(const std::string&amp; inState,const std::string&amp; inPoolName)</span>
+<span class="lineNum">      59 </span>            :     :m_state(inState)
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          2 :     ,m_poolName(inPoolName){};</span></a>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const{</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;STATE&quot;, EDbValueType::STRING, (void*)&amp;m_state);</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;POOLNAME&quot;,EDbValueType::STRING, (void*)&amp;m_poolName);</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :         return outMetadata;</span>
+<span class="lineNum">      66 </span>            :     };
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :     const std::string&amp; State() const {return m_state;};
+<span class="lineNum">      69 </span>            :     void SetState(const std::string&amp; inState){m_state = inState;};
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     const std::string&amp; PoolName() const {return m_poolName;};
+<span class="lineNum">      72 </span>            :     void SetPoolName(const std::string &amp;inPoolName) {m_poolName = inPoolName;};
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : private:
+<span class="lineNum">      75 </span>            :     std::string m_state;
+<span class="lineNum">      76 </span>            :     std::string m_poolName;
+<span class="lineNum">      77 </span>            : };
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 : class CDbSessionsRecord : public IDbRecord</span>
+<span class="lineNum">      81 </span>            : {
+<span class="lineNum">      82 </span>            : public:
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :     CDbSessionsRecord():m_stopReason(0), m_sequence(1),m_createTime(boost::posix_time::second_clock::universal_time()),</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :     m_modifyTime(m_createTime){};</span>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :     CDbSessionsRecord(const std::string&amp; inConfId, const std::string&amp; inType, const std::string&amp; inSessId,const std::string&amp; inLocation, const std::string&amp; inCallbackUrl,
+<span class="lineNum">      87 </span>            :                       const std::string&amp; inExtendInfo, const std::string&amp; inState, int inStopReason,const std::string&amp; inPoolName,
+<span class="lineNum">      88 </span>            :                       const boost::posix_time::ptime&amp; inStart, const boost::posix_time::ptime&amp; inStop, int inSequence,
+<span class="lineNum">      89 </span>            :                       const boost::posix_time::ptime&amp; inCreate, const boost::posix_time::ptime&amp; inModify)
+<span class="lineNum">      90 </span>            :     :m_key(inSessId), m_sessType(inType), m_location(inLocation), m_confId(inConfId), m_callbackUrl(inCallbackUrl),m_extendInfo(inExtendInfo),m_state(inState),
+<span class="lineNum">      91 </span>            :      m_stopReason(inStopReason),m_poolName(inPoolName),m_startTime(inStart),m_stopTime(inStop), m_sequence(inSequence), m_createTime(inCreate), m_modifyTime(inModify)
+<a name="92"><span class="lineNum">      92 </span>            :     {};</a>
+<span class="lineNum">      93 </span>            : 
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :     virtual const CDbSessionsPrimKey&amp; GetPrimaryKey() const {return m_key;};</span></a>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :     virtual void MapRowToRecord(IDbRow* inRow, int inStartIndex=1){</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         if (inRow){</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :             m_key.m_sessId = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :             m_sessType = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :             m_location = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :             m_confId = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :             m_callbackUrl = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :             m_extendInfo = inRow-&gt;GetCLob(inStartIndex++);</span>
+<span class="lineNum">     104 </span>            : //            m_topOtter = inRow-&gt;GetString(7);
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :             m_stopReason = inRow-&gt;GetInt(inStartIndex++);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :             m_startTime = inRow-&gt;GetDateTime(inStartIndex++);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :             m_stopTime = inRow-&gt;GetDateTime(inStartIndex++);</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :             m_state = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :             m_sequence = inRow-&gt;GetInt(inStartIndex++);</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :             m_createTime = inRow-&gt;GetDateTime(inStartIndex++);</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :             m_modifyTime = inRow-&gt;GetDateTime(inStartIndex++);</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :             m_poolName = inRow-&gt;GetString(inStartIndex++);</span>
+<span class="lineNum">     113 </span>            :         }
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 :     };</span></a>
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const{</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         m_key.GetMetadata(outMetadata);</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;SESSIONTYPE&quot;, EDbValueType::STRING, (void*)&amp;m_sessType, true);</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;LOCATION&quot;, EDbValueType::STRING, (void*)&amp;m_location);</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;CONFERENCEID&quot;, EDbValueType::STRING, (void*)&amp;m_confId, true);</span>
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;CALLBACKURL&quot;, EDbValueType::STRING, (void*)&amp;m_callbackUrl);</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;EXTENDINFO&quot;, EDbValueType::STRING, (void*)&amp;m_extendInfo);</span>
+<span class="lineNum">     123 </span>            : //        outMetadata.emplace_back(&quot;TOPOTTER&quot;, EDbValueType::STRING, (void*)&amp;m_topOtter);
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;STOPREASON&quot;, EDbValueType::INT, (void*)&amp;m_stopReason);</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;STARTTIME&quot;, EDbValueType::DATE, (void*)m_startTime.get_ptr());</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;STOPTIME&quot;, EDbValueType::DATE, (void*)m_stopTime.get_ptr());</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;STATE&quot;, EDbValueType::STRING, (void*)&amp;m_state);</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;SEQUENCE&quot;, EDbValueType::INT, (void*)&amp;m_sequence);</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         outMetadata.emplace_back(&quot;POOLNAME&quot; , EDbValueType::STRING, (void*)&amp;m_poolName);</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         return outMetadata;</span>
+<span class="lineNum">     131 </span>            :     };
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineCov">          1 :     const std::string&amp; SessionID() const {return m_key.SessionID();};</span>
+<span class="lineNum">     134 </span>            :     void SetSessionID(const std::string&amp; inId) {m_key.SetSessionID(inId);};
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :     const std::string&amp; SessionType() const {return m_sessType;};
+<span class="lineNum">     137 </span>            :     void SetSessionType(const std::string&amp; inSessType) {m_sessType = inSessType;};
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :     const std::string&amp; Location() const {return m_location;};
+<span class="lineNum">     140 </span>            :     void SetLocation(const std::string&amp; inLocation) {m_location = inLocation;};
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            :     const std::string&amp; ConfID() const {return m_confId;};
+<span class="lineNum">     143 </span>            :     void SetConfID(const std::string&amp; inConfId){m_confId = inConfId;};
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :     const std::string&amp; CallbackUrl() const {return m_callbackUrl;};
+<span class="lineNum">     146 </span>            :     void SetCallbackUrl(const std::string&amp; inCallbackUrl){m_callbackUrl = inCallbackUrl;};
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :     const std::string&amp; ExtendInfo() const {return m_extendInfo;};
+<span class="lineNum">     149 </span>            :     void SetExendInfo(const std::string&amp; inInfo){m_extendInfo = inInfo;}
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            : //    const std::string&amp; TopOtter(){return m_topOtter;};
+<span class="lineNum">     152 </span>            : //    void SetTopOtter(const std::string&amp; inOtter){m_topOtter = inOtter;};
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            :     const std::string&amp; State() const {return m_state;};
+<span class="lineNum">     155 </span>            :     void SetState(const std::string&amp; inState) {m_state = inState;};
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            :     int StopReason(){return m_stopReason;};
+<span class="lineNum">     158 </span>            :     void SetStopReason(int inStopReason){m_stopReason = inStopReason;};
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :     const std::string&amp; PoolName() const {return m_poolName;};
+<span class="lineNum">     161 </span>            :     void SetPoolName(const std::string &amp;inPoolName) {m_poolName = inPoolName;};
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineCov">          7 :     boost::posix_time::ptime StartTime() const {return m_startTime.value_or(boost::posix_time::ptime());};</span>
+<span class="lineNum">     164 </span>            :     void SetStartTime(const boost::posix_time::ptime&amp; inStartTime){m_startTime = inStartTime;};
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">          7 :     boost::posix_time::ptime StopTime() const {return m_stopTime.value_or(boost::posix_time::ptime());};</span>
+<span class="lineNum">     167 </span>            :     void SetStopTime(const boost::posix_time::ptime&amp; inStopTime){m_stopTime = inStopTime;};
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     int Sequence() {return m_sequence;};
+<span class="lineNum">     170 </span>            :     void SetSequence(int inSequence) {m_sequence = inSequence;};
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :     const boost::posix_time::ptime&amp; CreateTime() const {return m_createTime;};
+<span class="lineNum">     173 </span>            :     void SetCreateTime(const boost::posix_time::ptime&amp; inCreateTime){m_createTime = inCreateTime;};
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :     const boost::posix_time::ptime&amp; ModifyTime() const {return m_modifyTime;};
+<span class="lineNum">     176 </span>            :     void SetModifyTime(const boost::posix_time::ptime&amp; inModifyTime){m_modifyTime = inModifyTime;};
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : private:
+<span class="lineNum">     179 </span>            :     CDbSessionsPrimKey m_key;
+<span class="lineNum">     180 </span>            :     std::string m_sessType;
+<span class="lineNum">     181 </span>            :     std::string m_location;
+<span class="lineNum">     182 </span>            :     std::string m_confId;
+<span class="lineNum">     183 </span>            :     std::string m_callbackUrl;
+<span class="lineNum">     184 </span>            :     std::string m_extendInfo;
+<span class="lineNum">     185 </span>            : //    std::string m_topOtter;
+<span class="lineNum">     186 </span>            :     std::string m_state;
+<span class="lineNum">     187 </span>            :     int m_stopReason;
+<span class="lineNum">     188 </span>            :     std::string m_poolName;
+<span class="lineNum">     189 </span>            :     boost::optional&lt;boost::posix_time::ptime&gt; m_startTime;
+<span class="lineNum">     190 </span>            :     boost::optional&lt;boost::posix_time::ptime&gt; m_stopTime;
+<span class="lineNum">     191 </span>            :     int m_sequence;
+<span class="lineNum">     192 </span>            :     boost::posix_time::ptime m_createTime;
+<span class="lineNum">     193 </span>            :     boost::posix_time::ptime m_modifyTime;
+<span class="lineNum">     194 </span>            : };
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            : #endif /* SRC_INCLUDE_DB_DBSESSIONSRECORD_H_ */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/cme/HippoMediaServiceManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/cme</a> - HippoMediaServiceManager.cpp<span style="font-size: 80%;"> (source / <a href="HippoMediaServiceManager.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoMediaServiceManager.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">         28 : CHippoMediaServiceManager::CHippoMediaServiceManager() </span>
+<span class="lineNum">       4 </span>            : {
+<span class="lineNum">       5 </span><span class="lineCov">        420 :     HIPPO_INFO_THIS(&quot;CHippoMediaServiceManager::CHippoMediaServiceManager&quot;);</span>
+<a name="6"><span class="lineNum">       6 </span><span class="lineCov">         28 : }</span></a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         56 : CHippoMediaServiceManager::~CHippoMediaServiceManager()</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span><span class="lineCov">        381 :     HIPPO_INFO_THIS(&quot;CHippoMediaServiceManager::~CHippoMediaServiceManager&quot;);</span>
+<span class="lineNum">      11 </span>            :     Release();
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">         28 : }</span></a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">         23 : void CHippoMediaServiceManager::Release()</span>
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span><span class="lineCov">         51 :     m_mediaServices.clear();</span>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineCov">         22 : bool CHippoMediaServiceManager::Initialize(const MediaServiceIdList&amp; inMediaServicesList)</span>
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span><span class="lineCov">         22 :     m_mediaServices.clear();</span>
+<span class="lineNum">      22 </span><span class="lineCov">        117 :     for(const MediaServiceIdType&amp; mediaServiceId : inMediaServicesList)</span>
+<span class="lineNum">      23 </span><span class="lineCov">         87 :         m_mediaServices.insert(std::make_pair(mediaServiceId,CHippoMediaService(mediaServiceId)));</span>
+<span class="lineNum">      24 </span><span class="lineCov">         44 :     return !m_mediaServices.empty();</span>
+<a name="25"><span class="lineNum">      25 </span>            : }</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          1 : void CHippoMediaServiceManager::AddMediaService(const MediaServiceIdType&amp; inMediaServiceId)</span>
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span><span class="lineCov">          2 :     auto iter = m_mediaServices.find(inMediaServiceId);</span>
+<span class="lineNum">      30 </span><span class="lineCov">          2 :     if(iter == m_mediaServices.end())</span>
+<span class="lineNum">      31 </span><span class="lineCov">          3 :         m_mediaServices.insert(std::make_pair(inMediaServiceId,CHippoMediaService(inMediaServiceId)));</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">          3 : void CHippoMediaServiceManager::UpdateMediaServices(const CmeGroupIdType&amp; inGroupId,const CmeOrgIdType&amp; inOrgId,const MediaServicesMap&amp; inMediaServices)</span>
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">         12 :     for(auto iter = inMediaServices.begin();iter != inMediaServices.end();++iter)</span>
+<span class="lineNum">      37 </span><span class="lineCov">         12 :         UpdateMediaServices(inGroupId,inOrgId,iter-&gt;first,iter-&gt;second);</span>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">         20 : void CHippoMediaServiceManager::UpdateMediaServices(const CmeGroupIdType&amp; inGroupId,const CmeOrgIdType&amp; inOrgId,const MediaServiceIdType&amp; inMediaServiceId,const std::vector&lt;std::string&gt;&amp; inMediaServiceList)</span>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span><span class="lineCov">         40 :     auto iter = m_mediaServices.find(inMediaServiceId);</span>
+<span class="lineNum">      43 </span><span class="lineCov">         40 :     if(iter != m_mediaServices.end())</span>
+<span class="lineNum">      44 </span><span class="lineCov">         18 :         iter-&gt;second.UpdateMediaService(inGroupId,inOrgId,inMediaServiceList);</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         20 : }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">         16 : void CHippoMediaServiceManager::GetMediaService(const MediaServiceIdType&amp; inMediaServiceId,const CmeGroupIdType&amp; inGroupId,std::vector&lt;std::string&gt;&amp; outList)</span>
+<span class="lineNum">      48 </span>            : {
+<span class="lineNum">      49 </span><span class="lineCov">         32 :     auto iter = m_mediaServices.find(inMediaServiceId);</span>
+<span class="lineNum">      50 </span><span class="lineCov">         32 :     if(iter != m_mediaServices.end())</span>
+<span class="lineNum">      51 </span><span class="lineCov">         15 :         iter-&gt;second.GetMediaService(inGroupId,outList);</span>
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">         16 : }</span></a>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">          7 : bool CHippoMediaServiceManager::IsMediaServiceIDExited(const MediaServiceIdType&amp; inMediaServiceId) const</span>
+<span class="lineNum">      55 </span>            : {
+<span class="lineNum">      56 </span><span class="lineCov">         28 :     return m_mediaServices.find(inMediaServiceId) != m_mediaServices.end();</span>
+<a name="57"><span class="lineNum">      57 </span>            : }</a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          1 : JsonValue CHippoMediaServiceManager::ToJson()</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">          1 :     JsonValue body;</span>
+<span class="lineNum">      62 </span><span class="lineCov">          6 :     for(const auto&amp; mediaService : m_mediaServices)</span>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          2 :         body[mediaService.first] = mediaService.second.ToJson();</span></a>
+<span class="lineNum">      64 </span><span class="lineCov">          1 :     return body;</span>
+<span class="lineNum">      65 </span><span class="lineCov">         18 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

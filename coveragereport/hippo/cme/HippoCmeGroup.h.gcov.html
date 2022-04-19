@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/cme/HippoCmeGroup.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/cme</a> - HippoCmeGroup.h<span style="font-size: 80%;"> (source / <a href="HippoCmeGroup.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef HIPPO_CME_GROUP_H</a>
+<span class="lineNum">       2 </span>            : #define HIPPO_CME_GROUP_H
+<span class="lineNum">       3 </span>            : #include &quot;HippoDefine.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;HippoCommonInitiator.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;HippoCmeDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;HippoCmeClient.h&quot;
+<span class="lineNum">       7 </span>            : class CHippoCmeOrg
+<span class="lineNum">       8 </span>            : {
+<span class="lineNum">       9 </span>            : public:
+<span class="lineNum">      10 </span>            :     CHippoCmeOrg(boost::asio::io_service&amp; inIoService,const CmeGroupIdType&amp; inGroupId,const CmeOrgIdType&amp; inOrgId,const GetMediaServiceUrlHandler&amp; inGetMediaServiceUrlHandler);
+<span class="lineNum">      11 </span>            :     ~CHippoCmeOrg();
+<span class="lineNum">      12 </span>            :     void RequestMediaService();
+<span class="lineNum">      13 </span>            :     void InitlizeMediaService(const MediaServiceIdList&amp; inMediaServiceList,const MediaServiceUpdateCallback&amp; inCallback);
+<span class="lineNum">      14 </span>            :     const CmeOrgIdType&amp; GetOrgId() const {return m_orgId;}
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : private:
+<span class="lineNum">      17 </span>            :     boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">      18 </span>            :     CmeGroupIdType m_groupId;
+<span class="lineNum">      19 </span>            :     std::string m_orgId;
+<span class="lineNum">      20 </span>            :     GetMediaServiceUrlHandler m_getMediaServiceUrlHandler;
+<span class="lineNum">      21 </span>            :     //std::map&lt;MediaServiceIdType,HippoCmeClientSharedPtr&gt; m_clients;
+<span class="lineNum">      22 </span>            :     HippoCmeClientSharedPtr m_client;
+<span class="lineNum">      23 </span>            : };
+<span class="lineNum">      24 </span>            : 
+<a name="25"><span class="lineNum">      25 </span>            : typedef std::shared_ptr&lt;CHippoCmeOrg&gt; HippoCmeOrgSharedPtr;</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 : class CHippoCmeGroup</span>
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span>            : public:
+<span class="lineNum">      30 </span>            :     CHippoCmeGroup(boost::asio::io_service&amp; inIoService,const CmeGroupIdType&amp; inGroupId);
+<span class="lineNum">      31 </span>            :     void RequestMediaService();
+<span class="lineNum">      32 </span>            :     void AddOrg(const CmeOrgIdType&amp; inOrgId,const MediaServiceUpdateCallback&amp; inCallback,const MediaServiceIdList&amp; inMediaServiceIdList,const GetMediaServiceUrlHandler&amp; inGetMediaServiceUrlHandler);
+<span class="lineNum">      33 </span><span class="lineCov">         24 :     void SetRegionName(const RegionNameType&amp; inRegionName){ m_regionname = inRegionName;}</span>
+<span class="lineNum">      34 </span>            :     void SetLocationName(const std::string&amp; inLocationName){m_locationName = inLocationName;};
+<span class="lineNum">      35 </span>            :     const RegionNameType&amp; GetRegionName() const {return m_regionname;}
+<span class="lineNum">      36 </span>            :     const CmeGroupIdType&amp; GetGroupId() const {return m_groupId;}
+<span class="lineNum">      37 </span>            :     const std::map&lt;std::string,HippoCmeOrgSharedPtr&gt;&amp; GetOrgList() const {return m_orgList;}
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : private:
+<span class="lineNum">      40 </span>            :     boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">      41 </span>            :     CmeGroupIdType m_groupId;
+<span class="lineNum">      42 </span>            :     RegionNameType m_regionname;
+<span class="lineNum">      43 </span>            :     std::string m_locationName;
+<span class="lineNum">      44 </span>            :     GetMediaServiceUrlHandler m_getOrpheusUrlHandler;
+<span class="lineNum">      45 </span>            :     std::map&lt;CmeOrgIdType,HippoCmeOrgSharedPtr&gt; m_orgList;
+<span class="lineNum">      46 </span>            : };
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : typedef std::shared_ptr&lt;CHippoCmeGroup&gt; HippoCmeGroupSharedPtr;
+<span class="lineNum">      49 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

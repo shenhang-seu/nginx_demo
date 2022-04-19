@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/feeder/OttDashFeeder.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/feeder</a> - OttDashFeeder.cpp<span style="font-size: 80%;"> (source / <a href="OttDashFeeder.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;OttDashFeeder.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;OttMultimediaSession.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;OttVenue.h&quot;
+<a name="4"><span class="lineNum">       4 </span>            : #include &quot;CspAssert.h&quot;</a>
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span><span class="lineCov">          3 : COttDashFeeder::COttDashFeeder(OttMultimediaSessionSharedPtr inSession)</span>
+<span class="lineNum">       7 </span><span class="lineCov">          6 : : ParentType(inSession)</span>
+<span class="lineNum">       8 </span>            : {
+<span class="lineNum">       9 </span><span class="lineCov">         51 :     OTTER_INFO_THIS(&quot;COttDashFeeder::COttDashFeeder, venueId:&quot; &lt;&lt; GetVenueId() &lt;&lt; &quot; sessionId:&quot; &lt;&lt; GetSessionId());</span>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          9 : COttDashFeeder::~COttDashFeeder()</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span><span class="lineCov">         42 :     OTTER_INFO_THIS(&quot;COttDashFeeder::~COttDashFeeder&quot;);</span>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">          1 : void COttDashFeeder::Start(const JsonValue&amp; inContext, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span><span class="lineCov">         17 :     CSP_ASSERT(!&quot;COttDashFeeder::Start has not been implemented yet!&quot;);</span>
+<a name="20"><span class="lineNum">      20 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">          1 : void COttDashFeeder::Release(SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span><span class="lineCov">          1 :     if (m_isReleased)</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          1 :     m_isReleased = true;</span>
+<span class="lineNum">      28 </span><span class="lineCov">         21 :     OTTER_INFO_THIS(&quot;COttDashFeeder::Release, venueId:&quot; &lt;&lt; GetVenueId() &lt;&lt; &quot; sessionId:&quot; &lt;&lt; GetSessionId() &lt;&lt; &quot; inErrorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; inMessage:&quot; &lt;&lt; inMessage);</span>
+<a name="29"><span class="lineNum">      29 </span>            : }</a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          1 : IN_STREAM_THREAD void COttDashFeeder::SendAudioStream(int64_t inTimestamp, const std::string&amp; inNal)</span>
+<span class="lineNum">      32 </span>            : {
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineCov">          1 : IN_STREAM_THREAD void COttDashFeeder::SendVideoStream(int64_t inTimestamp, bool inIsIdr, const std::string&amp; inNal)</span>
+<span class="lineNum">      36 </span>            : {
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">          1 : Json::Value COttDashFeeder::ToJson()</span>
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span><span class="lineCov">          1 :     Json::Value info;</span>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          1 :     info[JSON_KEY_FEEDER_TYPE] = &quot;DASH Feeder&quot;;</span></a>
+<span class="lineNum">      43 </span><span class="lineCov">          1 :     return info;</span>
+<span class="lineNum">      44 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">      45 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

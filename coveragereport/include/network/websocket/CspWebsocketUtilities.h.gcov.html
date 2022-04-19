@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/network/websocket/CspWebsocketUtilities.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/network/websocket</a> - CspWebsocketUtilities.h<span style="font-size: 80%;"> (source / <a href="CspWebsocketUtilities.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">62.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CSP_WEBSOCKET_UTILITIES_H</a>
+<span class="lineNum">       2 </span>            : #define CSP_WEBSOCKET_UTILITIES_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;string&gt;
+<span class="lineNum">       5 </span>            : #include &lt;map&gt;
+<span class="lineNum">       6 </span>            : #include &quot;LoggerApi.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #define WEBSOCKET_WRITE_BUFFER_WARNING_SIZE 1024*1024*16
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #define WEBSOCKET_DEBUG_LOG(message)            LOG_DEBUG(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      11 </span>            : #define WEBSOCKET_INFO_LOG(message)             LOG_INFO(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      12 </span>            : #define WEBSOCKET_WARNING_LOG(message)          LOG_WARNING(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      13 </span>            : #define WEBSOCKET_ERROR_LOG(message)            LOG_ERROR(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #define WEBSOCKET_DEBUG_LOG_THIS(message)       LOG_DEBUG_THIS(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      16 </span>            : #define WEBSOCKET_INFO_LOG_THIS(message)        LOG_INFO_THIS(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      17 </span>            : #define WEBSOCKET_WARNING_LOG_THIS(message)     LOG_WARNING_THIS(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      18 </span>            : #define WEBSOCKET_ERROR_LOG_THIS(message)       LOG_ERROR_THIS(&quot;WEBSOCKET&quot;, &quot;&quot;, message)
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : enum class EWebsocketState :uint16_t
+<span class="lineNum">      21 </span>            : {
+<span class="lineNum">      22 </span>            :     CREATED = 0,
+<span class="lineNum">      23 </span>            :     CONNECTING = 1,
+<span class="lineNum">      24 </span>            :     CONNECTED = 2,
+<span class="lineNum">      25 </span>            :     CLOSING = 3,
+<span class="lineNum">      26 </span>            :     CLOSED = 4,
+<span class="lineNum">      27 </span>            :     DESTROYED =5 ,
+<span class="lineNum">      28 </span>            : };
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : enum class EWebsocketMessageType :uint16_t
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span>            :     TEXT_MESSAGE = 1,
+<span class="lineNum">      33 </span>            :     BINARY_MESSAGE = 2,
+<span class="lineNum">      34 </span>            :     CLOSE = 8,
+<span class="lineNum">      35 </span>            :     PING = 9,
+<span class="lineNum">      36 </span>            :     PONG = 10,
+<span class="lineNum">      37 </span>            : };
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : enum class EWebsocketCloseCode :uint16_t
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span>            :     NORMAL = 1000,
+<span class="lineNum">      42 </span>            :     GOING_AWAY = 1001,
+<span class="lineNum">      43 </span>            :     PROTOCOL_ERROR = 1002,
+<span class="lineNum">      44 </span>            :     UNSUPPORTED = 1003, //or data_mismatch
+<span class="lineNum">      45 </span>            :     //1004 1005 is reserved 
+<span class="lineNum">      46 </span>            :     ABNORMAL_CLOSE = 1006,
+<span class="lineNum">      47 </span>            :     INCONSISTENT_DATATYPE = 1007,
+<span class="lineNum">      48 </span>            :     POLOCY_VIOLATION = 1008,
+<span class="lineNum">      49 </span>            :     TOO_LARGE = 1009,
+<span class="lineNum">      50 </span>            :     NEGOTIATE_ERROR = 1010,
+<span class="lineNum">      51 </span>            :     SERVER_TERMINATE = 1011,
+<span class="lineNum">      52 </span>            :     TLS_HANDSHAKE_ERROR = 1015,
+<span class="lineNum">      53 </span>            : };
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; inOs, EWebsocketState inState);
+<span class="lineNum">      57 </span>            : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; inOs, EWebsocketMessageType inMessageType);
+<span class="lineNum">      58 </span>            : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; inOs, EWebsocketCloseCode inCloseStatus);
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : //CCspWebClient
+<span class="lineNum">      61 </span>            : //client 
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          4 : const std::string WEBSCOKET_SUPPROTOCOL = &quot;Sec-WebSocket-Protocol&quot;;</span></a>
+<span class="lineNum">      63 </span>            : typedef std::map&lt;std::string,std::string&gt; HttpHeaders;
+<span class="lineNum">      64 </span><span class="lineCov">         72 : class CCspWebsocketClientConfig</span>
+<a name="65"><span class="lineNum">      65 </span>            : {</a>
+<span class="lineNum">      66 </span>            : public:
+<span class="lineNum">      67 </span><span class="lineCov">          9 :     CCspWebsocketClientConfig()</span>
+<span class="lineNum">      68 </span>            :     : m_isWssClient(false)
+<span class="lineNum">      69 </span>            :     , m_sniServerName(std::string(&quot;&quot;))
+<span class="lineNum">      70 </span><span class="lineCov">          9 :     , m_websocketSendBufferWarningSize(WEBSOCKET_WRITE_BUFFER_WARNING_SIZE)</span>
+<span class="lineNum">      71 </span><span class="lineCov">          9 :     {}</span>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :     void SetValidateCertificateFlag(bool inFlag)
+<span class="lineNum">      74 </span>            :     {
+<span class="lineNum">      75 </span>            :         m_isValidateCertificates = inFlag;
+<span class="lineNum">      76 </span>            :     }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :     void SetSniServerName(const std::string&amp; inServerName)
+<span class="lineNum">      79 </span>            :     {
+<span class="lineNum">      80 </span>            :         m_sniServerName = inServerName;
+<span class="lineNum">      81 </span>            :     }
+<span class="lineNum">      82 </span>            :     void SetWebsocketSendBufferWarningSize(uint32_t inKbSize)
+<span class="lineNum">      83 </span>            :     {
+<span class="lineNum">      84 </span>            :         m_websocketSendBufferWarningSize = inKbSize;
+<span class="lineNum">      85 </span>            :     }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :     void AddHttpHeader(const std::string&amp; inHeadKey,const std::string&amp; inHeadValue)
+<span class="lineNum">      88 </span>            :     {
+<span class="lineNum">      89 </span>            :         m_httpHeaders[inHeadKey] = inHeadValue;
+<a name="90"><span class="lineNum">      90 </span>            :     }</a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :     void AddAuthorization(const std::string&amp; inOAuthToken)</span>
+<span class="lineNum">      93 </span>            :     {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         m_httpHeaders[&quot;Authorization&quot;] = inOAuthToken;</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :     }</span>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :     void AddSubprotocol(const std::string&amp; inSubprotocol)
+<span class="lineNum">      98 </span>            :     {
+<span class="lineNum">      99 </span>            :         m_httpHeaders[WEBSCOKET_SUPPROTOCOL] = inSubprotocol;
+<span class="lineNum">     100 </span>            :     }
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :     const HttpHeaders&amp; GetHttpHeaders()
+<span class="lineNum">     103 </span>            :     {
+<span class="lineNum">     104 </span>            :         return m_httpHeaders;
+<span class="lineNum">     105 </span>            :     }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : public:
+<span class="lineNum">     108 </span>            :     bool m_isWssClient;
+<span class="lineNum">     109 </span>            :     bool m_isSingnal;
+<span class="lineNum">     110 </span>            :     bool m_isValidateCertificates;
+<span class="lineNum">     111 </span>            :     bool m_isSniEnabled;
+<span class="lineNum">     112 </span>            :     std::string m_sniServerName;
+<span class="lineNum">     113 </span>            :     //this size just will warning in log,if the send buffer more than this size
+<span class="lineNum">     114 </span>            :     std::size_t m_websocketSendBufferWarningSize;
+<span class="lineNum">     115 </span>            :     HttpHeaders m_httpHeaders;
+<span class="lineNum">     116 </span>            : };
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : #endif //WEBSOCKET_UTILITIES_H
+<span class="lineNum">     119 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

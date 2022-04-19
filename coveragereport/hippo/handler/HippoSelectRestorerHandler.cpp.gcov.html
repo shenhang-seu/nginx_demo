@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/handler/HippoSelectRestorerHandler.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/handler</a> - HippoSelectRestorerHandler.cpp<span style="font-size: 80%;"> (source / <a href="HippoSelectRestorerHandler.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntry">55</td>
+            <td class="headerCovTableEntryMed">87.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryHi">90.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoSelectRestorerHandler.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;HippoDBTaskFactory.h&quot;
+<a name="3"><span class="lineNum">       3 </span>            : #define IGNORE_REQUEST_TIME_SECOND  5</a>
+<span class="lineNum">       4 </span>            : 
+<a name="5"><span class="lineNum">       5 </span><span class="lineCov">          3 : std::chrono::steady_clock::time_point CHippoSelectRestorerHandler::s_lastReceiveRequestTime = std::chrono::steady_clock::now();</span></a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">          6 : CHippoSelectRestorerHandler::CHippoSelectRestorerHandler(boost::asio::io_service&amp; inIoService,const RestNetwork::RestRequestSharedPtr&amp; inRequest, const NotifyFunction&amp; inComplete)</span>
+<span class="lineNum">       8 </span>            :     : IRequestHandler(inRequest,inComplete)
+<span class="lineNum">       9 </span><span class="lineCov">          6 :     , m_ioService(inIoService)</span>
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span><span class="lineCov">         90 :     HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::CHippoSelectRestorerHandler&quot;);</span>
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">         12 : CHippoSelectRestorerHandler::~CHippoSelectRestorerHandler()</span>
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span><span class="lineCov">         90 :     HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::~CHippoSelectRestorerHandler&quot;);</span>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineCov">          1 : void CHippoSelectRestorerHandler::Start()</span>
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span><span class="lineCov">         15 :     HIPPO_DEBUG_THIS(&quot;CHippoSelectRestorerHandler::Start&quot;);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          1 :     SafariResult ret = ParseRequest();</span>
+<span class="lineNum">      23 </span>            :     if(ret != SAFARI_OK)
+<span class="lineNum">      24 </span>            :     {
+<span class="lineNum">      25 </span>            :         HIPPO_ERROR_THIS(&quot;CHippoSelectRestorerHandler::Start parserequest error : &quot;&lt;&lt;ret);
+<span class="lineNum">      26 </span>            :         JsonValue body;
+<span class="lineNum">      27 </span>            :         body[JSON_KEY_RESULT] = ret+HIPPO_RESPONSE_CB_ERROR_BASE;
+<span class="lineNum">      28 </span>            :         body[JSON_KEY_MESSAGE] = &quot;parserequest error&quot;;
+<span class="lineNum">      29 </span>            :         Complete(HTTP_STATUS_OK,body);
+<span class="lineNum">      30 </span>            :         return;
+<span class="lineNum">      31 </span>            :     }
+<span class="lineNum">      32 </span><span class="lineCov">          1 :     Reply(HTTP_STATUS_OK);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          3 :     auto intervalsTime = std::chrono::duration_cast&lt;std::chrono::seconds&gt;(std::chrono::steady_clock::now()-s_lastReceiveRequestTime);</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :     if(intervalsTime.count() &lt; IGNORE_REQUEST_TIME_SECOND)</span>
+<span class="lineNum">      35 </span>            :     {
+<span class="lineNum">      36 </span><span class="lineCov">         17 :         HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::Start  request was less than&quot;&lt;&lt;IGNORE_REQUEST_TIME_SECOND&lt;&lt;&quot;seconds from the last request time&quot;);</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :         Complete();</span>
+<span class="lineNum">      38 </span>            :         return;
+<span class="lineNum">      39 </span>            :     }
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :     s_lastReceiveRequestTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :     ret = QueryHippo();</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">      43 </span>            :     {
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoSelectRestorerHandler::Start QueryHippo error : &quot;&lt;&lt;ret);</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :         Complete();</span>
+<span class="lineNum">      46 </span>            :         return;
+<span class="lineNum">      47 </span>            :     }
+<a name="48"><span class="lineNum">      48 </span>            : }</a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">          1 : SafariResult CHippoSelectRestorerHandler::ParseRequest()</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span><span class="lineCov">          1 :     return SAFARI_OK;</span>
+<span class="lineNum">      53 </span>            : }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">          1 : SafariResult CHippoSelectRestorerHandler::QueryHippo()</span>
+<span class="lineNum">      56 </span>            : {
+<span class="lineNum">      57 </span><span class="lineCov">          1 :     boost::posix_time::ptime curTime = boost::posix_time::second_clock::universal_time();</span>
+<span class="lineNum">      58 </span><span class="lineCov">          2 :     curTime -= boost::posix_time::seconds(HIPPO_SERVER_TIMEOUT_IN_SECONDS);</span>
+<span class="lineNum">      59 </span>            :     /*
+<span class="lineNum">      60 </span>            :     char temp[1024] = {0};
+<span class="lineNum">      61 </span>            :     snprintf(temp, 1024, &quot;%s where ( HEARTBEATTIME &gt; TO_TIMESTAMP('%s', 'YYYY-MON-DD HH24:MI:SS.FF') AND (STATE = 'REGISTERED') AND (POOLNAME = '%s') )&quot;,CHippoDBManager::GetQuerySqlStatement(TABLE_HIPPO).c_str(), to_simple_string(curTime).c_str(),CHippoDBAccess::GetPoolName().c_str());
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :     std::string sql = temp;
+<span class="lineNum">      64 </span>            :     */
+<span class="lineNum">      65 </span><span class="lineCov">          2 :     auto dbTask = CDBTaskFactory::CreateDBTaskQueryActiveHippo(CHippoDBAccess::GetPoolName(),curTime);</span>
+<span class="lineNum">      66 </span><span class="lineCov">          6 :     return m_hippoDBAccess.AsyncQueryRecord(TABLE_HIPPO, dbTask, std::bind(&amp;CHippoSelectRestorerHandler::QueryHippoTableHandler, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          5 : void CHippoSelectRestorerHandler::QueryHippoTableHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span><span class="lineCov">         80 :     HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::QueryHippoRestorerHandler, inSafariResult=&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">         13 :     if (SAFARI_OK != inSafariResult || inDbRecordListSharedPtr.get() == nullptr)</span>
+<span class="lineNum">      75 </span>            :     {
+<span class="lineNum">      76 </span><span class="lineCov">          2 :         Complete();</span>
+<span class="lineNum">      77 </span>            :         return;
+<span class="lineNum">      78 </span>            :     }
+<span class="lineNum">      79 </span><span class="lineCov">          3 :     std::string restorerIp(&quot;&quot;);</span>
+<span class="lineNum">      80 </span><span class="lineCov">         29 :     for (auto iter = inDbRecordListSharedPtr-&gt;begin(); iter != inDbRecordListSharedPtr-&gt;end(); ++iter)</span>
+<span class="lineNum">      81 </span>            :     {
+<span class="lineNum">      82 </span><span class="lineCov">          3 :         std::shared_ptr&lt;CDbHipposRecord&gt; record = std::dynamic_pointer_cast&lt;CDbHipposRecord&gt;(*iter);</span>
+<span class="lineNum">      83 </span><span class="lineCov">          3 :         if(record-&gt;IsRestorer())</span>
+<span class="lineNum">      84 </span>            :         {
+<span class="lineNum">      85 </span><span class="lineCov">         16 :             HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::QueryHippoRestorerHandler  get a restorer ip ：&quot;&lt;&lt;record-&gt;IP());</span>
+<span class="lineNum">      86 </span><span class="lineCov">          1 :             Complete();</span>
+<span class="lineNum">      87 </span>            :             return;
+<span class="lineNum">      88 </span>            :         }
+<span class="lineNum">      89 </span><span class="lineCov">          4 :         if((restorerIp &lt; record-&gt;IP()) || restorerIp.empty())</span>
+<span class="lineNum">      90 </span><span class="lineCov">          2 :             restorerIp = record-&gt;IP();</span>
+<span class="lineNum">      91 </span>            :     }
+<span class="lineNum">      92 </span><span class="lineCov">          2 :     if(restorerIp.empty())</span>
+<span class="lineNum">      93 </span>            :     {
+<span class="lineNum">      94 </span><span class="lineCov">         15 :         HIPPO_ERROR_THIS(&quot;CHippoSelectRestorerHandler::QueryHippoRestorerHandler can not get restorer&quot;);</span>
+<span class="lineNum">      95 </span><span class="lineCov">          1 :         Complete();</span>
+<span class="lineNum">      96 </span>            :         return;
+<span class="lineNum">      97 </span>            :     }
+<span class="lineNum">      98 </span><span class="lineCov">          1 :     SafariResult ret = UpdateRestorer(restorerIp);</span>
+<span class="lineNum">      99 </span><span class="lineCov">          1 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">     100 </span>            :     {
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot; CHippoSelectRestorerHandler::UpdateRestorer error : &quot;&lt;&lt;ret);</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :         Complete();</span>
+<span class="lineNum">     103 </span>            :     }
+<span class="lineNum">     104 </span>            :     return;
+<span class="lineNum">     105 </span>            : }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span><span class="lineCov">          2 : SafariResult CHippoSelectRestorerHandler::UpdateRestorer(const std::string &amp;inRestorerIp)</span>
+<span class="lineNum">     108 </span>            : {
+<span class="lineNum">     109 </span><span class="lineCov">         32 :     HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::UpdateRestorer, restorerip =&quot;&lt;&lt;inRestorerIp);</span>
+<span class="lineNum">     110 </span>            :     /*
+<span class="lineNum">     111 </span>            :     std::vector&lt;std::string&gt; updateItem;
+<span class="lineNum">     112 </span>            :     updateItem.push_back(&quot;ISRESTORER&quot;);
+<span class="lineNum">     113 </span>            :     std::shared_ptr&lt;IDbKey&gt; key  =CHippoDBKeyFactory::CreateHippoIpKey(inRestorerIp);
+<span class="lineNum">     114 </span>            :     DbRecordSharedPtr record = CHippoDBAccess::CreateHippoRecord(inRestorerIp, true);
+<span class="lineNum">     115 </span>            :     return m_hippoDBAccess.UpdateRecord(TABLE_HIPPO, key, record, updateItem, true,[this]
+<span class="lineNum">     116 </span>            :         (DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)
+<span class="lineNum">     117 </span>            :         {
+<span class="lineNum">     118 </span>            :             HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::UpdateRestorer handler result &quot;&lt;&lt;inSafariResult);
+<span class="lineNum">     119 </span>            :             Complete();
+<span class="lineNum">     120 </span>            :         });
+<span class="lineNum">     121 </span>            :         */
+<a name="122"><span class="lineNum">     122 </span><span class="lineCov">          4 :     auto dbTask = CDBTaskFactory::CreateDBTaskUpdateHippo2Restorer(CHippoDBAccess::GetPoolName(),inRestorerIp);</span></a>
+<span class="lineNum">     123 </span>            :     return m_hippoDBAccess.AsyncUpdateRecord(TABLE_HIPPO,dbTask,[this]
+<span class="lineNum">     124 </span><span class="lineCov">          2 :         (DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">     125 </span>            :         {
+<span class="lineNum">     126 </span><span class="lineCov">         32 :             HIPPO_INFO_THIS(&quot;CHippoSelectRestorerHandler::UpdateRestorer handler result &quot;&lt;&lt;inSafariResult);</span>
+<a name="127"><span class="lineNum">     127 </span><span class="lineCov">          2 :             Complete();</span></a>
+<span class="lineNum">     128 </span><span class="lineCov">         12 :         });</span>
+<span class="lineNum">     129 </span><span class="lineCov">          9 : }</span>
+<span class="lineNum">     130 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/nightingale/OttNightingaleAgent.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/nightingale</a> - OttNightingaleAgent.h<span style="font-size: 80%;"> (source / <a href="OttNightingaleAgent.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryHi">90.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Nightingale agent is used for Otter to communicate with a Nightingale instance within a venue.
+<span class="lineNum">       6 </span>            : ///    (Modified from &lt;FlaSdkDevice.h&gt; )
+<span class="lineNum">       7 </span>            : ///
+<span class="lineNum">       8 </span>            : /// Author:
+<span class="lineNum">       9 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">      10 </span>            : ///
+<span class="lineNum">      11 </span>            : /// History:
+<span class="lineNum">      12 </span>            : ///    Dec-04-2018  Initial version
+<span class="lineNum">      13 </span>            : /******************************************************************************/
+<span class="lineNum">      14 </span>            : #ifndef OTTER_NIGHTINGALE_AGENT_H
+<span class="lineNum">      15 </span>            : #define OTTER_NIGHTINGALE_AGENT_H
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/asio/steady_timer.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;TssWrapper.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : const uint16_t MAX_RETRIES_CREATE_LOCAL_TRANSPORT = 15;
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : class CLocalTransport;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : class COttNightingaleAgent : public std::enable_shared_from_this&lt;COttNightingaleAgent&gt;
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span>            : public:
+<span class="lineNum">      31 </span>            :     COttNightingaleAgent(boost::asio::io_service&amp; inIoService, OttVenueSharedPtr inVenue);
+<span class="lineNum">      32 </span>            :     virtual ~COttNightingaleAgent();
+<span class="lineNum">      33 </span>            :     void CreateLocalTransport();
+<span class="lineNum">      34 </span>            :     void Release();
+<span class="lineNum">      35 </span>            :     Json::Value ToJson() const;
+<span class="lineNum">      36 </span>            :     void JoinConference(const Json::Value&amp; inContext, const ResultCallback&amp; inCallback);
+<span class="lineNum">      37 </span>            :     void JoinMediaSessions(uint16_t inMediaSessionBitmap);
+<span class="lineNum">      38 </span>            :     void OpenCmeSendonlySession(const CmeSessionIdType&amp; inCmeSessionId, const CmeMediaServiceIdType&amp; inCmeMediaServiceId, const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp);
+<span class="lineNum">      39 </span>            :     void CloseCmeSendonlySession(const CmeSessionIdType&amp; inCmeSessionId, const CmeMediaServiceIdType&amp; inCmeMediaServiceId, SafariResult inReason);
+<span class="lineNum">      40 </span>            :     void IndicateContentSharingResponse();
+<span class="lineNum">      41 </span>            :     void IndicateCmeRecvonlyVideoSessionOpenFirstTime(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType);
+<span class="lineNum">      42 </span>            :     void IndicateCmeRecvonlyVideoSessionRelease(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType);
+<span class="lineNum">      43 </span>            :     void IndicateCmeRecvonlyVideoSessionUpdate(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey, const std::string&amp; inCspSessionType);
+<span class="lineNum">      44 </span><span class="lineCov">          1 :     bool LeftConferenceAbnormally() const { return m_leftConferenceAbnormally; }</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :     bool PendingRejoinConference() const { return m_leftConferenceAbnormally &amp;&amp; !m_isJoiningConference; }</span>
+<span class="lineNum">      46 </span>            :     void IndicatePauseSession(const std::string&amp; inCspSessionType);
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : private:
+<span class="lineNum">      49 </span>            :     void OnLocalTransportCreated(SafariResult inResult, std::shared_ptr&lt;CLocalTransport&gt;);
+<span class="lineNum">      50 </span>            :     void OnSignallingReceived(const std::string&amp; inMessage);
+<span class="lineNum">      51 </span>            :     void OnMediaDataReceived(const std::string&amp; inData);
+<span class="lineNum">      52 </span>            :     void OnTransportError(SafariResult inResult);
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :     void HandleJoinConferenceResponse(const Json::Value&amp; inMessage);
+<span class="lineNum">      55 </span>            :     void HandleErrorReport(const Json::Value&amp; inMessage);
+<span class="lineNum">      56 </span>            :     void HandleUpdateRosterList(const Json::Value&amp; inMessage);
+<span class="lineNum">      57 </span>            :     void HandleContentSharingEvent(const Json::Value&amp; inMessage);
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :     void SendSignalling(const std::string&amp; inMessage);
+<span class="lineNum">      60 </span>            :     void OnConferenceError(SafariResult inReason, const std::string&amp; inMessage);
+<span class="lineNum">      61 </span>            :     void OnLeaveConferenceAbnormally();
+<span class="lineNum">      62 </span>            :     bool HavePendingJoinConferenceRequestMessage() const;
+<span class="lineNum">      63 </span>            :     void LeaveConference();
+<span class="lineNum">      64 </span>            :         void ReIndicateRecvonlyVideoSessionLayouts();
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : private:
+<span class="lineNum">      67 </span>            :     class CPendingNightingaleSignalling
+<a name="68"><span class="lineNum">      68 </span>            :     {</a>
+<span class="lineNum">      69 </span>            :     public:
+<span class="lineNum">      70 </span><span class="lineCov">          2 :         CPendingNightingaleSignalling(const std::string&amp; inSignalling, const CTssTrackingId&amp; inTrackingId)</span>
+<span class="lineNum">      71 </span>            :         : m_signalling(inSignalling)
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">          2 :         , m_trackingId(inTrackingId)</span></a>
+<span class="lineNum">      73 </span><span class="lineCov">          2 :         {}</span>
+<span class="lineNum">      74 </span><span class="lineCov">          2 :         CPendingNightingaleSignalling(const CPendingNightingaleSignalling&amp; inRhs)</span>
+<span class="lineNum">      75 </span>            :         : m_signalling(inRhs.m_signalling)
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov">          2 :         , m_trackingId(inRhs.m_trackingId)</span></a>
+<span class="lineNum">      77 </span><span class="lineCov">          2 :         {}</span>
+<span class="lineNum">      78 </span><span class="lineCov">          4 :         ~CPendingNightingaleSignalling()</span>
+<span class="lineNum">      79 </span><span class="lineCov">         12 :         {}</span>
+<span class="lineNum">      80 </span>            :         CPendingNightingaleSignalling&amp; operator =(const CPendingNightingaleSignalling&amp; inRhs) = delete;
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :     public:
+<span class="lineNum">      83 </span>            :         std::string m_signalling;
+<span class="lineNum">      84 </span>            :         CTssTrackingId m_trackingId;
+<span class="lineNum">      85 </span>            :     };
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :     bool m_isReleased;
+<span class="lineNum">      88 </span>            :     boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">      89 </span>            :     OttVenueSharedPtr m_venue;
+<span class="lineNum">      90 </span>            :     std::shared_ptr&lt;CLocalTransport&gt; m_transport;
+<span class="lineNum">      91 </span>            :     Json::Value m_context;
+<span class="lineNum">      92 </span>            :     ResultCallback m_joinConferenceCallback;
+<span class="lineNum">      93 </span>            :     std::vector&lt;CPendingNightingaleSignalling&gt; m_pendingSignallings;
+<span class="lineNum">      94 </span>            :     uint16_t m_transportRecreateCount;
+<span class="lineNum">      95 </span>            :     boost::asio::steady_timer m_joinConferenceTimer;
+<span class="lineNum">      96 </span>            :     boost::asio::steady_timer m_eurekaFailoverTimer;
+<span class="lineNum">      97 </span>            :     boost::asio::steady_timer m_reconnectTimer;
+<span class="lineNum">      98 </span>            :     volatile bool m_leftConferenceAbnormally;
+<span class="lineNum">      99 </span>            :     bool m_isJoiningConference;
+<span class="lineNum">     100 </span>            :         //webex-114311, otter should update layout sets after nightingale failover
+<span class="lineNum">     101 </span>            :     std::map&lt;std::string, CCspVideoComposeKey&gt; m_videoComposeKeyMap;
+<span class="lineNum">     102 </span>            : };
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : #endif /* OTTER_NIGHTINGALE_AGENT_H */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

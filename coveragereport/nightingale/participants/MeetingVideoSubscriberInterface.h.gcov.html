@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/MeetingVideoSubscriberInterface.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - MeetingVideoSubscriberInterface.h<span style="font-size: 80%;"> (source / <a href="MeetingVideoSubscriberInterface.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntryMed">89.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef VIDEO_SUBSCRIBER_H</a>
+<span class="lineNum">       2 </span>            : #define VIDEO_SUBSCRIBER_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;WbxEurekaSDKDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;WbxEurekaSDKInterface.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;WbxMMPSDKDefine.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;WbxMMPSDKInterface.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;NtgParticipantManager.h&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;json/json.h&quot;
+<span class="lineNum">      12 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : enum EMediaSharedStyle
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span>            :         MEDIA_SHARED_NORMAL_STYLE = 0,
+<span class="lineNum">      17 </span>            :         MEDIA_SHARED_GRID_STYLE
+<span class="lineNum">      18 </span>            : };
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : #define TP_CSI_COUNT_MAX 4
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : struct TPUserCsiInfo
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span>            :         unsigned int count;
+<span class="lineNum">      25 </span>            :         unsigned int csi[TP_CSI_COUNT_MAX];
+<span class="lineNum">      26 </span>            :         TPUserCsiInfo()
+<span class="lineNum">      27 </span><span class="lineCov">        475 :         : count(0)</span>
+<span class="lineNum">      28 </span>            :         {}
+<span class="lineNum">      29 </span>            :         void Copy(const TPUserCsiInfo&amp; in)
+<span class="lineNum">      30 </span>            :         {
+<span class="lineNum">      31 </span><span class="lineCov">         23 :             for (unsigned int i = 0; i &lt; in.count; i++)</span>
+<span class="lineNum">      32 </span><span class="lineCov">         23 :                         csi[i] = in.csi[i];</span>
+<span class="lineNum">      33 </span><span class="lineCov">         23 :                 count = in.count;</span>
+<span class="lineNum">      34 </span>            :         }
+<span class="lineNum">      35 </span>            :         bool Empty()const { return (count == 0);}
+<span class="lineNum">      36 </span>            : };
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : struct AudioUserInfo
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span>            :         unsigned int csi;
+<span class="lineNum">      41 </span>            :         AudioUserInfo()
+<span class="lineNum">      42 </span><span class="lineCov">        226 :     : csi(0)</span>
+<span class="lineNum">      43 </span>            :         {}
+<a name="44"><span class="lineNum">      44 </span>            : };</a>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineCov">        452 : struct WbxUserInfo</span>
+<span class="lineNum">      47 </span>            : {
+<span class="lineNum">      48 </span>            :     //tandberg callback user
+<span class="lineNum">      49 </span>            :     bool isCallbackWebexUser;
+<span class="lineNum">      50 </span>            :         bool isCallbackTpUser;
+<span class="lineNum">      51 </span>            :         bool isCallinWebexUser;
+<span class="lineNum">      52 </span>            :         bool isCallinPhoneUser;
+<span class="lineNum">      53 </span>            :         unsigned int callbackPeerNodeId;
+<span class="lineNum">      54 </span>            :         
+<span class="lineNum">      55 </span>            :         bool isMeetingUserLive;
+<span class="lineNum">      56 </span>            :         MeetingUserInfo meetingUserInfo;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         bool isVideoUserLive;
+<span class="lineNum">      59 </span>            :         bool isPendSending;
+<span class="lineNum">      60 </span>            :         MediaSessionUserInfo videoUserInfo;
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         //audio user
+<span class="lineNum">      63 </span>            :         bool isPhoneUserLive;
+<span class="lineNum">      64 </span>            :         bool isAudioUserLive;
+<span class="lineNum">      65 </span>            :         AudioUserInfo audioUserInfo;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :         //tp user
+<span class="lineNum">      68 </span>            :         bool isTpUserLive;
+<span class="lineNum">      69 </span>            :         TPUserCsiInfo tpVideoCsiInfo;
+<span class="lineNum">      70 </span>            :         TPUserCsiInfo tpAudioCsiInfo;
+<span class="lineNum">      71 </span>            :         //joined participant
+<span class="lineNum">      72 </span>            :         bool isParticipantFlag;
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         WbxUserInfo()
+<span class="lineNum">      75 </span>            :                 : isCallbackWebexUser(false)
+<span class="lineNum">      76 </span>            :                 , isCallbackTpUser(false)
+<span class="lineNum">      77 </span>            :                 , isCallinWebexUser(false)
+<span class="lineNum">      78 </span>            :                 , isCallinPhoneUser(false)
+<span class="lineNum">      79 </span>            :                 , callbackPeerNodeId(0)
+<span class="lineNum">      80 </span>            :                 , isMeetingUserLive(false)
+<span class="lineNum">      81 </span>            :                 , isVideoUserLive(false)
+<span class="lineNum">      82 </span>            :                 , isPendSending(false)
+<span class="lineNum">      83 </span>            :                 , isPhoneUserLive(false)
+<span class="lineNum">      84 </span>            :                 , isAudioUserLive(false)
+<span class="lineNum">      85 </span>            :                 , isTpUserLive(false)
+<span class="lineNum">      86 </span><span class="lineCov">       1356 :                 , isParticipantFlag(false)</span>
+<span class="lineNum">      87 </span>            :         {}
+<span class="lineNum">      88 </span>            :         
+<span class="lineNum">      89 </span>            :         MeetingUserInfo* GetMeetingUserInfo(){ return &amp;meetingUserInfo;}
+<a name="90"><span class="lineNum">      90 </span><span class="lineCov">         97 :         void SetMeetingUserInfo(const MeetingUserInfo&amp; inUser){ isMeetingUserLive=true; meetingUserInfo=inUser;}</span></a>
+<a name="91"><span class="lineNum">      91 </span>            :         MediaSessionUserInfo* GetMediaUserInfo(){ return &amp;videoUserInfo;}</a>
+<span class="lineNum">      92 </span><span class="lineCov">        172 :         void SetMediaUserInfo(const MediaSessionUserInfo&amp; inUser){ isVideoUserLive=true; videoUserInfo=inUser;}</span>
+<span class="lineNum">      93 </span><span class="lineCov">         69 :         void ResetMediaUserInfo(){ isVideoUserLive=false; videoUserInfo=MediaSessionUserInfo();}</span>
+<span class="lineNum">      94 </span>            :         
+<span class="lineNum">      95 </span>            :         bool IsMeetingUserLive() const { return isMeetingUserLive;}
+<span class="lineNum">      96 </span>            :         bool IsVideoUserLive() const { return isVideoUserLive;}
+<span class="lineNum">      97 </span>            :         bool IsAudioUserLive() const { return isAudioUserLive;}
+<span class="lineNum">      98 </span>            :         bool IsTPUserLive() const { return isTpUserLive;}
+<span class="lineNum">      99 </span><span class="lineCov">         96 :         void SetTPUserLive(bool inLive){ isTpUserLive=inLive;}</span>
+<span class="lineNum">     100 </span>            :         bool IsPhoneUserLive() const { return isPhoneUserLive;}
+<span class="lineNum">     101 </span>            :         unsigned int GetCBNodeId() const { return meetingUserInfo.nodeID;}
+<span class="lineNum">     102 </span>            :         unsigned int GetMMPNodeId() const { return videoUserInfo.ulUserNodeID;}
+<span class="lineNum">     103 </span>            :         unsigned int GetMMPCsi() const { return videoUserInfo.ulCSI;}
+<span class="lineNum">     104 </span>            :     unsigned int GetAttendeeId() const { return meetingUserInfo.attendeeId;}
+<span class="lineNum">     105 </span>            :         unsigned int GetVAttendeeId() const { return meetingUserInfo.vAttendeeId;}
+<span class="lineNum">     106 </span>            :         const std::string&amp; GetUserName() const { return meetingUserInfo.nodeName;}
+<span class="lineNum">     107 </span>            :         unsigned int GetEnrollFlag() const { return meetingUserInfo.enrollFlag;}
+<span class="lineNum">     108 </span>            :         EMediaUserType GetMMPUserType() const { return videoUserInfo.ulUserType;}
+<span class="lineNum">     109 </span>            :         bool IsCallbackWebex() const { return isCallbackWebexUser;}
+<span class="lineNum">     110 </span>            :         bool IsCallbackTP() const { return isCallbackTpUser;}
+<span class="lineNum">     111 </span>            :         unsigned int GetPeerNodeId() const {return callbackPeerNodeId;}
+<span class="lineNum">     112 </span><span class="lineCov">          9 :         void SetCallbackWebex(int inPeerNodeId){ isCallbackWebexUser=true; callbackPeerNodeId=inPeerNodeId;}</span>
+<span class="lineNum">     113 </span><span class="lineCov">          9 :         void SetCallbackTP(int inPeerNodeId){ isCallbackTpUser=true; callbackPeerNodeId=inPeerNodeId;}</span>
+<span class="lineNum">     114 </span><span class="lineCov">          3 :         void ReSetCallbackWebex(){ isCallbackWebexUser=false; callbackPeerNodeId=0;}</span>
+<span class="lineNum">     115 </span><span class="lineCov">          3 :         void ReSetCallbackTP(){ isCallbackTpUser=false; callbackPeerNodeId=0;}</span>
+<span class="lineNum">     116 </span>            :         bool IsCallInWebex() const { return isCallinWebexUser;}
+<span class="lineNum">     117 </span>            :         bool IsCallInPhone() const { return isCallinPhoneUser;}
+<span class="lineNum">     118 </span><span class="lineCov">          5 :         void SetCallInWebex(int inPeerNodeId){ isCallinWebexUser=true; callbackPeerNodeId=inPeerNodeId;}</span>
+<span class="lineNum">     119 </span><span class="lineCov">          5 :         void SetCallInPhone(int inPeerNodeId){ isCallinPhoneUser=true; callbackPeerNodeId=inPeerNodeId;}</span>
+<span class="lineNum">     120 </span><span class="lineCov">          2 :         void ReSetCallInWebex(){ isCallinWebexUser=false; callbackPeerNodeId=0;}</span>
+<span class="lineNum">     121 </span><span class="lineCov">          2 :         void ReSetCallInPhone(){ isCallinPhoneUser=false; callbackPeerNodeId=0;}</span>
+<span class="lineNum">     122 </span>            :         EMediaSourceSendingStatus GetSendingStatus() const { return videoUserInfo.sendStatus;}
+<span class="lineNum">     123 </span><span class="lineCov">         66 :         void SetSendingStatus(EMediaSourceSendingStatus inStatus){ videoUserInfo.sendStatus=inStatus;}</span>
+<span class="lineNum">     124 </span>            :         bool IsSendingStatus() const { return (MEDIA_STATUS_SOURCE_SENDING==videoUserInfo.sendStatus);}
+<span class="lineNum">     125 </span><span class="lineCov">          2 :         void SetAvatarUrl(const std::string&amp; inUrl){ meetingUserInfo.avatarUrl=inUrl;}</span>
+<span class="lineNum">     126 </span>            :         const std::string&amp; GetAvatarUrl() const { return meetingUserInfo.avatarUrl;}
+<span class="lineNum">     127 </span><span class="lineCov">        128 :         void SetParticaipantFlag(bool inFlag){ isParticipantFlag=inFlag;}</span>
+<span class="lineNum">     128 </span>            :         bool IsParticaipantUser() const { return isParticipantFlag;}
+<span class="lineNum">     129 </span>            :         bool IsTpVideoCsiReady() const { return (tpVideoCsiInfo.count &gt; 0);}
+<span class="lineNum">     130 </span>            :         bool IsTpAudioCsiReady() const { return (tpAudioCsiInfo.count &gt; 0);}
+<span class="lineNum">     131 </span>            : };
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            : struct VideoScrInfo
+<span class="lineNum">     134 </span>            : {
+<span class="lineNum">     135 </span>            :     EMediaUserType type;
+<span class="lineNum">     136 </span>            :     unsigned int nodeId;
+<span class="lineNum">     137 </span>            :     unsigned int csi;
+<span class="lineNum">     138 </span>            :         bool isSource;
+<span class="lineNum">     139 </span>            :         EMediaVideoSize resolution;
+<span class="lineNum">     140 </span>            :         WMERtpExtend rtpExtend;
+<span class="lineNum">     141 </span>            :         VideoScrInfo()
+<span class="lineNum">     142 </span>            :                 : type(MEDIA_VIDEO_USER_TYPE_WEBEX)
+<span class="lineNum">     143 </span>            :                 , nodeId(0)
+<span class="lineNum">     144 </span>            :                 , csi(0)
+<span class="lineNum">     145 </span>            :                 , isSource(false)
+<span class="lineNum">     146 </span><span class="lineCov">          1 :                 , resolution(VIDEO_SIZEO_NONE)</span>
+<span class="lineNum">     147 </span>            :         {}
+<span class="lineNum">     148 </span>            :         void Reset(){ nodeId=0; csi=0; isSource=false; type=MEDIA_VIDEO_USER_TYPE_WEBEX;}
+<span class="lineNum">     149 </span>            :         bool IsSameCsi(unsigned int Id) const { return (csi == Id);}
+<span class="lineNum">     150 </span>            :         bool IsSameNodeId(unsigned int Id) const { return (nodeId==Id);}
+<span class="lineNum">     151 </span>            :         bool IsSource() const { return isSource;}
+<span class="lineNum">     152 </span>            :         bool IsFree() const { return ((unsigned int)0 == nodeId) &amp;&amp; ((unsigned int)0 == csi);}
+<span class="lineNum">     153 </span>            :         bool IsValidCsi() const { return ((unsigned int)0 != csi);}
+<span class="lineNum">     154 </span><span class="lineCov">          3 :         unsigned int GetVid() const { return rtpExtend.vidArray[0];}</span>
+<span class="lineNum">     155 </span>            :         void SetVid(uint8_t inVid){ rtpExtend.vidArray[0] = inVid;}
+<span class="lineNum">     156 </span>            :         EMediaVideoSize GetVideoSize() const { return resolution;}
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :         void SetVideoSize(EMediaVideoSize inMode){ resolution=inMode;}</span>
+<span class="lineNum">     158 </span>            :         WMERtpExtend* GetRtpExtend(){ return &amp;rtpExtend;}
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :         void SetVideoUser(EMediaUserType inType, unsigned int Id, unsigned int inCsi){ nodeId=Id; csi=inCsi; isSource=true; type=inType;}</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         void SetAvatarUser(unsigned int Id, unsigned int inCsi){ nodeId=Id; csi=inCsi; isSource=false;}</span>
+<span class="lineNum">     161 </span>            : };
+<span class="lineNum">     162 </span>            : typedef std::vector&lt;VideoScrInfo&gt; VideoSCRList;
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            : enum EMediaMeetingMode
+<span class="lineNum">     165 </span>            : {
+<span class="lineNum">     166 </span>            :     MEDIA_VIDEO_MEETING_MODE_DEFAULT = 0x00000000,
+<span class="lineNum">     167 </span>            :     MEDIA_VIDEO_MEETING_MODE_TELEPRESENCE = 0x00000001,
+<span class="lineNum">     168 </span>            :     MEDIA_VIDEO_MEETING_MODE_TANDBERG = 0x00000002,
+<span class="lineNum">     169 </span>            :     MEDIA_VIDEO_MEETING_MODE_TANDBERG_NO_QOS = 0x00000003,
+<span class="lineNum">     170 </span>            :     MEDIA_VIDEO_MEETING_MODE_TANDBERG_CMR_CLOUD = 0x00000004,
+<span class="lineNum">     171 </span>            :     MEDIA_VIDEO_MEETING_MODE_TANDBERG_MULTISTREAM = 0x00000005
+<span class="lineNum">     172 </span>            : };
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span><span class="lineCov">         44 : class IVideoSubscriberSink</span>
+<a name="175"><span class="lineNum">     175 </span>            : {</a>
+<span class="lineNum">     176 </span>            : public:
+<span class="lineNum">     177 </span><span class="lineCov">         40 :         virtual ~IVideoSubscriberSink(){};</span>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :         virtual void SubscribeVideo(EMediaUserType inUserType, unsigned int inUserNodeID, unsigned int inCsi, EMediaVideoSize inVideoSize, const WMERtpExtend&amp; inExtend) = 0;
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :         virtual void SelectChiefSender(EMediaUserType inUserType, unsigned long inUserNodeID, unsigned long inCbNodeID) = 0;
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :         virtual void AnnounceInvalidSource(WBXSubsessionChannelAnnounce* inAnnounce, std::vector&lt;unsigned int&gt;* inCsiList) = 0;
+<span class="lineNum">     184 </span>            : };
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

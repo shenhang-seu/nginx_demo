@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - ci/CspOAuthDefines.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ci</a> - CspOAuthDefines.h<span style="font-size: 80%;"> (source / <a href="CspOAuthDefines.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CSP_OAUTH_DEFINES_H</a>
+<span class="lineNum">       2 </span>            : #define CSP_OAUTH_DEFINES_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : //HTTP API url path
+<span class="lineNum">       5 </span><span class="lineCov">          3 : const std::string ACCESS_TOKEN_URI          = &quot;/idb/oauth2/v1/access_token&quot;;</span>
+<span class="lineNum">       6 </span>            : //HTTP API header and body constants, it is request by CI doc
+<span class="lineNum">       7 </span><span class="lineCov">          3 : const std::string SAML2_GRANT_TYPE          = &quot;urn:ietf:params:oauth:grant-type:saml2-bearer&quot;;</span>
+<span class="lineNum">       8 </span><span class="lineCov">          3 : const std::string BEARER_TOKEN              = &quot;BearerToken&quot;;</span>
+<span class="lineNum">       9 </span><span class="lineCov">          3 : const std::string ACCESS_TOKEN              = &quot;access_token&quot;;</span>
+<span class="lineNum">      10 </span><span class="lineCov">          3 : const std::string REFRESH_TOKEN             = &quot;refresh_token&quot;;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          3 : const std::string ACCESS_TOKEN_TYPE         = &quot;token_type&quot;;</span>
+<span class="lineNum">      12 </span><span class="lineCov">          3 : const std::string ACCESS_TOKEN_EXPIRES_IN   = &quot;expires_in&quot;;</span>
+<span class="lineNum">      13 </span><span class="lineCov">          3 : const std::string REFRESH_TOKEN_EXPIRES_IN  = &quot;refresh_token_expires_in&quot;;</span>
+<span class="lineNum">      14 </span><span class="lineCov">          3 : const std::string ACCOUNT_EXPIRATION        = &quot;accountExpiration&quot;;</span>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #define CI_DEBUG(argc)             LOG_DEBUG(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      17 </span>            : #define CI_INFO(argc)              LOG_INFO(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      18 </span>            : #define CI_WARNING(argc)           LOG_WARNING(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      19 </span>            : #define CI_ERROR(argc)             LOG_ERROR(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #define CI_DEBUG_THIS(argc)        LOG_DEBUG_THIS(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      22 </span>            : #define CI_INFO_THIS(argc)         LOG_INFO_THIS(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      23 </span>            : #define CI_WARNING_THIS(argc)      LOG_WARNING_THIS(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      24 </span>            : #define CI_ERROR_THIS(argc)        LOG_ERROR_THIS(&quot;CI&quot;, &quot;&quot;, argc)
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

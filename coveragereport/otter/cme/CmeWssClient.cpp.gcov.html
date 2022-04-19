@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/cme/CmeWssClient.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/cme</a> - CmeWssClient.cpp<span style="font-size: 80%;"> (source / <a href="CmeWssClient.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">188</td>
+            <td class="headerCovTableEntry">223</td>
+            <td class="headerCovTableEntryMed">84.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntryMed">84.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;chrono&gt;</a>
+<span class="lineNum">       2 </span>            : #include &quot;CmeWssClient.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;CmeWssClientManager.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;CmeNodeProvider.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;ServerApplication.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;OttVenue.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;CmeSession.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;OtterMetrics.h&quot;
+<span class="lineNum">      12 </span>            : 
+<a name="13"><span class="lineNum">      13 </span>            : using namespace Websocket;</a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          7 : CCmeWssClient::CCmeWssClient(boost::asio::io_service&amp; inIoService, const std::string&amp; inBaseUrl)</span>
+<span class="lineNum">      16 </span><span class="lineCov">         14 : : m_wssClient(CCspWebsocketClientFactory::CreateWebsocketClient(inIoService, inBaseUrl, IServerApplication::Instance()-&gt;GetCiToken(CME_MEDIA_SERVICE_ID_EDONUS)))</span>
+<span class="lineNum">      17 </span>            : , m_connectTimer(inIoService)
+<span class="lineNum">      18 </span><span class="lineCov">         42 : , m_isHandshakeSuccessful(false)</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">        112 :     OTTER_INFO_THIS(&quot;CCmeWssClient::CCmeWssClient, cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(inBaseUrl));</span>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">         42 : CCmeWssClient::~CCmeWssClient()</span>
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span><span class="lineCov">         98 :     OTTER_INFO_THIS(&quot;CCmeWssClient::~CCmeWssClient&quot;);</span>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineCov">          7 : void CCmeWssClient::Connect()</span>
+<span class="lineNum">      29 </span>            : {
+<a name="30"><span class="lineNum">      30 </span><span class="lineCov">          7 :     m_connectionStartTime = std::chrono::steady_clock::now();</span></a>
+<span class="lineNum">      31 </span><span class="lineCov">         35 :     m_wssClient-&gt;SetMessageCallback(std::bind(&amp;CCmeWssClient::OnHandshakeMessage, this, std::placeholders::_1));</span>
+<span class="lineNum">      32 </span><span class="lineCov">         14 :     m_wssClient-&gt;SetCloseCallback([this](EWebsocketCloseCode inCloseStatus, const std::string&amp; inReason, SafariResult inErrorCode) mutable {</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :         OTTER_WARNING_THIS(&quot;CCmeWssClient::Connect::lambda::CloseCallback, wss connection is closed upexpected! inCloseStatus:&quot; &lt;&lt; inCloseStatus &lt;&lt; &quot; inReason:&quot; &lt;&lt; inReason &lt;&lt; &quot; inErrorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()));</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :         HandleCmeWssError(inErrorCode, inReason);</span>
+<span class="lineNum">      35 </span><span class="lineCov">         14 :     });</span>
+<span class="lineNum">      36 </span><span class="lineCov">         28 :     m_wssClient-&gt;Connect(std::bind(&amp;CCmeWssClient::OnConnect, this, std::placeholders::_1));</span>
+<span class="lineNum">      37 </span>            : 
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">         14 :     m_connectTimer.expires_from_now(std::chrono::seconds(3));</span></a>
+<span class="lineNum">      39 </span><span class="lineCov">          7 :     auto self = shared_from_this();</span>
+<span class="lineNum">      40 </span><span class="lineCov">         42 :     m_connectTimer.async_wait([self, this](const boost::system::error_code&amp; inErrorCode) {</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         if (m_wssClient == nullptr || inErrorCode)</span>
+<span class="lineNum">      42 </span>            :         {
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :             return;</span>
+<span class="lineNum">      44 </span>            :         }
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         OnConnect(SAFARI_ERROR_WEBSOCKET_OPEN_CONNECTION_TIMEOUT);</span>
+<span class="lineNum">      47 </span><span class="lineCov">         14 :     });</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">          7 : void CCmeWssClient::Disconnect()</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span><span class="lineCov">          7 :     m_connectTimer.cancel();</span>
+<span class="lineNum">      53 </span><span class="lineCov">          7 :     if (m_wssClient)</span>
+<span class="lineNum">      54 </span>            :     {
+<span class="lineNum">      55 </span><span class="lineCov">         14 :         m_wssClient-&gt;Close();</span>
+<span class="lineNum">      56 </span><span class="lineCov">         14 :         m_wssClient = nullptr;</span>
+<span class="lineNum">      57 </span>            :     }
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">         29 : void CCmeWssClient::OpenCmeSession(CmeSessionSharedPtr inCmeSession)</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineCov">        725 :     OTTER_INFO_THIS(&quot;CCmeWssClient::OpenCmeSession, venueId:&quot; &lt;&lt; inCmeSession-&gt;GetVenueId() &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCmeSession-&gt;GetSessionId() &lt;&lt; &quot; cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; state:&quot; &lt;&lt; GetState());</span>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">         58 :     auto&amp; sessionId = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">      65 </span><span class="lineCov">         58 :     m_cmeSessionMap.insert(std::make_pair(sessionId, inCmeSession));</span>
+<span class="lineNum">      66 </span><span class="lineCov">         29 :     if(GetState() == EWebsocketState::CONNECTED &amp;&amp; m_isHandshakeSuccessful)</span>
+<span class="lineNum">      67 </span>            :     {
+<span class="lineNum">      68 </span><span class="lineCov">          3 :         SendOpenCmeSessionMessage(inCmeSession, CTssTrackingId::Get());</span>
+<span class="lineNum">      69 </span><span class="lineCov">         30 :         return;</span>
+<span class="lineNum">      70 </span>            :     }
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">         28 :     m_pendingCmeSessionList.push_back(COttPendingCmeSession(inCmeSession, CTssTrackingId::Get()));</span>
+<a name="73"><span class="lineNum">      73 </span>            : }</a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">         29 : void CCmeWssClient::CloseCmeSession(CmeSessionSharedPtr inCmeSession, bool inSendCloseSessionMessage)</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">        836 :     OTTER_INFO_THIS(&quot;CCmeWssClient::CloseCmeSession, venueId:&quot; &lt;&lt; inCmeSession-&gt;GetVenueId() &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCmeSession-&gt;GetSessionId() &lt;&lt; &quot; cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; state:&quot; &lt;&lt; GetState() &lt;&lt; &quot; inSendCloseSessionMessage:&quot; &lt;&lt; inSendCloseSessionMessage);</span>
+<span class="lineNum">      78 </span><span class="lineCov">         29 :     if (GetState() == EWebsocketState::CONNECTED &amp;&amp; m_isHandshakeSuccessful)</span>
+<span class="lineNum">      79 </span>            :     {
+<span class="lineNum">      80 </span><span class="lineCov">         13 :         if (inSendCloseSessionMessage)</span>
+<span class="lineNum">      81 </span>            :         {
+<span class="lineNum">      82 </span><span class="lineCov">         13 :             JsonValue body;</span>
+<span class="lineNum">      83 </span><span class="lineCov">         13 :             body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">      84 </span><span class="lineCov">         13 :             body[&quot;type&quot;] = &quot;session&quot;;</span>
+<span class="lineNum">      85 </span><span class="lineCov">         26 :             body[&quot;trackingID&quot;] = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">      86 </span><span class="lineCov">         13 :             body[&quot;data&quot;][&quot;type&quot;] = &quot;close&quot;;</span>
+<span class="lineNum">      87 </span><span class="lineCov">         13 :             body[&quot;data&quot;][&quot;reason&quot;] = &quot;WS_SESSION_CLOSED&quot;;</span>
+<span class="lineNum">      88 </span><span class="lineCov">         26 :             body[&quot;data&quot;][&quot;sessionID&quot;] = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">      89 </span><span class="lineCov">         39 :             m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<span class="lineNum">      90 </span>            :         }
+<span class="lineNum">      91 </span>            :     }
+<span class="lineNum">      92 </span>            :     else
+<span class="lineNum">      93 </span>            :     {
+<span class="lineNum">      94 </span><span class="lineCov">         68 :         for (auto it = m_pendingCmeSessionList.begin(); it != m_pendingCmeSessionList.end(); ++it)</span>
+<span class="lineNum">      95 </span>            :         {
+<span class="lineNum">      96 </span><span class="lineCov">         36 :             if (it-&gt;m_cmeSession == inCmeSession)</span>
+<span class="lineNum">      97 </span>            :             {
+<span class="lineNum">      98 </span><span class="lineCov">         16 :                 m_pendingCmeSessionList.erase(it);</span>
+<span class="lineNum">      99 </span>            :                 break;
+<span class="lineNum">     100 </span>            :             }
+<span class="lineNum">     101 </span>            :         }
+<span class="lineNum">     102 </span>            :     }
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineCov">         58 :     m_cmeSessionMap.erase(inCmeSession-&gt;GetSessionId());</span>
+<span class="lineNum">     105 </span><span class="lineCov">         58 :     if(m_cmeSessionMap.empty())</span>
+<span class="lineNum">     106 </span>            :     {
+<span class="lineNum">     107 </span><span class="lineCov">        126 :         OTTER_INFO_THIS(&quot;CCmeWssClient::CloseCmeSession, CME session list is empty now. cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()));</span>
+<span class="lineNum">     108 </span><span class="lineCov">         21 :         CCmeWssClientManager::Instance().RemoveCmeWssClient(m_wssClient-&gt;GetWebsocketUrl());</span>
+<span class="lineNum">     109 </span>            :     }
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">         29 : }</span></a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 : void CCmeWssClient::CloseAllCmeSession()</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :     auto self = shared_from_this();</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :     auto it = m_cmeSessionMap.begin();</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :     while (it != m_cmeSessionMap.end())</span>
+<span class="lineNum">     117 </span>            :     {
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         auto eraseIt = it++;</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         CloseCmeSession(eraseIt-&gt;second, true);</span>
+<span class="lineNum">     120 </span>            :     }
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">          5 : void CCmeWssClient::RoapOfferForRecvonlyVideo(CmeSessionSharedPtr inCmeSession, const std::string&amp; inOfferSdp)</span>
+<span class="lineNum">     124 </span>            : {
+<span class="lineNum">     125 </span><span class="lineCov">          5 :     JsonValue jsonMessage;</span>
+<span class="lineNum">     126 </span><span class="lineCov">          5 :     jsonMessage[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     127 </span><span class="lineCov">          5 :     jsonMessage[&quot;type&quot;] = &quot;roap&quot;;</span>
+<span class="lineNum">     128 </span><span class="lineCov">         15 :     jsonMessage[&quot;trackingID&quot;] = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">     129 </span><span class="lineCov">         10 :     jsonMessage[&quot;data&quot;][&quot;sessionID&quot;] = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">     130 </span><span class="lineCov">         10 :     jsonMessage[&quot;data&quot;][&quot;roap&quot;] = inCmeSession-&gt;GenerateOfferRoap(inOfferSdp);</span>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">          5 :     jsonMessage[&quot;data&quot;][&quot;featureToggles&quot;] = EDONUS_FEATURE_TOGGLES_RECVONLY_VIDEO;</span>
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span><span class="lineCov">         10 :     m_wssClient-&gt;Send(JsonWriter().write(jsonMessage));</span>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">          9 : void CCmeWssClient::RoapOk(const std::string&amp; inSessionId, const JsonValue&amp; inAnswerRoap)</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span><span class="lineCov">         18 :     JsonValue body,roapBody;</span>
+<span class="lineNum">     140 </span><span class="lineCov">          9 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     141 </span><span class="lineCov">          9 :     body[&quot;type&quot;] = &quot;roap&quot;;</span>
+<span class="lineNum">     142 </span><span class="lineCov">          9 :     body[&quot;trackingID&quot;] = inSessionId;</span>
+<span class="lineNum">     143 </span><span class="lineCov">          9 :     body[&quot;data&quot;][&quot;sessionID&quot;] = inSessionId;</span>
+<span class="lineNum">     144 </span><span class="lineCov">          9 :     roapBody = inAnswerRoap;</span>
+<span class="lineNum">     145 </span><span class="lineCov">          9 :     roapBody[&quot;messageType&quot;] = &quot;OK&quot;;</span>
+<span class="lineNum">     146 </span><span class="lineCov">          9 :     roapBody.removeMember(&quot;sdps&quot;);</span>
+<span class="lineNum">     147 </span><span class="lineCov">          9 :     body[&quot;data&quot;][&quot;roap&quot;] = roapBody;</span>
+<span class="lineNum">     148 </span><span class="lineCov">         27 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineCov">          1 : void CCmeWssClient::UpdateRosterList(const std::string&amp; inSessionId, const JsonValue&amp; inLocus)</span>
+<span class="lineNum">     152 </span>            : {
+<span class="lineNum">     153 </span><span class="lineCov">          1 :     JsonValue body;</span>
+<span class="lineNum">     154 </span><span class="lineCov">          1 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     155 </span><span class="lineCov">          1 :     body[&quot;type&quot;] = &quot;metadata&quot;;</span>
+<span class="lineNum">     156 </span><span class="lineCov">          1 :     body[&quot;trackingID&quot;] = inSessionId;</span>
+<span class="lineNum">     157 </span><span class="lineCov">          1 :     body[&quot;data&quot;][&quot;sessionID&quot;] = inSessionId;</span>
+<span class="lineNum">     158 </span><span class="lineCov">          1 :     body[&quot;data&quot;][&quot;metadata&quot;][&quot;data&quot;][&quot;eventType&quot;] = &quot;locus.difference&quot;;</span>
+<span class="lineNum">     159 </span><span class="lineCov">          1 :     body[&quot;data&quot;][&quot;metadata&quot;][&quot;data&quot;][&quot;locus&quot;] = inLocus;</span>
+<span class="lineNum">     160 </span><span class="lineCov">          2 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="161"><span class="lineNum">     161 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 : void CCmeWssClient::UpdateSessionLayout(const CmeSessionIdType&amp; inSessionId, const std::string&amp; inLayoutType, const std::string&amp; inLayout)</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :     OTTER_INFO_THIS(&quot;CCmeWssClient::UpdateSessionLayout&quot;);</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :     JsonValue body;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :     body[&quot;type&quot;] = &quot;action&quot;;</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :     body[&quot;trackingID&quot;] = inSessionId;</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :     body[&quot;data&quot;][&quot;sessionID&quot;] = inSessionId;</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :     body[&quot;data&quot;][&quot;action&quot;] = &quot;layout&quot;;</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :     body[&quot;data&quot;][&quot;layout&quot;] = inLayout;</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :     body[&quot;data&quot;][&quot;type&quot;] = inLayoutType;</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineCov">          4 : void CCmeWssClient::RequestFloor(const std::string&amp; inSessionId)</span>
+<span class="lineNum">     178 </span>            : {
+<span class="lineNum">     179 </span><span class="lineCov">          4 :     JsonValue body;</span>
+<span class="lineNum">     180 </span><span class="lineCov">          4 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     181 </span><span class="lineCov">          4 :     body[&quot;type&quot;] = &quot;floor&quot;;</span>
+<span class="lineNum">     182 </span><span class="lineCov">          4 :     body[&quot;trackingID&quot;] = inSessionId;</span>
+<span class="lineNum">     183 </span><span class="lineCov">          4 :     body[&quot;data&quot;][&quot;sessionID&quot;] = inSessionId;</span>
+<span class="lineNum">     184 </span><span class="lineCov">          4 :     body[&quot;data&quot;][&quot;event&quot;] = &quot;requested&quot;;</span>
+<span class="lineNum">     185 </span><span class="lineCov">          8 :     body[&quot;data&quot;][&quot;uuid&quot;] = NEW_UUID();</span>
+<span class="lineNum">     186 </span><span class="lineCov">          4 :     boost::posix_time::ptime curTime = boost::posix_time::microsec_clock::universal_time();</span>
+<span class="lineNum">     187 </span><span class="lineCov">          8 :     body[&quot;data&quot;][&quot;time&quot;] = to_iso_string(curTime);</span>
+<span class="lineNum">     188 </span><span class="lineCov">          8 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">          1 : void CCmeWssClient::ReleaseFloor(const std::string&amp; inSessionId)</span>
+<span class="lineNum">     192 </span>            : {
+<span class="lineNum">     193 </span><span class="lineCov">          1 :     JsonValue body;</span>
+<span class="lineNum">     194 </span><span class="lineCov">          1 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     195 </span><span class="lineCov">          1 :     body[&quot;type&quot;] = &quot;floor&quot;;</span>
+<span class="lineNum">     196 </span><span class="lineCov">          1 :     body[&quot;trackingID&quot;] = inSessionId;</span>
+<span class="lineNum">     197 </span><span class="lineCov">          1 :     body[&quot;data&quot;][&quot;sessionID&quot;] = inSessionId;</span>
+<span class="lineNum">     198 </span><span class="lineCov">          1 :     body[&quot;data&quot;][&quot;event&quot;] = &quot;released&quot;;</span>
+<span class="lineNum">     199 </span><span class="lineCov">          2 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineCov">          3 : JsonValue CCmeWssClient::ToJson() const</span>
+<span class="lineNum">     203 </span>            : {
+<span class="lineNum">     204 </span><span class="lineCov">          3 :     Json::Value info;</span>
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineCov">          3 :     info[JSON_KEY_STATE] = (int)GetState();</span>
+<span class="lineNum">     207 </span><span class="lineCov">          3 :     info[JSON_KEY_IS_HANDSHAKE_SUCCESSFUL] = m_isHandshakeSuccessful;</span>
+<span class="lineNum">     208 </span><span class="lineCov">          6 :     info[JSON_KEY_NUMBER_OF_CME_SESSIONS] = m_cmeSessionMap.size();</span>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">          6 :     Json::Value jsonCmeSessions;</span>
+<span class="lineNum">     211 </span><span class="lineCov">          3 :     Json::ArrayIndex id = 0;</span>
+<span class="lineNum">     212 </span><span class="lineCov">         21 :     for (const auto&amp; cmeSession : m_cmeSessionMap)</span>
+<span class="lineNum">     213 </span>            :     {
+<span class="lineNum">     214 </span><span class="lineCov">          9 :         jsonCmeSessions[id++] = cmeSession.first;</span>
+<span class="lineNum">     215 </span>            :     }
+<span class="lineNum">     216 </span><span class="lineCov">          3 :     info[JSON_KEY_CME_SESSIONS] = jsonCmeSessions;</span>
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span><span class="lineCov">          6 :     Json::Value jsonPendingCmeSessions;</span>
+<span class="lineNum">     219 </span><span class="lineCov">          3 :     id = 0;</span>
+<span class="lineNum">     220 </span><span class="lineCov">         21 :     for (const auto&amp; cmeSession : m_pendingCmeSessionList)</span>
+<span class="lineNum">     221 </span>            :     {
+<span class="lineNum">     222 </span><span class="lineCov">          9 :         jsonPendingCmeSessions[id++] = cmeSession.m_cmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">     223 </span>            :     }
+<span class="lineNum">     224 </span><span class="lineCov">          3 :     info[JSON_KEY_PENDING_CME_SESSIONS] = jsonPendingCmeSessions;</span>
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span><span class="lineCov">          3 :     return info;</span>
+<a name="227"><span class="lineNum">     227 </span>            : }</a>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">          3 : void CCmeWssClient::OnConnect(SafariResult inResult)</span>
+<span class="lineNum">     230 </span>            : {
+<span class="lineNum">     231 </span><span class="lineCov">          3 :     m_connectTimer.cancel();</span>
+<span class="lineNum">     232 </span><span class="lineCov">          9 :     uint32_t rtt = (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-m_connectionStartTime)).count();</span>
+<span class="lineNum">     233 </span><span class="lineCov">          6 :     std::string remoteIp = ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl());</span>
+<span class="lineNum">     234 </span><span class="lineCov">         18 :     WSS_ESTABLISHMENT_METRICS_LOG(std::string(&quot;WssEstablishTime&quot;), std::string(&quot;CmeNode&quot;), remoteIp, inResult, rtt);</span>
+<span class="lineNum">     235 </span><span class="lineCov">          3 :     if(SAFARI_FAILED(inResult))</span>
+<span class="lineNum">     236 </span>            :     {
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :         std::string errorMessage = (inResult == SAFARI_ERROR_WEBSOCKET_OPEN_CONNECTION_TIMEOUT ? &quot;open WSS connection timeout!&quot; : &quot;open WSS connection failed!&quot;);</span>
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :         OTTER_WARNING_THIS(&quot;CCmeWssClient::OnConnect, &quot; &lt;&lt; errorMessage &lt;&lt; &quot; cmeNode:&quot; &lt;&lt; remoteIp &lt;&lt; &quot; inResult:&quot; &lt;&lt; inResult);</span>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :         HandleCmeWssError(inResult, errorMessage);</span>
+<span class="lineNum">     240 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">     241 </span>            :     }
+<span class="lineNum">     242 </span><span class="lineCov">          3 :     Handshake();</span>
+<a name="243"><span class="lineNum">     243 </span>            : }</a>
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">          3 : void CCmeWssClient::Handshake()</span>
+<span class="lineNum">     246 </span>            : {
+<span class="lineNum">     247 </span><span class="lineCov">          3 :     m_handshakeStartTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">     248 </span><span class="lineCov">          3 :     CTssTrackingId::Reset(ESafariServerType::OTTER);</span>
+<span class="lineNum">     249 </span><span class="lineCov">          3 :     JsonValue body;</span>
+<span class="lineNum">     250 </span><span class="lineCov">          3 :     body[&quot;version&quot;] = CME_WEBSOCKET_VERSION;</span>
+<span class="lineNum">     251 </span><span class="lineCov">          3 :     body[&quot;type&quot;] = &quot;handshake&quot;;</span>
+<span class="lineNum">     252 </span><span class="lineCov">          3 :     body[&quot;trackingID&quot;] = CTssTrackingId::Get();</span>
+<span class="lineNum">     253 </span><span class="lineCov">          3 :     body[&quot;data&quot;][&quot;versions&quot;].append(CME_WEBSOCKET_VERSION);</span>
+<span class="lineNum">     254 </span><span class="lineCov">          6 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="255"><span class="lineNum">     255 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineCov">          3 : void CCmeWssClient::OnHandshakeMessage(const CCspWebsocketMessage&amp; inMessage)</span>
+<span class="lineNum">     258 </span>            : {
+<span class="lineNum">     259 </span><span class="lineCov">          3 :     if(inMessage.GetMessageType() != EWebsocketMessageType::TEXT_MESSAGE)</span>
+<span class="lineNum">     260 </span>            :     {
+<span class="lineNum">     261 </span><span class="lineCov">          6 :         OTTER_ERROR_THIS(&quot;CCmeWssClient::OnHandshakeMessage, invalid message type! cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; type:&quot; &lt;&lt; inMessage.GetMessageType());</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :         HandleCmeWssError(SAFARI_ERROR_WEBSOCKET_INVALID_MESSAGE_TYPE, &quot;SAFARI_ERROR_WEBSOCKET_INVALID_MESSAGE_TYPE&quot;);</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     264 </span>            :     }
+<span class="lineNum">     265 </span><span class="lineCov">          3 :     JsonValue body;</span>
+<span class="lineNum">     266 </span><span class="lineCov">          3 :     JsonReader().parse(inMessage.GetMessage(), body);</span>
+<span class="lineNum">     267 </span><span class="lineCov">          9 :     if(!body.isObject()|| !body[&quot;type&quot;].isString() || body[&quot;type&quot;].asString() != &quot;handshake&quot;)</span>
+<span class="lineNum">     268 </span>            :     {
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :         OTTER_ERROR_THIS(&quot;CCmeWssClient::OnHandshakeMessage, invalid handshake! cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage.GetMessage());</span>
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :         HandleCmeWssError(SAFARI_ERROR_CME_WEBSOCKET_INVALID_HANDSHAKE, &quot;SAFARI_ERROR_CME_WEBSOCKET_INVALID_HANDSHAKE&quot;);</span>
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     272 </span>            :     }
+<span class="lineNum">     273 </span><span class="lineCov">         12 :     m_wssClient-&gt;SetMessageCallback(std::bind(&amp;CCmeWssClient::OnMessage, this, std::placeholders::_1));</span>
+<span class="lineNum">     274 </span><span class="lineCov">          3 :     m_isHandshakeSuccessful = true;</span>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span><span class="lineCov">          9 :     uint32_t rtt = (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-m_handshakeStartTime)).count();</span>
+<span class="lineNum">     277 </span><span class="lineCov">         24 :     WSS_HANDSHAKE_METRICS_LOG(std::string(&quot;HandshakeRTT&quot;), std::string(&quot;CmeNode&quot;), ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()), rtt);</span>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">         24 :     for (auto&amp; cmeSession : m_pendingCmeSessionList)</span>
+<span class="lineNum">     280 </span><span class="lineCov">         36 :         SendOpenCmeSessionMessage(cmeSession.m_cmeSession, cmeSession.m_trackingId);</span>
+<span class="lineNum">     281 </span><span class="lineCov">          6 :     m_pendingCmeSessionList.clear();</span>
+<a name="282"><span class="lineNum">     282 </span>            : }</a>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">         13 : void CCmeWssClient::SendOpenCmeSessionMessage(CmeSessionSharedPtr inCmeSession, const CTssTrackingId&amp; inTrackingId)</span>
+<span class="lineNum">     285 </span>            : {
+<span class="lineNum">     286 </span><span class="lineCov">         26 :     JsonValue body = inCmeSession-&gt;GenerateOpenSessionMessage();</span>
+<span class="lineNum">     287 </span><span class="lineCov">         26 :     body[&quot;trackingID&quot;] = inCmeSession-&gt;GetSessionId();</span>
+<span class="lineNum">     288 </span><span class="lineCov">         26 :     m_wssClient-&gt;Send(JsonWriter().write(body));</span>
+<a name="289"><span class="lineNum">     289 </span><span class="lineCov">         13 : }</span></a>
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineCov">         27 : void CCmeWssClient::OnMessage(const CCspWebsocketMessage&amp; inMessage)</span>
+<span class="lineNum">     292 </span>            : {
+<span class="lineNum">     293 </span><span class="lineCov">        198 :     OTTER_DEBUG_THIS(&quot;CCmeWssClient::OnMessage, cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; type:&quot; &lt;&lt; inMessage.GetMessageType() &lt;&lt; &quot;, message:&quot;&lt;&lt;inMessage.GetMessage());</span>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineCov">          9 :     if(inMessage.GetMessageType() != EWebsocketMessageType::TEXT_MESSAGE)</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineCov">          9 :     JsonValue body;</span>
+<span class="lineNum">     299 </span><span class="lineCov">          9 :     JsonReader().parse(inMessage.GetMessage(), body);</span>
+<span class="lineNum">     300 </span><span class="lineCov">          9 :     if(!body.isObject())</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :         return ;</span>
+<span class="lineNum">     302 </span><span class="lineCov">          9 :     if(!body[&quot;type&quot;].isString())</span>
+<span class="lineNum">     303 </span>            :         return;
+<span class="lineNum">     304 </span><span class="lineCov">          9 :     if(!body[&quot;trackingID&quot;].isString())</span>
+<span class="lineNum">     305 </span>            :         return;
+<span class="lineNum">     306 </span><span class="lineCov">          9 :     if(!body[&quot;version&quot;].isString())</span>
+<span class="lineNum">     307 </span>            :         return;
+<span class="lineNum">     308 </span><span class="lineCov">          9 :     if(!body[&quot;data&quot;].isObject())</span>
+<span class="lineNum">     309 </span>            :         return;
+<span class="lineNum">     310 </span><span class="lineCov">          9 :     if(!body[&quot;data&quot;][&quot;sessionID&quot;].isString())</span>
+<span class="lineNum">     311 </span>            :         return;
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span><span class="lineCov">         36 :     CTssTrackingId::Set(body[&quot;trackingID&quot;].asString());</span>
+<span class="lineNum">     314 </span><span class="lineCov">          9 :     const JsonValue&amp; dataBody = body[&quot;data&quot;];</span>
+<span class="lineNum">     315 </span><span class="lineCov">          9 :     std::string cmeSessionId = dataBody[&quot;sessionID&quot;].asString();</span>
+<span class="lineNum">     316 </span><span class="lineCov">         18 :     auto iter = m_cmeSessionMap.find(cmeSessionId);</span>
+<span class="lineNum">     317 </span><span class="lineCov">         18 :     if(iter == m_cmeSessionMap.end())</span>
+<span class="lineNum">     318 </span>            :     {
+<span class="lineNum">     319 </span><span class="lineNoCov">          0 :         OTTER_WARNING_THIS(&quot;CCmeWssClient::OnMessage, CME session not found! sessionId:&quot; &lt;&lt; cmeSessionId &lt;&lt; &quot; cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()));</span>
+<span class="lineNum">     320 </span>            :         return;
+<span class="lineNum">     321 </span>            :     }
+<span class="lineNum">     322 </span><span class="lineCov">         18 :     iter-&gt;second-&gt;OnMessage(body);</span>
+<a name="323"><span class="lineNum">     323 </span>            : }</a>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">          1 : void CCmeWssClient::HandleCmeWssError(SafariResult inErrorCode, const std::string&amp; inMessage) </span>
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span><span class="lineCov">         23 :     OTTER_WARNING_THIS(&quot;CCmeWssClient::HandleCmeWssError, cmeNode:&quot; &lt;&lt; ::GetHostOfUrl(m_wssClient-&gt;GetWebsocketUrl()) &lt;&lt; &quot; inErrorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; inMessage:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     328 </span><span class="lineCov">          3 :     CCmeNodeProvider::Instance().RemoveCmeNode(m_wssClient-&gt;GetWebsocketUrl());</span>
+<span class="lineNum">     329 </span><span class="lineCov">          1 :     auto venues = GetVenues();</span>
+<span class="lineNum">     330 </span><span class="lineCov">          1 :     CTssTrackingId::Reset(ESafariServerType::OTTER);</span>
+<span class="lineNum">     331 </span><span class="lineCov">          5 :     for (auto&amp; venue : venues)</span>
+<span class="lineNum">     332 </span>            :     {
+<span class="lineNum">     333 </span><span class="lineCov">          3 :         venue.second-&gt;HandleCmeWssError(m_wssClient-&gt;GetWebsocketUrl(), inErrorCode, inMessage);</span>
+<span class="lineNum">     334 </span>            :     }
+<a name="335"><span class="lineNum">     335 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineCov">          1 : OttVenueSharedPtrMap CCmeWssClient::GetVenues()</span>
+<span class="lineNum">     338 </span>            : {
+<span class="lineNum">     339 </span>            :     OttVenueSharedPtrMap venues;
+<span class="lineNum">     340 </span><span class="lineCov">          8 :     for (auto&amp; cmeSession : m_cmeSessionMap)</span>
+<span class="lineNum">     341 </span>            :     {
+<span class="lineNum">     342 </span><span class="lineCov">          8 :         venues.insert(OttVenueSharedPtrMap::value_type(cmeSession.second-&gt;GetVenueId(), cmeSession.second-&gt;GetVenue()));</span>
+<a name="343"><span class="lineNum">     343 </span>            :     }</a>
+<span class="lineNum">     344 </span><span class="lineCov">          1 :     return venues;</span>
+<span class="lineNum">     345 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     346 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

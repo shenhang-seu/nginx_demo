@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/handler/HippoMonitorInfoHandler.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/handler</a> - HippoMonitorInfoHandler.cpp<span style="font-size: 80%;"> (source / <a href="HippoMonitorInfoHandler.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">156</td>
+            <td class="headerCovTableEntry">173</td>
+            <td class="headerCovTableEntryHi">90.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoMonitorInfoHandler.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;SafariApplication.h&quot;
+<span class="lineNum">       3 </span>            : #include &lt;boost/date_time/posix_time/posix_time.hpp&gt;
+<span class="lineNum">       4 </span>            : #include &quot;SafariConfig.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;HippoCmeManager.h&quot;
+<a name="6"><span class="lineNum">       6 </span>            : #include &quot;HippoDBTaskFactory.h&quot;</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         10 : CHippoMonitorInfoHandler::CHippoMonitorInfoHandler(boost::asio::io_service&amp; inIoService, const RestNetwork::RestRequestSharedPtr&amp; inRequest, const NotifyFunction&amp; inComplete)</span>
+<span class="lineNum">       9 </span>            :     : IRequestHandler(inRequest, inComplete)
+<span class="lineNum">      10 </span>            :     , m_poolName(CHippoDBAccess::GetPoolName())
+<span class="lineNum">      11 </span>            :     , m_isVerbose(false)
+<span class="lineNum">      12 </span><span class="lineCov">         70 :     , m_isMoreVerbose(false)</span>
+<span class="lineNum">      13 </span>            : {
+<a name="14"><span class="lineNum">      14 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">          2 : void CHippoMonitorInfoHandler::Start()</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span><span class="lineCov">          2 :     SafariResult ret = ParseRequest();</span>
+<span class="lineNum">      19 </span><span class="lineCov">          2 :     m_isVerbose = (m_item.find(&quot;verbose&quot;) != m_item.npos);</span>
+<span class="lineNum">      20 </span><span class="lineCov">          4 :     m_isMoreVerbose = (m_item == &quot;more-verbose&quot;);</span>
+<span class="lineNum">      21 </span><span class="lineCov">          4 :     if (SAFARI_FAILED(ret) || (&quot;status&quot; != m_item &amp;&amp; !m_isVerbose)) </span>
+<span class="lineNum">      22 </span>            :     {
+<span class="lineNum">      23 </span><span class="lineCov">         18 :         HIPPO_WARNING_THIS(&quot;CHippoMonitorInfoHandler::Start, ParseRequest failed! ret:&quot; &lt;&lt; ret &lt;&lt; &quot; m_item:&quot; &lt;&lt; m_item);</span>
+<span class="lineNum">      24 </span><span class="lineCov">          1 :         JsonValue body;</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :         body[JSON_KEY_RESULT] = false;</span>
+<span class="lineNum">      26 </span><span class="lineCov">          1 :         Complete(HTTP_STATUS_OK, body);</span>
+<span class="lineNum">      27 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">      28 </span>            :     }
+<span class="lineNum">      29 </span>            :  
+<span class="lineNum">      30 </span><span class="lineCov">          1 :     QueryOtter();</span>
+<a name="31"><span class="lineNum">      31 </span>            : }</a>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          2 : SafariResult CHippoMonitorInfoHandler::ParseRequest()</span>
+<span class="lineNum">      34 </span>            : {
+<span class="lineNum">      35 </span><span class="lineCov">          2 :     JsonValue param = m_restRequest-&gt;GetParameters();</span>
+<span class="lineNum">      36 </span><span class="lineCov">          6 :     ENSURE_JSON_IS_A_VALID_STRING(param[JSON_KEY_ITEM]);</span>
+<span class="lineNum">      37 </span><span class="lineCov">          4 :     m_item = param[JSON_KEY_ITEM].asString();</span>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :     return SAFARI_OK;</span>
+<span class="lineNum">      39 </span>            : }
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineCov">          2 : SafariResult CHippoMonitorInfoHandler::QueryOtter()</span>
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span>            :     //HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::QueryOtter&quot;);
+<span class="lineNum">      45 </span>            :     /*
+<span class="lineNum">      46 </span>            :     char temp[1024] = {0};
+<span class="lineNum">      47 </span>            :     snprintf(temp, 1024, &quot;%s where STATE != 'UNREGISTERED' AND POOLNAME = '%s'&quot;, CHippoDBManager::GetQuerySqlStatement(TABLE_OTTER).c_str(), m_poolName.c_str());
+<span class="lineNum">      48 </span>            :     std::string sql = temp;
+<span class="lineNum">      49 </span>            :     */
+<span class="lineNum">      50 </span><span class="lineCov">          4 :     auto dbTask = CDBTaskFactory::CreateDBTaskQueryAliveInLogicOtter(m_poolName,false,&quot;0&quot;);</span>
+<span class="lineNum">      51 </span><span class="lineCov">         12 :     return m_hippoDBAccess.AsyncQueryRecord(TABLE_OTTER, dbTask, std::bind(&amp;CHippoMonitorInfoHandler::QueryOtterHandler, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">      52 </span>            : }
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">          5 : void CHippoMonitorInfoHandler::QueryOtterHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">      55 </span>            : {
+<span class="lineNum">      56 </span><span class="lineCov">         80 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::QueryOtterHandler, inSafariResult=&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineCov">          8 :     if ( (SAFARI_FAILED(inSafariResult)) || (NULL == inDbRecordListSharedPtr.get()))</span>
+<span class="lineNum">      59 </span>            :     {
+<span class="lineNum">      60 </span><span class="lineCov">         64 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QueryOtterHandler, fail result =&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">      61 </span>            :     }
+<span class="lineNum">      62 </span>            :     else
+<span class="lineNum">      63 </span>            :     {
+<span class="lineNum">      64 </span><span class="lineCov">          3 :       std::vector&lt;std::shared_ptr&lt;IDbRecord&gt; &gt;::iterator iter = inDbRecordListSharedPtr-&gt;begin();</span>
+<span class="lineNum">      65 </span><span class="lineCov">          9 :       for (; iter != inDbRecordListSharedPtr-&gt;end(); ++iter)</span>
+<span class="lineNum">      66 </span>            :       {
+<span class="lineNum">      67 </span><span class="lineCov">          1 :                 if (iter-&gt;get() != nullptr)</span>
+<span class="lineNum">      68 </span>            :                 {
+<span class="lineNum">      69 </span><span class="lineCov">          1 :                         std::shared_ptr&lt;CDbOttersRecord&gt; record = std::dynamic_pointer_cast&lt;CDbOttersRecord&gt;(*iter);</span>
+<span class="lineNum">      70 </span><span class="lineCov">          2 :                         std::string ottID       = record-&gt;ID();</span>
+<span class="lineNum">      71 </span><span class="lineCov">          2 :                         MonServerInfo ottInfo ;</span>
+<span class="lineNum">      72 </span><span class="lineCov">          2 :                 ottInfo.m_id            = record-&gt;ID();</span>
+<span class="lineNum">      73 </span><span class="lineCov">          1 :                 ottInfo.m_ip            = record-&gt;IP();</span>
+<span class="lineNum">      74 </span><span class="lineCov">          1 :                 ottInfo.m_load          = record-&gt;Load();</span>
+<span class="lineNum">      75 </span><span class="lineCov">          1 :                 ottInfo.m_sequence      = record-&gt;Sequence();</span>
+<span class="lineNum">      76 </span><span class="lineCov">          1 :                 ottInfo.m_state         = record-&gt;State();</span>
+<span class="lineNum">      77 </span><span class="lineCov">          1 :                 ottInfo.m_maxLoad       = record-&gt;MaxLoad();</span>
+<span class="lineNum">      78 </span><span class="lineCov">          1 :                 ottInfo.m_location      = record-&gt;Location();</span>
+<span class="lineNum">      79 </span><span class="lineCov">          2 :                 ottInfo.m_heartbeatTime = to_simple_string(record-&gt;HeartbeatTime());</span>
+<span class="lineNum">      80 </span><span class="lineCov">          1 :                 ottInfo.m_version       = record-&gt;Version();</span>
+<span class="lineNum">      81 </span><span class="lineCov">          1 :                 ottInfo.m_extendInfo    = record-&gt;ExtendInfo();</span>
+<span class="lineNum">      82 </span><span class="lineCov">          2 :                         m_ottInfoMap.insert(std::pair&lt;std::string,MonServerInfo&gt;(ottID,ottInfo));</span>
+<span class="lineNum">      83 </span>            :                 }
+<span class="lineNum">      84 </span>            :                 else
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QueryOtterHandler, NULL POINTER&quot;);</span>
+<span class="lineNum">      86 </span>            :       }
+<span class="lineNum">      87 </span>            :     }
+<span class="lineNum">      88 </span><span class="lineCov">          5 :     SafariResult ret = QueryHippo();</span>
+<span class="lineNum">      89 </span><span class="lineCov">          5 :     if(SAFARI_FAILED(ret))</span>
+<span class="lineNum">      90 </span>            :     {
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QuerySessionInfoTable, QueryHippo fail&quot;);</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :         OutputResult();</span>
+<span class="lineNum">      93 </span>            :     }
+<span class="lineNum">      94 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">          6 : SafariResult CHippoMonitorInfoHandler::QueryHippo()</span>
+<span class="lineNum">      97 </span>            : {
+<span class="lineNum">      98 </span>            :     
+<span class="lineNum">      99 </span><span class="lineCov">         90 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::QueryHippo&quot;);</span>
+<span class="lineNum">     100 </span>            :     /*
+<span class="lineNum">     101 </span>            :     char temp[1024] = {0};
+<span class="lineNum">     102 </span>            :     snprintf(temp, 1024, &quot;%s where STATE != 'UNREGISTERED' AND POOLNAME = '%s'&quot;, CHippoDBManager::GetQuerySqlStatement(TABLE_HIPPO).c_str(), m_poolName.c_str());
+<span class="lineNum">     103 </span>            :     std::string sql = temp;
+<span class="lineNum">     104 </span>            :     */
+<span class="lineNum">     105 </span><span class="lineCov">          6 :     auto dbTask = CDBTaskFactory::CreateDBTaskQueryAliveInLogicHippo(m_poolName);</span>
+<span class="lineNum">     106 </span><span class="lineCov">         36 :     return m_hippoDBAccess.AsyncQueryRecord(TABLE_HIPPO, dbTask, std::bind(&amp;CHippoMonitorInfoHandler::QueryHippoHandler, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     107 </span>            : }
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">          9 : void CHippoMonitorInfoHandler::QueryHippoHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">     110 </span>            : {
+<span class="lineNum">     111 </span><span class="lineCov">        144 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::QueryHippoHandler, inSafariResult=&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span><span class="lineCov">         12 :     if ( (SAFARI_FAILED(inSafariResult)) || (NULL == inDbRecordListSharedPtr.get()))</span>
+<span class="lineNum">     114 </span>            :     {
+<span class="lineNum">     115 </span><span class="lineCov">        128 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QueryHippoHandler, fail result =&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">     116 </span>            :     }
+<span class="lineNum">     117 </span>            :     else
+<span class="lineNum">     118 </span>            :     {
+<span class="lineNum">     119 </span><span class="lineCov">          3 :         std::vector&lt;std::shared_ptr&lt;IDbRecord&gt; &gt;::iterator iter = inDbRecordListSharedPtr-&gt;begin();</span>
+<span class="lineNum">     120 </span><span class="lineCov">          9 :         for (; iter != inDbRecordListSharedPtr-&gt;end(); ++iter)</span>
+<span class="lineNum">     121 </span>            :         {
+<span class="lineNum">     122 </span><span class="lineCov">          1 :             if (iter-&gt;get() != nullptr)</span>
+<span class="lineNum">     123 </span>            :             {
+<span class="lineNum">     124 </span><span class="lineCov">          1 :                 std::shared_ptr&lt;CDbHipposRecord&gt; record = std::dynamic_pointer_cast&lt;CDbHipposRecord&gt;(*iter);</span>
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span><span class="lineCov">          2 :                 std::string hipID = record-&gt;ID();</span>
+<span class="lineNum">     127 </span><span class="lineCov">          2 :                 JsonValue hipInfo;</span>
+<span class="lineNum">     128 </span><span class="lineCov">          3 :                 hipInfo[JSON_KEY_HEARTBEAT_TIME] = to_simple_string(record-&gt;HeartbeatTime());</span>
+<span class="lineNum">     129 </span><span class="lineCov">          2 :                 hipInfo[JSON_KEY_SERVER_ID] = record-&gt;ID();</span>
+<span class="lineNum">     130 </span><span class="lineCov">          1 :                 hipInfo[JSON_KEY_SERVER_IP] = record-&gt;IP();</span>
+<span class="lineNum">     131 </span><span class="lineCov">          1 :                 hipInfo[JSON_KEY_STATE] = record-&gt;State();</span>
+<span class="lineNum">     132 </span><span class="lineCov">          1 :                 hipInfo[JSON_KEY_IS_RESTORER] = record-&gt;IsRestorer();</span>
+<span class="lineNum">     133 </span><span class="lineCov">          2 :                 m_hipInfoMap.insert(std::pair&lt;std::string,JsonValue&gt;(hipID,hipInfo));</span>
+<span class="lineNum">     134 </span>            :             }
+<span class="lineNum">     135 </span>            :             else
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QueryHippoHandler, NULL POINTER&quot;);</span>
+<span class="lineNum">     137 </span>            :         }
+<span class="lineNum">     138 </span>            :     }
+<span class="lineNum">     139 </span><span class="lineCov">          9 :     SafariResult ret = QuerySessionInfoTable();</span>
+<span class="lineNum">     140 </span><span class="lineCov">          9 :     if(SAFARI_FAILED(ret))</span>
+<span class="lineNum">     141 </span>            :     {
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QueryHippoHandler, QuerySessionInfoTable fail&quot;);</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         OutputResult();</span>
+<span class="lineNum">     144 </span>            :     }
+<span class="lineNum">     145 </span><span class="lineCov">          9 : }</span>
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span><span class="lineCov">         10 : SafariResult CHippoMonitorInfoHandler::QuerySessionInfoTable()</span>
+<span class="lineNum">     148 </span>            : {
+<span class="lineNum">     149 </span><span class="lineCov">        150 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::QuerySessionInfoTable&quot;);</span>
+<span class="lineNum">     150 </span>            :     //std::string sql = CHippoDBManager::GetQuerySqlStatement(TABLE_SESSION)+&quot; where STATE != 'STOP' AND POOLNAME = '&quot;+m_poolName+&quot;' AND &quot;+CHippoDBManager::GetDBPartitionConditionSqlSessionInfo();
+<span class="lineNum">     151 </span><span class="lineCov">         10 :     auto dbTask = CDBTaskFactory::CreateDBTaskQueryActiveSession(m_poolName,CHippoDBManager::GetDBPartitionTime());</span>
+<span class="lineNum">     152 </span><span class="lineCov">         60 :     return m_hippoDBAccess.AsyncQueryRecord(TABLE_SESSION, dbTask, std::bind(&amp;CHippoMonitorInfoHandler::GetSessionIdHandler, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     153 </span>            : }
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineCov">         13 : void CHippoMonitorInfoHandler::GetSessionIdHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span><span class="lineCov">         17 :     if(SAFARI_FAILED(inSafariResult) || (nullptr == inDbRecordListSharedPtr.get()))</span>
+<span class="lineNum">     158 </span>            :     {
+<span class="lineNum">     159 </span><span class="lineCov">        192 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::GetSessionIdHandler, fail result=&quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">     160 </span><span class="lineCov">         12 :         OutputResult();</span>
+<span class="lineNum">     161 </span><span class="lineCov">         25 :         return;</span>
+<span class="lineNum">     162 </span>            :     }
+<span class="lineNum">     163 </span><span class="lineCov">          3 :     std::vector&lt;std::shared_ptr&lt;IDbRecord&gt; &gt;::iterator iter = inDbRecordListSharedPtr-&gt;begin();</span>
+<span class="lineNum">     164 </span>            :     std::string sessionId;
+<span class="lineNum">     165 </span>            :          
+<span class="lineNum">     166 </span><span class="lineCov">          8 :     for (; iter != inDbRecordListSharedPtr-&gt;end(); ++iter)</span>
+<span class="lineNum">     167 </span>            :     {
+<span class="lineNum">     168 </span><span class="lineCov">          1 :         std::shared_ptr&lt;CDbSessionsRecord&gt;  record = std::dynamic_pointer_cast&lt;CDbSessionsRecord&gt; (*iter);</span>
+<span class="lineNum">     169 </span><span class="lineCov">          2 :         sessionId = record-&gt;SessionID();</span>
+<span class="lineNum">     170 </span><span class="lineCov">          3 :         m_sessionList.push_back(sessionId);</span>
+<span class="lineNum">     171 </span>            :     }
+<span class="lineNum">     172 </span><span class="lineCov">         23 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::GetSessionIdHandler,session num is &quot; &lt;&lt; m_sessionList.size() &lt;&lt; &quot;, DB query row num is&quot; &lt;&lt; inDbRecordListSharedPtr-&gt;size());</span>
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span><span class="lineCov">          2 :     if (!m_sessionList.empty() &amp;&amp; m_isMoreVerbose)</span>
+<span class="lineNum">     175 </span>            :     {
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :         std::string sql =  CHippoDBManager::GetQuerySqlStatement(TABLE_SESSION_SERVER_JOINED)+&quot; where wbxsessionservermap.sessionid in ( '&quot;+m_sessionList[0]+&quot;' &quot;;</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :         for(std::size_t i=1;i&lt;m_sessionList.size();++i)</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :             sql += &quot; , '&quot;+m_sessionList[i]+&quot;' &quot;;</span>
+<span class="lineNum">     180 </span>            :         sql += &quot; )&quot;;
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :         SafariResult result = m_hippoDBAccess.AsyncQueryRecord(TABLE_SESSION_SERVER_JOINED,sql,std::bind(&amp;CHippoMonitorInfoHandler::QuerySessionServerJoinedHandler, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :         if (SAFARI_OK != result)</span>
+<span class="lineNum">     183 </span>            :         {
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :             HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::GetSessionIdHandler, result=&quot; &lt;&lt; result);</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :             OutputResult();</span>
+<span class="lineNum">     186 </span>            :         }
+<span class="lineNum">     187 </span>            :     }
+<span class="lineNum">     188 </span>            :     else
+<span class="lineNum">     189 </span>            :     {
+<span class="lineNum">     190 </span><span class="lineCov">          1 :         OutputResult();</span>
+<span class="lineNum">     191 </span>            :     }
+<span class="lineNum">     192 </span>            : }
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span><span class="lineCov">          3 : void CHippoMonitorInfoHandler::QuerySessionServerJoinedHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">     195 </span>            : {
+<span class="lineNum">     196 </span><span class="lineCov">          6 :     if(SAFARI_FAILED(inSafariResult) || (nullptr == inDbRecordListSharedPtr.get()))</span>
+<span class="lineNum">     197 </span>            :     {
+<span class="lineNum">     198 </span><span class="lineCov">         34 :         HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::GetSessionIdHandler, fail result=&quot;&lt;&lt;inSafariResult&lt;&lt;&quot;.&quot;);</span>
+<span class="lineNum">     199 </span><span class="lineCov">          2 :         OutputResult();</span>
+<span class="lineNum">     200 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">     201 </span>            :     }
+<span class="lineNum">     202 </span><span class="lineCov">          3 :     std::vector&lt;std::shared_ptr&lt;IDbRecord&gt; &gt;::iterator iter = inDbRecordListSharedPtr-&gt;begin();</span>
+<span class="lineNum">     203 </span><span class="lineCov">          9 :     for (; iter != inDbRecordListSharedPtr-&gt;end(); ++iter)</span>
+<span class="lineNum">     204 </span>            :     {
+<span class="lineNum">     205 </span><span class="lineCov">          1 :         if (iter-&gt;get() != nullptr)</span>
+<span class="lineNum">     206 </span>            :         {
+<span class="lineNum">     207 </span><span class="lineCov">          1 :             std::shared_ptr&lt;CDbSessSvrPairsJoinedRecord&gt; record = std::dynamic_pointer_cast&lt;CDbSessSvrPairsJoinedRecord&gt;(*iter);</span>
+<span class="lineNum">     208 </span><span class="lineCov">          2 :             if (record-&gt;IsDeleted())</span>
+<span class="lineNum">     209 </span>            :                 continue;
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineCov">          2 :             std::string sessionId = record-&gt;SessionID();</span>
+<span class="lineNum">     212 </span><span class="lineCov">          2 :             JsonValue sessionInfo;</span>
+<span class="lineNum">     213 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_SESSION_ID]       = record-&gt;SessionID();</span>
+<span class="lineNum">     214 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_CONFERENCE_ID]    = record-&gt;ConfID();</span>
+<span class="lineNum">     215 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_OTTER_IP]         = record-&gt;OtterIP();</span>
+<span class="lineNum">     216 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_OTTER_VERSION]    = record-&gt;OtterVersion();</span>
+<span class="lineNum">     217 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_SESSION_TYPE]     = record-&gt;SessionType();</span>
+<span class="lineNum">     218 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_LOCATION]         = record-&gt;SessionLocation();</span>
+<span class="lineNum">     219 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_CALLBACK_URL]     = record-&gt;SessionCallbackUrl();</span>
+<span class="lineNum">     220 </span><span class="lineCov">          2 :             sessionInfo[JSON_KEY_STATE]            = record-&gt;SessionState();</span>
+<span class="lineNum">     221 </span><span class="lineCov">          2 :             m_sessionInfoMap.insert(std::pair&lt;std::string, JsonValue &gt;(sessionId, sessionInfo));</span>
+<span class="lineNum">     222 </span>            :         }
+<span class="lineNum">     223 </span>            :         else
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :             HIPPO_ERROR_THIS(&quot;CHippoMonitorInfoHandler::QuerySessionServerJoinedHandler, NULL POINTER&quot;);</span>
+<span class="lineNum">     225 </span>            :     }
+<span class="lineNum">     226 </span><span class="lineCov">          1 :     OutputResult();</span>
+<span class="lineNum">     227 </span>            : }
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">         16 : void CHippoMonitorInfoHandler::OutputResult()</span>
+<span class="lineNum">     230 </span>            : {
+<span class="lineNum">     231 </span>            :         //output json body
+<span class="lineNum">     232 </span><span class="lineCov">         16 :         JsonValue body;</span>
+<span class="lineNum">     233 </span><span class="lineCov">         32 :     body[JSON_KEY_HIPPO_VERSION] = ISafariApplication::Instance()-&gt;GetVersion();</span>
+<span class="lineNum">     234 </span><span class="lineCov">         16 :         body[JSON_KEY_SERVERS] = GenerateServerInfo();</span>
+<span class="lineNum">     235 </span><span class="lineCov">         32 :     body[JSON_KEY_NUMBER_OF_SESSIONS] = m_sessionList.size();</span>
+<span class="lineNum">     236 </span><span class="lineCov">         16 :     if (m_isMoreVerbose)</span>
+<span class="lineNum">     237 </span>            :     {
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :         body[JSON_KEY_SERVER_CONFIG] = CSafariConfig::GetContent();</span>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :         body[JSON_KEY_CME_INFO] = CHippoCmeManager::Instance().ToJson();</span>
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :         body[JSON_KEY_SESSIONS] = GenerateSessionInfo();</span>
+<span class="lineNum">     241 </span>            :     }
+<span class="lineNum">     242 </span><span class="lineCov">         16 :         Complete(HTTP_STATUS_OK, body,true);</span>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov">         16 : }</span></a>
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">         18 : Json::Value CHippoMonitorInfoHandler::GenerateServerInfo()</span>
+<span class="lineNum">     246 </span>            : {
+<span class="lineNum">     247 </span><span class="lineCov">        270 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::GenerateServerInfo&quot;);</span>
+<span class="lineNum">     248 </span><span class="lineCov">         18 :     JsonValue serverInfo;</span>
+<span class="lineNum">     249 </span><span class="lineCov">         36 :     serverInfo[JSON_KEY_NUMBER_OF_HIPPOS]    = m_hipInfoMap.size();</span>
+<span class="lineNum">     250 </span><span class="lineCov">         36 :     serverInfo[JSON_KEY_NUMBER_OF_OTTERS]    = m_ottInfoMap.size();</span>
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineCov">         18 :     if (!m_isVerbose)</span>
+<span class="lineNum">     253 </span>            :         return serverInfo;
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineCov">          4 :     auto iter_hipInfo = m_hipInfoMap.begin();</span>
+<span class="lineNum">     256 </span><span class="lineCov">          9 :     for (; iter_hipInfo != m_hipInfoMap.end(); iter_hipInfo++)</span>
+<span class="lineNum">     257 </span>            :     {
+<span class="lineNum">     258 </span><span class="lineCov">          1 :         JsonValue info = iter_hipInfo-&gt;second;</span>
+<span class="lineNum">     259 </span><span class="lineCov">          1 :         serverInfo[JSON_KEY_HIPPOS].append(info);</span>
+<span class="lineNum">     260 </span><span class="lineCov">          1 :     }</span>
+<span class="lineNum">     261 </span>            :   
+<span class="lineNum">     262 </span><span class="lineCov">          4 :     std::map&lt;std::string, MonServerInfo&gt;::iterator iter_serverInfo = m_ottInfoMap.begin();</span>
+<span class="lineNum">     263 </span><span class="lineCov">         10 :     for (; iter_serverInfo != m_ottInfoMap.end(); ++iter_serverInfo)</span>
+<span class="lineNum">     264 </span>            :     {
+<span class="lineNum">     265 </span><span class="lineCov">          2 :         JsonValue info;</span>
+<span class="lineNum">     266 </span><span class="lineCov">          2 :         info[JSON_KEY_SERVER_ID]      = iter_serverInfo-&gt;second.m_id;</span>
+<span class="lineNum">     267 </span><span class="lineCov">          2 :         info[JSON_KEY_SERVER_IP]      = iter_serverInfo-&gt;second.m_ip;</span>
+<span class="lineNum">     268 </span><span class="lineCov">          2 :         info[JSON_KEY_LOAD]           = iter_serverInfo-&gt;second.m_load;</span>
+<span class="lineNum">     269 </span><span class="lineCov">          2 :         info[JSON_KEY_STATE]          = iter_serverInfo-&gt;second.m_state;</span>
+<span class="lineNum">     270 </span><span class="lineCov">          2 :         info[JSON_KEY_MAX_LOAD]       = iter_serverInfo-&gt;second.m_maxLoad;</span>
+<span class="lineNum">     271 </span><span class="lineCov">          2 :         info[JSON_KEY_OTTER_VERSION]  = iter_serverInfo-&gt;second.m_version;</span>
+<span class="lineNum">     272 </span><span class="lineCov">          2 :         info[JSON_KEY_SEQUENCE]       = iter_serverInfo-&gt;second.m_sequence;</span>
+<span class="lineNum">     273 </span><span class="lineCov">          2 :         info[JSON_KEY_LOCATION]       = iter_serverInfo-&gt;second.m_location;</span>
+<span class="lineNum">     274 </span><span class="lineCov">          2 :         info[JSON_KEY_HEARTBEAT_TIME] = iter_serverInfo-&gt;second.m_heartbeatTime;</span>
+<span class="lineNum">     275 </span><span class="lineCov">          4 :         JsonReader().parse(iter_serverInfo-&gt;second.m_extendInfo, info[JSON_KEY_EXTEND_INFO]);</span>
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineCov">          2 :         serverInfo[JSON_KEY_OTTERS].append(info);</span>
+<span class="lineNum">     278 </span><span class="lineCov">          2 :     }</span>
+<span class="lineNum">     279 </span>            :     
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :     return serverInfo;
+<a name="282"><span class="lineNum">     282 </span>            : }</a>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">          2 : Json::Value CHippoMonitorInfoHandler::GenerateSessionInfo()</span>
+<span class="lineNum">     285 </span>            : {
+<span class="lineNum">     286 </span><span class="lineCov">         30 :     HIPPO_INFO_THIS(&quot;CHippoMonitorInfoHandler::GenerateSessionInfo&quot;);</span>
+<span class="lineNum">     287 </span><span class="lineCov">          2 :     JsonValue sessionInfo;</span>
+<span class="lineNum">     288 </span>            :     // for (auto const&amp; session : m_sessionInfoMap)
+<span class="lineNum">     289 </span>            :     // {
+<span class="lineNum">     290 </span>            :     //     sessionInfo.append(session.second);
+<span class="lineNum">     291 </span>            :     // }
+<span class="lineNum">     292 </span><span class="lineCov">          4 :     std::vector&lt;std::string&gt;::iterator iter =  m_sessionList.begin();</span>
+<span class="lineNum">     293 </span><span class="lineCov">         14 :     for (; iter != m_sessionList.end(); ++iter)</span>
+<span class="lineNum">     294 </span>            :     {
+<span class="lineNum">     295 </span><span class="lineCov">          4 :         auto iter_sessionInfo = m_sessionInfoMap.find(*iter);</span>
+<span class="lineNum">     296 </span><span class="lineCov">          2 :         JsonValue info;</span>
+<span class="lineNum">     297 </span><span class="lineCov">          4 :         if (iter_sessionInfo != m_sessionInfoMap.end())</span>
+<span class="lineNum">     298 </span>            :         {
+<span class="lineNum">     299 </span><span class="lineCov">          1 :             info = iter_sessionInfo-&gt;second;</span>
+<span class="lineNum">     300 </span>            :         }
+<span class="lineNum">     301 </span>            :         else
+<span class="lineNum">     302 </span>            :         {
+<span class="lineNum">     303 </span><span class="lineCov">          1 :             info[JSON_KEY_SESSION_ID] = *iter;</span>
+<span class="lineNum">     304 </span>            :         }
+<span class="lineNum">     305 </span><span class="lineCov">          2 :         sessionInfo.append(info);</span>
+<a name="306"><span class="lineNum">     306 </span><span class="lineCov">          2 :     }</span></a>
+<span class="lineNum">     307 </span><span class="lineCov">          2 :     return sessionInfo;</span>
+<span class="lineNum">     308 </span><span class="lineCov">          9 : }</span>
+<span class="lineNum">     309 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - local_service/LocalService.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">local_service</a> - LocalService.cpp<span style="font-size: 80%;"> (source / <a href="LocalService.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">281</td>
+            <td class="headerCovTableEntry">315</td>
+            <td class="headerCovTableEntryMed">89.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntry">47</td>
+            <td class="headerCovTableEntryMed">85.1 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : </a>
+<span class="lineNum">       2 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">       3 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">       4 </span>            : #include &lt;boost/lexical_cast.hpp&gt;
+<span class="lineNum">       5 </span>            : #include &quot;LocalService.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;ProcessPool.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;LocalServiceDefines.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;HttpDefines.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;TssWrapper.h&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      14 </span>            : /// class CLocalTransport
+<a name="15"><span class="lineNum">      15 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">          3 : CLocalTransport::CLocalTransport()</span>
+<span class="lineNum">      18 </span><span class="lineCov">         18 :         : m_haveReceivedMediaData(false)</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">         45 :         LS_INFO_LOG_THIS(&quot;CLocalTransport::CLocalTransport&quot;);</span>
+<span class="lineNum">      21 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          1 : CLocalTransport::CLocalTransport(const LocalSocketHandlerPtr&amp; inSignallingConnection, const LocalSocketHandlerPtr&amp; inMediaConnection)</span>
+<span class="lineNum">      24 </span>            :         : m_signallingConnection(inSignallingConnection)
+<span class="lineNum">      25 </span>            :         , m_mediaConnection(inMediaConnection)
+<span class="lineNum">      26 </span><span class="lineCov">         12 :         , m_haveReceivedMediaData(false)</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span><span class="lineCov">         18 :         LS_INFO_LOG_THIS(&quot;CLocalTransport::CLocalTransport, inSignallingConnection: &quot; &lt;&lt; inSignallingConnection &lt;&lt; &quot;, inMediaConnection: &quot; &lt;&lt; inMediaConnection);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          5 :         m_signallingConnection-&gt;UpdateDataHandler(std::bind(&amp;CLocalTransport::HandleSignallingConnectionData, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">      30 </span><span class="lineCov">          5 :         m_signallingConnection-&gt;UpdateErrorHandler(std::bind(&amp;CLocalTransport::HandleSignallingConnectionError, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">      31 </span><span class="lineCov">          5 :         m_mediaConnection-&gt;UpdateDataHandler(std::bind(&amp;CLocalTransport::HandleMediaConnectionData, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">      32 </span><span class="lineCov">          5 :         m_mediaConnection-&gt;UpdateErrorHandler(std::bind(&amp;CLocalTransport::HandleMediaConnectionError, this, std::placeholders::_1, std::placeholders::_2));</span>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineCov">         33 : CLocalTransport::~CLocalTransport()</span>
+<span class="lineNum">      36 </span>            : {
+<span class="lineNum">      37 </span><span class="lineCov">         60 :         LS_INFO_LOG_THIS(&quot;CLocalTransport::~CLocalTransport&quot;);</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">          4 :         m_signallingHandler = nullptr;</span>
+<span class="lineNum">      40 </span><span class="lineCov">          4 :         m_mediaDataHandler = nullptr;</span>
+<span class="lineNum">      41 </span><span class="lineCov">          4 :         m_errorHandler = nullptr;</span>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">          4 :         if (m_signallingConnection)</span>
+<span class="lineNum">      44 </span>            :         {
+<span class="lineNum">      45 </span><span class="lineCov">          2 :                 m_signallingConnection-&gt;Close();</span>
+<span class="lineNum">      46 </span><span class="lineCov">          1 :                 m_signallingConnection = nullptr;</span>
+<span class="lineNum">      47 </span>            :         }
+<span class="lineNum">      48 </span><span class="lineCov">          4 :         if (m_mediaConnection)</span>
+<span class="lineNum">      49 </span>            :         {
+<span class="lineNum">      50 </span><span class="lineCov">          2 :                 m_mediaConnection-&gt;Close();</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :                 m_mediaConnection = nullptr;</span>
+<span class="lineNum">      52 </span>            :         }
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">          3 : void CLocalTransport::SetSignallingHandler(const LocalSignallingHandler&amp; inHandler)</span>
+<span class="lineNum">      56 </span>            : {
+<span class="lineNum">      57 </span><span class="lineCov">          3 :         m_signallingHandler = inHandler;</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">          3 : void CLocalTransport::SetMediaDataHandler(const LocalMediaDataHandler&amp; inHandler)</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineCov">          3 :         m_mediaDataHandler = inHandler;</span>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">          3 : void CLocalTransport::SetErrorHandler(const LocalErrorHandler&amp; inHandler)</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span><span class="lineCov">          3 :         m_errorHandler = inHandler;</span>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 : void CLocalTransport::SetOnSignallingSentHandler(const LocalSignalingSentHandler&amp; inHandler)</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :         m_signalingSentHandler = inHandler;</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : #define JSON_KEY_TRACKING_ID &quot;trackingId&quot;
+<a name="76"><span class="lineNum">      76 </span>            : #define JSON_KEY_SIGNALLING &quot;signalling&quot;</a>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineCov">          1 : SafariResult CLocalTransport::SendSignalling(const std::string&amp; inSignalling)</span>
+<span class="lineNum">      79 </span>            : {
+<span class="lineNum">      80 </span><span class="lineCov">          1 :         std::string trackingId = CTssTrackingId::Get();</span>
+<span class="lineNum">      81 </span><span class="lineCov">          3 :         if (m_signallingConnection == nullptr)</span>
+<span class="lineNum">      82 </span>            :         {
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                 LS_WARNING_LOG_THIS(&quot;CLocalTransport::SendSignalling, connection not available! &quot; &lt;&lt; TRACKING_ID &lt;&lt; &quot;:&quot; &lt;&lt; trackingId &lt;&lt; &quot;, signalling:&quot; &lt;&lt; inSignalling);</span>
+<span class="lineNum">      84 </span>            :                 return SAFARI_ERROR_NULL_POINTER;
+<span class="lineNum">      85 </span>            :         }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineCov">          2 :         Json::Value jsonMessage;</span>
+<span class="lineNum">      88 </span><span class="lineCov">          1 :         jsonMessage[JSON_KEY_TRACKING_ID] = trackingId;</span>
+<span class="lineNum">      89 </span><span class="lineCov">          1 :         jsonMessage[JSON_KEY_SIGNALLING] = inSignalling;</span>
+<span class="lineNum">      90 </span><span class="lineCov">          1 :         std::string strMessage = Json::FastWriter().write(jsonMessage);</span>
+<span class="lineNum">      91 </span><span class="lineCov">          3 :         m_signallingConnection-&gt;Send(strMessage);</span>
+<span class="lineNum">      92 </span><span class="lineCov">          1 :         const std::string desensitizedMessage = ::Desensitize(strMessage);</span>
+<span class="lineNum">      93 </span><span class="lineCov">         16 :         LS_INFO_LOG_THIS(&quot;CLocalTransport::SendSignalling, message:&quot; &lt;&lt; desensitizedMessage);</span>
+<span class="lineNum">      94 </span><span class="lineCov">          2 :         if (m_signalingSentHandler)</span>
+<span class="lineNum">      95 </span>            :         {
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 m_signalingSentHandler(desensitizedMessage);</span>
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span><span class="lineCov">          1 :         return SAFARI_OK;</span>
+<a name="99"><span class="lineNum">      99 </span>            : }</a>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineCov">          1 : SafariResult CLocalTransport::SendMediaData(const std::string&amp; inMediaData)</span>
+<span class="lineNum">     102 </span>            : {
+<span class="lineNum">     103 </span><span class="lineCov">          2 :         if (m_mediaConnection == nullptr)</span>
+<span class="lineNum">     104 </span>            :                 return SAFARI_ERROR_NULL_POINTER;
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span><span class="lineCov">          2 :         m_mediaConnection-&gt;Send(inMediaData);</span>
+<span class="lineNum">     107 </span><span class="lineCov">          1 :         return SAFARI_OK;</span>
+<a name="108"><span class="lineNum">     108 </span>            : }</a>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span><span class="lineCov">          1 : void CLocalTransport::HandleSignallingConnectionData(const char* inData, std::size_t inLength, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     111 </span>            : {
+<span class="lineNum">     112 </span><span class="lineCov">          1 :         std::string strMessage(inData, inLength);</span>
+<span class="lineNum">     113 </span><span class="lineCov">          2 :         Json::Value jsonMessage;</span>
+<span class="lineNum">     114 </span><span class="lineCov">          1 :         bool successful = Json::Reader().parse(strMessage, jsonMessage);</span>
+<span class="lineNum">     115 </span><span class="lineCov">          1 :         if (!successful)</span>
+<span class="lineNum">     116 </span>            :         {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalTransport::HandleSignallingConnectionData, JSON parse message failed! message: &quot; &lt;&lt; ::Desensitize(strMessage));</span>
+<span class="lineNum">     118 </span><span class="lineCov">          1 :                 return;</span>
+<span class="lineNum">     119 </span>            :         }
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span><span class="lineCov">         17 :         LS_INFO_LOG_THIS(&quot;CLocalTransport::HandleSignallingConnectionData, message:&quot; &lt;&lt; ::Desensitize(strMessage));</span>
+<span class="lineNum">     122 </span>            :         std::string trackingId;
+<span class="lineNum">     123 </span>            :         std::string signalling;
+<span class="lineNum">     124 </span><span class="lineCov">          1 :         if (jsonMessage[JSON_KEY_TRACKING_ID].isString())</span>
+<span class="lineNum">     125 </span>            :         {
+<span class="lineNum">     126 </span><span class="lineCov">          2 :                 trackingId = jsonMessage[JSON_KEY_TRACKING_ID].asString();</span>
+<span class="lineNum">     127 </span><span class="lineCov">          2 :                 CTssTrackingId::Set(trackingId);</span>
+<span class="lineNum">     128 </span>            :         }
+<span class="lineNum">     129 </span><span class="lineCov">          1 :         if (jsonMessage[JSON_KEY_SIGNALLING].isString())</span>
+<span class="lineNum">     130 </span><span class="lineCov">          2 :                 signalling = jsonMessage[JSON_KEY_SIGNALLING].asString();</span>
+<span class="lineNum">     131 </span><span class="lineCov">          2 :         if (m_signallingHandler)</span>
+<span class="lineNum">     132 </span>            :         {
+<span class="lineNum">     133 </span><span class="lineCov">          1 :                 m_signallingHandler(signalling);</span>
+<span class="lineNum">     134 </span>            :         }
+<a name="135"><span class="lineNum">     135 </span>            : }</a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">          1 : void CLocalTransport::HandleSignallingConnectionError(const boost::system::error_code&amp; inErrorCode, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span><span class="lineCov">         21 :         LS_WARNING_LOG_THIS(&quot;CLocalTransport::HandleSignallingConnectionError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message() &lt;&lt; &quot;, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     140 </span><span class="lineCov">          1 :         HandleError(inErrorCode);</span>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span><span class="lineCov">          1 : void CLocalTransport::HandleMediaConnectionData(const char* inData, std::size_t inLength, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     144 </span>            : {
+<span class="lineNum">     145 </span><span class="lineCov">          1 :         if (!m_haveReceivedMediaData)</span>
+<span class="lineNum">     146 </span>            :         {
+<span class="lineNum">     147 </span><span class="lineCov">          1 :                 m_haveReceivedMediaData = true;</span>
+<span class="lineNum">     148 </span><span class="lineCov">         18 :                 LS_INFO_LOG_THIS(&quot;CLocalTransport::HandleMediaConnectionData, first packet. length:&quot; &lt;&lt; inLength &lt;&lt; &quot; connection:&quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     149 </span>            :         }
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :         // LS_DEBUG_LOG_THIS(&quot;CLocalTransport::HandleMediaConnectionData, length:&quot; &lt;&lt; inLength);
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineCov">          2 :         if (m_mediaDataHandler)</span>
+<span class="lineNum">     154 </span>            :         {
+<span class="lineNum">     155 </span><span class="lineCov">          2 :                 m_mediaDataHandler(std::string(inData, inLength));</span>
+<span class="lineNum">     156 </span>            :         }
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 : void CLocalTransport::HandleMediaConnectionError(const boost::system::error_code&amp; inErrorCode, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     160 </span>            : {
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         LS_WARNING_LOG_THIS(&quot;CLocalTransport::HandleMediaConnectionError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message() &lt;&lt; &quot;, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         HandleError(inErrorCode);</span>
+<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span><span class="lineCov">          3 : void CLocalTransport::HandleError(const boost::system::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     166 </span>            : {
+<span class="lineNum">     167 </span><span class="lineCov">         57 :         LS_WARNING_LOG_THIS(&quot;CLocalTransport::HandleError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message());</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :         /* Prevent this instance from being destructed prematurely in the following operations. */
+<span class="lineNum">     170 </span><span class="lineCov">          3 :         std::shared_ptr&lt;CLocalTransport&gt; self(shared_from_this()); </span>
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span><span class="lineCov">          3 :         m_signallingHandler = nullptr;</span>
+<span class="lineNum">     173 </span><span class="lineCov">          3 :         m_mediaDataHandler = nullptr;</span>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span><span class="lineCov">          6 :         if (m_signallingConnection != nullptr)</span>
+<span class="lineNum">     176 </span>            :         {
+<span class="lineNum">     177 </span><span class="lineCov">          4 :                 m_signallingConnection-&gt;Close();</span>
+<span class="lineNum">     178 </span><span class="lineCov">          2 :                 m_signallingConnection = nullptr;</span>
+<span class="lineNum">     179 </span>            :         }
+<span class="lineNum">     180 </span><span class="lineCov">          6 :         if (m_mediaConnection != nullptr)</span>
+<span class="lineNum">     181 </span>            :         {
+<span class="lineNum">     182 </span><span class="lineCov">          4 :                 m_mediaConnection-&gt;Close();</span>
+<span class="lineNum">     183 </span><span class="lineCov">          2 :                 m_mediaConnection = nullptr;</span>
+<span class="lineNum">     184 </span>            :         }
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span><span class="lineCov">          6 :         if (m_errorHandler)</span>
+<span class="lineNum">     187 </span>            :         {
+<span class="lineNum">     188 </span><span class="lineCov">          2 :                 m_errorHandler(ConvertBoostErrorCode2SafariErrorCode(inErrorCode));</span>
+<span class="lineNum">     189 </span><span class="lineCov">          2 :                 m_errorHandler = nullptr;</span>
+<span class="lineNum">     190 </span>            :         }
+<span class="lineNum">     191 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     194 </span>            : /// class CLocalTransportClient
+<span class="lineNum">     195 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     196 </span>            : 
+<a name="197"><span class="lineNum">     197 </span>            : TransportIdType CLocalTransportClient::s_nextTransportId = 0;</a>
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineCov">          3 : CLocalTransportClient::CLocalTransportClient(const LocalServiceClientSharedPtr&amp; inLocalServiceClient)</span>
+<span class="lineNum">     200 </span>            :         : m_transportId(s_nextTransportId++)
+<span class="lineNum">     201 </span>            :         , m_localServiceClient(inLocalServiceClient)
+<span class="lineNum">     202 </span><span class="lineCov">          6 :         , m_isReady(false)</span>
+<span class="lineNum">     203 </span>            : {
+<span class="lineNum">     204 </span><span class="lineCov">         48 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::CLocalTransportClient, m_transportId: &quot; &lt;&lt; m_transportId);</span>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         24 : CLocalTransportClient::~CLocalTransportClient()</span>
+<span class="lineNum">     208 </span>            : {
+<span class="lineNum">     209 </span><span class="lineCov">         54 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::~CLocalTransportClient, m_transportId: &quot; &lt;&lt; m_transportId &lt;&lt; &quot;, m_isReady: &quot; &lt;&lt; m_isReady);</span>
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineCov">          6 :         m_localServiceClient = nullptr;</span>
+<span class="lineNum">     212 </span><span class="lineCov">          3 :         if (m_isReady)</span>
+<span class="lineNum">     213 </span>            :         {
+<span class="lineNum">     214 </span><span class="lineCov">          1 :                 m_isReady = false;</span>
+<span class="lineNum">     215 </span>            :         }
+<span class="lineNum">     216 </span><span class="lineCov">          3 :         if (m_peerProcess)</span>
+<span class="lineNum">     217 </span>            :         {
+<span class="lineNum">     218 </span>            :                 /*It is a common case that upper-layer closes local transport normally, so the process load should be decremented. */
+<span class="lineNum">     219 </span><span class="lineCov">          1 :                 m_peerProcess-&gt;DecrementLoad();</span>
+<span class="lineNum">     220 </span><span class="lineCov">          2 :                 m_peerProcess = nullptr;</span>
+<span class="lineNum">     221 </span>            :         }
+<span class="lineNum">     222 </span><span class="lineCov">          3 :         m_localTransportHandler = nullptr;</span>
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span><span class="lineCov">          6 :         if (m_signallingLocalSocketClient != nullptr)</span>
+<span class="lineNum">     225 </span>            :         {
+<span class="lineNum">     226 </span><span class="lineCov">          2 :                 m_signallingLocalSocketClient-&gt;Disconnect();</span>
+<span class="lineNum">     227 </span><span class="lineCov">          1 :                 m_signallingLocalSocketClient = nullptr;</span>
+<span class="lineNum">     228 </span>            :         }
+<span class="lineNum">     229 </span><span class="lineCov">          6 :         if (m_mediaDataLocalSocketClient != nullptr)</span>
+<span class="lineNum">     230 </span>            :         {
+<span class="lineNum">     231 </span><span class="lineCov">          2 :                 m_mediaDataLocalSocketClient-&gt;Disconnect();</span>
+<span class="lineNum">     232 </span><span class="lineCov">          1 :                 m_mediaDataLocalSocketClient = nullptr;</span>
+<span class="lineNum">     233 </span>            :         }
+<span class="lineNum">     234 </span><span class="lineCov">          6 : }</span>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineCov">          3 : SafariResult CLocalTransportClient::AsyncConnect(boost::asio::io_service&amp; inIoService, std::shared_ptr&lt;CProcess&gt;&amp; inPeerProcess, const LocalTransportHandler&amp; inLocalTransportHandler)</span>
+<span class="lineNum">     237 </span>            : {
+<span class="lineNum">     238 </span><span class="lineCov">         54 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::AsyncConnect, peer process pid: &quot; &lt;&lt; inPeerProcess-&gt;GetPid());</span>
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineCov">          3 :         m_peerProcess = inPeerProcess;</span>
+<span class="lineNum">     241 </span><span class="lineCov">          3 :         m_peerProcess-&gt;IncrementLoad();</span>
+<span class="lineNum">     242 </span><span class="lineCov">          3 :         m_localTransportHandler = inLocalTransportHandler;</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :         /* Initiate signalling connecting request. */
+<span class="lineNum">     245 </span><span class="lineCov">         21 :         m_signallingLocalSocketClient = ::CreateLocalSocketPackClient(inIoService, inPeerProcess-&gt;GetLocalSocketFilePath(), SIGNALLING_RECV_BUFFER_SIZE);</span>
+<span class="lineNum">     246 </span><span class="lineCov">         15 :         m_signallingLocalSocketClient-&gt;SetDataHandler(std::bind(&amp;CLocalTransportClient::HandleSignallingHandshakeResponse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     247 </span><span class="lineCov">         15 :         m_signallingLocalSocketClient-&gt;SetErrorHandler(std::bind(&amp;CLocalTransportClient::HandleSignallingConnectionError, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     248 </span><span class="lineCov">         15 :         m_signallingLocalSocketClient-&gt;SetReadyHandler(std::bind(&amp;CLocalTransportClient::HandleSignallingConnectionReady, this, std::placeholders::_1));</span>
+<span class="lineNum">     249 </span><span class="lineCov">          9 :         bool successful = m_signallingLocalSocketClient-&gt;Connect();</span>
+<span class="lineNum">     250 </span><span class="lineCov">          3 :         if (!successful)</span>
+<span class="lineNum">     251 </span>            :         {
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalTransportClient::AsyncConnect, m_signallingLocalSocketClient-&gt;Connect failed!&quot;);</span>
+<span class="lineNum">     253 </span>            :                 return SAFARI_ERROR_FAILURE;
+<span class="lineNum">     254 </span>            :         }
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span>            :         /* Initiate media data connecting request. */
+<span class="lineNum">     257 </span><span class="lineCov">         21 :         m_mediaDataLocalSocketClient = ::CreateLocalSocketPackClient(inIoService, inPeerProcess-&gt;GetLocalSocketFilePath(), MEDIA_DATA_RECV_BUFFER_SIZE);</span>
+<span class="lineNum">     258 </span><span class="lineCov">         15 :         m_mediaDataLocalSocketClient-&gt;SetDataHandler(std::bind(&amp;CLocalTransportClient::HandleMediaHandshakeResponse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     259 </span><span class="lineCov">         15 :         m_mediaDataLocalSocketClient-&gt;SetErrorHandler(std::bind(&amp;CLocalTransportClient::HandleMediaConnectionError, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     260 </span><span class="lineCov">         15 :         m_mediaDataLocalSocketClient-&gt;SetReadyHandler(std::bind(&amp;CLocalTransportClient::HandleMediaConnectionReady, this, std::placeholders::_1));</span>
+<span class="lineNum">     261 </span><span class="lineCov">          9 :         successful = m_mediaDataLocalSocketClient-&gt;Connect();</span>
+<span class="lineNum">     262 </span><span class="lineCov">          3 :         if (!successful)</span>
+<span class="lineNum">     263 </span>            :         {
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalTransportClient::AsyncConnect, m_mediaDataLocalSocketClient-&gt;Connect failed!&quot;);</span>
+<span class="lineNum">     265 </span>            :                 return SAFARI_ERROR_FAILURE;
+<span class="lineNum">     266 </span>            :         }
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :         return SAFARI_OK;
+<span class="lineNum">     269 </span>            : }
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineCov">          2 : void CLocalTransportClient::FinishHandshake()</span>
+<span class="lineNum">     272 </span>            : {
+<span class="lineNum">     273 </span>            :         /* Although two handshake-request messages have been sent to LocalServiceServer, only one response, SignallingHandshakeResponse or MediaHandshakeResponse, should be received. */
+<span class="lineNum">     274 </span><span class="lineCov">          8 :         m_signallingConnection-&gt;UpdateDataHandler(std::bind(&amp;CLocalTransportClient::HandleSignallingConnectionData, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     275 </span><span class="lineCov">          8 :         m_mediaConnection-&gt;UpdateDataHandler(std::bind(&amp;CLocalTransportClient::HandleMediaConnectionData, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineCov">          2 :         m_isReady = true;</span>
+<span class="lineNum">     278 </span>            :         /* Notify upper-layer that local transport is ready. */
+<span class="lineNum">     279 </span><span class="lineCov">          6 :         m_localTransportHandler(SAFARI_OK, CLocalTransport::shared_from_this());</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :         /* Prevent this instance from being destructed prematurely in the following operations. */
+<span class="lineNum">     282 </span><span class="lineCov">          2 :         std::shared_ptr&lt;CLocalTransport&gt; self(CLocalTransport::shared_from_this()); </span>
+<span class="lineNum">     283 </span><span class="lineCov">          2 :         m_localServiceClient-&gt;RemoveUnreadyTransport(m_transportId);</span>
+<span class="lineNum">     284 </span><span class="lineCov">          6 :         m_localServiceClient = nullptr;</span>
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span><span class="lineCov">          2 : void CLocalTransportClient::HandleSignallingHandshakeResponse(const char* inData, std::size_t inLength, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     288 </span>            : {
+<span class="lineNum">     289 </span><span class="lineCov">         42 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::HandleSignallingHandshakeResponse, data: \'&quot; &lt;&lt; std::string(inData, inLength) &lt;&lt; &quot;\', inConnection: &quot; &lt;&lt; inConnection &lt;&lt; &quot;, m_isReady: &quot; &lt;&lt; m_isReady);</span>
+<span class="lineNum">     290 </span><span class="lineCov">          2 :         FinishHandshake();</span>
+<a name="291"><span class="lineNum">     291 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span><span class="lineCov">          2 : void CLocalTransportClient::HandleSignallingConnectionError(const boost::system::error_code&amp; inErrorCode, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     294 </span>            : {
+<span class="lineNum">     295 </span><span class="lineCov">         42 :         LS_WARNING_LOG_THIS(&quot;CLocalTransportClient::HandleSignallingConnectionError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message() &lt;&lt; &quot;, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     296 </span><span class="lineCov">          2 :         HandleError(inErrorCode);</span>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span><span class="lineCov">          2 : void CLocalTransportClient::HandleSignallingConnectionReady(const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     300 </span>            : {
+<span class="lineNum">     301 </span><span class="lineCov">         32 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::HandleSignallingConnectionReady, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     302 </span><span class="lineCov">          4 :         m_signallingConnection = inConnection;</span>
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :         /* Send the transportId and &quot;S&quot;, which means signalling connection, to local server. */
+<span class="lineNum">     305 </span><span class="lineCov">         12 :         m_signallingConnection-&gt;Send(boost::lexical_cast&lt;std::string&gt;(m_transportId)+&quot;S&quot;); </span>
+<a name="306"><span class="lineNum">     306 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 : void CLocalTransportClient::HandleMediaHandshakeResponse(const char* inData, std::size_t inLength, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     309 </span>            : {
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::HandleMediaHandshakeResponse, data: \'&quot; &lt;&lt; std::string(inData, inLength) &lt;&lt; &quot;\', inConnection: &quot; &lt;&lt; inConnection &lt;&lt; &quot;, m_isReady: &quot; &lt;&lt; m_isReady);</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :         FinishHandshake();</span>
+<a name="312"><span class="lineNum">     312 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 : void CLocalTransportClient::HandleMediaConnectionError(const boost::system::error_code&amp; inErrorCode, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     315 </span>            : {
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 :         LS_WARNING_LOG_THIS(&quot;CLocalTransportClient::HandleMediaConnectionError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message());</span>
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :         HandleError(inErrorCode);</span>
+<a name="318"><span class="lineNum">     318 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     319 </span>            : 
+<span class="lineNum">     320 </span><span class="lineCov">          2 : void CLocalTransportClient::HandleMediaConnectionReady(const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     321 </span>            : {
+<span class="lineNum">     322 </span><span class="lineCov">         32 :         LS_INFO_LOG_THIS(&quot;CLocalTransportClient::HandleMediaConnectionReady, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     323 </span><span class="lineCov">          4 :         m_mediaConnection = inConnection;</span>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span>            :         /* Send the transportId and &quot;D&quot;, which means data connection, to local server. */
+<span class="lineNum">     326 </span><span class="lineCov">         12 :         m_mediaConnection-&gt;Send(boost::lexical_cast&lt;std::string&gt;(m_transportId)+&quot;D&quot;); </span>
+<a name="327"><span class="lineNum">     327 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span><span class="lineCov">          2 : void CLocalTransportClient::HandleError(const boost::system::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     330 </span>            : {
+<span class="lineNum">     331 </span><span class="lineCov">         44 :         LS_WARNING_LOG_THIS(&quot;CLocalTransportClient::HandleError, transportId: &quot; &lt;&lt; m_transportId &lt;&lt; &quot;, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message());</span>
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :         /* Prevent this instance from being destructed prematurely in the following operations. */
+<span class="lineNum">     334 </span><span class="lineCov">          2 :         std::shared_ptr&lt;CLocalTransport&gt; self(CLocalTransport::shared_from_this()); </span>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineCov">          2 :         ParentType::HandleError(inErrorCode);</span>
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span><span class="lineCov">          4 :         if (m_signallingLocalSocketClient != nullptr)</span>
+<span class="lineNum">     339 </span>            :         {
+<span class="lineNum">     340 </span><span class="lineCov">          4 :                 m_signallingLocalSocketClient-&gt;Disconnect();</span>
+<span class="lineNum">     341 </span><span class="lineCov">          2 :                 m_signallingLocalSocketClient = nullptr;</span>
+<span class="lineNum">     342 </span>            :         }
+<span class="lineNum">     343 </span><span class="lineCov">          4 :         if (m_mediaDataLocalSocketClient != nullptr)</span>
+<span class="lineNum">     344 </span>            :         {
+<span class="lineNum">     345 </span><span class="lineCov">          4 :                 m_mediaDataLocalSocketClient-&gt;Disconnect();</span>
+<span class="lineNum">     346 </span><span class="lineCov">          2 :                 m_mediaDataLocalSocketClient = nullptr;</span>
+<span class="lineNum">     347 </span>            :         }
+<span class="lineNum">     348 </span><span class="lineCov">          4 :         if (m_peerProcess != nullptr)</span>
+<span class="lineNum">     349 </span>            :         {
+<span class="lineNum">     350 </span><span class="lineCov">          2 :                 m_peerProcess-&gt;RestartIfCrash();</span>
+<span class="lineNum">     351 </span><span class="lineCov">          4 :                 m_peerProcess = nullptr;</span>
+<span class="lineNum">     352 </span>            :         }
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineCov">          2 :         if (m_isReady)</span>
+<span class="lineNum">     355 </span><span class="lineCov">          1 :                 m_isReady = false;</span>
+<span class="lineNum">     356 </span>            :         else
+<span class="lineNum">     357 </span>            :         {
+<span class="lineNum">     358 </span><span class="lineCov">          2 :                 if (m_localTransportHandler != nullptr)</span>
+<span class="lineNum">     359 </span>            :                 {
+<span class="lineNum">     360 </span>            :                         /* Notify upper-layer the failure truth. */
+<span class="lineNum">     361 </span><span class="lineCov">          3 :                         m_localTransportHandler(ConvertBoostErrorCode2SafariErrorCode(inErrorCode), std::shared_ptr&lt;CLocalTransport&gt;(nullptr));</span>
+<span class="lineNum">     362 </span><span class="lineCov">          1 :                         m_localTransportHandler = nullptr;</span>
+<span class="lineNum">     363 </span>            :                 }
+<span class="lineNum">     364 </span><span class="lineCov">          2 :                 if (m_localServiceClient != nullptr)</span>
+<span class="lineNum">     365 </span>            :                 {
+<span class="lineNum">     366 </span><span class="lineCov">          1 :                         m_localServiceClient-&gt;RemoveUnreadyTransport(m_transportId);</span>
+<span class="lineNum">     367 </span><span class="lineCov">          2 :                         m_localServiceClient = nullptr;</span>
+<span class="lineNum">     368 </span>            :                 }
+<span class="lineNum">     369 </span>            :         }
+<span class="lineNum">     370 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     373 </span>            : /// class CLocalServiceClient
+<a name="374"><span class="lineNum">     374 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">     375 </span>            : 
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 : CLocalServiceClient::CLocalServiceClient(boost::asio::io_service&amp; inIoService)</span></a>
+<span class="lineNum">     377 </span>            :         : m_initialized(false)
+<span class="lineNum">     378 </span><span class="lineCov">          6 :         , m_ioService(inIoService)</span>
+<span class="lineNum">     379 </span>            : {
+<a name="380"><span class="lineNum">     380 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span><span class="lineCov">          8 : CLocalServiceClient::~CLocalServiceClient()</span>
+<span class="lineNum">     383 </span>            : {
+<span class="lineNum">     384 </span><span class="lineCov">          2 :         Release();</span>
+<a name="385"><span class="lineNum">     385 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span><span class="lineCov">          3 : bool CLocalServiceClient::Initialize(const std::string&amp; inChildProcessName, uint16_t inChildProcessNum)</span>
+<span class="lineNum">     388 </span>            : {
+<span class="lineNum">     389 </span><span class="lineCov">          3 :         if (m_initialized)</span>
+<span class="lineNum">     390 </span>            :                 return true;
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span><span class="lineCov">          6 :         m_childProcessPool = CProcessPoolFactory::CreateProcessPool(m_ioService);</span>
+<span class="lineNum">     393 </span><span class="lineCov">          3 :         bool successful = m_childProcessPool-&gt;Initialize(inChildProcessName, inChildProcessNum); </span>
+<span class="lineNum">     394 </span><span class="lineCov">          3 :         if (!successful)</span>
+<span class="lineNum">     395 </span>            :                 return false;
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span><span class="lineCov">          3 :         m_initialized = true;</span>
+<span class="lineNum">     398 </span><span class="lineCov">         54 :         LS_INFO_LOG_THIS(&quot;CLocalServiceClient::Initialize, inChildProcessName: &quot; &lt;&lt; inChildProcessName &lt;&lt; &quot;, inChildProcessNum: &quot; &lt;&lt; inChildProcessNum);</span>
+<span class="lineNum">     399 </span>            :         return true;
+<a name="400"><span class="lineNum">     400 </span>            : }</a>
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span><span class="lineCov">          4 : void CLocalServiceClient::Release()</span>
+<span class="lineNum">     403 </span>            : {
+<span class="lineNum">     404 </span><span class="lineCov">          4 :         if (!m_initialized)</span>
+<span class="lineNum">     405 </span><span class="lineCov">          4 :                 return;</span>
+<span class="lineNum">     406 </span>            : 
+<span class="lineNum">     407 </span><span class="lineCov">         45 :         LS_INFO_LOG_THIS(&quot;CLocalServiceClient::Release&quot;);</span>
+<span class="lineNum">     408 </span><span class="lineCov">          3 :         m_childProcessPool-&gt;Release();</span>
+<span class="lineNum">     409 </span><span class="lineCov">          6 :         m_childProcessPool = nullptr;</span>
+<span class="lineNum">     410 </span><span class="lineCov">          3 :         m_unreadyTransportMap.clear();</span>
+<span class="lineNum">     411 </span><span class="lineCov">          3 :         m_initialized = false;</span>
+<a name="412"><span class="lineNum">     412 </span>            : }</a>
+<span class="lineNum">     413 </span>            : 
+<span class="lineNum">     414 </span><span class="lineCov">          3 : SafariResult CLocalServiceClient::InitiateNewTransportRequest(const LocalTransportHandler&amp; inLocalTransportHandler)</span>
+<span class="lineNum">     415 </span>            : {
+<span class="lineNum">     416 </span><span class="lineCov">          3 :         if (!m_initialized)</span>
+<span class="lineNum">     417 </span>            :                 return SAFARI_ERROR_NOT_INITIALIZED;
+<span class="lineNum">     418 </span>            : 
+<span class="lineNum">     419 </span><span class="lineCov">          3 :         std::shared_ptr&lt;CProcess&gt; process = m_childProcessPool-&gt;SelectProcess();</span>
+<span class="lineNum">     420 </span><span class="lineCov">          6 :         if (process == nullptr)</span>
+<span class="lineNum">     421 </span>            :         {
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalServiceClient::InitiateNewTransportRequest, child process not found!&quot;);</span>
+<span class="lineNum">     423 </span>            :                 return SAFARI_ERROR_NOT_FOUND;
+<span class="lineNum">     424 </span>            :         }
+<span class="lineNum">     425 </span><span class="lineCov">          9 :         std::shared_ptr&lt;CLocalTransport&gt; localTransport(new CLocalTransportClient(shared_from_this()));</span>
+<span class="lineNum">     426 </span><span class="lineCov">          6 :         CLocalTransportClient* localTransportClient = dynamic_cast&lt;CLocalTransportClient*&gt;(localTransport.get());</span>
+<span class="lineNum">     427 </span><span class="lineCov">          3 :         SafariResult rv = localTransportClient-&gt;AsyncConnect(m_ioService, process, inLocalTransportHandler);</span>
+<span class="lineNum">     428 </span><span class="lineCov">          3 :         if (SAFARI_FAILED(rv))</span>
+<span class="lineNum">     429 </span>            :         {
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalServiceClient::InitiateNewTransportRequest, localTransportClient-&gt;AsyncConnect failed! rv: &quot; &lt;&lt; rv &lt;&lt; &quot;, peer process pid: &quot; &lt;&lt; process-&gt;GetPid());</span>
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :                 return rv;</span>
+<span class="lineNum">     432 </span>            :         }
+<span class="lineNum">     433 </span>            : 
+<span class="lineNum">     434 </span><span class="lineCov">          9 :         m_unreadyTransportMap.insert(LocalTransportMap::value_type(localTransportClient-&gt;GetTransportId(), localTransport));</span>
+<span class="lineNum">     435 </span><span class="lineCov">          3 :         return SAFARI_OK;</span>
+<a name="436"><span class="lineNum">     436 </span>            : }</a>
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 : void CLocalServiceClient::RemoveUnreadyTransport(TransportIdType inTransportId)</span>
+<span class="lineNum">     439 </span>            : {
+<span class="lineNum">     440 </span><span class="lineCov">          3 :         m_unreadyTransportMap.erase(inTransportId);</span>
+<a name="441"><span class="lineNum">     441 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     442 </span>            : 
+<span class="lineNum">     443 </span><span class="lineCov">          1 : JsonValue CLocalServiceClient::ToJson() const</span>
+<span class="lineNum">     444 </span>            : {
+<span class="lineNum">     445 </span><span class="lineCov">          1 :         JsonValue info;</span>
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span><span class="lineCov">          1 :         info[JSON_KEY_PROCESS_POOL] = m_childProcessPool ? m_childProcessPool-&gt;ToJson() : JsonValue();</span>
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span><span class="lineCov">          1 :         return info;</span>
+<span class="lineNum">     450 </span>            : }
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     453 </span>            : /// class CLocalServiceClientFactory
+<span class="lineNum">     454 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineCov">          3 : LocalServiceClientSharedPtr CLocalServiceClientFactory::CreateLocalServiceClient(boost::asio::io_service&amp; inIoService)</span>
+<span class="lineNum">     457 </span>            : {
+<span class="lineNum">     458 </span><span class="lineCov">          6 :         return LocalServiceClientSharedPtr(new CLocalServiceClient(inIoService));</span>
+<span class="lineNum">     459 </span>            : }
+<span class="lineNum">     460 </span>            : 
+<span class="lineNum">     461 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     462 </span>            : /// class CLocalServiceServer
+<a name="463"><span class="lineNum">     463 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">     464 </span>            : 
+<a name="465"><span class="lineNum">     465 </span><span class="lineNoCov">          0 : CLocalServiceServer::CLocalServiceServer(boost::asio::io_service&amp; inIoService)</span></a>
+<span class="lineNum">     466 </span>            :         : m_initialized(false)
+<span class="lineNum">     467 </span><span class="lineCov">          6 :         , m_ioService(inIoService)</span>
+<span class="lineNum">     468 </span>            : {
+<a name="469"><span class="lineNum">     469 </span>            : }</a>
+<span class="lineNum">     470 </span>            : 
+<span class="lineNum">     471 </span><span class="lineCov">         10 : CLocalServiceServer::~CLocalServiceServer()</span>
+<span class="lineNum">     472 </span>            : {
+<span class="lineNum">     473 </span><span class="lineCov">          2 :         Release();</span>
+<span class="lineNum">     474 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">     475 </span>            : 
+<span class="lineNum">     476 </span><span class="lineCov">          2 : bool CLocalServiceServer::Initialize(const std::string&amp; inLocalSocketFileName, const LocalTransportHandler&amp; inLocalTransportHandler)</span>
+<span class="lineNum">     477 </span>            : {
+<span class="lineNum">     478 </span><span class="lineCov">          2 :         if (m_initialized)</span>
+<span class="lineNum">     479 </span>            :                 return true;
+<span class="lineNum">     480 </span>            : 
+<span class="lineNum">     481 </span><span class="lineCov">          2 :         if (inLocalSocketFileName.empty())</span>
+<span class="lineNum">     482 </span>            :         {
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :                 LS_INFO_LOG_THIS(&quot;CLocalServiceServer::Initialize, inLocalSocketFileName is empty!&quot;);</span>
+<span class="lineNum">     484 </span>            :                 return false;
+<span class="lineNum">     485 </span>            :         }
+<span class="lineNum">     486 </span>            : 
+<span class="lineNum">     487 </span><span class="lineCov">         32 :         LS_INFO_LOG_THIS(&quot;CLocalServiceServer::Initialize, inLocalSocketFileName: &quot; &lt;&lt; inLocalSocketFileName);</span>
+<span class="lineNum">     488 </span><span class="lineCov">         12 :         m_localSocketServer = ::CreateLocalSocketPackServer(m_ioService, inLocalSocketFileName, SIGNALLING_RECV_BUFFER_SIZE);</span>
+<span class="lineNum">     489 </span><span class="lineCov">         10 :         m_localSocketServer-&gt;SetDataHandler(std::bind(&amp;CLocalServiceServer::HandleConnectionData, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     490 </span><span class="lineCov">         10 :         m_localSocketServer-&gt;SetErrorHandler(std::bind(&amp;CLocalServiceServer::HandleConnectionError, this, std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">     491 </span><span class="lineCov">         10 :         m_localSocketServer-&gt;SetReadyHandler(std::bind(&amp;CLocalServiceServer::HandleConnectionReady, this, std::placeholders::_1));</span>
+<span class="lineNum">     492 </span><span class="lineCov">          6 :         m_localSocketServer-&gt;Start();</span>
+<span class="lineNum">     493 </span><span class="lineCov">          2 :         m_localTransportHandler = inLocalTransportHandler;</span>
+<span class="lineNum">     494 </span><span class="lineCov">          2 :         m_initialized = true;</span>
+<span class="lineNum">     495 </span><span class="lineCov">          2 :         return true;</span>
+<a name="496"><span class="lineNum">     496 </span>            : }</a>
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span><span class="lineCov">          4 : void CLocalServiceServer::Release()</span>
+<span class="lineNum">     499 </span>            : {
+<span class="lineNum">     500 </span><span class="lineCov">          4 :         if (!m_initialized)</span>
+<span class="lineNum">     501 </span><span class="lineCov">          4 :                 return;</span>
+<span class="lineNum">     502 </span>            : 
+<span class="lineNum">     503 </span><span class="lineCov">         30 :         LS_INFO_LOG_THIS(&quot;CLocalServiceServer::Release&quot;);</span>
+<span class="lineNum">     504 </span><span class="lineCov">          4 :         m_localSocketServer-&gt;Stop();</span>
+<span class="lineNum">     505 </span><span class="lineCov">          2 :         m_localSocketServer = nullptr;</span>
+<span class="lineNum">     506 </span><span class="lineCov">          2 :         m_localTransportHandler = nullptr;</span>
+<span class="lineNum">     507 </span><span class="lineCov">          2 :         m_initialConnectionList.clear();</span>
+<span class="lineNum">     508 </span><span class="lineCov">          2 :         m_handshakedConnectionMap.clear();</span>
+<span class="lineNum">     509 </span><span class="lineCov">          2 :         m_initialized = false;</span>
+<a name="510"><span class="lineNum">     510 </span>            : }</a>
+<span class="lineNum">     511 </span>            : 
+<span class="lineNum">     512 </span><span class="lineCov">          4 : void CLocalServiceServer::HandleConnectionData(const char* inData, std::size_t inLength, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     513 </span>            : {
+<span class="lineNum">     514 </span><span class="lineCov">          3 :         bool successful = RemoveInitialConnection(inConnection);</span>
+<span class="lineNum">     515 </span><span class="lineCov">          3 :         if (!successful)</span>
+<span class="lineNum">     516 </span>            :         {
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :                 LS_WARNING_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionData, initial connection not found! inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     518 </span>            :         }
+<span class="lineNum">     519 </span>            : 
+<span class="lineNum">     520 </span>            :         /**
+<span class="lineNum">     521 </span>            :          *  Handshake data format: transport_id + &quot;S&quot;|&quot;D&quot;
+<span class="lineNum">     522 </span>            :          *  eg.: &quot;38352S&quot; means transport_id is 38352 and it is a SIGNALLING connection;
+<span class="lineNum">     523 </span>            :          */
+<span class="lineNum">     524 </span><span class="lineCov">          3 :         char connectionType = inData[inLength-1];</span>
+<span class="lineNum">     525 </span><span class="lineCov">          3 :         if (inLength &lt; 2 || (connectionType != 'S' &amp;&amp; connectionType != 'D'))</span>
+<span class="lineNum">     526 </span>            :         {
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionData, invalid handshaking request! data: \'&quot; &lt;&lt; std::string(inData, inLength) &lt;&lt; &quot;\', connection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     528 </span><span class="lineCov">          2 :                 return;</span>
+<span class="lineNum">     529 </span>            :         }
+<span class="lineNum">     530 </span>            : 
+<span class="lineNum">     531 </span><span class="lineCov">          3 :         TransportIdType transportId = 0;</span>
+<span class="lineNum">     532 </span>            :         try
+<span class="lineNum">     533 </span>            :         {
+<span class="lineNum">     534 </span><span class="lineCov">          3 :                 std::string strTransportId((char*)inData, inLength-1);</span>
+<span class="lineNum">     535 </span><span class="lineCov">          3 :                 transportId = boost::lexical_cast&lt;TransportIdType&gt;(strTransportId);</span>
+<span class="lineNum">     536 </span>            :         }  
+<span class="lineNum">     537 </span><span class="lineNoCov">          0 :         catch (const boost::bad_lexical_cast&amp; e)</span>
+<span class="lineNum">     538 </span>            :         {
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 :                 LS_ERROR_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionData, catch exception! data: \'&quot; &lt;&lt; std::string(inData, inLength) &lt;&lt; &quot;\', connection: &quot; &lt;&lt; inConnection &lt;&lt; &quot;, e: &quot; &lt;&lt; e.what());</span>
+<span class="lineNum">     540 </span>            :                 return;
+<span class="lineNum">     541 </span>            :         }
+<span class="lineNum">     542 </span>            : 
+<span class="lineNum">     543 </span><span class="lineCov">          6 :         auto it = m_handshakedConnectionMap.find(transportId);</span>
+<span class="lineNum">     544 </span><span class="lineCov">          6 :         if (it == m_handshakedConnectionMap.end())</span>
+<span class="lineNum">     545 </span>            :         {
+<span class="lineNum">     546 </span>            :                 /* Wait for handshaking request of another connection. */
+<span class="lineNum">     547 </span><span class="lineCov">          6 :                 m_handshakedConnectionMap.insert(LocalConnectionMap::value_type(transportId, inConnection));</span>
+<span class="lineNum">     548 </span><span class="lineCov">          2 :                 return;</span>
+<span class="lineNum">     549 </span>            :         }
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            :         /* We've got both connections having the same transportId. */
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span>            :         /* Send handshake-response message. */
+<span class="lineNum">     554 </span><span class="lineCov">          2 :         inConnection-&gt;Send(inData, inLength);</span>
+<span class="lineNum">     555 </span>            : 
+<span class="lineNum">     556 </span><span class="lineCov">          1 :         LocalSocketHandlerPtr signallingConnction = (*it).second;</span>
+<span class="lineNum">     557 </span>            :         LocalSocketHandlerPtr mediaDataConnection = inConnection;
+<span class="lineNum">     558 </span><span class="lineCov">          1 :         if (connectionType == 'S')</span>
+<span class="lineNum">     559 </span>            :         {
+<span class="lineNum">     560 </span><span class="lineCov">          1 :                 signallingConnction = inConnection;</span>
+<span class="lineNum">     561 </span><span class="lineCov">          1 :                 mediaDataConnection = (*it).second;</span>
+<span class="lineNum">     562 </span>            :         }
+<span class="lineNum">     563 </span><span class="lineCov">          1 :         m_handshakedConnectionMap.erase(it);</span>
+<span class="lineNum">     564 </span><span class="lineCov">          1 :         std::shared_ptr&lt;CLocalTransport&gt; localTransport(new CLocalTransport(signallingConnction, mediaDataConnection));</span>
+<span class="lineNum">     565 </span><span class="lineCov">         22 :         LS_INFO_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionData, new localTransport: &quot; &lt;&lt; localTransport &lt;&lt; &quot;, signallingConnction: &quot; &lt;&lt; signallingConnction &lt;&lt; &quot;, mediaDataConnection: &quot; &lt;&lt; mediaDataConnection &lt;&lt;&quot;, transportId: &quot; &lt;&lt; transportId);</span>
+<span class="lineNum">     566 </span><span class="lineCov">          2 :         if (m_localTransportHandler)</span>
+<span class="lineNum">     567 </span>            :         {
+<span class="lineNum">     568 </span>            :                 /* Notify upper-layer that new transport is ready. */
+<span class="lineNum">     569 </span><span class="lineCov">          2 :                 m_localTransportHandler(SAFARI_OK, localTransport);</span>
+<span class="lineNum">     570 </span>            :         }
+<a name="571"><span class="lineNum">     571 </span>            : }</a>
+<span class="lineNum">     572 </span>            : 
+<span class="lineNum">     573 </span><span class="lineCov">          1 : void CLocalServiceServer::HandleConnectionError(const boost::system::error_code&amp; inErrorCode, const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     574 </span>            : {
+<span class="lineNum">     575 </span><span class="lineCov">         21 :         LS_WARNING_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionError, error: &quot; &lt;&lt; inErrorCode &lt;&lt; &quot; msg: &quot; &lt;&lt; inErrorCode.message() &lt;&lt; &quot;, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     576 </span><span class="lineCov">          1 :         if (!RemoveInitialConnection(inConnection))</span>
+<span class="lineNum">     577 </span>            :         {
+<span class="lineNum">     578 </span><span class="lineCov">          1 :                 bool successful = RemoveHandshakedConnection(inConnection);</span>
+<span class="lineNum">     579 </span><span class="lineCov">          1 :                 if (!successful)</span>
+<span class="lineNum">     580 </span>            :                 {
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :                         LS_WARNING_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionError, connection not found! inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     582 </span>            :                 }
+<span class="lineNum">     583 </span>            :         }
+<a name="584"><span class="lineNum">     584 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span><span class="lineCov">          4 : void CLocalServiceServer::HandleConnectionReady(const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     587 </span>            : {
+<span class="lineNum">     588 </span><span class="lineCov">         64 :         LS_INFO_LOG_THIS(&quot;CLocalServiceServer::HandleConnectionReady, new connection, inConnection: &quot; &lt;&lt; inConnection);</span>
+<span class="lineNum">     589 </span><span class="lineCov">          4 :         m_initialConnectionList.push_back(inConnection);</span>
+<a name="590"><span class="lineNum">     590 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">     591 </span>            : 
+<span class="lineNum">     592 </span><span class="lineCov">          4 : bool CLocalServiceServer::RemoveInitialConnection(const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     593 </span>            : {
+<span class="lineNum">     594 </span><span class="lineCov">         22 :         for (auto it = m_initialConnectionList.begin(); it!= m_initialConnectionList.end(); ++it)</span>
+<span class="lineNum">     595 </span>            :         {
+<span class="lineNum">     596 </span><span class="lineCov">         12 :                 if ((*it) == inConnection)</span>
+<span class="lineNum">     597 </span>            :                 {
+<span class="lineNum">     598 </span><span class="lineCov">          3 :                         m_initialConnectionList.erase(it);</span>
+<span class="lineNum">     599 </span>            :                         return true;
+<span class="lineNum">     600 </span>            :                 }
+<span class="lineNum">     601 </span>            :         }
+<span class="lineNum">     602 </span>            :         return false;
+<a name="603"><span class="lineNum">     603 </span>            : }</a>
+<span class="lineNum">     604 </span>            : 
+<span class="lineNum">     605 </span><span class="lineCov">          1 : bool CLocalServiceServer::RemoveHandshakedConnection(const LocalSocketHandlerPtr&amp; inConnection)</span>
+<span class="lineNum">     606 </span>            : {
+<span class="lineNum">     607 </span><span class="lineCov">          4 :         for (auto it = m_handshakedConnectionMap.begin(); it!= m_handshakedConnectionMap.end(); ++it)</span>
+<span class="lineNum">     608 </span>            :         {
+<span class="lineNum">     609 </span><span class="lineCov">          2 :                 if ((*it).second == inConnection)</span>
+<span class="lineNum">     610 </span>            :                 {
+<span class="lineNum">     611 </span><span class="lineCov">          1 :                         m_handshakedConnectionMap.erase(it);</span>
+<span class="lineNum">     612 </span>            :                         return true;
+<span class="lineNum">     613 </span>            :                 }
+<span class="lineNum">     614 </span>            :         }
+<span class="lineNum">     615 </span>            :         return false;
+<span class="lineNum">     616 </span>            : }
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     619 </span>            : /// class CLocalServiceServerFactory
+<span class="lineNum">     620 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">     621 </span>            : 
+<span class="lineNum">     622 </span><span class="lineCov">          2 : LocalServiceServerSharedPtr CLocalServiceServerFactory::CreateLocalServiceServer(boost::asio::io_service&amp; inIoService)</span>
+<a name="623"><span class="lineNum">     623 </span>            : {</a>
+<span class="lineNum">     624 </span><span class="lineCov">          4 :         return LocalServiceServerSharedPtr(new CLocalServiceServer(inIoService));</span>
+<span class="lineNum">     625 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     626 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

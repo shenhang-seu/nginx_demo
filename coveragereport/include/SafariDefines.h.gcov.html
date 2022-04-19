@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/SafariDefines.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">include</a> - SafariDefines.h<span style="font-size: 80%;"> (source / <a href="SafariDefines.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">59</td>
+            <td class="headerCovTableEntry">59</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Safari type definitions.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Jul-21-2017  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef SAFARI_DEFINES_H
+<span class="lineNum">      14 </span>            : #define SAFARI_DEFINES_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;string&gt;
+<span class="lineNum">      17 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      18 </span>            : #include &lt;set&gt;
+<span class="lineNum">      19 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">      20 </span>            : #include &lt;functional&gt;
+<span class="lineNum">      21 </span>            : #include &quot;JsonKeyDefines.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;SafariErrorCodes.h&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #define ENV_SAFARI_HOME &quot;WEBEX_SAFARI_HOME&quot;
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #define CSP_MAX_INT64 ((int64_t)0x7FFFFFFFFFFFFFFF)
+<span class="lineNum">      27 </span>            : #define CSP_MIN_INT64 ((int64_t)0x8000000000000000)
+<span class="lineNum">      28 </span>            : #define CSP_MAX_UINT32 ((uint32_t)0xFFFFFFFF)
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : #ifndef INVALID_PID
+<span class="lineNum">      31 </span>            : #define INVALID_PID (-1)
+<span class="lineNum">      32 </span>            : #endif
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : /* Type Definitions. */
+<span class="lineNum">      35 </span>            : typedef std::string ConfIdType;
+<span class="lineNum">      36 </span>            : typedef std::string CspSessionIdType;
+<span class="lineNum">      37 </span>            : typedef std::string CmeSessionIdType;
+<span class="lineNum">      38 </span>            : typedef std::vector&lt;CspSessionIdType&gt; CspSessionIdTypeVector;
+<span class="lineNum">      39 </span>            : typedef std::set&lt;CspSessionIdType&gt; CspSessionIdTypeSet;
+<span class="lineNum">      40 </span>            : typedef std::string DeviceIdType;
+<span class="lineNum">      41 </span>            : typedef int SessionSequenceType;
+<span class="lineNum">      42 </span>            : typedef std::string SessionStateType;
+<span class="lineNum">      43 </span>            : typedef Json::Value JsonValue;
+<span class="lineNum">      44 </span>            : typedef Json::ValueType JsonValueType;
+<span class="lineNum">      45 </span>            : typedef Json::FastWriter JsonWriter;
+<span class="lineNum">      46 </span>            : typedef Json::StyledWriter JsonStyledWriter;
+<span class="lineNum">      47 </span>            : typedef Json::Reader JsonReader;
+<span class="lineNum">      48 </span>            : typedef uint32_t TimestampType;
+<span class="lineNum">      49 </span>            : typedef uint16_t SeqIdType;
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : typedef std::function&lt;void (SafariResult inResult, const std::string&amp; inMessage)&gt; ResultCallback;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : /* CSP Server Type Definitions. */
+<span class="lineNum">      54 </span><span class="lineCov">        546 : const std::string SERVER_TYPE_HIPPO     = &quot;HIPPO&quot;;</span>
+<span class="lineNum">      55 </span><span class="lineCov">        546 : const std::string SERVER_TYPE_OTTER     = &quot;OTTER&quot;;</span>
+<span class="lineNum">      56 </span>            : // const std::string SERVER_TYPE_FLAMINGO  = &quot;FLAMINGO&quot;;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : /* CSP Server State Definitions. */
+<span class="lineNum">      59 </span><span class="lineCov">        546 : const std::string SERVER_STATE_REGISTERED       = &quot;REGISTERED&quot;;</span>
+<span class="lineNum">      60 </span><span class="lineCov">        546 : const std::string SERVER_STATE_SUSPENDED        = &quot;SUSPENDED&quot;;</span>
+<span class="lineNum">      61 </span><span class="lineCov">        546 : const std::string SERVER_STATE_UNREGISTERED = &quot;UNREGISTERED&quot;;</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : /* CSP Session Type Definitions. */
+<span class="lineNum">      64 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_FB_LIVE                            = &quot;WEBEX_FB_LIVE&quot;;</span>
+<span class="lineNum">      65 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_FB_WORKPLACE                       = &quot;W_C_facebook.com&quot;;</span>
+<span class="lineNum">      66 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_IBM_USTREAM_LIVE           = &quot;WEBEX_IBM_USTREAM_LIVE&quot;;</span>
+<span class="lineNum">      67 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_MEETING_LIVE                       = &quot;WEBEX_MEETING_LIVE&quot;;</span>
+<span class="lineNum">      68 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_NBR                                        = &quot;WEBEX_NBR&quot;;</span>
+<span class="lineNum">      69 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_SLIDES_REWIND                      = &quot;WEBEX_SLIDES_REWIND&quot;;</span>
+<span class="lineNum">      70 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_VBRICK_LIVE                        = &quot;WEBEX_VBRICK_LIVE&quot;;</span>
+<span class="lineNum">      71 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_YOUTUBE_LIVE                       = &quot;WEBEX_YOUTUBE_LIVE&quot;;</span>
+<span class="lineNum">      72 </span><span class="lineCov">        546 : const std::string SESSION_TYPE_WEBEX_WEBCAST_LIVE                       = &quot;WEBEX_WEBCAST_LIVE&quot;;</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : /* CSP Session State Definitions. */
+<span class="lineNum">      76 </span><span class="lineCov">        546 : const std::string SESSION_STATE_UNSTART = &quot;UNSTART&quot;;</span>
+<span class="lineNum">      77 </span><span class="lineCov">        546 : const std::string SESSION_STATE_START   = &quot;START&quot;;</span>
+<span class="lineNum">      78 </span><span class="lineCov">        546 : const std::string SESSION_STATE_PAUSE   = &quot;PAUSE&quot;;</span>
+<span class="lineNum">      79 </span><span class="lineCov">        546 : const std::string SESSION_STATE_STOP    = &quot;STOP&quot;;</span>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : /* Thread Name Definitions. */
+<span class="lineNum">      82 </span><span class="lineCov">        546 : const std::string THREAD_NAME_COMPOSER  = &quot;COMPOSER_THREAD&quot;;</span>
+<span class="lineNum">      83 </span><span class="lineCov">        546 : const std::string THREAD_NAME_STREAM    = &quot;STREAM_THREAD&quot;;</span>
+<span class="lineNum">      84 </span><span class="lineCov">        546 : const std::string THREAD_NAME_RTMP              = &quot;RTMP_THREAD&quot;;</span>
+<span class="lineNum">      85 </span><span class="lineCov">        546 : const std::string THREAD_NAME_NETWORK   = &quot;NETWORK_THREAD&quot;;</span>
+<span class="lineNum">      86 </span><span class="lineCov">        546 : const std::string THREAD_NAME_DB                = &quot;DB_THREAD&quot;;</span>
+<span class="lineNum">      87 </span><span class="lineCov">        546 : const std::string THREAD_NAME_SDK               = &quot;SDK_THREAD&quot;;</span>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : /* Indicate which thread a call is running in. */
+<span class="lineNum">      90 </span>            : #define IN_MAIN_THREAD
+<span class="lineNum">      91 </span>            : #define IN_STREAM_THREAD
+<span class="lineNum">      92 </span>            : #define IN_RTMP_THREAD
+<span class="lineNum">      93 </span>            : #define IN_HTTP_THREAD
+<span class="lineNum">      94 </span>            : #define IN_NETWORK_THREAD
+<span class="lineNum">      95 </span>            : #define IN_DB_THREAD
+<span class="lineNum">      96 </span>            : #define IN_SDK_THREAD
+<span class="lineNum">      97 </span>            : #define IN_MMP_TASK_THREAD
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : /* CME media service ID definitions. */
+<span class="lineNum">     101 </span>            : typedef std::string CmeMediaServiceIdType;
+<span class="lineNum">     102 </span><span class="lineCov">        546 : const std::string CME_MEDIA_SERVICE_ID_EDONUS = &quot;edonus&quot;;</span>
+<span class="lineNum">     103 </span><span class="lineCov">        546 : const std::string CME_MEDIA_SERVICE_ID_CES = &quot;ces&quot;; // Content Extraction Service (OMP)</span>
+<span class="lineNum">     104 </span><span class="lineCov">        546 : const std::string CME_MEDIA_SERVICE_ID_TRANSCODER = &quot;transcoder&quot;;</span>
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span><span class="lineCov">        546 : const std::string CME_SERVICE = &quot;cmeService&quot;;</span>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : /* 
+<span class="lineNum">     109 </span>            :  * Video layout definitions. 
+<span class="lineNum">     110 </span>            :  * More layout definitions, see https://sqbu-github.cisco.com/Calliope/documentation/blob/master/apis/websocket/api.md#layout-action-message
+<span class="lineNum">     111 </span>            :  */
+<span class="lineNum">     112 </span><span class="lineCov">        546 : const std::string VIDEO_LAYOUT_SINGLE                           = &quot;Single&quot;;</span>
+<span class="lineNum">     113 </span><span class="lineCov">        546 : const std::string VIDEO_LAYOUT_PROMINENT                        = &quot;Prominent&quot;;</span>
+<span class="lineNum">     114 </span><span class="lineCov">        546 : const std::string VIDEO_LAYOUT_EQUAL                            = &quot;Equal&quot;;</span>
+<span class="lineNum">     115 </span><span class="lineCov">        546 : const std::string VIDEO_LAYOUT_SINGLE_PLUS_SPEAKER      = &quot;SinglePlusSpeaker&quot;;</span>
+<span class="lineNum">     116 </span><span class="lineCov">        546 : const std::string VIDEO_LAYOUT_BACKGROUND_ONLY          = &quot;BackgroundOnly&quot;;</span>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : /* Video resolution definitions. */
+<span class="lineNum">     119 </span>            : const uint32_t VIDEO_RESOLUTION_90P             = 90;
+<span class="lineNum">     120 </span>            : const uint32_t VIDEO_RESOLUTION_180P    = 180;
+<span class="lineNum">     121 </span>            : const uint32_t VIDEO_RESOLUTION_360P    = 360;
+<span class="lineNum">     122 </span>            : const uint32_t VIDEO_RESOLUTION_720P    = 720;
+<span class="lineNum">     123 </span>            : const uint32_t VIDEO_RESOLUTION_1080P   = 1080;
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : /* Media Spec Definitions. */
+<span class="lineNum">     126 </span>            : #define CSP_AUDIO_AAC_SAMPLE_RATE_DEFAULT 32000
+<span class="lineNum">     127 </span>            : #define CSP_AUDIO_AAC_BIT_RATE_DEFAULT 96000
+<span class="lineNum">     128 </span>            : #define CSP_AUDIO_AAC_SAMPLE_NUM_PER_FRAME 1024
+<span class="lineNum">     129 </span>            : #define CSP_VIDEO_FRAME_RATE_DEFAULT 30
+<span class="lineNum">     130 </span>            : #define CSP_VIDEO_CLOCK_RATE_DEFAULT 90000
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : /* CSP API Action Definitions. */
+<span class="lineNum">     133 </span><span class="lineCov">        546 : const std::string CSP_ACTION_UPDATE_SERVER_STATUS                                                                       = &quot;UPDATE_SERVER_STATUS&quot;;</span>
+<span class="lineNum">     134 </span><span class="lineCov">        546 : const std::string CSP_ACTION_PAUSE_SESSION                                                                                      = &quot;PAUSE_SESSION&quot;;</span>
+<span class="lineNum">     135 </span><span class="lineCov">        546 : const std::string CSP_ACTION_RESUME_SESSION                                                                                     = &quot;RESUME_SESSION&quot;;</span>
+<span class="lineNum">     136 </span><span class="lineCov">        546 : const std::string CSP_ACTION_UPDATE_SESSION_LAYOUT                                                                      = &quot;UPDATE_SESSION_LAYOUT&quot;;</span>
+<span class="lineNum">     137 </span><span class="lineCov">        546 : const std::string CSP_ACTION_JOIN_CONFERENCE_REQUEST                                                            = &quot;JOIN_CONFERENCE_REQUEST&quot;;</span>
+<span class="lineNum">     138 </span><span class="lineCov">        546 : const std::string CSP_ACTION_JOIN_CONFERENCE_RESPONSE                                                           = &quot;JOIN_CONFERENCE_RESPONSE&quot;;</span>
+<span class="lineNum">     139 </span><span class="lineCov">        546 : const std::string CSP_ACTION_LEAVE_CONFERENCE                                                                           = &quot;LEAVE_CONFERENCE&quot;;</span>
+<span class="lineNum">     140 </span><span class="lineCov">        546 : const std::string CSP_ACTION_JOIN_MEDIA_SESSIONS                                                                        = &quot;JOIN_MEDIA_SESSIONS&quot;;</span>
+<span class="lineNum">     141 </span><span class="lineCov">        546 : const std::string CSP_ACTION_OPEN_CME_SENDONLY_SESSION                                                          = &quot;OPEN_CME_SENDONLY_SESSION&quot;;</span>
+<span class="lineNum">     142 </span><span class="lineCov">        546 : const std::string CSP_ACTION_CLOSE_CME_SENDONLY_SESSION                                                         = &quot;CLOSE_CME_SENDONLY_SESSION&quot;;</span>
+<span class="lineNum">     143 </span><span class="lineCov">        546 : const std::string CSP_ACTION_ERROR_REPORT                                                                                       = &quot;ERROR_REPORT&quot;;</span>
+<span class="lineNum">     144 </span><span class="lineCov">        546 : const std::string CSP_ACTION_UPDATE_ROSTER_LIST                                                                         = &quot;UPDATE_ROSTER_LIST&quot;;</span>
+<span class="lineNum">     145 </span><span class="lineCov">        546 : const std::string CSP_ACTION_CONTENT_SHARING_EVENT                                                                      = &quot;CONTENT_SHARING_EVENT&quot;;</span>
+<span class="lineNum">     146 </span><span class="lineCov">        546 : const std::string CSP_ACTION_CONTENT_SHARING_EVENT_RESPONSE                        = &quot;CONTENT_SHARING_EVENT_RESPONSE&quot;;</span>
+<span class="lineNum">     147 </span><span class="lineCov">        546 : const std::string CSP_ACTION_REQUEST_CONTENT_KEYFRAME                                                           = &quot;REQUEST_CONTENT_KEYFRAME&quot;;</span>
+<span class="lineNum">     148 </span><span class="lineCov">        546 : const std::string CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_OPEN_FIRST_TIME        = &quot;INDICATE_CME_RECVONLY_VIDEO_SESSION_OPEN_FIRST_TIME&quot;;</span>
+<span class="lineNum">     149 </span><span class="lineCov">        546 : const std::string CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_RELEASE                        = &quot;INDICATE_CME_RECVONLY_VIDEO_SESSION_RELEASE&quot;;</span>
+<span class="lineNum">     150 </span><span class="lineCov">        546 : const std::string CSP_ACTION_INDICATE_PAUSE_SESSION                                             = &quot;INDICATE_PAUSE_SESSION&quot;;</span>
+<span class="lineNum">     151 </span><span class="lineCov">        546 : const std::string CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_UPDATE                         = &quot;INDICATE_CME_RECVONLY_VIDEO_SESSION_UPDATE&quot;;</span>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : /* CSP Feature Toggle Key Definitions. */
+<span class="lineNum">     154 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_VIDEO_ENABLE_CHP = &quot;CSP_VIDEO_ENABLE_CHP&quot;;</span>
+<span class="lineNum">     155 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_MEDIA_ENABLE_AES_256_GCM = &quot;CSP_MEDIA_ENABLE_AES_256_GCM&quot;;</span>
+<span class="lineNum">     156 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_SHARING_MAX_RESOLUTION = &quot;CSP_SHARING_MAX_RESOLUTION&quot;;</span>
+<span class="lineNum">     157 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_DISABLE_LOGO_SERVICE_LIST = &quot;CSP_DISABLE_LOGO_SERVICE_LIST&quot;;</span>
+<span class="lineNum">     158 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_VIDEO_1080P_RESOLUTION_ENABLED = &quot;video1080PResolutionEnabled&quot;;</span>
+<span class="lineNum">     159 </span><span class="lineCov">        546 : const std::string CSP_FT_KEY_STREAMING_RESOLUTION = &quot;streamingResolution&quot;;</span>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : #define FFMPEG_ERROR_MESSAGE(errno) [](int inErrNo) { char errBuff[1024] = &quot;&quot;; return std::to_string(inErrNo) + &quot; (&quot; + av_make_error_string(errBuff, 1024, inErrNo) + &quot;)&quot;; } (errno)
+<span class="lineNum">     162 </span>            : #define LINUX_ERROR_MESSAGE(errno) (std::to_string(errno) + &quot; (&quot; + ::strerror(errno) + &quot;)&quot;)
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            : /* g++ compiler optimizations. */
+<span class="lineNum">     165 </span>            : #define CSP_BUILD_LIKELY(x)      __builtin_expect(!!(x), 1)
+<span class="lineNum">     166 </span>            : #define CSP_BUILD_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : #define JSON_IS_A_VALID_STRING(jsonValue) (jsonValue.isString() &amp;&amp; !jsonValue.asString().empty())
+<span class="lineNum">     169 </span>            : #define JSON_IS_A_VALID_ARRAY(jsonValue) (jsonValue.isArray() &amp;&amp; !jsonValue.empty())
+<span class="lineNum">     170 </span>            : #define JSON_IS_A_VALID_INT(jsonValue) (jsonValue.isInt())
+<span class="lineNum">     171 </span>            : #define JSON_IS_A_VALID_UINT(jsonValue) (jsonValue.isUInt())
+<span class="lineNum">     172 </span>            : #define JSON_IS_A_VALID_BOOL(jsonValue) (jsonValue.isBool())
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            : #define ENSURE_JSON_IS_A_VALID_STRING(jsonValue) \
+<span class="lineNum">     175 </span>            :         if (!JSON_IS_A_VALID_STRING(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return SAFARI_ERROR_INVALID_PARAMETER; }
+<span class="lineNum">     176 </span>            : #define ENSURE_JSON_IS_A_VALID_ARRAY(jsonValue) \
+<span class="lineNum">     177 </span>            :         if (!JSON_IS_A_VALID_ARRAY(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return SAFARI_ERROR_INVALID_PARAMETER; }
+<span class="lineNum">     178 </span>            : #define ENSURE_JSON_IS_A_VALID_INT(jsonValue) \
+<span class="lineNum">     179 </span>            :         if (!JSON_IS_A_VALID_INT(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return SAFARI_ERROR_INVALID_PARAMETER; }
+<span class="lineNum">     180 </span>            : #define ENSURE_JSON_IS_A_VALID_UINT(jsonValue) \
+<span class="lineNum">     181 </span>            :         if (!JSON_IS_A_VALID_UINT(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return SAFARI_ERROR_INVALID_PARAMETER; }
+<span class="lineNum">     182 </span>            : #define ENSURE_JSON_IS_A_VALID_BOOL(jsonValue) \
+<span class="lineNum">     183 </span>            :         if (!JSON_IS_A_VALID_BOOL(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return SAFARI_ERROR_INVALID_PARAMETER; }
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : #define ENSURE_JSON_IS_A_VALID_STRING_OTHERWISE_RETURN_VOID(jsonValue) \
+<span class="lineNum">     186 </span>            :         if (!JSON_IS_A_VALID_STRING(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return; }
+<span class="lineNum">     187 </span>            : #define ENSURE_JSON_IS_A_VALID_ARRAY_OTHERWISE_RETURN_VOID(jsonValue) \
+<span class="lineNum">     188 </span>            :         if (!JSON_IS_A_VALID_ARRAY(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return; }
+<span class="lineNum">     189 </span>            : #define ENSURE_JSON_IS_A_VALID_INT_OTHERWISE_RETURN_VOID(jsonValue) \
+<span class="lineNum">     190 </span>            :         if (!JSON_IS_A_VALID_INT(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return; }
+<span class="lineNum">     191 </span>            : #define ENSURE_JSON_IS_A_VALID_UINT_OTHERWISE_RETURN_VOID(jsonValue) \
+<span class="lineNum">     192 </span>            :         if (!JSON_IS_A_VALID_UINT(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return; }
+<span class="lineNum">     193 </span>            : #define ENSURE_JSON_IS_A_VALID_BOOL_OTHERWISE_RETURN_VOID(jsonValue) \
+<span class="lineNum">     194 </span>            :         if (!JSON_IS_A_VALID_BOOL(jsonValue)) { LOG_ERROR(&quot;&quot;, &quot;&quot;, #jsonValue); return; }
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            : /* avpriv_mpeg4audio_sample_rates is copied from ffmpeg/libavcodec/mpeg4audio.c */
+<span class="lineNum">     197 </span>            : const int avpriv_mpeg4audio_sample_rates[16] = {
+<span class="lineNum">     198 </span>            :     96000, 88200, 64000, 48000, 44100, 32000,
+<span class="lineNum">     199 </span>            :     24000, 22050, 16000, 12000, 11025, 8000, 7350
+<span class="lineNum">     200 </span>            : };
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineCov">        546 : const std::string CSP_STATISTICS_PREFIX = &quot;STAT &quot;;</span>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            : #endif //SAFARI_DEFINES_H
+<span class="lineNum">     205 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

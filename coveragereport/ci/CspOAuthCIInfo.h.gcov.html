@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - ci/CspOAuthCIInfo.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ci</a> - CspOAuthCIInfo.h<span style="font-size: 80%;"> (source / <a href="CspOAuthCIInfo.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CSP_OAUTH_CI_INFO_H</a>
+<span class="lineNum">       2 </span>            : #define CSP_OAUTH_CI_INFO_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include&lt;string&gt;
+<span class="lineNum">       5 </span>            : #include&lt;vector&gt;
+<span class="lineNum">       6 </span>            : #include &quot;CspOAuthDefines.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;SafariServerType.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;json/json.h&quot;
+<a name="9"><span class="lineNum">       9 </span>            : #include &quot;SafariDefines.h&quot;</a>
+<span class="lineNum">      10 </span>            : class CCspOAuth2Client;
+<span class="lineNum">      11 </span><span class="lineCov">         80 : class CCspOAuthCIInfo</span>
+<span class="lineNum">      12 </span>            : {
+<span class="lineNum">      13 </span>            : public:
+<span class="lineNum">      14 </span>            :     CCspOAuthCIInfo();
+<span class="lineNum">      15 </span>            :     CCspOAuthCIInfo(const CCspOAuthCIInfo&amp;);
+<span class="lineNum">      16 </span>            :     CCspOAuthCIInfo( CCspOAuthCIInfo&amp;&amp;);
+<span class="lineNum">      17 </span>            :     bool operator ==(const CCspOAuthCIInfo&amp; inRight);
+<span class="lineNum">      18 </span>            :     bool Initialize(const JsonValue&amp; inCSPAccount);
+<span class="lineNum">      19 </span>            :     CCspOAuthCIInfo&amp; operator =( CCspOAuthCIInfo&amp;&amp; inRight);
+<span class="lineNum">      20 </span>            :     const std::string&amp; GetCiBaseUrl();
+<span class="lineNum">      21 </span>            :     std::size_t GetCurrentUrlCount()                const {return m_currentUrlCount;}
+<span class="lineNum">      22 </span>            :     const std::string&amp; GetUserName()                const {return m_userName;}
+<span class="lineNum">      23 </span>            :     const std::string&amp; GetPassword()                const {return m_password;}
+<span class="lineNum">      24 </span>            :     const std::string&amp; GetOrgId()                   const {return m_orgId;}
+<span class="lineNum">      25 </span>            :     const std::string&amp; GetRequestBearerTokenPath()  const {return m_requestBearerTokenPath;}
+<span class="lineNum">      26 </span>            :     const std::string&amp; GetClientScope()             const {return m_clientScope;}
+<span class="lineNum">      27 </span>            :     const std::string&amp; GetClientId()                const {return m_clientId;}
+<span class="lineNum">      28 </span>            :     const std::string&amp; GetClientSecret()            const {return m_clientSecret;}
+<span class="lineNum">      29 </span>            :     const std::string&amp; GetBase64ClientInfo()        const {return m_base64ClientInfo;}
+<span class="lineNum">      30 </span>            :     const std::string&amp; GetRequestBearerTokenBody()  const {return m_requestBearerTokenBodyStr;}
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            :     void RePickCIBaseUrl();
+<span class="lineNum">      33 </span>            : private:
+<span class="lineNum">      34 </span>            :     bool IsBaseUrlEqual(const std::vector&lt;std::string&gt;&amp; inBaseUrl);
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : private:
+<span class="lineNum">      37 </span>            :     std::vector&lt;std::string&gt; m_ciBaseUrlList;
+<span class="lineNum">      38 </span>            :     std::size_t m_currentUrlCount;
+<span class="lineNum">      39 </span>            :     std::string m_userName;
+<span class="lineNum">      40 </span>            :     std::string m_password;
+<span class="lineNum">      41 </span>            :     std::string m_orgId;
+<span class="lineNum">      42 </span>            :     std::string m_requestBearerTokenPath;
+<span class="lineNum">      43 </span>            :     std::string m_clientScope;
+<span class="lineNum">      44 </span>            :     std::string m_clientId;
+<span class="lineNum">      45 </span>            :     std::string m_clientSecret;
+<span class="lineNum">      46 </span>            :     std::string m_base64ClientInfo;
+<span class="lineNum">      47 </span>            :     std::string m_requestBearerTokenBodyStr;
+<span class="lineNum">      48 </span>            : };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : #endif // CSP_OAUTH_CI_INFO_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

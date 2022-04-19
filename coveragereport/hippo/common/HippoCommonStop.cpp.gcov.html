@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/common/HippoCommonStop.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/common</a> - HippoCommonStop.cpp<span style="font-size: 80%;"> (source / <a href="HippoCommonStop.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">97</td>
+            <td class="headerCovTableEntry">120</td>
+            <td class="headerCovTableEntryMed">80.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoCommonStop.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;HippoSessionMetrics.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;TssWrapper.h&quot;
+<a name="4"><span class="lineNum">       4 </span>            : #include &quot;HippoDBTaskFactory.h&quot;</a>
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span><span class="lineCov">         55 : CHippoCommonStop::CHippoCommonStop(</span>
+<span class="lineNum">       7 </span>            :         boost::asio::io_service&amp; inIoService,
+<span class="lineNum">       8 </span>            :         const std::string &amp;inSessionId,
+<span class="lineNum">       9 </span>            :         const std::string&amp; inConfId,
+<span class="lineNum">      10 </span>            :         const std::string&amp; inSessionType,
+<span class="lineNum">      11 </span>            :         const boost::posix_time::ptime&amp; inSessionStartTime,
+<span class="lineNum">      12 </span>            :         const boost::posix_time::ptime&amp; inSessionStopTime,
+<span class="lineNum">      13 </span>            :         const std::string&amp; inOtterIp,
+<span class="lineNum">      14 </span>            :         const std::string&amp; inSessionExtendInfo,
+<span class="lineNum">      15 </span>            :         int inStopReason)
+<span class="lineNum">      16 </span>            :     : m_ioService(inIoService)
+<span class="lineNum">      17 </span>            :     , m_sessionId(inSessionId)
+<span class="lineNum">      18 </span>            :     , m_confId(inConfId)
+<span class="lineNum">      19 </span>            :     , m_sessionType(inSessionType)
+<span class="lineNum">      20 </span>            :     , m_sessionStartTime(inSessionStartTime)
+<span class="lineNum">      21 </span>            :     , m_sessionStopTime(inSessionStopTime)
+<span class="lineNum">      22 </span>            :     , m_otterIp(inOtterIp)
+<span class="lineNum">      23 </span>            :     , m_sessionExtendInfo(inSessionExtendInfo)
+<span class="lineNum">      24 </span><span class="lineCov">         55 :     , m_stopReason(inStopReason)</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineCov">        880 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::CHippoCommonStop, sessionId=&quot; &lt;&lt; m_sessionId);</span>
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">         55 : }</span></a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">        330 : CHippoCommonStop::~CHippoCommonStop()</span>
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span><span class="lineCov">        825 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::~CHippoCommonStop&quot;);</span>
+<span class="lineNum">      32 </span><span class="lineCov">         55 : }</span>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">          8 : SafariResult CHippoCommonStop::NotificationToCB(const std::string &amp;inCallbackUrl)</span>
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">          8 :     if(inCallbackUrl.empty())</span>
+<span class="lineNum">      37 </span>            :     {
+<span class="lineNum">      38 </span><span class="lineCov">        105 :         HIPPO_WARNING_THIS(&quot;CHippoCommonStop::NotificationToCB, error callbackUrl is empty.&quot;);</span>
+<span class="lineNum">      39 </span>            :         return SAFARI_ERROR_HTTP_INVALID_URL;
+<span class="lineNum">      40 </span>            :     }
+<span class="lineNum">      41 </span><span class="lineCov">          1 :     JsonValue body;</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :     body[JSON_KEY_REASON] = m_stopReason+HIPPO_RESPONSE_CB_ERROR_BASE;</span>
+<span class="lineNum">      43 </span><span class="lineCov">          2 :     CHttpUrlParser parser(inCallbackUrl);</span>
+<span class="lineNum">      44 </span>            :     std::string url = parser.GetFullDomain();
+<span class="lineNum">      45 </span><span class="lineCov">          3 :     std::string path = parser.GetFullPath()+ '/'+ m_sessionId;</span>
+<span class="lineNum">      46 </span><span class="lineCov">         20 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::NotificationToCB, sessionid=&quot; &lt;&lt; m_sessionId &lt;&lt; &quot;, url=&quot; &lt;&lt; url &lt;&lt; &quot;, path=&quot; &lt;&lt; path);</span>
+<span class="lineNum">      47 </span><span class="lineCov">          2 :     InitiatorSharedPtr initiator = std::make_shared&lt;CHippoCommonInitiator&gt;(m_ioService,url,path);</span>
+<span class="lineNum">      48 </span><span class="lineCov">          1 :     initiator-&gt;SetBody(body);</span>
+<span class="lineNum">      49 </span><span class="lineCov">          1 :     std::string sessionId = m_sessionId;</span>
+<span class="lineNum">      50 </span><span class="lineCov">          1 :     SafariResult ret = initiator-&gt;Delete(</span>
+<span class="lineNum">      51 </span><span class="lineCov">          8 :         [initiator,sessionId](const RestResponseSharedPtr&amp; inResponse) mutable </span>
+<span class="lineNum">      52 </span>            :         {
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :             HIPPO_INFO(&quot;CHippoCommonStop::NotificationToCBHandler, sessionId=&quot; &lt;&lt; sessionId </span>
+<span class="lineNum">      54 </span>            :                 &lt;&lt; &quot;, result=&quot; &lt;&lt; REST_RESPONSE_SUCCEEDED(inResponse) 
+<span class="lineNum">      55 </span>            :                 &lt;&lt; &quot;, status=&quot; &lt;&lt; inResponse-&gt;GetStatus());
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :             initiator.reset();</span>
+<span class="lineNum">      57 </span><span class="lineCov">          3 :         });</span>
+<span class="lineNum">      58 </span><span class="lineCov">          1 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoCommonStop::NotificationToCB, error: http busy.&quot;);</span>
+<span class="lineNum">      60 </span><span class="lineCov">          2 :     return ret;</span>
+<a name="61"><span class="lineNum">      61 </span>            : }</a>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineCov">          6 : SafariResult CHippoCommonStop::StopOtter(const std::string &amp;inOtterIp, const std::string &amp;inOtterPort)</span>
+<span class="lineNum">      64 </span>            : {
+<span class="lineNum">      65 </span><span class="lineCov">        120 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::StopOtter, confid=&quot;&lt;&lt;m_confId&lt;&lt;&quot;, sessionid=&quot;&lt;&lt;m_sessionId&lt;&lt;&quot;, otterIp=&quot;&lt;&lt;inOtterIp);</span>
+<span class="lineNum">      66 </span><span class="lineCov">         63 :     HIPPO_ASSERTE_RETURN(!inOtterIp.empty(),SAFARI_ERROR_HTTP_INVALID_URL);</span>
+<span class="lineNum">      67 </span><span class="lineCov">          3 :     JsonValue body;</span>
+<span class="lineNum">      68 </span><span class="lineCov">          3 :     body[JSON_KEY_REASON] = m_stopReason;</span>
+<span class="lineNum">      69 </span><span class="lineCov">          3 :     body[JSON_KEY_CONFERENCE_ID] = m_confId; </span>
+<span class="lineNum">      70 </span><span class="lineCov">          9 :     std::string url = ((inOtterPort==HTTPS_PORT)? HTTPS_PROTOCOL : HTTP_PROTOCOL)+inOtterIp+&quot;:&quot;+inOtterPort;</span>
+<span class="lineNum">      71 </span><span class="lineCov">          9 :     std::string path = std::string(HIPPO_TO_OTTER_SESSION_CONTROL_SERVICE)+&quot;/&quot;+m_sessionId;</span>
+<span class="lineNum">      72 </span><span class="lineCov">         18 :     std::string  logInfo = &quot; sessionid=&quot;+m_sessionId+&quot;, confid=&quot;+m_confId+&quot;, otterIp=&quot;+inOtterIp+&quot;, &quot;;</span>
+<span class="lineNum">      73 </span><span class="lineCov">          6 :     return CHippoCommonStop::StopOtterWithRetryTime(&amp;m_ioService,url,path,logInfo,body,3);</span>
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineCov">          3 : SafariResult CHippoCommonStop::StopOtterWithRetryTime(boost::asio::io_service* inIoService,const std::string &amp;inUrl, const std::string &amp;inPath,const std::string&amp; inLogInfo,const JsonValue&amp; inBody,int inRetryTime)</span>
+<span class="lineNum">      77 </span>            : {
+<span class="lineNum">      78 </span><span class="lineCov">          3 :     InitiatorSharedPtr initiator =std::make_shared&lt;CHippoCommonInitiator&gt;(*inIoService, inUrl, inPath);</span>
+<span class="lineNum">      79 </span><span class="lineCov">          3 :     initiator-&gt;SetBody(inBody);</span>
+<span class="lineNum">      80 </span><span class="lineCov">         39 :     SafariResult ret = initiator-&gt;Delete([initiator,inIoService,inUrl,inPath,inBody,inRetryTime,inLogInfo](const RestResponseSharedPtr&amp; inResponse) mutable</span>
+<span class="lineNum">      81 </span>            :     {
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         HIPPO_INFO(&quot;CHippoCommonStop::StopOtterWithRetryTime, &quot; &lt;&lt; inLogInfo &lt;&lt;&quot;, retime=&quot;&lt;&lt;inRetryTime</span>
+<span class="lineNum">      83 </span>            :         &lt;&lt; &quot;, result=&quot; &lt;&lt; REST_RESPONSE_SUCCEEDED(inResponse) 
+<span class="lineNum">      84 </span>            :         &lt;&lt; &quot;, status=&quot; &lt;&lt; inResponse-&gt;GetStatus());
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         if(REST_RESPONSE_FAILED(inResponse))</span>
+<span class="lineNum">      86 </span>            :         {
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :             if(inRetryTime &gt; 0)</span>
+<span class="lineNum">      88 </span>            :             {
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 inRetryTime--;</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 CHippoCommonStop::StopOtterWithRetryTime(inIoService,inUrl,inPath,inLogInfo,inBody,inRetryTime);</span>
+<span class="lineNum">      91 </span>            :             }
+<span class="lineNum">      92 </span>            :         }
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :         initiator.reset();</span>
+<span class="lineNum">      94 </span><span class="lineCov">          9 :     });</span>
+<span class="lineNum">      95 </span><span class="lineCov">          3 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :         HIPPO_ERROR(&quot;CHippoCommonStop::StopOtterWithRetryTime, error: http busy. &quot;&lt;&lt;inLogInfo);</span>
+<span class="lineNum">      97 </span><span class="lineCov">          6 :     return ret;</span>
+<span class="lineNum">      98 </span>            : }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">         38 : SafariResult CHippoCommonStop::UpdateTableSessions(bool isCreateFail)</span>
+<span class="lineNum">     101 </span>            : {
+<span class="lineNum">     102 </span><span class="lineCov">        608 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::UpdateTableSessions, sessionId=&quot; &lt;&lt; m_sessionId);</span>
+<span class="lineNum">     103 </span><span class="lineCov">         38 :     boost::posix_time::ptime curTime = boost::posix_time::second_clock::universal_time();</span>
+<span class="lineNum">     104 </span>            :     /*
+<span class="lineNum">     105 </span>            :     std::string poolName =CHippoDBAccess::GetPoolName();
+<span class="lineNum">     106 </span>            :     char temp[1024] = {0};
+<span class="lineNum">     107 </span>            :     snprintf(temp, 1024, &quot;update %s set STOPREASON=%d,STOPTIME=TO_DATE('%s', 'YYYY-MON-DD HH24:MI:SS'), STATE='STOP' where (SESSIONID='%s' AND STATE!='STOP' AND POOLNAME = '%s' AND %s)&quot;,
+<span class="lineNum">     108 </span>            :         DB_TABLE_NAME_SESSION,m_stopReason,to_simple_string(curTime).c_str(),m_sessionId.c_str(),poolName.c_str(),CHippoDBManager::GetDBPartitionConditionSqlSessionInfo().c_str());
+<span class="lineNum">     109 </span>            :     std::string sql = temp;
+<span class="lineNum">     110 </span>            :     */
+<span class="lineNum">     111 </span><span class="lineCov">        114 :     DBTaskSharedPtr dbTask = CDBTaskFactory::CreateDBTaskUpdateSessionStop(CHippoDBAccess::GetPoolName(),m_sessionId,m_stopReason,curTime,CHippoDBManager::GetDBPartitionTime());</span>
+<span class="lineNum">     112 </span>            :     auto dbAccessSharedPtr = std::make_shared&lt;CHippoDBAccess&gt;();
+<span class="lineNum">     113 </span><span class="lineCov">         38 :     std::string sessionId = m_sessionId;</span>
+<span class="lineNum">     114 </span><span class="lineCov">         38 :     std::string sessionType = m_sessionType;</span>
+<span class="lineNum">     115 </span><span class="lineCov">         38 :     std::string confId = m_confId;</span>
+<span class="lineNum">     116 </span><span class="lineCov">         38 :     int stopReason = m_stopReason;</span>
+<span class="lineNum">     117 </span><span class="lineCov">         38 :     boost::posix_time::ptime sessionStartTime = m_sessionStartTime;</span>
+<span class="lineNum">     118 </span><span class="lineCov">         38 :     boost::posix_time::ptime sessionStopTme = curTime;</span>
+<span class="lineNum">     119 </span><span class="lineCov">         38 :     std::string otterIp = m_otterIp;</span>
+<span class="lineNum">     120 </span><span class="lineCov">         38 :     std::string extendInfo = m_sessionExtendInfo;</span>
+<span class="lineNum">     121 </span>            :     SafariResult ret = dbAccessSharedPtr-&gt;AsyncUpdateRecord(TABLE_SESSION, dbTask,
+<span class="lineNum">     122 </span><span class="lineCov">        836 :         [sessionId,sessionType,confId,isCreateFail,stopReason,dbAccessSharedPtr,sessionStartTime,sessionStopTme,otterIp, extendInfo](DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult) mutable </span>
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span><span class="lineCov">        608 :             HIPPO_INFO(&quot;CHippoCommonStop::UpdateSessionHandler, inSafariResult=&quot; &lt;&lt; inSafariResult &lt;&lt; &quot; sessionId=&quot; &lt;&lt; sessionId);</span>
+<span class="lineNum">     125 </span><span class="lineCov">         38 :             if(SAFARI_OK == inSafariResult)</span>
+<span class="lineNum">     126 </span><span class="lineCov">         38 :                 WriteSessionSummaryMetrics(sessionType, sessionId, confId, sessionStartTime, sessionStopTme, otterIp, extendInfo, stopReason, isCreateFail);</span>
+<span class="lineNum">     127 </span><span class="lineCov">         38 :             dbAccessSharedPtr.reset();</span>
+<span class="lineNum">     128 </span><span class="lineCov">        228 :         });</span>
+<span class="lineNum">     129 </span><span class="lineCov">         38 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoCommonStop::UpdateTableSessions, fail: async task busy, sessionId=&quot;&lt;&lt;m_sessionId);</span>
+<span class="lineNum">     131 </span><span class="lineCov">         76 :     return ret;</span>
+<span class="lineNum">     132 </span>            : }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineCov">         37 : SafariResult CHippoCommonStop::UpdateSessionServerMap()</span>
+<span class="lineNum">     136 </span>            : {
+<span class="lineNum">     137 </span><span class="lineCov">        592 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::UpdateSessionServerMap, sessionId &quot;&lt;&lt;m_sessionId);</span>
+<span class="lineNum">     138 </span>            :     /*
+<span class="lineNum">     139 </span>            :     char temp[1024] = {0};
+<span class="lineNum">     140 </span>            :     snprintf(temp, 1024, &quot;update %s set ISDELETE = 1 where (WBXSESSIONSERVERMAP.SESSIONID='%s' AND POOLNAME = '%s' AND %s)&quot;,
+<span class="lineNum">     141 </span>            :         DB_TABLE_NAME_SESSION_MAP,m_sessionId.c_str(),CHippoDBAccess::GetPoolName().c_str(),CHippoDBManager::GetDBPartitionConditionSqlSessionMap().c_str());
+<span class="lineNum">     142 </span>            :     std::string sql = temp;
+<span class="lineNum">     143 </span>            :     */
+<span class="lineNum">     144 </span><span class="lineCov">        111 :     DBTaskSharedPtr dbTask = CDBTaskFactory::CreateDBTaskUpdateSessionMapStop(CHippoDBAccess::GetPoolName(),m_sessionId,CHippoDBManager::GetDBPartitionTime());</span>
+<span class="lineNum">     145 </span>            :     auto dbAccessSharedPtr = std::make_shared&lt;CHippoDBAccess&gt;();
+<span class="lineNum">     146 </span><span class="lineCov">         37 :     std::string sessionId = m_sessionId;</span>
+<span class="lineNum">     147 </span>            :     SafariResult ret = dbAccessSharedPtr-&gt;AsyncUpdateRecord(TABLE_SESSION_SERVER_PAIR, dbTask,
+<span class="lineNum">     148 </span><span class="lineCov">        333 :         [sessionId,dbAccessSharedPtr](DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult) mutable </span>
+<span class="lineNum">     149 </span>            :         {
+<span class="lineNum">     150 </span><span class="lineCov">        592 :             HIPPO_INFO(&quot;CHippoCommonStop::UpdateSessionServerMapHandler, inSafariResult=&quot; &lt;&lt; inSafariResult &lt;&lt; &quot; sessionId=&quot; &lt;&lt; sessionId);</span>
+<span class="lineNum">     151 </span><span class="lineCov">         37 :             dbAccessSharedPtr.reset();</span>
+<span class="lineNum">     152 </span><span class="lineCov">        222 :         });</span>
+<span class="lineNum">     153 </span><span class="lineCov">         37 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoCommonStop::UpdateSessionServerMap, fail sessionId=&quot; &lt;&lt; m_sessionId);</span>
+<span class="lineNum">     155 </span><span class="lineCov">         74 :     return ret;</span>
+<span class="lineNum">     156 </span>            : }
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">          8 : SafariResult CHippoCommonStop::UpdateSessionServerMap(const std::vector&lt;std::string&gt; &amp;inOtterIDList)</span>
+<span class="lineNum">     159 </span>            : {
+<span class="lineNum">     160 </span><span class="lineCov">         32 :     HIPPO_INFO_THIS(&quot;CHippoCommonStop::UpdateSessionServerMap, sessionId=&quot; &lt;&lt; m_sessionId);</span>
+<span class="lineNum">     161 </span><span class="lineCov">         25 :     HIPPO_ASSERTE_RETURN(inOtterIDList.size() &gt; 0,SAFARI_ERROR_HIPPO_BASE);</span>
+<span class="lineNum">     162 </span><span class="lineCov">          1 :     std::string otterIDList = &quot;( &quot;+inOtterIDList[0];</span>
+<span class="lineNum">     163 </span><span class="lineCov">          3 :     for(size_t i=1;i&lt;inOtterIDList.size();++i)</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         otterIDList += (&quot;, &quot;+inOtterIDList[i]);</span>
+<span class="lineNum">     165 </span>            :     otterIDList += &quot; )&quot;;
+<span class="lineNum">     166 </span><span class="lineCov">          1 :     char temp[1024] = {0};</span>
+<span class="lineNum">     167 </span>            :     snprintf(temp, 1024, &quot;update %s set ISDELETE = 1 where (WBXSESSIONSERVERMAP.otterid in %s AND WBXSESSIONSERVERMAP.SESSIONID='%s' AND POOLNAME = '%s' AND %s)&quot;,
+<span class="lineNum">     168 </span><span class="lineCov">          6 :         DB_TABLE_NAME_SESSION_MAP,otterIDList.c_str(),m_sessionId.c_str(),CHippoDBAccess::GetPoolName().c_str(),CHippoDBManager::GetDBPartitionConditionSqlSessionMap().c_str());</span>
+<span class="lineNum">     169 </span><span class="lineCov">          1 :     std::string sql = temp;</span>
+<span class="lineNum">     170 </span>            :     auto dbAccessSharedPtr = std::make_shared&lt;CHippoDBAccess&gt;();
+<span class="lineNum">     171 </span><span class="lineCov">          1 :     std::string sessionId = m_sessionId;</span>
+<span class="lineNum">     172 </span>            :     SafariResult ret = dbAccessSharedPtr-&gt;AsyncUpdateRecord(TABLE_SESSION_SERVER_PAIR, sql,
+<span class="lineNum">     173 </span><span class="lineCov">          9 :     [dbAccessSharedPtr,sessionId](DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult) mutable </span>
+<span class="lineNum">     174 </span>            :     {
+<span class="lineNum">     175 </span><span class="lineCov">         16 :         HIPPO_INFO(&quot;CHippoCommonStop::UpdateSessionServerMapHandler, inSafariResult=&quot; &lt;&lt; inSafariResult &lt;&lt; &quot; sessionId=&quot; &lt;&lt; sessionId);</span>
+<span class="lineNum">     176 </span><span class="lineCov">          1 :         dbAccessSharedPtr.reset();</span>
+<span class="lineNum">     177 </span><span class="lineCov">          3 :     });</span>
+<span class="lineNum">     178 </span><span class="lineCov">          1 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :         HIPPO_ERROR_THIS(&quot;CHippoCommonStop::UpdateSessionServerMap, fail sessionId=&quot; &lt;&lt; m_sessionId);</span>
+<span class="lineNum">     180 </span><span class="lineCov">          1 :     return ret;</span>
+<a name="181"><span class="lineNum">     181 </span>            : }</a>
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">         38 : void CHippoCommonStop::WriteSessionSummaryMetrics(</span>
+<span class="lineNum">     184 </span>            :     std::string&amp; inSessionType,
+<span class="lineNum">     185 </span>            :     std::string&amp; inSessionId,
+<span class="lineNum">     186 </span>            :     std::string&amp; inConfId,
+<span class="lineNum">     187 </span>            :     boost::posix_time::ptime&amp; inSessionStartTime,
+<span class="lineNum">     188 </span>            :     boost::posix_time::ptime&amp; inSessionStopTime,
+<span class="lineNum">     189 </span>            :     std::string&amp; inOtterIp,
+<span class="lineNum">     190 </span>            :     std::string&amp; inSessionExtendInfo,
+<span class="lineNum">     191 </span>            :     int inStopReason,
+<span class="lineNum">     192 </span>            :     bool isCreateFail)
+<span class="lineNum">     193 </span>            : {
+<span class="lineNum">     194 </span><span class="lineCov">         38 :     JsonValue sessionExtendInfo;</span>
+<span class="lineNum">     195 </span>            :     std::string siteUrl;
+<span class="lineNum">     196 </span>            :     std::string videoLayout;
+<span class="lineNum">     197 </span>            :     std::string contentLayout;
+<span class="lineNum">     198 </span>            :     
+<span class="lineNum">     199 </span><span class="lineCov">         76 :     uint32_t duration = (inSessionStopTime - inSessionStartTime).total_seconds();</span>
+<span class="lineNum">     200 </span><span class="lineCov">         76 :     std::stringstream formatTime;</span>
+<span class="lineNum">     201 </span><span class="lineCov">        152 :     formatTime.imbue(std::locale(std::cout.getloc(), new boost::posix_time::time_facet(&quot;%Y-%m-%d %H:%M:%S&quot;)));</span>
+<span class="lineNum">     202 </span><span class="lineCov">         38 :     formatTime &lt;&lt; inSessionStartTime;</span>
+<span class="lineNum">     203 </span>            :     std::string sessionStartTime = formatTime.str();
+<span class="lineNum">     204 </span><span class="lineCov">         76 :     formatTime.str(&quot;&quot;);</span>
+<span class="lineNum">     205 </span><span class="lineCov">         38 :     formatTime &lt;&lt; inSessionStopTime;</span>
+<span class="lineNum">     206 </span>            :     std::string sessionStopTme = formatTime.str();
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineCov">         38 :     if(JsonReader().parse(inSessionExtendInfo, sessionExtendInfo, false))</span>
+<span class="lineNum">     209 </span>            :     {
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :         if(sessionExtendInfo[JSON_KEY_EUREKA_INFO][JSON_KEY_SITE_URL].isString())</span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :             siteUrl = sessionExtendInfo[JSON_KEY_EUREKA_INFO][JSON_KEY_SITE_URL].asString();</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :         JsonValue videoComposeKeyList = sessionExtendInfo[JSON_KEY_VIDEO_COMPOSE_KEY_LIST];</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :         if(videoComposeKeyList.isArray() &amp;&amp; videoComposeKeyList.size() &gt; 0)</span>
+<span class="lineNum">     214 </span>            :         {
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :             if(videoComposeKeyList[0][JSON_KEY_VIDEO_LAYOUT].isString())</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                 videoLayout = videoComposeKeyList[0][JSON_KEY_VIDEO_LAYOUT].asString();</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :             if(videoComposeKeyList[0][JSON_KEY_CONTENT_LAYOUT].isString())</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                 contentLayout = videoComposeKeyList[0][JSON_KEY_CONTENT_LAYOUT].asString();</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     220 </span>            :     }
+<span class="lineNum">     221 </span>            :     
+<span class="lineNum">     222 </span><span class="lineCov">        570 :     HIPPO_SESSION_SUMMARY_METRICS_LOG(</span>
+<span class="lineNum">     223 </span>            :         std::string(&quot;SessionSummary&quot;),
+<span class="lineNum">     224 </span>            :         std::string(&quot;CspSession&quot;),
+<span class="lineNum">     225 </span>            :         inSessionType,
+<span class="lineNum">     226 </span>            :         inSessionId,
+<span class="lineNum">     227 </span>            :         inConfId,
+<span class="lineNum">     228 </span>            :         siteUrl,
+<span class="lineNum">     229 </span>            :         sessionStartTime,
+<span class="lineNum">     230 </span>            :         sessionStopTme,
+<span class="lineNum">     231 </span>            :         duration,
+<span class="lineNum">     232 </span>            :         videoLayout,
+<span class="lineNum">     233 </span>            :         contentLayout,
+<span class="lineNum">     234 </span>            :         inStopReason,
+<span class="lineNum">     235 </span>            :         isCreateFail,
+<a name="236"><span class="lineNum">     236 </span>            :         inOtterIp</a>
+<span class="lineNum">     237 </span><span class="lineCov">         38 :     );</span>
+<span class="lineNum">     238 </span><span class="lineCov">         53 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

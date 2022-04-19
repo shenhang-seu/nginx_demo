@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/cme/NtgCmeMediaRelayer.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/cme</a> - NtgCmeMediaRelayer.h<span style="font-size: 80%;"> (source / <a href="NtgCmeMediaRelayer.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Nightingale CME RTP stream. 
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Aug-06-2019  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef NTG_CME_MEDIA_RELAYER_H
+<span class="lineNum">      14 </span>            : #define NTG_CME_MEDIA_RELAYER_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;WbxMMPSDKDefine.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;WmeRtpSessionInterface.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;SdpUtilities.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;MeetingVideoSubscriberInterface.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;CspRtpSession.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;NtgCmeStreamThread.h&quot;
+<span class="lineNum">      23 </span>            : #include &quot;NtgCmeRtpTransport.h&quot;
+<span class="lineNum">      24 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      25 </span>            : //#define CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">         54 : class INtgCmeMediaRelayerSink</span>
+<a name="28"><span class="lineNum">      28 </span>            : {</a>
+<span class="lineNum">      29 </span>            : public:
+<span class="lineNum">      30 </span><span class="lineCov">         48 :         virtual ~INtgCmeMediaRelayerSink(){}</span>
+<span class="lineNum">      31 </span>            :     virtual void OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel) = 0;
+<span class="lineNum">      32 </span>            :     virtual void OnVideoSCR(const CmeSessionIdType&amp; inCmeSessionId, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount) = 0;
+<span class="lineNum">      33 </span>            :         virtual void OnAudioSCR(const CmeSessionIdType&amp; inCmeSessionId, unsigned int inCount, WMERtpExtend* inRtpExtend) = 0;
+<a name="34"><span class="lineNum">      34 </span>            :         virtual void OnMediaRtpData(EMediaSessionType inType, const std::string&amp; inRtpPacket) = 0;  </a>
+<span class="lineNum">      35 </span>            :     virtual void OnMediaRtcpData(EMediaSessionType inType, const std::string&amp; inRtcpPacket) = 0;
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :         virtual void OnRtpStreamError(SafariResult inErrorCode) {}</span>
+<span class="lineNum">      37 </span>            : };
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : typedef std::vector&lt;WMERtpExtend&gt; AudioSCRList;
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : class CNtgCmeMediaRelayer: public std::enable_shared_from_this&lt;CNtgCmeMediaRelayer&gt; 
+<span class="lineNum">      42 </span>            :                                , public ICspRtpSessionSink
+<span class="lineNum">      43 </span>            :                                , public IMediaRtpSessionChannel
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span>            : public:
+<span class="lineNum">      46 </span>            :         CNtgCmeMediaRelayer(
+<span class="lineNum">      47 </span>            :                 const NtgCmeSendonlySessionSharedPtr&amp; inCmeSendonlySession,
+<span class="lineNum">      48 </span>            :                 EMediaSessionType inType, 
+<span class="lineNum">      49 </span>            :                 const NtgCmeMediaRelayerSinkSharedPtr&amp; inSink);
+<span class="lineNum">      50 </span>            :         virtual ~CNtgCmeMediaRelayer();
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :         bool Initialize(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp);
+<span class="lineNum">      53 </span>            :         void Release();
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         void AnnounceSource(unsigned int inCount);
+<span class="lineNum">      56 </span>            :         void AnnounceInvalidSource(WBXSubsessionChannelAnnounce* inAnnounce, std::vector&lt;unsigned int&gt;* inCsiList);
+<span class="lineNum">      57 </span>            :         void HandleStatisticsTimer(bool inIsOneMinute, const MediaOneSecondSample&amp; inSample);
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :         // ICspRtpSessionSink
+<span class="lineNum">      60 </span>            :         virtual void OnSubscribe(EMediaSessionType inType, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">      61 </span>            :     virtual void OnAnnounce(EMediaSessionType inType, const WBXSubsessionChannelAnnounce&amp; inAnnounce);
+<span class="lineNum">      62 </span>            :         virtual void OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel);
+<a name="63"><span class="lineNum">      63 </span>            :         virtual void OnOutputRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcpPacket);</a>
+<a name="64"><span class="lineNum">      64 </span>            :         virtual void OnOutputRtpPacket(EMediaSessionType inType, const std::string&amp; inRtpPacket);</a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :         virtual void OnOutputAudioFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, const std::string&amp; inAudioFrame){}</span></a>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         virtual void OnOutputVideoFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, bool inIsIdr, const std::string&amp; inVideoFrame){}</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         virtual void OnRtpPacketLoss(uint32_t inCsi, uint32_t inLossCount){}</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :     // IMediaRtpSessionChannel
+<span class="lineNum">      70 </span>            :         virtual IWMEMediaRtpChannel* CreateRtpChannel(uint32_t inCsi, const WMERtpExtend&amp; inRtpExtend);
+<span class="lineNum">      71 </span>            :     virtual void RemoveRtpChannel(IWMEMediaRtpChannel* inRtpChannel);
+<span class="lineNum">      72 </span>            :         virtual IWMEMediaRtpChannel* CreateRtpChannel(uint32_t inNodeId, uint32_t inCsi, EMediaVideoSize inVideoSize);
+<span class="lineNum">      73 </span>            :     virtual void RemoveRtpChannel(uint32_t inNodeId, uint32_t inCsi, IWMEMediaRtpChannel* inRtpChannel);
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">          1 :         bool GetVideoSCRFlag() const { return m_videoScrFlag;}</span>
+<span class="lineNum">      76 </span>            :         const ConfIdType&amp; GetConferenceId() const;
+<span class="lineNum">      77 </span>            :         const std::string&amp; GetCmeSessionId() const;
+<span class="lineNum">      78 </span>            :         const CmeMediaServiceIdType&amp; GetCmeMediaServiceId() const;
+<span class="lineNum">      79 </span>            :         boost::asio::io_service&amp; GetCmeStreamThreadIoService();
+<span class="lineNum">      80 </span>            :         boost::asio::io_service&amp; GetMainThreadIoService();
+<span class="lineNum">      81 </span>            :         NtgCmeStreamThreadSharedPtr&amp; GetCmeStreamThread();
+<span class="lineNum">      82 </span><span class="lineCov">        236 :         EMediaSessionType GetMediaType() const { return m_mediaType; }</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : private:
+<span class="lineNum">      85 </span>            :         bool CreateRtpSession(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp);
+<span class="lineNum">      86 </span>            :         void DestoryRtpSession();
+<span class="lineNum">      87 </span>            :     bool OpenUdp(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp);
+<span class="lineNum">      88 </span>            :         void CloseUdp();
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :     void SendRtp(const std::string&amp; inRtp);
+<span class="lineNum">      91 </span>            :         void SendRtcp(const std::string&amp; inRtcp);
+<span class="lineNum">      92 </span>            :         void OnReceiveRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcp);
+<span class="lineNum">      93 </span>            :         void UpdateCsiInStreamTread();
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            :         void ParseAudioSCR(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">      96 </span>            :         void ParseVideoSCR(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">      97 </span>            :         
+<span class="lineNum">      98 </span>            :         void ConvertToResolution(uint16_t inMaxFS, VideoScrInfo* outScr);
+<span class="lineNum">      99 </span>            :         bool IsSameSCR(VideoScrInfo&amp; inLeft, VideoScrInfo&amp; inRight);
+<span class="lineNum">     100 </span>            :         
+<span class="lineNum">     101 </span>            : private:
+<span class="lineNum">     102 </span>            :         bool m_released = false;
+<span class="lineNum">     103 </span>            :         bool m_stopStreamFlag = false;
+<span class="lineNum">     104 </span>            :         NtgCmeSendonlySessionSharedPtr m_cmeSendonlySession;
+<span class="lineNum">     105 </span>            :         EMediaSessionType m_mediaType;
+<span class="lineNum">     106 </span>            :         NtgCmeMediaRelayerSinkSharedPtr m_sink;
+<span class="lineNum">     107 </span>            :         std::shared_ptr&lt;CCspRtpSession&gt; m_rtpSession;
+<span class="lineNum">     108 </span>            :         std::shared_ptr&lt;CNtgCmeRtpTransport&gt;  m_rtpTransport;
+<span class="lineNum">     109 </span>            : #ifdef CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">     110 </span>            :         std::shared_ptr&lt;CCspRtpSession&gt; m_nalRtpSession;
+<span class="lineNum">     111 </span>            : #endif
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :     bool m_videoScrFlag = false;
+<span class="lineNum">     114 </span>            :         AudioSCRList m_scrAudioList;
+<span class="lineNum">     115 </span>            :         //metrics
+<span class="lineNum">     116 </span>            :         NtgMediaStatistics m_mediaStatistics;
+<span class="lineNum">     117 </span>            :         CRtpEndpoint m_remoteAddr;
+<span class="lineNum">     118 </span>            : };
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

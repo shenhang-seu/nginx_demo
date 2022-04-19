@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/network/rest/RestRequest.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/network/rest</a> - RestRequest.h<span style="font-size: 80%;"> (source / <a href="RestRequest.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef REST_REQUEST_INTERFACE_H</a>
+<span class="lineNum">       2 </span>            : #define REST_REQUEST_INTERFACE_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;RestDefines.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;RestResponse.h&quot;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : namespace RestNetwork {
+<span class="lineNum">       8 </span>            :     class CRestRequestImpl;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :     typedef std::function&lt;SafariResult(const CHttpResponse&amp;)&gt; HttpReplyFunction;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">         10 :     class CRestRequest{</span>
+<span class="lineNum">      13 </span>            :     public:
+<span class="lineNum">      14 </span>            :         CRestRequest(const CHttpRequest&amp; inHttpRequest);
+<span class="lineNum">      15 </span>            :         std::string GetPath() const;
+<span class="lineNum">      16 </span>            :         HttpMethod GetMethod() const;
+<span class="lineNum">      17 </span>            :         std::string GetHeader(const std::string&amp; inKey) const;
+<span class="lineNum">      18 </span>            :         std::string GetTrackingID() const;
+<span class="lineNum">      19 </span>            :         const JsonValue&amp; GetBody() const;
+<span class="lineNum">      20 </span>            :         const JsonValue&amp; GetParameters() const;
+<span class="lineNum">      21 </span>            :         void SetParameters(const JsonValue&amp;);
+<span class="lineNum">      22 </span>            :         // SetHttpReplyFunction Only Called By RestServer
+<span class="lineNum">      23 </span>            :         void SetHttpReplyFunction(const HttpReplyFunction&amp; inHttpReplyFunction);
+<span class="lineNum">      24 </span>            :         // User Can use Reply to complete the http request.
+<span class="lineNum">      25 </span>            :         // Reply must only be called once.
+<span class="lineNum">      26 </span>            :         SafariResult Reply(HttpStatus);
+<span class="lineNum">      27 </span>            :         SafariResult Reply(HttpStatus, const JsonValue&amp;,bool inIsStyledJson = false);
+<span class="lineNum">      28 </span>            :         RestResponseSharedPtr GetRestResponse();
+<span class="lineNum">      29 </span>            :     private:
+<span class="lineNum">      30 </span>            :         std::shared_ptr&lt;CRestRequestImpl&gt; m_impl;
+<span class="lineNum">      31 </span>            :     };
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :     typedef std::shared_ptr&lt;CRestRequest&gt;  RestRequestSharedPtr;
+<span class="lineNum">      34 </span>            : }
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

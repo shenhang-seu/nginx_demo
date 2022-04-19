@@ -1,0 +1,493 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - db/DbTableOracleImpl.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">db</a> - DbTableOracleImpl.cpp<span style="font-size: 80%;"> (source / <a href="DbTableOracleImpl.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">127</td>
+            <td class="headerCovTableEntry">249</td>
+            <td class="headerCovTableEntryLo">51.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntryLo">60.7 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * DataTableOracleImpl.cpp
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  *  Created on: 2017/8/4
+<span class="lineNum">       5 </span>            :  *      Author: xinxzhu
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       9 </span>            : #include &quot;occi.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DbDefines.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DbRecord.h&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;DbRecordFactory.h&quot;
+<span class="lineNum">      14 </span>            : #include &quot;boost/date_time/gregorian/gregorian.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;DbOracleContextManager.h&quot;
+<span class="lineNum">      16 </span>            : #include &quot;DbOracleStatistics.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;DbTableOracleImpl.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;DbLog.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;DbMetrics.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #define DB_THREAD_TIMEOUT_SECONDS 30
+<span class="lineNum">      23 </span>            : #define DB_SQL_EXECUTE_WARNING_TIME 5000//milliseconds
+<span class="lineNum">      24 </span>            : 
+<a name="25"><span class="lineNum">      25 </span>            : using namespace oracle::occi;</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">         18 : CDbTableOracleImpl::CDbTableOracleImpl(EDbTableName inTableName)</span>
+<span class="lineNum">      28 </span>            : : CDbTableImpl(inTableName)
+<span class="lineNum">      29 </span><span class="lineCov">         18 : , m_appIoService(CDbOracleContextManager::Instance()-&gt;GetAppIoService())</span>
+<span class="lineNum">      30 </span><span class="lineCov">         18 : , m_dbIoService(CDbOracleContextManager::Instance()-&gt;GetDbIoService())</span>
+<span class="lineNum">      31 </span><span class="lineCov">         72 : , m_monitorTimer(m_appIoService)</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineCov">        270 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::CDbTableOracleImpl&quot;);</span>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">         18 : }</span></a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">         68 : CDbTableOracleImpl::~CDbTableOracleImpl()</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineCov">        255 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::~CDbTableOracleImpl&quot;);</span>
+<span class="lineNum">      39 </span><span class="lineCov">         17 : }</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : #define DB_IS_DUPLICATED_RECORD(exception) (exception.getErrorCode() == 1)
+<span class="lineNum">      42 </span>            : #define DB_IS_INVALID_SESSION_ID(exception) (exception.getErrorCode() == 22)
+<span class="lineNum">      43 </span>            : #define DB_IS_CONNECTION_LOST(exception) (exception.getErrorCode() == 3135)
+<a name="44"><span class="lineNum">      44 </span>            : #define DB_TRANSACTION_MUST_ROLLBACK(exception) (exception.getErrorCode() == 25402)</a>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineCov">         19 : DbRecordListSharedPtr CDbTableOracleImpl::ExecuteQuery(const std::string&amp; inSql)</span>
+<span class="lineNum">      47 </span>            : {
+<span class="lineNum">      48 </span><span class="lineCov">         19 :     DbRecordListSharedPtr recordList;</span>
+<span class="lineNum">      49 </span><span class="lineCov">         19 :     Connection* conn = nullptr;</span>
+<span class="lineNum">      50 </span>            :     try {
+<span class="lineNum">      51 </span><span class="lineCov">         19 :         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">      52 </span><span class="lineCov">         19 :         conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">      53 </span><span class="lineCov">         19 :         if (conn == nullptr) {</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, get null DB connection! ResetDbConnection ...&quot;);</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :             conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :             if (conn == nullptr) {</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                 DB_ERROR_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, still get null DB connection! return failure ...&quot;);</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 return recordList;</span>
+<span class="lineNum">      60 </span>            :             }
+<span class="lineNum">      61 </span>            :         }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineCov">         19 :         Statement* stmt = conn-&gt;createStatement(inSql);</span>
+<span class="lineNum">      64 </span><span class="lineCov">        323 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, start sql=&quot;&lt;&lt;inSql.c_str());</span>
+<span class="lineNum">      65 </span><span class="lineCov">         38 :         ResultSet *rs = stmt-&gt;executeQuery();</span>
+<span class="lineNum">      66 </span><span class="lineCov">        285 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, end &quot;);</span>
+<span class="lineNum">      67 </span><span class="lineCov">         38 :         recordList = ConvertToRecordList(rs);</span>
+<span class="lineNum">      68 </span><span class="lineCov">         19 :         stmt-&gt;closeResultSet(rs);</span>
+<span class="lineNum">      69 </span><span class="lineCov">         19 :         conn-&gt;terminateStatement(stmt);</span>
+<span class="lineNum">      70 </span><span class="lineCov">         57 :         CDbOracleStatistics::AddQueryRTT( (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime)).count() );</span>
+<span class="lineNum">      71 </span>            :     }
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :     catch(SQLException&amp; ex) {</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :         DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, fail to execute sql: &quot;&lt;&lt; inSql &lt;&lt; &quot; , error:&quot; &lt;&lt; ex.getErrorCode() &lt;&lt; &quot; what:&quot; &lt;&lt; ex.what());</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :         if (DB_IS_INVALID_SESSION_ID(ex) || DB_IS_CONNECTION_LOST(ex))</span>
+<span class="lineNum">      75 </span>            :         {
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteQuery, reset DB connection!&quot;);</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">      78 </span>            :         }
+<span class="lineNum">      79 </span>            :     }
+<span class="lineNum">      80 </span>            :     return recordList;
+<a name="81"><span class="lineNum">      81 </span>            : }</a>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 : DbRecordListSharedPtr CDbTableOracleImpl::ExecutePlaceholderQuery(const std::string&amp; inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys)</span>
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :     DbRecordListSharedPtr recordList;</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :     Connection* conn = nullptr;</span>
+<span class="lineNum">      87 </span>            :     try {
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :         conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :         if (conn == nullptr) {</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, get null DB connection! ResetDbConnection ...&quot;);</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :             conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :             if (conn == nullptr) {</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 DB_ERROR_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, still get null DB connection! return failure ...&quot;);</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 return recordList;</span>
+<span class="lineNum">      97 </span>            :             }
+<span class="lineNum">      98 </span>            :         }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :         Statement* stmt = conn-&gt;createStatement(inSql);</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :         inDbPlaceholderKeys-&gt;SetPlaceholderKey(stmt);</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, start sql=&quot;&lt;&lt;inSql.c_str()&lt;&lt;*inDbPlaceholderKeys);</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         ResultSet *rs = stmt-&gt;executeQuery();</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, end &quot;);</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         recordList = ConvertToRecordList(rs);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         stmt-&gt;closeResultSet(rs);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         conn-&gt;terminateStatement(stmt);</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :         CDbOracleStatistics::AddQueryRTT( (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime)).count() );</span>
+<span class="lineNum">     109 </span>            :     }
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :     catch(SQLException&amp; ex) {</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :         DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, fail to execute sql: &quot;&lt;&lt; inSql &lt;&lt; &quot; , error:&quot; &lt;&lt; ex.getErrorCode() &lt;&lt; &quot; what:&quot; &lt;&lt; ex.what());</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         if (DB_IS_INVALID_SESSION_ID(ex) || DB_IS_CONNECTION_LOST(ex))</span>
+<span class="lineNum">     113 </span>            :         {
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderQuery, reset DB connection!&quot;);</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">     116 </span>            :         }
+<span class="lineNum">     117 </span>            :     }
+<span class="lineNum">     118 </span>            :     return recordList;
+<a name="119"><span class="lineNum">     119 </span>            : }</a>
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span><span class="lineCov">         27 : SafariResult CDbTableOracleImpl::ExecuteUpdate(const std::string&amp; inSql)</span>
+<span class="lineNum">     122 </span>            : {
+<span class="lineNum">     123 </span><span class="lineCov">         27 :     SafariResult ret = SAFARI_OK;</span>
+<span class="lineNum">     124 </span><span class="lineCov">         27 :     Connection* conn = nullptr;</span>
+<span class="lineNum">     125 </span>            :     try {
+<span class="lineNum">     126 </span><span class="lineCov">         27 :         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">     127 </span><span class="lineCov">         27 :         conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">     128 </span><span class="lineCov">         27 :         if (conn == nullptr) {</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, get null DB connection! ResetDbConnection ...&quot;);</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :             conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :             if (conn == nullptr) {</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                 DB_ERROR_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, still get null DB connection! return failure ...&quot;);</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                 return SAFARI_ERROR_DB_NULL_CONNECTION;</span>
+<span class="lineNum">     135 </span>            :             }
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineCov">         27 :         Statement* stmt = conn-&gt;createStatement(inSql);</span>
+<span class="lineNum">     139 </span><span class="lineCov">        459 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, start sql=&quot;&lt;&lt;inSql.c_str());</span>
+<span class="lineNum">     140 </span><span class="lineCov">         55 :         uint32_t count = stmt-&gt;executeUpdate();</span>
+<span class="lineNum">     141 </span><span class="lineCov">         26 :         conn-&gt;commit();</span>
+<span class="lineNum">     142 </span><span class="lineCov">        390 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, end &quot;);</span>
+<span class="lineNum">     143 </span><span class="lineCov">         26 :         conn-&gt;terminateStatement(stmt);</span>
+<span class="lineNum">     144 </span><span class="lineCov">         26 :         if (count == 0) {</span>
+<span class="lineNum">     145 </span><span class="lineCov">          4 :             ret = SAFARI_ERROR_DB_RECORD_NOT_FOUND;</span>
+<span class="lineNum">     146 </span>            :         }
+<span class="lineNum">     147 </span><span class="lineCov">         79 :         CDbOracleStatistics::AddUpdateRTT( (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime)).count() );</span>
+<span class="lineNum">     148 </span>            :     }
+<span class="lineNum">     149 </span><span class="lineCov">          2 :     catch(SQLException&amp; ex) {</span>
+<span class="lineNum">     150 </span><span class="lineCov">          1 :         ret = (DB_IS_DUPLICATED_RECORD(ex)) ? SAFARI_ERROR_DB_DUPLICATED_RECORD : SAFARI_ERROR_DB_CATCH_EXCEPTION;</span>
+<span class="lineNum">     151 </span><span class="lineCov">         20 :         DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, fail to execute sql:&quot;&lt;&lt; inSql &lt;&lt; &quot;, error:&quot; &lt;&lt; ex.getErrorCode() &lt;&lt; &quot; what:&quot; &lt;&lt; ex.what());</span>
+<span class="lineNum">     152 </span><span class="lineCov">          1 :         if (DB_TRANSACTION_MUST_ROLLBACK(ex) &amp;&amp; conn) { </span>
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, rollback the commitment!&quot;);</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :             conn-&gt;rollback();</span>
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span><span class="lineCov">          1 :         else if (DB_IS_INVALID_SESSION_ID(ex) || DB_IS_CONNECTION_LOST(ex))</span>
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecuteUpdate, reset DB connection!&quot;);</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">     160 </span>            :         }
+<span class="lineNum">     161 </span>            :     }
+<span class="lineNum">     162 </span><span class="lineCov">         27 :     return ret;</span>
+<a name="163"><span class="lineNum">     163 </span>            : }</a>
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 : SafariResult CDbTableOracleImpl::ExecutePlaceholderUpdate(const std::string&amp; inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys)</span>
+<span class="lineNum">     166 </span>            : {
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :     SafariResult ret = SAFARI_OK;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :     Connection* conn = nullptr;</span>
+<span class="lineNum">     169 </span>            :     try {
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :         conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         if (conn == nullptr) {</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, get null DB connection! ResetDbConnection ...&quot;);</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :             conn = CDbOracleContextManager::Instance()-&gt;GetDbConnection();</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :             if (conn == nullptr) {</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 DB_ERROR_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, still get null DB connection! return failure ...&quot;);</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                 return SAFARI_ERROR_DB_NULL_CONNECTION;</span>
+<span class="lineNum">     179 </span>            :             }
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :         Statement* stmt = conn-&gt;createStatement(inSql);</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :         inDbPlaceholderKeys-&gt;SetPlaceholderKey(stmt);</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, start sql=&quot;&lt;&lt;inSql.c_str()&lt;&lt;*inDbPlaceholderKeys);</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         uint32_t count = stmt-&gt;executeUpdate();</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :         conn-&gt;commit();</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :         DB_DEBUG_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, end &quot;);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :         conn-&gt;terminateStatement(stmt);</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :         if (count == 0) {</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :             ret = SAFARI_ERROR_DB_RECORD_NOT_FOUND;</span>
+<span class="lineNum">     191 </span>            :         }
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :         CDbOracleStatistics::AddUpdateRTT( (std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime)).count() );</span>
+<span class="lineNum">     193 </span>            :     }
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :     catch(SQLException&amp; ex) {</span>
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :         ret = (DB_IS_DUPLICATED_RECORD(ex)) ? SAFARI_ERROR_DB_DUPLICATED_RECORD : SAFARI_ERROR_DB_CATCH_EXCEPTION;</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :         DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, fail to execute sql:&quot;&lt;&lt; inSql &lt;&lt; &quot;, error:&quot; &lt;&lt; ex.getErrorCode() &lt;&lt; &quot; what:&quot; &lt;&lt; ex.what());</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :         if (DB_TRANSACTION_MUST_ROLLBACK(ex) &amp;&amp; conn) { </span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, rollback the commitment!&quot;);</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :             conn-&gt;rollback();</span>
+<span class="lineNum">     200 </span>            :         }
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :         else if (DB_IS_INVALID_SESSION_ID(ex) || DB_IS_CONNECTION_LOST(ex))</span>
+<span class="lineNum">     202 </span>            :         {
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :             DB_WARNING_THIS(&quot;CDbTableOracleImpl::ExecutePlaceholderUpdate, reset DB connection!&quot;);</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :             CDbOracleContextManager::Instance()-&gt;ResetDbConnection();</span>
+<span class="lineNum">     205 </span>            :         }
+<span class="lineNum">     206 </span>            :     }
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :     return ret;</span>
+<a name="208"><span class="lineNum">     208 </span>            : }</a>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">         19 : DbRecordListSharedPtr CDbTableOracleImpl::ConvertToRecordList(ResultSet* inRs)</span>
+<span class="lineNum">     211 </span>            : {
+<span class="lineNum">     212 </span>            :     DbRecordListSharedPtr recordList = std::make_shared&lt;std::vector&lt;DbRecordSharedPtr&gt;&gt;();
+<span class="lineNum">     213 </span>            :     CDbOracleRow row(inRs);
+<span class="lineNum">     214 </span><span class="lineCov">         49 :     while(inRs-&gt;next()){</span>
+<span class="lineNum">     215 </span><span class="lineCov">         30 :         DbRecordSharedPtr record = CDbRecordFactory::CreateRecord(m_tableType);</span>
+<span class="lineNum">     216 </span><span class="lineCov">         30 :         if (record){</span>
+<span class="lineNum">     217 </span><span class="lineCov">         30 :             record-&gt;MapRowToRecord(&amp;row);</span>
+<span class="lineNum">     218 </span><span class="lineCov">         30 :             recordList-&gt;push_back(record);</span>
+<span class="lineNum">     219 </span>            :         }
+<span class="lineNum">     220 </span>            :     }
+<span class="lineNum">     221 </span><span class="lineCov">         19 :     return recordList;</span>
+<a name="222"><span class="lineNum">     222 </span>            : }</a>
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span><span class="lineCov">          3 : void CDbTableOracleImpl::AsyncExecuteQuery(const std::string&amp; inSql, const DBResultCallback&amp; inCallback)</span>
+<span class="lineNum">     225 </span>            : {
+<span class="lineNum">     226 </span><span class="lineCov">         51 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteQuery, sql: \'&quot; &lt;&lt; inSql &lt;&lt; &quot;\'. &quot;);</span>
+<span class="lineNum">     227 </span><span class="lineCov">          3 :     m_executeSqlSentense = inSql;</span>
+<span class="lineNum">     228 </span><span class="lineCov">          3 :     StartTimer();</span>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">          3 :     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span></a>
+<span class="lineNum">     230 </span>            :     /* Post message to DB thread and pass Tracking-Id. Modified by Webber Zheng, Dec 07 2017. */
+<span class="lineNum">     231 </span><span class="lineCov">         60 :     CThreadPoster(m_dbIoService,[this, inCallback, inSql,startTime]() {</span>
+<a name="232"><span class="lineNum">     232 </span><span class="lineCov">          3 :         DbRecordListSharedPtr recordList = ExecuteQuery(inSql);</span></a>
+<span class="lineNum">     233 </span>            :         /* Post message to app layer thread. Added by Webber Zheng, Dec 05 2017. */
+<span class="lineNum">     234 </span><span class="lineCov">         87 :         CThreadPoster(m_appIoService,[this, inCallback, recordList,inSql,startTime]() {</span>
+<span class="lineNum">     235 </span><span class="lineCov">         48 :             DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteQuery, callback size: &quot; &lt;&lt; (recordList ? recordList-&gt;size() : 0));</span>
+<span class="lineNum">     236 </span><span class="lineCov">          3 :             StopTimer();</span>
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span><span class="lineCov">          9 :             auto useTime = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime);</span>
+<span class="lineNum">     239 </span><span class="lineCov">          3 :             if(useTime.count()&gt; DB_SQL_EXECUTE_WARNING_TIME)</span>
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                 DB_WARNING_THIS(&quot;CDbTableOracleImpl::AsyncExecuteQuery excute use time : &quot;&lt;&lt;useTime.count()&lt;&lt;&quot; milliseconds, sql : &quot;&lt;&lt;inSql);</span>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">          9 :             inCallback(recordList, SAFARI_OK);</span>
+<span class="lineNum">     243 </span><span class="lineCov">         12 :         });</span>
+<span class="lineNum">     244 </span><span class="lineCov">          9 :     });</span>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineCov">          3 : void CDbTableOracleImpl::AsyncExecuteUpdate(const std::string&amp; inSql, const DBResultCallback&amp; inCallback)</span>
+<span class="lineNum">     248 </span>            : {
+<span class="lineNum">     249 </span><span class="lineCov">         51 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate, sql: \'&quot; &lt;&lt; inSql &lt;&lt; &quot;\'. &quot;);</span>
+<span class="lineNum">     250 </span><span class="lineCov">          3 :     m_executeSqlSentense = inSql;</span>
+<span class="lineNum">     251 </span><span class="lineCov">          3 :     StartTimer();</span>
+<a name="252"><span class="lineNum">     252 </span>            :     /* Post message to DB thread and pass Tracking-Id. Modified by Webber Zheng, Dec 07 2017. */</a>
+<span class="lineNum">     253 </span><span class="lineCov">          3 :     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">     254 </span><span class="lineCov">         60 :     CThreadPoster(m_dbIoService,[this, inCallback, inSql,startTime](){</span>
+<a name="255"><span class="lineNum">     255 </span><span class="lineCov">          3 :         SafariResult ret = ExecuteUpdate(inSql);</span></a>
+<span class="lineNum">     256 </span>            :         /* Post message to app layer thread. Added by Webber Zheng, Dec 05 2017. */
+<span class="lineNum">     257 </span><span class="lineCov">         60 :         CThreadPoster(m_appIoService,[this, inCallback, ret,inSql,startTime]() {</span>
+<span class="lineNum">     258 </span><span class="lineCov">         51 :             DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate, callback ret: &quot; &lt;&lt; ret &lt;&lt; &quot;. &quot;);</span>
+<span class="lineNum">     259 </span><span class="lineCov">          3 :             StopTimer();</span>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineCov">          9 :             auto useTime = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime);</span>
+<span class="lineNum">     262 </span><span class="lineCov">          3 :             if(useTime.count()&gt; DB_SQL_EXECUTE_WARNING_TIME)</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :                 DB_WARNING_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate excute use time : &quot;&lt;&lt;useTime.count()&lt;&lt;&quot; milliseconds, sql : &quot;&lt;&lt;inSql);</span>
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span><span class="lineCov">          9 :             inCallback(DbRecordListSharedPtr(), ret);</span>
+<span class="lineNum">     266 </span><span class="lineCov">          9 :         });</span>
+<span class="lineNum">     267 </span><span class="lineCov">          9 :     });</span>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 : void CDbTableOracleImpl::AsyncExcutePlaceholderQuery(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback)</span>
+<span class="lineNum">     271 </span>            : {
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExcutePlaceholderQuery, sql: \'&quot; &lt;&lt; inSql &lt;&lt; &quot;\'. &quot;);</span>
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :     m_executeSqlSentense = inSql;</span>
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :     StartTimer();</span>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span></a>
+<span class="lineNum">     276 </span>            :     /* Post message to DB thread and pass Tracking-Id. Modified by Webber Zheng, Dec 07 2017. */
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :     CThreadPoster(m_dbIoService,[this, inCallback, inSql,startTime,inDbPlaceholderKeys]() {</span>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :         DbRecordListSharedPtr recordList = ExecutePlaceholderQuery(inSql,inDbPlaceholderKeys);</span></a>
+<span class="lineNum">     279 </span>            :         /* Post message to app layer thread. Added by Webber Zheng, Dec 05 2017. */
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :         CThreadPoster(m_appIoService,[this, inCallback, recordList,inSql,startTime]() {</span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :             StopTimer();</span>
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :             auto useTime = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime);</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :             if(useTime.count()&gt; DB_SQL_EXECUTE_WARNING_TIME)</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                 DB_WARNING_THIS(&quot;CDbTableOracleImpl::AsyncExcutePlaceholderQuery excute use time : &quot;&lt;&lt;useTime.count()&lt;&lt;&quot; milliseconds, sql : &quot;&lt;&lt;inSql);</span>
+<span class="lineNum">     286 </span>            :             //DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExcutePlaceholderQuery, callback size: &quot; &lt;&lt; (recordList ? recordList-&gt;size() : 0)&lt;&lt;&quot;, useTime:&quot;&lt;&lt;useTime.count()&lt;&lt;&quot;, inSql:&quot;&lt;&lt;inSql);
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :             inCallback(recordList, SAFARI_OK);</span>
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :         });</span>
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :     });</span>
+<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 : void CDbTableOracleImpl::AsyncExcutePlaceholderUpdate(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback)</span>
+<span class="lineNum">     294 </span>            : {
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate, sql: \'&quot; &lt;&lt; inSql &lt;&lt; &quot;\'. &quot;);</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :     m_executeSqlSentense = inSql;</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :     StartTimer();</span>
+<a name="298"><span class="lineNum">     298 </span>            :     /* Post message to DB thread and pass Tracking-Id. Modified by Webber Zheng, Dec 07 2017. */</a>
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :     std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();</span>
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :     CThreadPoster(m_dbIoService,[this, inCallback, inSql,startTime,inDbPlaceholderKeys](){</span>
+<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :         SafariResult ret = ExecutePlaceholderUpdate(inSql,inDbPlaceholderKeys);</span></a>
+<span class="lineNum">     302 </span>            :         /* Post message to app layer thread. Added by Webber Zheng, Dec 05 2017. */
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         CThreadPoster(m_appIoService,[this, inCallback, ret,inSql,startTime]() {</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :             DB_DEBUG_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate, callback ret: &quot; &lt;&lt; ret &lt;&lt; &quot;. &quot;);</span>
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :             StopTimer();</span>
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :             auto useTime = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(std::chrono::steady_clock::now()-startTime);</span>
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :             if(useTime.count()&gt; DB_SQL_EXECUTE_WARNING_TIME)</span>
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                 DB_WARNING_THIS(&quot;CDbTableOracleImpl::AsyncExecuteUpdate excute use time : &quot;&lt;&lt;useTime.count()&lt;&lt;&quot; milliseconds, sql : &quot;&lt;&lt;inSql);</span>
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :             inCallback(DbRecordListSharedPtr(), ret);</span>
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :         });</span>
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :     });</span>
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 : }</span>
+<a name="315"><span class="lineNum">     315 </span>            : </a>
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span><span class="lineCov">          6 : void CDbTableOracleImpl::StartTimer()</span>
+<span class="lineNum">     318 </span>            : {
+<span class="lineNum">     319 </span><span class="lineCov">         90 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::StartTimer()&quot;);</span>
+<span class="lineNum">     320 </span><span class="lineCov">         12 :     m_monitorTimer.expires_from_now(std::chrono::seconds(DB_THREAD_TIMEOUT_SECONDS));</span>
+<span class="lineNum">     321 </span><span class="lineCov">         24 :     m_monitorTimer.async_wait(std::bind(&amp;CDbTableOracleImpl::HandleTimer, get_shared_from_this(), &amp;m_monitorTimer, std::placeholders::_1));</span>
+<a name="322"><span class="lineNum">     322 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span><span class="lineCov">          6 : void CDbTableOracleImpl::StopTimer()</span>
+<span class="lineNum">     325 </span>            : {
+<span class="lineNum">     326 </span><span class="lineCov">         90 :     DB_DEBUG_THIS(&quot;CDbTableOracleImpl::StopTimer&quot;);</span>
+<span class="lineNum">     327 </span><span class="lineCov">          6 :     m_monitorTimer.cancel();</span>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span><span class="lineCov">          5 : void CDbTableOracleImpl::HandleTimer(boost::asio::steady_timer* inTimer, const boost::system::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     331 </span>            : {
+<span class="lineNum">     332 </span><span class="lineCov">          5 :     if (inErrorCode.value())</span>
+<span class="lineNum">     333 </span>            :         return ;
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :     if (inTimer == &amp;m_monitorTimer)</span>
+<span class="lineNum">     336 </span>            :     {
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :         DB_ERROR_THIS(&quot;CDbTableOracleImpl::HandleTimer, sql: &quot; &lt;&lt; m_executeSqlSentense &lt;&lt; &quot;, timeout.&quot;);</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         DB_THREAD_BLOCK_METRICS_LOG(std::string(&quot;DB_THREAD_BLOCK&quot;), std::string(&quot;DB&quot;), m_executeSqlSentense, DB_THREAD_TIMEOUT_SECONDS);</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :         CDbOracleContextManager::Instance()-&gt;DBThreadBlock();</span>
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     341 </span>            :     }
+<a name="342"><span class="lineNum">     342 </span>            : }</a>
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineCov">        174 : std::string CDbOracleRow::GetString(int inColIndex)</span>
+<span class="lineNum">     345 </span>            : {
+<span class="lineNum">     346 </span><span class="lineCov">        174 :     return m_result-&gt;getString(inColIndex);</span>
+<a name="347"><span class="lineNum">     347 </span>            : }</a>
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineCov">         26 : int CDbOracleRow::GetInt(int inColIndex)</span>
+<span class="lineNum">     350 </span>            : {
+<span class="lineNum">     351 </span><span class="lineCov">         26 :     return m_result-&gt;getInt(inColIndex);</span>
+<a name="352"><span class="lineNum">     352 </span>            : }</a>
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 : double CDbOracleRow::GetDouble(int inColIndex)</span>
+<span class="lineNum">     355 </span>            : {
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :     return m_result-&gt;getDouble(inColIndex);</span>
+<a name="357"><span class="lineNum">     357 </span>            : }</a>
+<span class="lineNum">     358 </span>            : 
+<span class="lineNum">     359 </span><span class="lineCov">         80 : boost::posix_time::ptime CDbOracleRow::GetDateTime(int inColIndex)</span>
+<span class="lineNum">     360 </span>            : {
+<span class="lineNum">     361 </span>            :     int year;
+<span class="lineNum">     362 </span>            :     unsigned int month, day, hour, minute, second;
+<span class="lineNum">     363 </span><span class="lineCov">         80 :     oracle::occi::Date date = m_result-&gt;getDate(inColIndex);</span>
+<span class="lineNum">     364 </span><span class="lineCov">         80 :     if (date.isNull()){</span>
+<span class="lineNum">     365 </span><span class="lineCov">          4 :         return boost::posix_time::ptime();</span>
+<span class="lineNum">     366 </span>            :     }
+<span class="lineNum">     367 </span>            :     else{
+<span class="lineNum">     368 </span><span class="lineCov">         76 :         date.getDate(year, month, day, hour, minute, second);</span>
+<span class="lineNum">     369 </span>            :         return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+<span class="lineNum">     370 </span><span class="lineCov">        456 :                                         boost::posix_time::time_duration(hour,minute,second,0));</span>
+<span class="lineNum">     371 </span><span class="lineCov">         80 :     }</span>
+<a name="372"><span class="lineNum">     372 </span>            : }</a>
+<span class="lineNum">     373 </span>            : 
+<span class="lineNum">     374 </span><span class="lineCov">         28 : boost::posix_time::ptime CDbOracleRow::GetTimestamp(int inColIndex)</span>
+<span class="lineNum">     375 </span>            : {
+<span class="lineNum">     376 </span>            :     int year;
+<span class="lineNum">     377 </span>            :     unsigned int month, day, hour, minute, second, fractionalSec,microSec;
+<span class="lineNum">     378 </span><span class="lineCov">         28 :     oracle::occi::Timestamp time = m_result-&gt;getTimestamp(inColIndex);</span>
+<span class="lineNum">     379 </span><span class="lineCov">         28 :     if (time.isNull()){</span>
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :         return boost::posix_time::ptime();</span>
+<span class="lineNum">     381 </span>            :     }
+<span class="lineNum">     382 </span>            :     else{
+<span class="lineNum">     383 </span><span class="lineCov">         28 :         time.getDate(year, month, day);</span>
+<span class="lineNum">     384 </span><span class="lineCov">         28 :         time.getTime(hour,minute,second,fractionalSec);//fractionalSec get from oracle db is nanosecond.</span>
+<span class="lineNum">     385 </span><span class="lineCov">         28 :         microSec = fractionalSec / 1000;</span>
+<span class="lineNum">     386 </span>            :         return boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+<span class="lineNum">     387 </span><span class="lineCov">        168 :                                         boost::posix_time::time_duration(hour,minute,second,microSec));</span>
+<span class="lineNum">     388 </span><span class="lineCov">         28 :     }</span>
+<a name="389"><span class="lineNum">     389 </span>            : }</a>
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span><span class="lineCov">         26 : bool CDbOracleRow::GetBoolean(int inColIndex)</span>
+<span class="lineNum">     392 </span>            : {
+<span class="lineNum">     393 </span>            : //    std::string boolVal = m_result-&gt;getString(inColIndex);
+<span class="lineNum">     394 </span><span class="lineCov">         26 :     int boolVal = m_result-&gt;getInt(inColIndex);</span>
+<span class="lineNum">     395 </span><span class="lineCov">         26 :     return boolVal == 1;</span>
+<a name="396"><span class="lineNum">     396 </span>            : }</a>
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span><span class="lineCov">         32 : std::string CDbOracleRow::GetCLob(int inColIndex)</span>
+<span class="lineNum">     399 </span>            : {
+<span class="lineNum">     400 </span>            :     std::string val;
+<span class="lineNum">     401 </span><span class="lineCov">         64 :     oracle::occi::Clob lob = m_result-&gt;getClob(inColIndex);</span>
+<span class="lineNum">     402 </span><span class="lineCov">         32 :     if (lob.isNull()){</span>
+<span class="lineNum">     403 </span>            :         return val;
+<span class="lineNum">     404 </span>            :     }
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span><span class="lineCov">         32 :     lob.open(OCCI_LOB_READONLY);</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineCov">         32 :     if (lob.isOpen()){</span>
+<span class="lineNum">     409 </span><span class="lineCov">         32 :         uint32_t size = lob.length();</span>
+<span class="lineNum">     410 </span><span class="lineCov">         32 :         uint8_t buffer[size];</span>
+<span class="lineNum">     411 </span><span class="lineCov">         32 :         lob.read(size, buffer, size);</span>
+<span class="lineNum">     412 </span><span class="lineCov">         32 :         lob.close();</span>
+<span class="lineNum">     413 </span><span class="lineCov">         32 :         return std::string((char*)buffer,size);</span>
+<span class="lineNum">     414 </span>            :     }
+<a name="415"><span class="lineNum">     415 </span>            : </a>
+<span class="lineNum">     416 </span>            :     return val;
+<span class="lineNum">     417 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

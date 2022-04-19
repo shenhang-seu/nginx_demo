@@ -1,0 +1,546 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/cme/NtgCmeMediaRelayer.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/cme</a> - NtgCmeMediaRelayer.cpp<span style="font-size: 80%;"> (source / <a href="NtgCmeMediaRelayer.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">163</td>
+            <td class="headerCovTableEntry">244</td>
+            <td class="headerCovTableEntryLo">66.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">37</td>
+            <td class="headerCovTableEntry">45</td>
+            <td class="headerCovTableEntryMed">82.2 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;NtgCmeMediaRelayer.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;NtgCmeSendonlySession.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;WbxSDKThread.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;NtgAudioDataDispatch.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;NtgMetrics.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         57 : CNtgCmeMediaRelayer::CNtgCmeMediaRelayer(</span>
+<span class="lineNum">       9 </span>            :         const NtgCmeSendonlySessionSharedPtr&amp; inCmeSendonlySession,
+<span class="lineNum">      10 </span>            :         EMediaSessionType inType, 
+<span class="lineNum">      11 </span>            :         const NtgCmeMediaRelayerSinkSharedPtr&amp; inSink)
+<span class="lineNum">      12 </span>            : : m_cmeSendonlySession(inCmeSendonlySession)
+<span class="lineNum">      13 </span>            : , m_mediaType(inType)
+<span class="lineNum">      14 </span><span class="lineCov">        399 : , m_sink(inSink)</span>
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span><span class="lineCov">       1254 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::CNtgCmeMediaRelayer, confId:&quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; cmeSessionId:&quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">         57 : }</span></a>
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineCov">        570 : CNtgCmeMediaRelayer::~CNtgCmeMediaRelayer()</span>
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span><span class="lineCov">        912 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::~CNtgCmeMediaRelayer,  m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">      22 </span><span class="lineCov">         57 : }</span>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">         57 : IN_SDK_THREAD bool CNtgCmeMediaRelayer::Initialize(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp)</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineCov">        912 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::Initialize, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">      27 </span><span class="lineCov">         57 :     auto succ = CreateRtpSession(inOfferSdp, inAnswerSdp);</span>
+<span class="lineNum">      28 </span><span class="lineCov">         57 :     if (!succ)</span>
+<span class="lineNum">      29 </span>            :         return false;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">         57 :     auto self = shared_from_this();</span>
+<span class="lineNum">      32 </span><span class="lineCov">        627 :     CThreadPoster(GetCmeStreamThreadIoService(), [self, this, inOfferSdp, inAnswerSdp]() {</span>
+<span class="lineNum">      33 </span><span class="lineCov">         57 :         auto succ = OpenUdp(inOfferSdp, inAnswerSdp);</span>
+<span class="lineNum">      34 </span><span class="lineCov">         57 :         if (!succ)</span>
+<span class="lineNum">      35 </span>            :         {
+<span class="lineNum">      36 </span><span class="lineCov">         12 :             std::shared_ptr&lt;WbxSDKEvent&gt; errorEvent(new WbxSDKEventNone(std::bind(&amp;INtgCmeMediaRelayerSink::OnRtpStreamError, m_sink, SAFARI_ERROR_CREATE_UDP_SOCKET_FAILED)));</span>
+<span class="lineNum">      37 </span><span class="lineCov">          3 :             CWbxSDKThread::Instance()-&gt;PostEvent(errorEvent);</span>
+<span class="lineNum">      38 </span>            :         }
+<span class="lineNum">      39 </span><span class="lineCov">        228 :     });</span>
+<span class="lineNum">      40 </span><span class="lineCov">         57 :     return true;</span>
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         57 : IN_SDK_THREAD void CNtgCmeMediaRelayer::Release()</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">         57 :     if (m_released)</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">        912 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::Release, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">      49 </span><span class="lineCov">         57 :     m_released = true;</span>
+<span class="lineNum">      50 </span><span class="lineCov">        114 :     m_sink = nullptr;</span>
+<span class="lineNum">      51 </span><span class="lineCov">         57 :     DestoryRtpSession();</span>
+<span class="lineNum">      52 </span><span class="lineCov">         57 :     auto self = shared_from_this();</span>
+<span class="lineNum">      53 </span><span class="lineCov">        228 :     CThreadPoster(GetCmeStreamThreadIoService(), [self, this]() {</span>
+<span class="lineNum">      54 </span><span class="lineCov">         57 :         CloseUdp();</span>
+<span class="lineNum">      55 </span><span class="lineCov">        228 :     });</span>
+<a name="56"><span class="lineNum">      56 </span>            : }</a>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineCov">          4 : IN_SDK_THREAD void CNtgCmeMediaRelayer::AnnounceSource(unsigned int inCount)</span>
+<span class="lineNum">      59 </span>            : {
+<span class="lineNum">      60 </span><span class="lineCov">         72 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::AnnounceSource, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; inCount:&quot; &lt;&lt; inCount);</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :     WBXSubsessionChannelAnnounce inAnnounce;
+<span class="lineNum">      63 </span>            :     inAnnounce.invalidChannelWaringCount = 0;
+<span class="lineNum">      64 </span><span class="lineCov">          4 :     inAnnounce.subSessionsAvailable = inCount;</span>
+<span class="lineNum">      65 </span>            :     
+<span class="lineNum">      66 </span><span class="lineCov">          4 :     if (m_rtpSession)</span>
+<span class="lineNum">      67 </span><span class="lineCov">          4 :         m_rtpSession-&gt;Announce(inAnnounce, true);</span>
+<span class="lineNum">      68 </span><span class="lineCov">          4 : }</span>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          1 : IN_SDK_THREAD void CNtgCmeMediaRelayer::AnnounceInvalidSource(WBXSubsessionChannelAnnounce* inAnnounce, std::vector&lt;unsigned int&gt;* inCsiList)</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span><span class="lineCov">         18 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::AnnounceInvalidSource, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; m_videoScrFlag:&quot; &lt;&lt; m_videoScrFlag );</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          1 :     if (!m_videoScrFlag)</span>
+<span class="lineNum">      75 </span>            :         return;
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineCov">          1 :     if (m_rtpSession)</span>
+<span class="lineNum">      78 </span><span class="lineCov">          1 :         m_rtpSession-&gt;Announce(*inAnnounce, true);</span>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">          1 :     NIGHTINGALE_ASSERTE_RETURN_VOID(GetCmeStreamThread());</span>
+<span class="lineNum">      81 </span><span class="lineCov">          7 :     CThreadPoster(GetCmeStreamThreadIoService(), std::bind(&amp;CNtgCmeMediaRelayer::UpdateCsiInStreamTread, shared_from_this()));</span>
+<a name="82"><span class="lineNum">      82 </span>            : }</a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 : void CNtgCmeMediaRelayer::HandleStatisticsTimer(bool inIsOneMinute, const MediaOneSecondSample&amp; inSample)</span>
+<span class="lineNum">      85 </span>            : {
+<span class="lineNum">      86 </span>            :     //get session statistics
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :     MediaOneSecondSample&amp; sample = const_cast&lt;MediaOneSecondSample&amp;&gt;(inSample);</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :     if (m_rtpSession)</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :         m_rtpSession-&gt;GetSessionStatistics(&amp;sample, nullptr);</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :     bool isNotAudio = (MEDIA_AUDIO_SESSION != GetMediaType());      </span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :     m_mediaStatistics.frameNum += sample.frameNum;</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :     m_mediaStatistics.rtpNum += sample.rtpNum;</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :     m_mediaStatistics.bitRate += sample.bitRate;</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :     m_mediaStatistics.lossRate += sample.lossRate;</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :     m_mediaStatistics.jitterNum += sample.jitter;</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :     if (isNotAudio)</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         m_mediaStatistics.idrNum += sample.idrNum;</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :     if (sample.sourceNum &gt; m_mediaStatistics.maxSourceNum)</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :         m_mediaStatistics.maxSourceNum = sample.sourceNum;</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :     if (inIsOneMinute)</span>
+<span class="lineNum">     102 </span>            :     {
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         JsonValue valueVector(Json::arrayValue);</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         const char* mediaType = CCspRtpSession::GetMediaTypeString(GetMediaType());</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         if (isNotAudio)</span>
+<span class="lineNum">     106 </span>            :         {
+<span class="lineNum">     107 </span>            :             //pli/idr
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :             uint32_t pliNum = 0;</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :             uint32_t idrNum = 0;</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :             m_mediaStatistics.pliNum.Minute(&amp;pliNum, &amp;valueVector);</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; PLI_NUM:&quot; &lt;&lt; pliNum &lt;&lt; &quot; &quot; &lt;&lt; (pliNum &gt; 0 ? JsonWriter().write(valueVector) : std::string()));</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :             m_mediaStatistics.idrNum.Minute(&amp;idrNum, &amp;valueVector);</span>
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; IDR_NUM:&quot; &lt;&lt; idrNum &lt;&lt; &quot; &quot; &lt;&lt; JsonWriter().write(valueVector));</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :             NTG_CME_RECV_PLI_METRICS(GetConferenceId(), GetCmeSessionId(), GetCmeMediaServiceId(), m_remoteAddr.ip, mediaType, pliNum, idrNum);</span>
+<span class="lineNum">     115 </span>            :         }
+<span class="lineNum">     116 </span>            :         //frameRate to cme
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         uint32_t frameNum = 0;</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         uint32_t minValue = 0;</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         uint32_t avgValue = 0;</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :         uint32_t maxValue = 0;</span>
+<span class="lineNum">     121 </span>            :         std::string statisticsMessage;
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :         m_mediaStatistics.frameNum.Minute(&amp;frameNum, &amp;valueVector, &amp;minValue, &amp;avgValue, &amp;maxValue, &amp;statisticsMessage);</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; FRAME_NUM(&quot; &lt;&lt; m_mediaStatistics.maxSourceNum &lt;&lt; &quot;):&quot; &lt;&lt; frameNum &lt;&lt; &quot; &quot; &lt;&lt; JsonWriter().write(valueVector));</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         NTG_CME_SEND_FRAME_RATE_METRICS(GetConferenceId(), GetCmeSessionId(), GetCmeMediaServiceId(), m_remoteAddr.ip, mediaType, frameNum, minValue, avgValue, maxValue);</span>
+<span class="lineNum">     125 </span>            :         //bitRate to cme
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         uint32_t bitsPerMinute = 0;</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         m_mediaStatistics.bitRate.Minute(&amp;bitsPerMinute, &amp;valueVector, &amp;minValue, &amp;avgValue, &amp;maxValue, &amp;statisticsMessage);</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; BIT_RATE(&quot; &lt;&lt; m_mediaStatistics.maxSourceNum &lt;&lt; &quot;):&quot; &lt;&lt; statisticsMessage &lt;&lt; &quot; &quot; &lt;&lt; JsonWriter().write(valueVector));</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         NTG_CME_SEND_BIT_RATE_METRICS(GetConferenceId(), GetCmeSessionId(), GetCmeMediaServiceId(), m_remoteAddr.ip, mediaType, m_mediaStatistics.maxSourceNum, minValue, avgValue, maxValue);</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         m_mediaStatistics.maxSourceNum = 0;</span>
+<span class="lineNum">     131 </span>            :          //loss rate
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :         uint32_t rtpPerMinute = 0;</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :         m_mediaStatistics.rtpNum.Minute(&amp;rtpPerMinute, &amp;valueVector);</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; PACKET_NUM(&quot; &lt;&lt; m_mediaStatistics.maxSourceNum &lt;&lt; &quot;):&quot; &lt;&lt; rtpPerMinute &lt;&lt; &quot; &quot; &lt;&lt; JsonWriter().write(valueVector));</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         uint32_t lossPerMinute = 0;</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :         m_mediaStatistics.lossRate.Minute(&amp;lossPerMinute, &amp;valueVector, &amp;minValue, &amp;avgValue, &amp;maxValue);</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :         NTG_CME_SEND_LOSS_RATE_METRICS(GetConferenceId(), GetCmeSessionId(), GetCmeMediaServiceId(), m_remoteAddr.ip, mediaType, minValue, avgValue, maxValue);</span>
+<span class="lineNum">     138 </span>            :         //jitter
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :         uint32_t jittersPerMinute = 0;</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :         m_mediaStatistics.jitterNum.Minute(&amp;jittersPerMinute, &amp;valueVector, &amp;minValue, &amp;avgValue, &amp;maxValue, &amp;statisticsMessage);</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO(CSP_STATISTICS_PREFIX &lt;&lt; &quot;NTG_CME &quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; &quot; &lt;&lt; mediaType &lt;&lt; &quot; &quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; JITTER(&quot; &lt;&lt; m_mediaStatistics.maxSourceNum &lt;&lt; &quot;):&quot; &lt;&lt; jittersPerMinute &lt;&lt; &quot; &quot; &lt;&lt; JsonWriter().write(valueVector));</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :         NTG_CME_SEND_JITTER_METRICS(GetConferenceId(), GetCmeSessionId(), GetCmeMediaServiceId(), m_remoteAddr.ip, mediaType, minValue, avgValue, maxValue);</span>
+<span class="lineNum">     143 </span>            :     }
+<span class="lineNum">     144 </span>            :     else
+<span class="lineNum">     145 </span>            :     {
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :         if (isNotAudio)</span>
+<span class="lineNum">     147 </span>            :         {
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :             m_mediaStatistics.pliNum.Second();</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :             m_mediaStatistics.idrNum.Second();</span>
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         m_mediaStatistics.frameNum.Second();</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         m_mediaStatistics.rtpNum.Second();</span>
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :         m_mediaStatistics.bitRate.Second();</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :         m_mediaStatistics.lossRate.Second();</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :         m_mediaStatistics.jitterNum.Second();</span>
+<span class="lineNum">     156 </span>            :     }
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span><span class="lineCov">          3 : void CNtgCmeMediaRelayer::OnSubscribe(EMediaSessionType inType, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     160 </span>            : {
+<span class="lineNum">     161 </span><span class="lineCov">         54 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::OnSubscribe, inRequestCount=&quot; &lt;&lt; (int)inRequestCount &lt;&lt; &quot; mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(inType));</span>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineCov">          3 :     if (MEDIA_AUDIO_SESSION == inType)</span>
+<span class="lineNum">     164 </span><span class="lineCov">          1 :         ParseAudioSCR(inRequests, inRequestCount); </span>
+<span class="lineNum">     165 </span><span class="lineCov">          2 :     else if (MEDIA_VIDEO_SESSION == inType)</span>
+<span class="lineNum">     166 </span><span class="lineCov">          1 :         ParseVideoSCR(inRequests, inRequestCount);</span>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :     /* Shared content is non-multistream so no SCR will be received. */
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::OnAnnounce(EMediaSessionType inType, const WBXSubsessionChannelAnnounce&amp; inAnnounce)</span>
+<span class="lineNum">     172 </span>            : {
+<span class="lineNum">     173 </span><span class="lineCov">         16 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::OnAnnounce, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(inType));</span>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel)</span>
+<span class="lineNum">     177 </span>            : {
+<span class="lineNum">     178 </span><span class="lineCov">          2 :     NIGHTINGALE_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     179 </span><span class="lineCov">          1 :     m_sink-&gt;OnPictureLossIndication(m_mediaType, inRtpChannel);</span>
+<span class="lineNum">     180 </span><span class="lineCov">          1 :     ++m_mediaStatistics.pliNum;</span>
+<span class="lineNum">     181 </span>            : }
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">          1 : IN_SDK_THREAD void CNtgCmeMediaRelayer::OnOutputRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcpPacket)</span>
+<span class="lineNum">     184 </span>            : {
+<span class="lineNum">     185 </span><span class="lineCov">          7 :     CThreadPoster(GetCmeStreamThreadIoService(), std::bind(&amp;CNtgCmeMediaRelayer::SendRtcp, shared_from_this(), inRtcpPacket));</span>
+<span class="lineNum">     186 </span>            : #ifdef CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">     187 </span>            :     if (m_nalRtpSession)
+<span class="lineNum">     188 </span>            :     {
+<span class="lineNum">     189 </span>            :         std::string rtcpPacket(inRtcpPacket.c_str(), inRtcpPacket.length());
+<span class="lineNum">     190 </span>            :         m_nalRtpSession-&gt;InputRtcpPacket(rtcpPacket);
+<span class="lineNum">     191 </span>            :     }
+<span class="lineNum">     192 </span>            : #endif
+<span class="lineNum">     193 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineCov">          2 : IN_SDK_THREAD void CNtgCmeMediaRelayer::OnOutputRtpPacket(EMediaSessionType inType, const std::string&amp; inRtpPacket)</span>
+<span class="lineNum">     196 </span>            : {
+<span class="lineNum">     197 </span><span class="lineCov">         14 :     CThreadPoster(GetCmeStreamThreadIoService(), std::bind(&amp;CNtgCmeMediaRelayer::SendRtp, shared_from_this(), inRtpPacket));</span>
+<span class="lineNum">     198 </span>            : #ifdef CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">     199 </span>            :     if (m_nalRtpSession)
+<span class="lineNum">     200 </span>            :     {
+<span class="lineNum">     201 </span>            :         std::string rtpPacket(inRtpPacket.c_str(), inRtpPacket.length());
+<span class="lineNum">     202 </span>            :         m_nalRtpSession-&gt;InputRtpPacket(rtpPacket);
+<span class="lineNum">     203 </span>            :     }
+<span class="lineNum">     204 </span>            : #endif
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">          1 : IWMEMediaRtpChannel* CNtgCmeMediaRelayer::CreateRtpChannel(uint32_t inCsi, const WMERtpExtend&amp; inRtpExtend)</span>
+<span class="lineNum">     208 </span>            : {   
+<span class="lineNum">     209 </span><span class="lineCov">          1 :     if (m_rtpSession)</span>
+<span class="lineNum">     210 </span><span class="lineCov">          1 :         return m_rtpSession-&gt;CreateRtpChannel(inCsi, inRtpExtend);</span>
+<span class="lineNum">     211 </span>            :     return nullptr;
+<a name="212"><span class="lineNum">     212 </span>            : }</a>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::RemoveRtpChannel(IWMEMediaRtpChannel* inRtpChannel)</span>
+<span class="lineNum">     215 </span>            : {  
+<span class="lineNum">     216 </span><span class="lineCov">          1 :     if (m_rtpSession)</span>
+<span class="lineNum">     217 </span><span class="lineCov">          1 :         return m_rtpSession-&gt;RemoveRtpChannel(inRtpChannel);</span>
+<a name="218"><span class="lineNum">     218 </span>            : }</a>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineCov">          1 : IWMEMediaRtpChannel* CNtgCmeMediaRelayer::CreateRtpChannel(uint32_t inNodeId, uint32_t inCsi, EMediaVideoSize inVideoSize)</span>
+<span class="lineNum">     221 </span>            : {
+<span class="lineNum">     222 </span><span class="lineCov">         22 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::CreateRtpChannel, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; inNodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; inCsi:&quot; &lt;&lt; inCsi &lt;&lt; &quot; inVideoSize:&quot; &lt;&lt; inVideoSize);</span>
+<span class="lineNum">     223 </span><span class="lineCov">          1 :     return nullptr;</span>
+<a name="224"><span class="lineNum">     224 </span>            : }</a>
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::RemoveRtpChannel(uint32_t inNodeId, uint32_t inCsi, IWMEMediaRtpChannel* inRtpChannel)</span>
+<span class="lineNum">     227 </span>            : {
+<span class="lineNum">     228 </span><span class="lineCov">         22 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::RemoveRtpChannel, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; inNodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; inCsi:&quot; &lt;&lt; inCsi &lt;&lt; &quot; inRtpChannel:&quot; &lt;&lt; inRtpChannel);   </span>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span><span class="lineCov">         57 : const ConfIdType&amp; CNtgCmeMediaRelayer::GetConferenceId() const</span>
+<span class="lineNum">     232 </span>            : {
+<span class="lineNum">     233 </span><span class="lineCov">        114 :     return m_cmeSendonlySession-&gt;GetConferenceId();</span>
+<a name="234"><span class="lineNum">     234 </span>            : }</a>
+<span class="lineNum">     235 </span>            : 
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">         57 : const CmeSessionIdType&amp; CNtgCmeMediaRelayer::GetCmeSessionId() const</span></a>
+<span class="lineNum">     237 </span>            : {
+<span class="lineNum">     238 </span><span class="lineCov">        116 :     return m_cmeSendonlySession-&gt;GetCmeSessionId();</span>
+<a name="239"><span class="lineNum">     239 </span>            : }</a>
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 : const std::string&amp; CNtgCmeMediaRelayer::GetCmeMediaServiceId() const</span>
+<span class="lineNum">     242 </span>            : {
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :     return m_cmeSendonlySession-&gt;GetCmeMediaServiceId();</span>
+<a name="244"><span class="lineNum">     244 </span>            : }</a>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span><span class="lineCov">        168 : boost::asio::io_service&amp; CNtgCmeMediaRelayer::GetCmeStreamThreadIoService() </span>
+<span class="lineNum">     247 </span>            : { 
+<span class="lineNum">     248 </span><span class="lineCov">        286 :     return m_cmeSendonlySession-&gt;GetCmeStreamThreadIoService(); </span>
+<a name="249"><span class="lineNum">     249 </span>            : }</a>
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 : boost::asio::io_service&amp; CNtgCmeMediaRelayer::GetMainThreadIoService()</span>
+<span class="lineNum">     252 </span>            : {
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :     return m_cmeSendonlySession-&gt;GetMainThreadIoService(); </span>
+<a name="254"><span class="lineNum">     254 </span>            : }</a>
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 : NtgCmeStreamThreadSharedPtr&amp; CNtgCmeMediaRelayer::GetCmeStreamThread()</span>
+<span class="lineNum">     257 </span>            : {
+<span class="lineNum">     258 </span><span class="lineCov">          1 :     return m_cmeSendonlySession-&gt;GetCmeStreamThread();</span>
+<span class="lineNum">     259 </span>            : }
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineCov">         57 : IN_SDK_THREAD bool CNtgCmeMediaRelayer::CreateRtpSession(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp)</span>
+<span class="lineNum">     262 </span>            : {
+<span class="lineNum">     263 </span><span class="lineCov">        912 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::CreateRtpSession, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            : #ifdef CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">     266 </span>            :     if ((MEDIA_HFPS_AS_SESSION == m_mediaType) &amp;&amp; (nullptr == m_nalRtpSession))
+<span class="lineNum">     267 </span>            :     {
+<span class="lineNum">     268 </span>            :         //m_nalRtpSession = std::shared_ptr&lt;CCspRtpSession&gt;(new CCspRtpSession(m_mediaType, nullptr, true));
+<span class="lineNum">     269 </span>            :         //m_nalRtpSession-&gt;Initialize( inAnswerSdp, inOfferSdp, nullptr);
+<span class="lineNum">     270 </span>            :     }
+<span class="lineNum">     271 </span>            : #endif    
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">        171 :     m_rtpSession = std::shared_ptr&lt;CCspRtpSession&gt;(new CCspRtpSession(m_mediaType, nullptr, true, m_cmeSendonlySession-&gt;EnableMultistream()));</span>
+<span class="lineNum">     274 </span><span class="lineCov">         57 :     return m_rtpSession-&gt;Initialize( inOfferSdp, inAnswerSdp, this);</span>
+<span class="lineNum">     275 </span>            : }
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineCov">         57 : IN_SDK_THREAD void CNtgCmeMediaRelayer::DestoryRtpSession()</span>
+<span class="lineNum">     278 </span>            : {
+<span class="lineNum">     279 </span><span class="lineCov">       1026 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::DestoryRtpSession, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; m_released:&quot; &lt;&lt; m_released);</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineCov">         57 :     if (m_rtpSession)</span>
+<span class="lineNum">     282 </span>            :     {
+<span class="lineNum">     283 </span><span class="lineCov">         57 :         m_rtpSession-&gt;Release(); </span>
+<span class="lineNum">     284 </span><span class="lineCov">        114 :         m_rtpSession = nullptr;</span>
+<span class="lineNum">     285 </span>            :     }
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            : #ifdef CSP_DUMP_RTP_TO_NAL
+<span class="lineNum">     288 </span>            :     if (m_nalRtpSession)
+<span class="lineNum">     289 </span>            :     {
+<span class="lineNum">     290 </span>            :         m_nalRtpSession-&gt;Release();
+<span class="lineNum">     291 </span>            :         m_nalRtpSession = nullptr;
+<span class="lineNum">     292 </span>            :     }
+<span class="lineNum">     293 </span>            : #endif
+<span class="lineNum">     294 </span><span class="lineCov">         57 : }</span>
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span><span class="lineCov">         57 : IN_STREAM_THREAD bool CNtgCmeMediaRelayer::OpenUdp(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp)</span>
+<span class="lineNum">     297 </span>            : {
+<span class="lineNum">     298 </span><span class="lineCov">        912 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::OpenUdp, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">     299 </span>            :     
+<span class="lineNum">     300 </span><span class="lineCov">         57 :     SessionDescriptionSharedPtr  offerSdpPtr = CSessionDescriptionFactory::Create(inOfferSdp);</span>
+<span class="lineNum">     301 </span><span class="lineCov">         57 :     SessionDescriptionSharedPtr answerSdpPtr = CSessionDescriptionFactory::Create(inAnswerSdp);</span>
+<span class="lineNum">     302 </span><span class="lineCov">         57 :     if (!offerSdpPtr || !answerSdpPtr)</span>
+<span class="lineNum">     303 </span>            :     {
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :         NIGHTINGALE_ERROR_THIS(&quot;CNtgCmeMediaRelayer::OpenUdp, parse sdp fail offer_sdp=&quot;&lt;&lt;inOfferSdp&lt;&lt;&quot;, answer_sdp&quot;&lt;&lt;inAnswerSdp);</span>
+<span class="lineNum">     305 </span>            :         return false;
+<span class="lineNum">     306 </span>            :     }
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            :     CRtpEndpoint local;
+<span class="lineNum">     309 </span>            :     CRtpEndpoint remote;
+<span class="lineNum">     310 </span>            :     
+<span class="lineNum">     311 </span><span class="lineCov">         57 :     if (MEDIA_AUDIO_SESSION == m_mediaType)</span>
+<span class="lineNum">     312 </span>            :     {
+<span class="lineNum">     313 </span><span class="lineCov">         38 :         local.ip = offerSdpPtr-&gt;GetRtpIP(AUDIO);</span>
+<span class="lineNum">     314 </span><span class="lineCov">         19 :         local.port = offerSdpPtr-&gt;GetRtpPort(AUDIO);</span>
+<span class="lineNum">     315 </span><span class="lineCov">         38 :         remote.ip = answerSdpPtr-&gt;GetRtpIP(AUDIO);</span>
+<span class="lineNum">     316 </span><span class="lineCov">         19 :         remote.port = answerSdpPtr-&gt;GetRtpPort(AUDIO);</span>
+<span class="lineNum">     317 </span>            :     }
+<span class="lineNum">     318 </span><span class="lineCov">         38 :     else if (MEDIA_VIDEO_SESSION == m_mediaType)</span>
+<span class="lineNum">     319 </span>            :     {
+<span class="lineNum">     320 </span><span class="lineCov">         38 :         local.ip = offerSdpPtr-&gt;GetRtpIP(VIDEO);</span>
+<span class="lineNum">     321 </span><span class="lineCov">         19 :         local.port = offerSdpPtr-&gt;GetRtpPort(VIDEO);</span>
+<span class="lineNum">     322 </span><span class="lineCov">         38 :         remote.ip = answerSdpPtr-&gt;GetRtpIP(VIDEO);</span>
+<span class="lineNum">     323 </span><span class="lineCov">         19 :         remote.port = answerSdpPtr-&gt;GetRtpPort(VIDEO);</span>
+<span class="lineNum">     324 </span>            :     }
+<span class="lineNum">     325 </span><span class="lineCov">         19 :     else if (MEDIA_HFPS_AS_SESSION == m_mediaType)</span>
+<span class="lineNum">     326 </span>            :     {
+<span class="lineNum">     327 </span><span class="lineCov">         38 :         local.ip = offerSdpPtr-&gt;GetRtpIP(VIDEO_SLIDES);</span>
+<span class="lineNum">     328 </span><span class="lineCov">         19 :         local.port = offerSdpPtr-&gt;GetRtpPort(VIDEO_SLIDES);</span>
+<span class="lineNum">     329 </span><span class="lineCov">         38 :         remote.ip = answerSdpPtr-&gt;GetRtpIP(VIDEO_SLIDES);</span>
+<span class="lineNum">     330 </span><span class="lineCov">         19 :         remote.port = answerSdpPtr-&gt;GetRtpPort(VIDEO_SLIDES);</span>
+<span class="lineNum">     331 </span>            :     }
+<span class="lineNum">     332 </span><span class="lineCov">         57 :     m_remoteAddr = remote;</span>
+<span class="lineNum">     333 </span><span class="lineCov">        285 :     m_rtpTransport = std::shared_ptr&lt;CNtgCmeRtpTransport&gt;(new CNtgCmeRtpTransport(shared_from_this()));</span>
+<span class="lineNum">     334 </span><span class="lineCov">        114 :     UdpDataCallback rtcpCallback = std::bind(&amp;CNtgCmeMediaRelayer::OnReceiveRtcpPacket, this, std::placeholders::_1, std::placeholders::_2);</span>
+<span class="lineNum">     335 </span><span class="lineCov">        114 :     return m_rtpTransport-&gt;Initialize(local, remote, rtcpCallback);</span>
+<span class="lineNum">     336 </span>            : }
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span><span class="lineCov">         57 : IN_STREAM_THREAD void CNtgCmeMediaRelayer::CloseUdp()</span>
+<span class="lineNum">     339 </span>            : {
+<span class="lineNum">     340 </span><span class="lineCov">       1026 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::CloseUdp, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; stopStreamFlag=&quot;&lt;&lt;m_stopStreamFlag);</span>
+<span class="lineNum">     341 </span><span class="lineCov">         57 :     if (m_rtpTransport)</span>
+<span class="lineNum">     342 </span>            :     {
+<span class="lineNum">     343 </span><span class="lineCov">         57 :         m_rtpTransport-&gt;Release();</span>
+<span class="lineNum">     344 </span><span class="lineCov">        114 :         m_rtpTransport = nullptr;</span>
+<span class="lineNum">     345 </span>            :     }
+<a name="346"><span class="lineNum">     346 </span><span class="lineCov">         57 : }</span></a>
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span><span class="lineCov">          2 : IN_STREAM_THREAD void CNtgCmeMediaRelayer::SendRtp(const std::string&amp; inRtp)</span>
+<span class="lineNum">     349 </span>            : {
+<span class="lineNum">     350 </span><span class="lineCov">          4 :     NIGHTINGALE_ASSERTE_RETURN_VOID(m_rtpTransport);</span>
+<span class="lineNum">     351 </span><span class="lineCov">          2 :     m_rtpTransport-&gt;SendRtp(inRtp);</span>
+<a name="352"><span class="lineNum">     352 </span>            : }</a>
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineCov">          1 : IN_STREAM_THREAD void CNtgCmeMediaRelayer::SendRtcp(const std::string&amp; inRtcp)</span>
+<span class="lineNum">     355 </span>            : {
+<span class="lineNum">     356 </span><span class="lineCov">          2 :     NIGHTINGALE_ASSERTE_RETURN_VOID(m_rtpTransport);</span>
+<span class="lineNum">     357 </span><span class="lineCov">          1 :     m_rtpTransport-&gt;SendRtcp(inRtcp);</span>
+<span class="lineNum">     358 </span>            : }
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span><span class="lineCov">          1 : IN_STREAM_THREAD void CNtgCmeMediaRelayer::OnReceiveRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcp)</span>
+<span class="lineNum">     361 </span>            : {
+<span class="lineNum">     362 </span><span class="lineCov">          1 :     auto self = shared_from_this();</span>
+<a name="363"><span class="lineNum">     363 </span><span class="lineCov">          1 :     if ((self.get() == nullptr) || m_released)</span></a>
+<span class="lineNum">     364 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">     365 </span><span class="lineCov">         14 :     CWbxSDKThread::Instance()-&gt;PostEvent(std::shared_ptr&lt;WbxSDKEvent&gt;(new WbxSDKEventNone([self, this, inRtcp]() {</span>
+<span class="lineNum">     366 </span><span class="lineCov">          2 :         if (!m_released &amp;&amp; m_rtpSession)</span>
+<span class="lineNum">     367 </span><span class="lineCov">          2 :             m_rtpSession-&gt;InputRtcpPacket(inRtcp);</span>
+<span class="lineNum">     368 </span><span class="lineCov">          5 :     })));</span>
+<a name="369"><span class="lineNum">     369 </span>            : }</a>
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span><span class="lineCov">          1 : IN_STREAM_THREAD void CNtgCmeMediaRelayer::UpdateCsiInStreamTread()</span>
+<span class="lineNum">     372 </span>            : {
+<span class="lineNum">     373 </span><span class="lineCov">          2 :     NIGHTINGALE_ASSERTE_RETURN_VOID(m_rtpTransport);</span>
+<span class="lineNum">     374 </span><span class="lineCov">          1 :     m_rtpTransport-&gt;NotifyVideoPresentChanded();</span>
+<span class="lineNum">     375 </span>            : }
+<span class="lineNum">     376 </span>            : 
+<span class="lineNum">     377 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::ParseAudioSCR(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     378 </span>            : {
+<span class="lineNum">     379 </span>            :     AudioSCRList scrList;
+<span class="lineNum">     380 </span><span class="lineCov">          2 :     for (uint8_t i = 0; i &lt; inRequestCount; i++)</span>
+<span class="lineNum">     381 </span>            :     {
+<span class="lineNum">     382 </span>            :         //only support as
+<span class="lineNum">     383 </span><span class="lineCov">          1 :         if (WBX_POLICY_TYPE_ACTIVE_SPEAKER == inRequests[i].policyType)</span>
+<span class="lineNum">     384 </span>            :         {
+<span class="lineNum">     385 </span>            :             WMERtpExtend rtpExtend;
+<span class="lineNum">     386 </span><span class="lineCov">          1 :             rtpExtend.vidCount = 1;</span>
+<span class="lineNum">     387 </span><span class="lineCov">          1 :             rtpExtend.vidArray[0] = inRequests[i].activeSpeakerTrait.subsessionChannelId;</span>
+<span class="lineNum">     388 </span><span class="lineCov">          1 :             scrList.push_back(rtpExtend);</span>
+<span class="lineNum">     389 </span><span class="lineCov">         22 :             NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::ParseAudioSCR, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; i=&quot;&lt;&lt;(int)i&lt;&lt;&quot;, policy=&quot;&lt;&lt;inRequests[i].policyType &lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)rtpExtend.vidArray[0]);</span>
+<span class="lineNum">     390 </span>            :         }
+<span class="lineNum">     391 </span>            :     }
+<span class="lineNum">     392 </span>            :     
+<span class="lineNum">     393 </span><span class="lineCov">          1 :     bool isNeedUpdate = false;</span>
+<span class="lineNum">     394 </span><span class="lineCov">          9 :     if (scrList.size() != m_scrAudioList.size())</span>
+<span class="lineNum">     395 </span>            :         isNeedUpdate = true;
+<span class="lineNum">     396 </span>            :     else
+<span class="lineNum">     397 </span>            :     {
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :         for (unsigned int i = 0; i &lt; scrList.size(); i++)</span>
+<span class="lineNum">     399 </span>            :         {
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 :             if (scrList[i].vidArray[0] != m_scrAudioList[i].vidArray[0])</span>
+<span class="lineNum">     401 </span>            :             {
+<span class="lineNum">     402 </span>            :                 isNeedUpdate = true;
+<span class="lineNum">     403 </span>            :                 break;
+<span class="lineNum">     404 </span>            :             }
+<span class="lineNum">     405 </span>            :         }
+<span class="lineNum">     406 </span>            :     }
+<span class="lineNum">     407 </span>            :     
+<span class="lineNum">     408 </span><span class="lineCov">          1 :     if (isNeedUpdate)</span>
+<span class="lineNum">     409 </span>            :     {
+<span class="lineNum">     410 </span>            :         WMERtpExtend rtpExtend;
+<span class="lineNum">     411 </span><span class="lineCov">          1 :         m_scrAudioList = scrList;</span>
+<span class="lineNum">     412 </span>            :         
+<span class="lineNum">     413 </span><span class="lineCov">          2 :         NIGHTINGALE_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     414 </span>            :         //for TA
+<span class="lineNum">     415 </span><span class="lineCov">          6 :         m_sink-&gt;OnAudioSCR(GetCmeSessionId(), m_scrAudioList.size(), (m_scrAudioList.size() &gt; 0 ? &amp;(m_scrAudioList[0]) : &amp;rtpExtend));</span>
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineCov">          1 :         if (m_cmeSendonlySession)</span>
+<span class="lineNum">     418 </span>            :         {
+<span class="lineNum">     419 </span><span class="lineCov">          1 :             NtgAudioDispatcherSharedPtr&amp; audioDispatch = m_cmeSendonlySession-&gt;GetCmeAudioDispatcher();</span>
+<span class="lineNum">     420 </span><span class="lineCov">          1 :             if (audioDispatch)</span>
+<span class="lineNum">     421 </span><span class="lineCov">          5 :                 audioDispatch-&gt;UpdateRTPExtension(m_scrAudioList.size(), (m_scrAudioList.size() &gt; 0 ? &amp;(m_scrAudioList[0]) : &amp;rtpExtend));</span>
+<span class="lineNum">     422 </span>            :         }
+<span class="lineNum">     423 </span><span class="lineCov">         23 :         NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::ParseAudioSCR,  m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; inRequestCount=&quot;&lt;&lt;(int)inRequestCount&lt;&lt;&quot;, real count=&quot;&lt;&lt;m_scrAudioList.size());</span>
+<span class="lineNum">     424 </span>            :     }
+<span class="lineNum">     425 </span>            : }
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">          1 : void CNtgCmeMediaRelayer::ParseVideoSCR(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     428 </span>            : {
+<span class="lineNum">     429 </span><span class="lineCov">          1 :     m_videoScrFlag = true;</span>
+<span class="lineNum">     430 </span><span class="lineCov">          1 :     if (m_sink)</span>
+<span class="lineNum">     431 </span><span class="lineCov">          2 :         m_sink-&gt;OnVideoSCR(GetCmeSessionId(), inRequests, inRequestCount);</span>
+<span class="lineNum">     432 </span><span class="lineCov">         18 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeMediaRelayer::ParseVideoSCR, m_mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(m_mediaType) &lt;&lt; &quot; inRequestCount=&quot;&lt;&lt;(int)inRequestCount); </span>
+<a name="433"><span class="lineNum">     433 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     434 </span>            : 
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 : void CNtgCmeMediaRelayer::ConvertToResolution(uint16_t inMaxFS, VideoScrInfo* outScr)</span>
+<span class="lineNum">     436 </span>            : {
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :     EMediaVideoSize resolution = VIDEO_SIZEO_NONE;</span>
+<span class="lineNum">     438 </span>            :     
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :     if (inMaxFS &gt;= 3600)</span>
+<span class="lineNum">     440 </span>            :         resolution= VIDEO_SIZE_720P;
+<span class="lineNum">     441 </span><span class="lineNoCov">          0 :     else if (inMaxFS &gt;= 920)</span>
+<span class="lineNum">     442 </span>            :         resolution = VIDEO_SIZE_360P;
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :     else if (inMaxFS &gt;= 240)</span>
+<span class="lineNum">     444 </span>            :         resolution = VIDEO_SIZE_180P;
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 :     else if (inMaxFS &gt;= 60)</span>
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :         resolution = VIDEO_SIZE_90P;</span>
+<span class="lineNum">     447 </span>            : 
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :     NIGHTINGALE_ASSERTE_RETURN_VOID(outScr);</span>
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :     outScr-&gt;SetVideoSize(resolution);</span>
+<a name="450"><span class="lineNum">     450 </span>            : }</a>
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 : bool CNtgCmeMediaRelayer::IsSameSCR(VideoScrInfo&amp; inLeft, VideoScrInfo&amp; inRight)</span>
+<span class="lineNum">     453 </span>            : {
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :     if (inLeft.GetVideoSize()!= inRight.GetVideoSize())</span>
+<span class="lineNum">     455 </span>            :         return false;
+<span class="lineNum">     456 </span>            : 
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :     WMERtpExtend* leftExtend = inLeft.GetRtpExtend();</span>
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :     WMERtpExtend* rightExtend = inRight.GetRtpExtend();</span>
+<span class="lineNum">     459 </span>            :     
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :     if (leftExtend-&gt;vidCount!= rightExtend-&gt;vidCount)</span>
+<span class="lineNum">     461 </span>            :         return false;
+<span class="lineNum">     462 </span>            :     
+<span class="lineNum">     463 </span><span class="lineNoCov">          0 :     for (unsigned int i = 0; i &lt; leftExtend-&gt;vidCount; i++)</span>
+<span class="lineNum">     464 </span>            :     {
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :         if (leftExtend-&gt;vidArray[i] != rightExtend-&gt;vidArray[i])</span>
+<span class="lineNum">     466 </span>            :             return false;
+<a name="467"><span class="lineNum">     467 </span>            :     }</a>
+<span class="lineNum">     468 </span>            :     return true;
+<span class="lineNum">     469 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     470 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

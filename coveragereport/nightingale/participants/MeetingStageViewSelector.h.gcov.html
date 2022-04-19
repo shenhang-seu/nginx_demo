@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/MeetingStageViewSelector.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - MeetingStageViewSelector.h<span style="font-size: 80%;"> (source / <a href="MeetingStageViewSelector.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef MEETING_STAGE_VIEW_SELECTOR_H</a>
+<span class="lineNum">       2 </span>            : #define MEETING_STAGE_VIEW_SELECTOR_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;NtgStageView.h&quot;
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : class CMeetingStageViewSelector
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span>            : public:
+<span class="lineNum">      11 </span>            :     CMeetingStageViewSelector();
+<span class="lineNum">      12 </span>            :     ~CMeetingStageViewSelector();
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :     bool UpdateStatus(bool inFollowHostLayout);
+<span class="lineNum">      15 </span>            :     bool UpdateContent(const std::string&amp; inContent);
+<span class="lineNum">      16 </span>            :         bool AddUser(uint32_t inSequence, NodeIdType inNodeId);
+<span class="lineNum">      17 </span>            :         bool RemoveUser(NodeIdType inNodeId);
+<span class="lineNum">      18 </span>            :         bool Trigger();
+<span class="lineNum">      19 </span>            :     void Reset();
+<span class="lineNum">      20 </span>            :     bool IsTimeout()const { return (m_count &gt;= 3);}
+<span class="lineNum">      21 </span>            :         bool IsComplete()const;
+<span class="lineNum">      22 </span>            :         bool IsDifferentCsi(NodeIdType inNodeId, CsiType inCsi)const ;
+<span class="lineNum">      23 </span><span class="lineCov">        268 :         bool IsStageViewLayout()const { return (IsFollowHostLayout() &amp;&amp; IsStageObjectExist() &amp;&amp; IsTimeout());}</span>
+<span class="lineNum">      24 </span>            :         bool IsUserInStageView(NodeIdType inNodeId)const;
+<span class="lineNum">      25 </span>            :         const AttendeeIdTypeVector&amp; GetAttendeeIds()const { return m_attendeeIds;}
+<span class="lineNum">      26 </span>            :         const NtgStageViewSharedPtr&amp; GetStageView()const { return m_stageView;}
+<span class="lineNum">      27 </span>            :     
+<span class="lineNum">      28 </span>            : private:
+<span class="lineNum">      29 </span>            :         void Parse();
+<span class="lineNum">      30 </span>            :         void ResetStageView();
+<span class="lineNum">      31 </span>            :         bool IsFollowHostLayout()const { return m_followHostLayout;}
+<span class="lineNum">      32 </span><span class="lineCov">          8 :         bool IsStageObjectExist()const { return (nullptr != m_stageView.get());}</span>
+<span class="lineNum">      33 </span>            :         
+<span class="lineNum">      34 </span>            :         uint32_t m_count = 0;//total seconds when session start, will be reset after rejoin Cb server
+<span class="lineNum">      35 </span>            :         bool m_followHostLayout = false;//default is off
+<span class="lineNum">      36 </span>            :         std::string m_content;
+<span class="lineNum">      37 </span>            :         AttendeeIdTypeVector m_attendeeIds;
+<span class="lineNum">      38 </span>            :         NtgStageViewSharedPtr m_stageView;
+<span class="lineNum">      39 </span>            : };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #endif //MEETING_STAGE_VIEW_SELECTOR_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

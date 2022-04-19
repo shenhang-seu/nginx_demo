@@ -1,0 +1,764 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/venue/OttVenue.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/venue</a> - OttVenue.cpp<span style="font-size: 80%;"> (source / <a href="OttVenue.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">269</td>
+            <td class="headerCovTableEntry">370</td>
+            <td class="headerCovTableEntryLo">72.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">49</td>
+            <td class="headerCovTableEntry">63</td>
+            <td class="headerCovTableEntryMed">77.8 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;OttVenue.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;OttVenueManager.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;OttSession.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;OttNightingaleAgent.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CmeServiceManager.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;CmeSession.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;OttTopSession.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;RequestInitiatorFactory.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;OtterMetrics.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;CmeServiceProperties.h&quot;
+<span class="lineNum">      12 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">      13 </span>            : #include &quot;HttpUrlParser.h&quot;
+<a name="14"><span class="lineNum">      14 </span>            : #include &quot;RequestInitiatorFactory.h&quot;</a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">         19 : OttVenueSharedPtr COttVenueFactory::CreateVenue(const CCspVenueId&amp; inVenueId)</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span><span class="lineCov">         38 :         return OttVenueSharedPtr(new COttVenue(inVenueId));</span>
+<span class="lineNum">      19 </span>            : }
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      22 </span>            : /// class COttVenue::COttContentSharingContext
+<a name="23"><span class="lineNum">      23 </span>            : /////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : COttVenue::COttContentSharingContext::COttContentSharingContext(const CCspVenueId&amp; inVenueId)</span>
+<span class="lineNum">      26 </span><span class="lineCov">         38 : : m_venueId(inVenueId)</span>
+<span class="lineNum">      27 </span>            : {
+<a name="28"><span class="lineNum">      28 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : COttVenue::COttContentSharingContext::~COttContentSharingContext()</span>
+<span class="lineNum">      31 </span>            : {
+<a name="32"><span class="lineNum">      32 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">          1 : void COttVenue::COttContentSharingContext::Start(bool inIsHfpsShare, const std::string&amp; inPresenterName, uint32_t inResolution)</span>
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">          1 :     m_isContentSharingStarted = true;</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :     m_isHfpsShare = inIsHfpsShare;</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 :     m_presenterName = inPresenterName;</span>
+<span class="lineNum">      39 </span><span class="lineCov">          1 :     m_resolution = inResolution;</span>
+<span class="lineNum">      40 </span><span class="lineCov">          2 :     m_startTime = ::GetCurrentTimestamp();</span>
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         20 : void COttVenue::COttContentSharingContext::Stop()</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">         20 :         if (!m_isContentSharingStarted)</span>
+<span class="lineNum">      46 </span><span class="lineCov">         20 :                 return;</span>
+<span class="lineNum">      47 </span><span class="lineCov">          1 :     m_isContentSharingStarted = false;</span>
+<span class="lineNum">      48 </span><span class="lineCov">          9 :     SHARE_SUMMARY_METRICS_LOG(&quot;ShareSummary&quot;, &quot;CspVenue&quot;, m_venueId.GetId(), m_startTime, ::GetCurrentTimestamp(), m_isHfpsShare, m_resolution);</span>
+<a name="49"><span class="lineNum">      49 </span>            : }</a>
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">          1 : JsonValue COttVenue::COttContentSharingContext::ToJson() const</span>
+<span class="lineNum">      52 </span>            : {
+<span class="lineNum">      53 </span><span class="lineCov">          1 :     JsonValue info;</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">          1 :     info[JSON_KEY_IS_CONTENT_SHARING_STARTED] = m_isContentSharingStarted;</span>
+<span class="lineNum">      56 </span><span class="lineCov">          1 :     info[JSON_KEY_PRESENTER_NAME] = m_presenterName;</span>
+<span class="lineNum">      57 </span><span class="lineCov">          1 :     info[JSON_KEY_CONTENT_RESOLUTION] = m_resolution;    </span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          1 :     return info;</span>
+<span class="lineNum">      60 </span>            : }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      63 </span>            : /// class COttVenue
+<span class="lineNum">      64 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineCov">         19 : COttVenue::COttVenue(const CCspVenueId&amp; inVenueId)</span>
+<span class="lineNum">      67 </span>            : : m_released(false)
+<span class="lineNum">      68 </span>            : , m_venueId(inVenueId)
+<span class="lineNum">      69 </span>            : , m_contentSharingContext(inVenueId)
+<span class="lineNum">      70 </span>            : , m_streamIoServiceWrapper(THREAD_NAME_STREAM)
+<span class="lineNum">      71 </span>            : , m_streamThread(std::make_shared&lt;std::thread&gt;(std::bind(&amp;CIoServiceWrapper::Run, &amp;m_streamIoServiceWrapper)))
+<span class="lineNum">      72 </span><span class="lineCov">        228 : , m_statisticsMgr(StatisticManagerSharedPtr(new CStatisticManager(GetMainThreadIoService(), std::bind(&amp;COttVenue::HandleStatisticsTimer, this, std::placeholders::_1))))</span>
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span><span class="lineCov">        285 :         OTTER_INFO_THIS(&quot;COttVenue::COttVenue, venueId:&quot; &lt;&lt; m_venueId);</span>
+<span class="lineNum">      75 </span><span class="lineCov">         19 :         m_statisticsMgr-&gt;StartTimer();</span>
+<span class="lineNum">      76 </span><span class="lineCov">         19 : }</span>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 : COttVenue::~COttVenue()</span>
+<span class="lineNum">      79 </span>            : {
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         OTTER_INFO_THIS(&quot;COttVenue::~COttVenue, venueId:&quot; &lt;&lt; m_venueId);</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">         19 : void COttVenue::Release(SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span><span class="lineCov">         19 :         if (m_released)</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">      87 </span><span class="lineCov">         19 :         m_released = true;</span>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineCov">        361 :         OTTER_INFO_THIS(&quot;COttVenue::Release, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; reason:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">         19 :         m_contentSharingContext.Stop();</span>
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span><span class="lineCov">         19 :         if (m_statisticsMgr)</span>
+<span class="lineNum">      94 </span>            :         {
+<span class="lineNum">      95 </span><span class="lineCov">         19 :                 m_statisticsMgr-&gt;StopTimer();</span>
+<span class="lineNum">      96 </span><span class="lineCov">         38 :                 m_statisticsMgr = nullptr;</span>
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         19 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     100 </span>            :         {
+<span class="lineNum">     101 </span><span class="lineCov">          5 :                 m_nightingaleAgent-&gt;Release();</span>
+<span class="lineNum">     102 </span><span class="lineCov">         10 :                 m_nightingaleAgent = nullptr;</span>
+<span class="lineNum">     103 </span>            :         }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineCov">         19 :         if(m_cmeServiceManager)</span>
+<span class="lineNum">     106 </span>            :         {
+<span class="lineNum">     107 </span><span class="lineCov">         16 :                 m_cmeServiceManager-&gt;Release();</span>
+<span class="lineNum">     108 </span><span class="lineCov">         32 :                 m_cmeServiceManager = nullptr;</span>
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         /*
+<span class="lineNum">     112 </span>            :          * m_cspSessions must be released later than m_cmeServiceManager as CSP sessions subscribe media streams from CME nodes. 
+<span class="lineNum">     113 </span>            :          * (subscribeResultCallback &amp; receiveStreamCallback pointers are maintained in CME Session instances)
+<span class="lineNum">     114 </span>            :          * DO NOT traverse m_cspSessions by &quot;for (auto&amp; session : m_cspSessions)&quot; as CSP sessions may be removed from the list in IOttSession::Release() 
+<span class="lineNum">     115 </span>            :          * if their start-session processes have not completed.
+<span class="lineNum">     116 </span>            :          */
+<span class="lineNum">     117 </span><span class="lineCov">         78 :         for (auto iter = m_cspSessions.begin(); iter != m_cspSessions.end();)</span>
+<span class="lineNum">     118 </span>            :         {
+<span class="lineNum">     119 </span><span class="lineCov">          2 :                 auto iterCurrent = iter++; </span>
+<span class="lineNum">     120 </span><span class="lineCov">          1 :                 iterCurrent-&gt;second-&gt;Release(inErrorCode, inMessage);</span>
+<span class="lineNum">     121 </span>            :         }
+<span class="lineNum">     122 </span><span class="lineCov">         19 :         m_cspSessions.clear();</span>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :     /* 
+<span class="lineNum">     125 </span>            :      * Post an event to the stream thread to make sure all media streams have been processed gracefully before the thread is stopped; 
+<span class="lineNum">     126 </span>            :      */
+<span class="lineNum">     127 </span><span class="lineCov">         19 :     auto self = shared_from_this();</span>
+<span class="lineNum">     128 </span><span class="lineCov">        171 :     CThreadPoster(GetStreamThreadIoService(), [self, this]() {</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         m_streamIoServiceWrapper.Stop();</span>
+<span class="lineNum">     130 </span><span class="lineCov">         76 :     });</span>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">         19 :     if (m_streamThread)</span>
+<span class="lineNum">     133 </span>            :     {
+<span class="lineNum">     134 </span><span class="lineCov">         19 :         m_streamThread-&gt;join();</span>
+<span class="lineNum">     135 </span><span class="lineCov">         38 :         m_streamThread = nullptr;</span>
+<span class="lineNum">     136 </span>            :     }
+<span class="lineNum">     137 </span>            : }
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">          6 : void COttVenue::StartSession(const Json::Value&amp; inContext, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">     140 </span>            : {
+<span class="lineNum">     141 </span><span class="lineCov">          6 :         std::string sessionType = inContext[JSON_KEY_SESSION_TYPE].asString();</span>
+<span class="lineNum">     142 </span><span class="lineCov">          6 :         CspSessionIdType sessionId = inContext[JSON_KEY_SESSION_ID].asString();</span>
+<span class="lineNum">     143 </span><span class="lineCov">          6 :         std::string cbAddr = inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_EUREKA_INFO][JSON_KEY_CB_ADDR].asString();</span>
+<span class="lineNum">     144 </span><span class="lineCov">         11 :         Json::Value inComposeKeyList = inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_VIDEO_COMPOSE_KEY_LIST];</span>
+<span class="lineNum">     145 </span><span class="lineCov">          6 :         SetNbrSessionStreamId(inContext);</span>
+<span class="lineNum">     146 </span><span class="lineCov">          6 :         bool isTopOtter = true;</span>
+<span class="lineNum">     147 </span><span class="lineCov">          8 :     if (JSON_IS_A_VALID_STRING(inContext[JSON_KEY_PARENT_OTTER_IP]))</span>
+<span class="lineNum">     148 </span>            :     {
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :         isTopOtter = (inContext[JSON_KEY_PARENT_OTTER_IP].asString() == OTTER_VIP);</span>
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span><span class="lineCov">          6 :     GetLocusIdInContext(inContext);</span>
+<span class="lineNum">     152 </span><span class="lineCov">          6 :     GetSiteUrlInContext(inContext);</span>
+<span class="lineNum">     153 </span><span class="lineCov">          6 :     GetEnable1080PResolutionInContext(inContext);</span>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineCov">          6 :         UpdateOtherSessionVideoComposeKey(sessionId, inComposeKeyList, inCallback);</span>
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span><span class="lineCov">          6 :     if (isTopOtter)</span>
+<span class="lineNum">     158 </span>            :     {
+<span class="lineNum">     159 </span>            :         /* Nightingale agent is only created on top Otter. */
+<span class="lineNum">     160 </span><span class="lineCov">         12 :                 if (m_nightingaleAgent == nullptr)</span>
+<span class="lineNum">     161 </span>            :                 {
+<span class="lineNum">     162 </span><span class="lineCov">         20 :                         m_nightingaleAgent = OttNightingaleAgentSharedPtr(new COttNightingaleAgent(GetMainThreadIoService(), shared_from_this()));</span>
+<span class="lineNum">     163 </span><span class="lineCov">         10 :                         m_nightingaleAgent-&gt;CreateLocalTransport();</span>
+<span class="lineNum">     164 </span>            :                 }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">          6 :                 auto mediaSessionBitmapToJoin = GetMediaSessionBitmapToJoin(sessionType);</span>
+<span class="lineNum">     167 </span><span class="lineCov">          6 :                 m_mediaSessionBitmap |= mediaSessionBitmapToJoin;</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :                 /* JoinConference is performed in two cases: 
+<span class="lineNum">     170 </span>            :                  *   1. it's the first CSP session started in the conference; 
+<span class="lineNum">     171 </span>            :                  *   2. CB failover;
+<span class="lineNum">     172 </span>            :                  */
+<span class="lineNum">     173 </span><span class="lineCov">         12 :                 if (m_cbAddr.empty() || m_nightingaleAgent-&gt;PendingRejoinConference())</span>
+<span class="lineNum">     174 </span>            :                 {
+<span class="lineNum">     175 </span><span class="lineCov">          6 :                         m_cbAddr = cbAddr;</span>
+<span class="lineNum">     176 </span><span class="lineCov">          6 :                         auto self = shared_from_this();</span>
+<span class="lineNum">     177 </span><span class="lineCov">         24 :                         m_nightingaleAgent-&gt;JoinConference(inContext, [self, this] (SafariResult inResult, const std::string&amp; inMessage) {</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         if (SAFARI_FAILED(inResult))</span>
+<span class="lineNum">     179 </span>            :                         {
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :                             HandleNightingaleError(inResult, inMessage);</span>
+<span class="lineNum">     181 </span>            :                         }
+<span class="lineNum">     182 </span><span class="lineCov">         24 :                     });</span>
+<span class="lineNum">     183 </span>            :                 }
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :                 else if (mediaSessionBitmapToJoin != 0)</span>
+<span class="lineNum">     185 </span>            :                 {
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                         m_nightingaleAgent-&gt;JoinMediaSessions(mediaSessionBitmapToJoin);</span>
+<span class="lineNum">     187 </span>            :                 }
+<span class="lineNum">     188 </span>            :     }
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineCov">         12 :     auto sessionIter = m_cspSessions.find(sessionId);</span>
+<span class="lineNum">     191 </span><span class="lineCov">         12 :         if (sessionIter != m_cspSessions.end())</span>
+<span class="lineNum">     192 </span>            :         {
+<span class="lineNum">     193 </span><span class="lineCov">         19 :                 OTTER_WARNING_THIS(&quot;COttVenue::StartSession, session found! venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; sessionId &lt;&lt; &quot; sessionType:&quot; &lt;&lt; sessionType);</span>
+<span class="lineNum">     194 </span><span class="lineCov">          1 :                 sessionIter-&gt;second-&gt;ResetSessionSequenceFromCB(); // Fix bug WEBEX-46481: CSP session state cannot be updated after CB failover. </span>
+<span class="lineNum">     195 </span><span class="lineCov">          2 :                 inCallback(SAFARI_OK, &quot;&quot;);</span>
+<span class="lineNum">     196 </span><span class="lineCov">          7 :                 return;</span>
+<span class="lineNum">     197 </span>            :         }
+<span class="lineNum">     198 </span>            : 
+<a name="199"><span class="lineNum">     199 </span><span class="lineCov">          5 :         auto newSession = CreateSession(sessionType, sessionId, isTopOtter);</span></a>
+<span class="lineNum">     200 </span><span class="lineCov">          5 :         auto self = shared_from_this();</span>
+<span class="lineNum">     201 </span><span class="lineCov">        120 :         newSession-&gt;Start(inContext, [self, this, sessionId, inCallback](const SafariResult&amp; inResult, const std::string&amp; inMessage) mutable {</span>
+<span class="lineNum">     202 </span>            :                 /* NOTE: sessionId is a member of the lambda expression object and may be released in the following call of RemoveSession, which invokes
+<span class="lineNum">     203 </span>            :                    session-&gt;Release() to unsubscribe stream from CME sessions and release CME session instances where the lambda expression object 
+<span class="lineNum">     204 </span>            :                    would also be destroyed. As such, passing sessionId into RemoveSession directly may lead to segmentation fault crashing. */
+<span class="lineNum">     205 </span><span class="lineCov">          5 :                 auto copySessionId = sessionId;</span>
+<span class="lineNum">     206 </span><span class="lineCov">          5 :                 inCallback(inResult, inMessage);</span>
+<span class="lineNum">     207 </span><span class="lineCov">          5 :                 if (SAFARI_FAILED(inResult))</span>
+<span class="lineNum">     208 </span>            :                 {
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :                         RemoveSession(copySessionId, inResult, inMessage);</span>
+<span class="lineNum">     210 </span>            :                 }
+<span class="lineNum">     211 </span><span class="lineCov">         15 :         });</span>
+<a name="212"><span class="lineNum">     212 </span>            : }</a>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineCov">          5 : void COttVenue::StopSession(const CspSessionIdType&amp; inCspSessionId, const SafariResult&amp; inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     215 </span>            : {
+<span class="lineNum">     216 </span><span class="lineCov">        105 :         OTTER_INFO_THIS(&quot;COttVenue::StopSession, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCspSessionId &lt;&lt; &quot; inErrorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; inMessage:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     217 </span><span class="lineCov">          5 :         RemoveSession(inCspSessionId, inErrorCode, inMessage);</span>
+<span class="lineNum">     218 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineCov">          2 : void COttVenue::PauseSession(const CspSessionIdType&amp; inCspSessionId, const SessionSequenceType&amp; inSessionSequence, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">     221 </span>            : {
+<span class="lineNum">     222 </span><span class="lineCov">          2 :     auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     223 </span><span class="lineCov">          4 :     if(session == nullptr)</span>
+<span class="lineNum">     224 </span>            :     {
+<span class="lineNum">     225 </span><span class="lineCov">         17 :         OTTER_WARNING_THIS(&quot;COttVenue::PauseSession, session not found! venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCspSessionId);</span>
+<span class="lineNum">     226 </span><span class="lineCov">          2 :         inCallback(SAFARI_ERROR_CSP_SESSION_NOT_FOUND, &quot;Session not found!&quot;);</span>
+<span class="lineNum">     227 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">     228 </span>            :     }
+<span class="lineNum">     229 </span><span class="lineCov">          1 :     session-&gt;Pause(inSessionSequence, inCallback);</span>
+<a name="230"><span class="lineNum">     230 </span>            : }</a>
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 : void COttVenue::OnIndicatePauseSession(const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     233 </span>            : {
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :     if (m_nightingaleAgent)</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                 m_nightingaleAgent-&gt;IndicatePauseSession(inCspSessionType);</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span><span class="lineCov">          2 : void COttVenue::ResumeSession(const CspSessionIdType&amp; inCspSessionId, const SessionSequenceType&amp; inSessionSequence, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">     239 </span>            : {
+<span class="lineNum">     240 </span><span class="lineCov">          2 :     auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     241 </span><span class="lineCov">          4 :     if(session == nullptr)</span>
+<span class="lineNum">     242 </span>            :     {
+<span class="lineNum">     243 </span><span class="lineCov">         17 :         OTTER_WARNING_THIS(&quot;COttVenue::PauseSession, session not found! venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCspSessionId);</span>
+<span class="lineNum">     244 </span><span class="lineCov">          2 :         inCallback(SAFARI_ERROR_CSP_SESSION_NOT_FOUND, &quot;Session not found!&quot;);</span>
+<span class="lineNum">     245 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">     246 </span>            :     }
+<span class="lineNum">     247 </span><span class="lineCov">          1 :     session-&gt;Resume(inSessionSequence, inCallback);</span>
+<span class="lineNum">     248 </span>            : }
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 : void COttVenue::UpdateSessionLayout(const CspSessionIdType&amp; inCspSessionId, const SessionSequenceType&amp; inSessionSequence, const Json::Value&amp; inComposeKeyList, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">     251 </span>            : {
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :     auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :     if(session == nullptr)</span>
+<span class="lineNum">     254 </span>            :     {
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :         OTTER_WARNING_THIS(&quot;COttVenue::UpdateSessionLayout, session not found! venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCspSessionId);</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :         inCallback(SAFARI_ERROR_CSP_SESSION_NOT_FOUND, &quot;Session not found!&quot;);</span>
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     258 </span>            :     }
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :         UpdateOtherSessionVideoComposeKey(inCspSessionId, inComposeKeyList, inCallback, inSessionSequence);</span>
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :     CCspVideoComposeKey videoComposeKey;</span>
+<span class="lineNum">     263 </span>            :     CspVideoComposeKeyList videoComposeKeyList;
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :     CCspVideoComposeKey::GetListByJsonArray(inComposeKeyList, &quot;&quot;, session-&gt;GetSessionType(), m_isEnableNBR1080P, m_streamingResolution, videoComposeKeyList);</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :     for (auto const&amp; videoComposeKeyElem : videoComposeKeyList)</span>
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :         videoComposeKey = videoComposeKeyElem;</span>
+<span class="lineNum">     267 </span>            :     
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :     m_cmeServiceManager-&gt;UpdateSessionLayout(session-&gt;GetSessionType(), inCspSessionId, videoComposeKey);</span>
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span>            :         //send back to hippo to update db
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         session-&gt;UpdateVideoComposeKeyToDB(inSessionSequence, videoComposeKey.ToJson(), inCallback);</span>
+<a name="273"><span class="lineNum">     273 </span>            : }</a>
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineCov">          6 : void COttVenue::UpdateOtherSessionVideoComposeKey(const CspSessionIdType&amp; inCspSessionId, const Json::Value&amp; inComposeKeyList, const ResultCallback&amp; inCallback, const SessionSequenceType&amp; inSessionSequence)</span>
+<span class="lineNum">     276 </span>            : {
+<span class="lineNum">     277 </span><span class="lineCov">          6 :     if(!JSON_IS_A_VALID_ARRAY(inComposeKeyList))</span>
+<span class="lineNum">     278 </span>            :         return;
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :     if(!inComposeKeyList[0].isMember(JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT) || !JSON_IS_A_VALID_BOOL(inComposeKeyList[0][JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT]))</span>
+<span class="lineNum">     281 </span>            :         return;
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :     bool isFollowSyncedLayout = inComposeKeyList[0][JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT].asBool();</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :     for (auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     285 </span>            :     {
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :         if(session.first == inCspSessionId)</span>
+<span class="lineNum">     287 </span>            :             continue;
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :         if(isFollowSyncedLayout != session.second-&gt;GetEnableFollowSyncedLayoutParam())</span>
+<span class="lineNum">     290 </span>            :         {
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :             CCspVideoComposeKey videoComposeKey;</span>
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :             CspVideoComposeKeyList videoComposeKeyList = session.second-&gt;GetVideoComposeKeyList();</span>
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :             for (auto const&amp; videoComposeKeyElem : videoComposeKeyList)</span>
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :                 videoComposeKey = videoComposeKeyElem;</span>
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :             videoComposeKey.SetEnableFollowSyncedLayoutParam(isFollowSyncedLayout);</span>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :             m_cmeServiceManager-&gt;UpdateSessionLayout(session.second-&gt;GetSessionType(), session.first, videoComposeKey);</span>
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :             session.second-&gt;UpdateVideoComposeKeyToDB(inSessionSequence, videoComposeKey.ToJson(), inCallback, true);</span>
+<span class="lineNum">     301 </span>            :         }
+<span class="lineNum">     302 </span>            :     }
+<span class="lineNum">     303 </span>            : }
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span><span class="lineCov">          1 : void COttVenue::SubscribeStream(</span>
+<span class="lineNum">     306 </span>            :         const std::string&amp; inCspSessionType, 
+<span class="lineNum">     307 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">     308 </span>            :         const CCspVideoComposeKey&amp; inVideoComposeKey, 
+<span class="lineNum">     309 </span>            :         const JsonValue&amp; inContext, 
+<span class="lineNum">     310 </span>            :         const ReceiveStreamCallback&amp; inAudioCallback,
+<span class="lineNum">     311 </span>            :         const ReceiveStreamCallback&amp; inVideoCallback,
+<span class="lineNum">     312 </span>            :         const ResultCallback&amp; inSubscribeResultCallback)
+<span class="lineNum">     313 </span>            : {
+<span class="lineNum">     314 </span><span class="lineCov">          2 :         if (m_cmeServiceManager == nullptr)</span>
+<span class="lineNum">     315 </span>            :         {
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 :                 m_cmeServiceManager = std::make_shared&lt;CCmeServiceManager&gt;(shared_from_this());</span>
+<span class="lineNum">     317 </span>            :         }
+<span class="lineNum">     318 </span><span class="lineCov">          1 :         m_cmeServiceManager-&gt;SubscribeStream(inCspSessionType, inCspSessionId, inVideoComposeKey, inAudioCallback, inVideoCallback, inSubscribeResultCallback);</span>
+<a name="319"><span class="lineNum">     319 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineCov">          1 : void COttVenue::UnsubscribeStream(const std::string&amp; inCspSessionType, const CspSessionIdType&amp; inCspSessionId, const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">     322 </span>            : {
+<span class="lineNum">     323 </span><span class="lineCov">          1 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     324 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;UnsubscribeStream(inCspSessionType, inCspSessionId, inVideoComposeKey);</span>
+<span class="lineNum">     325 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 : void COttVenue::AttachCmeService(const std::string&amp; inCspSessionType, const CspSessionIdType&amp; inCspSessionId, const JsonValue&amp; inMetadata, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">     328 </span>            : {
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :         if (m_cmeServiceManager == nullptr)</span>
+<span class="lineNum">     330 </span>            :         {
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :                 m_cmeServiceManager = std::make_shared&lt;CCmeServiceManager&gt;(shared_from_this());</span>
+<span class="lineNum">     332 </span>            :         }
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         m_cmeServiceManager-&gt;AttachCmeService(inCspSessionType, inCspSessionId, inMetadata, inCallback);</span>
+<a name="334"><span class="lineNum">     334 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 : void COttVenue::DetachCmeService(const std::string&amp; inCspSessionType, const CspSessionIdType&amp; inCspSessionId)</span>
+<span class="lineNum">     337 </span>            : {
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :                 m_cmeServiceManager-&gt;DetachCmeService(inCspSessionType, inCspSessionId);</span>
+<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span><span class="lineCov">          1 : void COttVenue::TriggerPli(const std::string&amp; inCspSessionType, const CspSessionIdType&amp; inCspSessionId, const CspVideoComposeKeyList&amp; inVideoComposeKeyList)</span>
+<span class="lineNum">     343 </span>            : {
+<span class="lineNum">     344 </span><span class="lineCov">          1 :     if (m_cmeServiceManager)</span>
+<span class="lineNum">     345 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;TriggerPli(inCspSessionType, inCspSessionId, inVideoComposeKeyList);</span>
+<a name="346"><span class="lineNum">     346 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span><span class="lineCov">          1 : void COttVenue::HandleCspSessionError(CspSessionIdType inCspSessionId, SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     349 </span>            : {
+<span class="lineNum">     350 </span><span class="lineCov">          1 :         CspSessionIdTypeVector sessionIds(1, inCspSessionId);</span>
+<span class="lineNum">     351 </span><span class="lineCov">          1 :         HandleCspSessionsError(sessionIds, inReason, inMessage);</span>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineCov">          1 : bool COttVenue::LeftConferenceAbnormally() const</span>
+<span class="lineNum">     355 </span>            : {
+<span class="lineNum">     356 </span><span class="lineCov">          2 :         if (m_nightingaleAgent == nullptr)</span>
+<span class="lineNum">     357 </span>            :                 return false;
+<span class="lineNum">     358 </span><span class="lineCov">          2 :         return m_nightingaleAgent-&gt;LeftConferenceAbnormally();</span>
+<a name="359"><span class="lineNum">     359 </span>            : }</a>
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span><span class="lineCov">         15 : boost::asio::io_service&amp; COttVenue::GetMainThreadIoService() </span>
+<span class="lineNum">     362 </span>            : { 
+<span class="lineNum">     363 </span><span class="lineCov">         40 :         return COttVenueManager::Instance().GetMainThreadIoService(); </span>
+<a name="364"><span class="lineNum">     364 </span>            : }</a>
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span><span class="lineCov">          1 : boost::asio::io_service&amp; COttVenue::GetStreamThreadIoService()</span>
+<span class="lineNum">     367 </span>            : {
+<span class="lineNum">     368 </span><span class="lineCov">         21 :         return m_streamIoServiceWrapper.GetIoService(); </span>
+<span class="lineNum">     369 </span>            : }
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 : bool COttVenue::GetSessionFeatureToggle(const CspSessionIdType&amp; inCspSessionId, const std::string&amp; inFeatureToggle)</span>
+<span class="lineNum">     372 </span>            : {
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :     auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :     if (session)</span>
+<span class="lineNum">     375 </span>            :     {
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :         if (JSON_KEY_ENABLE_RECORD_SPEAKER_ATTRIBUTE == inFeatureToggle)</span>
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :             return session-&gt;GetEnableRecordSpeakerAttributeParam();</span>
+<span class="lineNum">     378 </span>            :     }
+<span class="lineNum">     379 </span>            :     //default
+<span class="lineNum">     380 </span>            :     return false;
+<a name="381"><span class="lineNum">     381 </span>            : }</a>
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span><span class="lineCov">          1 : JsonValue COttVenue::ToJson() const</span>
+<span class="lineNum">     384 </span>            : {
+<span class="lineNum">     385 </span><span class="lineCov">          1 :     JsonValue info;</span>
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span><span class="lineCov">          2 :         info[JSON_KEY_VENUE_ID] = m_venueId.ToString();</span>
+<span class="lineNum">     388 </span><span class="lineCov">          1 :         info[JSON_KEY_CB_ADDR] = m_cbAddr;</span>
+<span class="lineNum">     389 </span><span class="lineCov">          1 :         info[JSON_KEY_NIGHTINGALE_AGENT] = m_nightingaleAgent ? m_nightingaleAgent-&gt;ToJson() : JsonValue();</span>
+<span class="lineNum">     390 </span><span class="lineCov">          1 :     info[JSON_KEY_CME_SERVICE_MANAGER] = m_cmeServiceManager ? m_cmeServiceManager-&gt;ToJson() : JsonValue();</span>
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span><span class="lineCov">          2 :     info[JSON_KEY_NUMBER_OF_SESSIONS] = m_cspSessions.size();</span>
+<span class="lineNum">     393 </span><span class="lineCov">          2 :     JsonValue jsonSessions;</span>
+<span class="lineNum">     394 </span><span class="lineCov">          1 :     Json::ArrayIndex id = 0;</span>
+<span class="lineNum">     395 </span><span class="lineCov">          5 :     for (const auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     396 </span>            :     {
+<span class="lineNum">     397 </span><span class="lineCov">          1 :         jsonSessions[id++] = session.second-&gt;ToJson();</span>
+<span class="lineNum">     398 </span>            :     }
+<span class="lineNum">     399 </span><span class="lineCov">          1 :     info[JSON_KEY_SESSIONS] = jsonSessions;</span>
+<span class="lineNum">     400 </span><span class="lineCov">          1 :     info[JSON_KEY_CONTENT_SHARING_CONTEXT] = m_contentSharingContext.ToJson();</span>
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span><span class="lineCov">          1 :     return info;</span>
+<a name="403"><span class="lineNum">     403 </span>            : }</a>
+<span class="lineNum">     404 </span>            : 
+<span class="lineNum">     405 </span><span class="lineCov">          2 : void COttVenue::HandleStatisticsTimer(bool inIsOneMinute)</span>
+<span class="lineNum">     406 </span>            : {
+<span class="lineNum">     407 </span><span class="lineCov">          2 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     408 </span><span class="lineCov">          2 :                 m_cmeServiceManager-&gt;HandleStatisticsTimer(inIsOneMinute);</span>
+<span class="lineNum">     409 </span><span class="lineCov">         12 :         for(auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     410 </span><span class="lineCov">          4 :                 session.second-&gt;HandleStatisticsTimer(inIsOneMinute);</span>
+<a name="411"><span class="lineNum">     411 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineCov">          1 : void COttVenue::HandleUpdateRosterList(const Json::Value&amp; inMessage)</span>
+<span class="lineNum">     414 </span>            : {
+<span class="lineNum">     415 </span><span class="lineCov">          1 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     416 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;UpdateRosterList(inMessage);</span>
+<a name="417"><span class="lineNum">     417 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     418 </span>            : 
+<span class="lineNum">     419 </span><span class="lineCov">          1 : void COttVenue::HandleContentSharingStart(const JsonValue&amp; inMessage)</span>
+<span class="lineNum">     420 </span>            : {
+<span class="lineNum">     421 </span><span class="lineCov">          1 :         if (IsContentSharingStarted())</span>
+<span class="lineNum">     422 </span>            :         {
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :                 OTTER_WARNING_THIS(&quot;COttVenue::HandleContentSharingStart, content sharing already started! venueId:&quot; &lt;&lt; m_venueId);</span>
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     425 </span>            :         }
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">          1 :         auto isHfpsShare = inMessage[JSON_KEY_DATA][JSON_KEY_IS_HFPS_SHARE].asBool();</span>
+<span class="lineNum">     428 </span><span class="lineCov">          1 :         auto presenterName = inMessage[JSON_KEY_DATA][JSON_KEY_PRESENTER_NAME].asString();</span>
+<span class="lineNum">     429 </span><span class="lineCov">          1 :         auto resolution = inMessage[JSON_KEY_DATA][JSON_KEY_RESOLUTION].asUInt();</span>
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span><span class="lineCov">          2 :         Json::Value sessionTypeList(Json::arrayValue);</span>
+<span class="lineNum">     432 </span><span class="lineCov">          4 :         for (const auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     433 </span>            :         {
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :                 SHARE_RESOLUTION_METRICS_LOG(&quot;ShareResolution&quot;, &quot;CspSession&quot;, m_venueId.GetId(), resolution, session.second-&gt;GetSessionType());</span>
+<span class="lineNum">     435 </span>            :         }
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span><span class="lineCov">          1 :         m_contentSharingContext.Start(isHfpsShare, presenterName, resolution);</span>
+<span class="lineNum">     438 </span><span class="lineCov">          1 :     if (m_cmeServiceManager)</span>
+<span class="lineNum">     439 </span><span class="lineCov">          1 :         m_cmeServiceManager-&gt;ContentSharingStart(presenterName, resolution);</span>
+<a name="440"><span class="lineNum">     440 </span>            : }</a>
+<span class="lineNum">     441 </span>            : 
+<span class="lineNum">     442 </span><span class="lineCov">          1 : void COttVenue::HandleContentSharingStop()</span>
+<span class="lineNum">     443 </span>            : {
+<span class="lineNum">     444 </span><span class="lineCov">          1 :         if (!IsContentSharingStarted())</span>
+<span class="lineNum">     445 </span>            :         {
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :                 OTTER_WARNING_THIS(&quot;COttVenue::HandleContentSharingStop, content sharing not started! venueId:&quot; &lt;&lt; m_venueId);</span>
+<span class="lineNum">     447 </span><span class="lineCov">          1 :                 return;</span>
+<span class="lineNum">     448 </span>            :         }
+<span class="lineNum">     449 </span>            : 
+<span class="lineNum">     450 </span><span class="lineCov">          1 :         m_contentSharingContext.Stop();</span>
+<span class="lineNum">     451 </span><span class="lineCov">          1 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     452 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;ContentSharingStop();</span>
+<a name="453"><span class="lineNum">     453 </span>            : }</a>
+<span class="lineNum">     454 </span>            : 
+<span class="lineNum">     455 </span><span class="lineCov">          1 : void COttVenue::ReopenSendonlySession2CmeNodes(SafariResult inReason)</span>
+<span class="lineNum">     456 </span>            : {
+<span class="lineNum">     457 </span><span class="lineCov">          1 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     458 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;ReopenSendonlySession2CmeNodes(inReason);</span>
+<a name="459"><span class="lineNum">     459 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     460 </span>            : 
+<span class="lineNum">     461 </span><span class="lineCov">          1 : void COttVenue::HandleNightingaleError(SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     462 </span>            : {
+<span class="lineNum">     463 </span><span class="lineCov">          1 :         HandleUnrecoverableError(inErrorCode, inMessage);</span>
+<a name="464"><span class="lineNum">     464 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     465 </span>            : 
+<span class="lineNum">     466 </span><span class="lineCov">          1 : void COttVenue::OnLeaveConferenceAbnormally()</span>
+<span class="lineNum">     467 </span>            : {
+<span class="lineNum">     468 </span><span class="lineCov">          6 :         for (auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     469 </span>            :         {
+<span class="lineNum">     470 </span><span class="lineCov">          2 :                 session.second-&gt;OnLeaveConferenceAbnormally();</span>
+<span class="lineNum">     471 </span>            :         }
+<a name="472"><span class="lineNum">     472 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     473 </span>            : 
+<span class="lineNum">     474 </span><span class="lineCov">          1 : void COttVenue::OnRejoinConferenceSuccessfully()</span>
+<span class="lineNum">     475 </span>            : {
+<span class="lineNum">     476 </span><span class="lineCov">          6 :         for (auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     477 </span>            :         {
+<span class="lineNum">     478 </span><span class="lineCov">          2 :                 session.second-&gt;OnRejoinConferenceSuccessfully();</span>
+<span class="lineNum">     479 </span>            :         }
+<a name="480"><span class="lineNum">     480 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     481 </span>            : 
+<span class="lineNum">     482 </span><span class="lineCov">          1 : void COttVenue::HandleOpenSendonlySessionResponseFromCme(CmeSessionSharedPtr inCmeSession)</span>
+<span class="lineNum">     483 </span>            : {
+<span class="lineNum">     484 </span><span class="lineCov">          2 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     485 </span><span class="lineCov">          2 :                 m_nightingaleAgent-&gt;OpenCmeSendonlySession(inCmeSession-&gt;GetSessionId(), inCmeSession-&gt;GetMediaServiceId(), inCmeSession-&gt;GetOfferSdp(), inCmeSession-&gt;GetAnswerSdp());</span>
+<a name="486"><span class="lineNum">     486 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span><span class="lineCov">          1 : void COttVenue::HandleCloseSendonlySessionIndicationFromCme(CmeSessionSharedPtr inCmeSession, SafariResult inReason)</span>
+<span class="lineNum">     489 </span>            : {
+<span class="lineNum">     490 </span><span class="lineCov">          2 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     491 </span><span class="lineCov">          2 :                 m_nightingaleAgent-&gt;CloseCmeSendonlySession(inCmeSession-&gt;GetSessionId(), inCmeSession-&gt;GetMediaServiceId(), inReason);</span>
+<a name="492"><span class="lineNum">     492 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span><span class="lineNoCov">          0 : void COttVenue::HandleFloorGrantedMessageFromCme(CmeSessionSharedPtr inCmeSession)</span>
+<span class="lineNum">     495 </span>            : {
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :                 m_nightingaleAgent-&gt;IndicateContentSharingResponse();</span>
+<a name="498"><span class="lineNum">     498 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span><span class="lineCov">          1 : void COttVenue::HandleCmeWssError(const WssUrlType&amp; inCmeNodeUrl, SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     501 </span>            : {
+<span class="lineNum">     502 </span><span class="lineCov">          1 :         if (m_cmeServiceManager)</span>
+<span class="lineNum">     503 </span><span class="lineCov">          1 :                 m_cmeServiceManager-&gt;HandleCmeWssError(inCmeNodeUrl, inErrorCode, inMessage);</span>
+<a name="504"><span class="lineNum">     504 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span><span class="lineCov">          1 : void COttVenue::HandleCmeServiceError(const CmeMediaServiceIdType&amp; inCmeMediaServiceId, SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     507 </span>            : {
+<span class="lineNum">     508 </span>            :         CspSessionIdTypeVector sessionIdVector;
+<span class="lineNum">     509 </span><span class="lineCov">          5 :         for (const auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     510 </span><span class="lineCov">          1 :                 if (CCmeServiceProperties::MatchMediaServiceId(session.second-&gt;GetSessionType(), inCmeMediaServiceId))</span>
+<span class="lineNum">     511 </span><span class="lineCov">          1 :                         sessionIdVector.push_back(session.first);</span>
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span><span class="lineCov">          1 :         HandleCspSessionsError(sessionIdVector, inErrorCode, inMessage);</span>
+<a name="514"><span class="lineNum">     514 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     515 </span>            : 
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 : void COttVenue::OnCmeRecvonlyVideoSessionOpenFirstTime(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     517 </span>            : {
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :                 m_nightingaleAgent-&gt;IndicateCmeRecvonlyVideoSessionOpenFirstTime(inVideoComposeKey, inCspSessionType);</span>
+<a name="520"><span class="lineNum">     520 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     521 </span>            : 
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 : void COttVenue::OnCmeRecvonlyVideoSessionRelease(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     523 </span>            : {
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :         if (m_nightingaleAgent)</span>
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :                 m_nightingaleAgent-&gt;IndicateCmeRecvonlyVideoSessionRelease(inVideoComposeKey, inCspSessionType);</span>
+<a name="526"><span class="lineNum">     526 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 : void COttVenue::OnCmeRecvonlyVideoSessionUpdate(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     529 </span>            : {
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 :     if (m_nightingaleAgent)</span>
+<span class="lineNum">     531 </span><span class="lineNoCov">          0 :                 m_nightingaleAgent-&gt;IndicateCmeRecvonlyVideoSessionUpdate(inOldVideoComposeKey, inNewVideoComposeKey, inCspSessionType);</span>
+<a name="532"><span class="lineNum">     532 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     533 </span>            : 
+<span class="lineNum">     534 </span><span class="lineNoCov">          0 : void COttVenue::ReportSpeakerAttributionToSrs(const JsonValue&amp; inMessage, bool inForce)</span>
+<span class="lineNum">     535 </span>            : {
+<span class="lineNum">     536 </span><span class="lineNoCov">          0 :         JsonValue reportInfo = inMessage;</span>
+<span class="lineNum">     537 </span><span class="lineNoCov">          0 :         reportInfo[&quot;streamId&quot;] = GetNbrSessionStreamId();</span>
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 :     COttVenueManager::Instance().ReportSpeakerAttributionToTransmitter(reportInfo, inForce);</span>
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span><span class="lineCov">         15 : OttSessionSharedPtr COttVenue::GetSession(const CspSessionIdType&amp; inCspSessionId)</span>
+<span class="lineNum">     542 </span>            : {
+<span class="lineNum">     543 </span><span class="lineCov">         30 :         auto it = m_cspSessions.find(inCspSessionId);</span>
+<span class="lineNum">     544 </span><span class="lineCov">         30 :         if (it == m_cspSessions.end())</span>
+<span class="lineNum">     545 </span><span class="lineCov">          3 :                 return nullptr;</span>
+<span class="lineNum">     546 </span><span class="lineCov">         12 :         return it-&gt;second;</span>
+<span class="lineNum">     547 </span>            : }
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span><span class="lineCov">          6 : OttSessionSharedPtr COttVenue::CreateSession(const std::string&amp; inSessionType, const CspSessionIdType&amp; inCspSessionId, bool inIsTopOtter)</span>
+<span class="lineNum">     550 </span>            : {
+<span class="lineNum">     551 </span><span class="lineCov">         18 :         auto session = COttSessionFactory::CreateSession(shared_from_this(), inSessionType, inCspSessionId, inIsTopOtter);</span>
+<span class="lineNum">     552 </span><span class="lineCov">         12 :         m_cspSessions.insert(OttSessionSharedPtrMap::value_type(inCspSessionId, session));</span>
+<span class="lineNum">     553 </span><span class="lineCov">          6 :         return session;</span>
+<span class="lineNum">     554 </span>            : }
+<span class="lineNum">     555 </span>            : 
+<span class="lineNum">     556 </span><span class="lineCov">          5 : void COttVenue::RemoveSession(const CspSessionIdType&amp; inCspSessionId, const SafariResult&amp; inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     557 </span>            : {
+<span class="lineNum">     558 </span><span class="lineCov">          5 :         auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     559 </span><span class="lineCov">         10 :         if (session == nullptr)</span>
+<span class="lineNum">     560 </span><span class="lineCov">          5 :                 return;</span>
+<span class="lineNum">     561 </span>            : 
+<span class="lineNum">     562 </span><span class="lineCov">          5 :         session-&gt;Release(inErrorCode, inMessage);</span>
+<span class="lineNum">     563 </span><span class="lineCov">          5 :         m_cspSessions.erase(inCspSessionId);</span>
+<span class="lineNum">     564 </span><span class="lineCov">         10 :         if (m_cspSessions.empty())</span>
+<span class="lineNum">     565 </span>            :         {
+<span class="lineNum">     566 </span><span class="lineCov">         12 :                 COttVenueManager::Instance().RemoveVenue(shared_from_this(), inErrorCode, inMessage);</span>
+<span class="lineNum">     567 </span>            :         }
+<a name="568"><span class="lineNum">     568 </span>            : }</a>
+<span class="lineNum">     569 </span>            : 
+<span class="lineNum">     570 </span><span class="lineCov">          2 : void COttVenue::HandleCspSessionsError(const CspSessionIdTypeVector&amp; inSessionIds, SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     571 </span>            : {
+<span class="lineNum">     572 </span><span class="lineCov">         10 :         for (auto&amp; sessionId : inSessionIds)</span>
+<span class="lineNum">     573 </span>            :         {
+<span class="lineNum">     574 </span><span class="lineCov">          2 :                 SendStopSession2Hippo(sessionId, inReason, inMessage);</span>
+<span class="lineNum">     575 </span><span class="lineCov">          2 :                 StopSession(sessionId, inReason, inMessage);</span>
+<span class="lineNum">     576 </span>            :         }
+<span class="lineNum">     577 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">     578 </span>            : 
+<span class="lineNum">     579 </span><span class="lineCov">          1 : void COttVenue::SendStopSession2HippoForAllSessions(SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     580 </span>            : {
+<span class="lineNum">     581 </span><span class="lineCov">         19 :         OTTER_INFO_THIS(&quot;COttVenue::SendStopSession2HippoForAllSessions, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     582 </span><span class="lineCov">          4 :         for (auto&amp; session : m_cspSessions)</span>
+<span class="lineNum">     583 </span>            :         {
+<span class="lineNum">     584 </span><span class="lineNoCov">          0 :                 SendStopSession2Hippo(session.second, inReason, inMessage);</span>
+<span class="lineNum">     585 </span>            :         }
+<span class="lineNum">     586 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     587 </span>            : 
+<span class="lineNum">     588 </span><span class="lineCov">          2 : void COttVenue::SendStopSession2Hippo(const CspSessionIdType&amp; inCspSessionId, SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     589 </span>            : {
+<span class="lineNum">     590 </span><span class="lineCov">          2 :     auto session = GetSession(inCspSessionId);</span>
+<span class="lineNum">     591 </span><span class="lineCov">          4 :     if(session == nullptr)</span>
+<span class="lineNum">     592 </span>            :     {
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :         OTTER_WARNING_THIS(&quot;COttVenue::SendStopSession2Hippo, session not found! venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inCspSessionId &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     594 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">     595 </span>            :     }
+<span class="lineNum">     596 </span><span class="lineCov">          4 :     SendStopSession2Hippo(session, inReason, inMessage);</span>
+<span class="lineNum">     597 </span>            : }
+<span class="lineNum">     598 </span>            : 
+<span class="lineNum">     599 </span><span class="lineCov">          2 : void COttVenue::SendStopSession2Hippo(OttSessionSharedPtr inSession, SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     600 </span>            : {
+<span class="lineNum">     601 </span><span class="lineCov">         58 :     OTTER_INFO_THIS(&quot;COttVenue::SendStopSession2Hippo, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; sessionId:&quot; &lt;&lt; inSession-&gt;GetSessionId() &lt;&lt; &quot; isStartedSuccessfully:&quot; &lt;&lt; inSession-&gt;IsStartedSuccessfully() &lt;&lt; &quot; state:&quot; &lt;&lt; inSession-&gt;GetSessionState() &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span><span class="lineCov">          6 :     if (!inSession-&gt;IsStartedSuccessfully())</span>
+<span class="lineNum">     604 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     605 </span>            : 
+<span class="lineNum">     606 </span>            :     InitiatorSharedPtr initiator = CRequestInitiatorFactory::Create(
+<span class="lineNum">     607 </span>            :         INITIATOR_OTTER_STOP_SESSION_TO_HIPPO,
+<span class="lineNum">     608 </span>            :         GetMainThreadIoService(),
+<span class="lineNum">     609 </span><span class="lineCov">          4 :         inSession-&gt;GetHippoBaseUrl(),</span>
+<span class="lineNum">     610 </span><span class="lineCov">         10 :         &quot;/hippo/api/v1/sessions/&quot; + inSession-&gt;GetSessionId());</span>
+<span class="lineNum">     611 </span><span class="lineCov">          2 :     initiator-&gt;Body()[JSON_KEY_REASON] = inReason;</span>
+<span class="lineNum">     612 </span><span class="lineCov">         10 :     initiator-&gt;Delete([initiator,inReason](const RestNetwork::RestResponseSharedPtr&amp; response) mutable {</span>
+<span class="lineNum">     613 </span><span class="lineNoCov">          0 :         initiator.reset();</span>
+<span class="lineNum">     614 </span><span class="lineCov">          8 :     });</span>
+<span class="lineNum">     615 </span>            : }
+<span class="lineNum">     616 </span>            : 
+<span class="lineNum">     617 </span><span class="lineCov">          1 : void COttVenue::HandleUnrecoverableError(SafariResult inErrorCode, const std::string&amp; inMessage)</span>
+<span class="lineNum">     618 </span>            : {
+<span class="lineNum">     619 </span><span class="lineCov">         19 :         OTTER_WARNING_THIS(&quot;COttVenue::HandleUnrecoverableError, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; errorCode:&quot; &lt;&lt; inErrorCode &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     620 </span><span class="lineCov">          1 :         SendStopSession2HippoForAllSessions(inErrorCode, inMessage);</span>
+<span class="lineNum">     621 </span><span class="lineCov">          3 :         COttVenueManager::Instance().RemoveVenue(shared_from_this(), inErrorCode, inMessage);</span>
+<a name="622"><span class="lineNum">     622 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     623 </span>            : 
+<span class="lineNum">     624 </span><span class="lineNoCov">          0 : uint16_t COttVenue::GetMediaSessionBitmapToJoin(const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     625 </span>            : {
+<span class="lineNum">     626 </span><span class="lineCov">          6 :         auto mediaSessionBitmapOfCspSessionType = CCmeServiceProperties::GetMediaSessionBitmapForCspSession(inCspSessionType);</span>
+<span class="lineNum">     627 </span>            :         /* Remove those session types that have already been joined. */
+<span class="lineNum">     628 </span><span class="lineCov">          6 :         return (m_mediaSessionBitmap ^ mediaSessionBitmapOfCspSessionType) &amp; mediaSessionBitmapOfCspSessionType; // (a XOR b) AND b</span>
+<a name="629"><span class="lineNum">     629 </span>            : }</a>
+<span class="lineNum">     630 </span>            : 
+<span class="lineNum">     631 </span><span class="lineCov">          8 : void COttVenue::GetLocusIdInContext(const Json::Value&amp; inContext)</span>
+<span class="lineNum">     632 </span>            : {
+<span class="lineNum">     633 </span><span class="lineCov">         10 :     if(inContext.isMember(JSON_KEY_LOCUS_ID) &amp;&amp; JSON_IS_A_VALID_STRING(inContext[JSON_KEY_LOCUS_ID]))</span>
+<span class="lineNum">     634 </span>            :     {
+<span class="lineNum">     635 </span><span class="lineCov">          2 :         CHttpUrlParser urlParser(inContext[JSON_KEY_LOCUS_ID].asString());</span>
+<span class="lineNum">     636 </span><span class="lineCov">          2 :         if (urlParser.GetPath().empty())</span>
+<span class="lineNum">     637 </span><span class="lineNoCov">          0 :             return;</span>
+<span class="lineNum">     638 </span>            :         
+<span class="lineNum">     639 </span><span class="lineCov">          5 :         std::vector&lt;std::string&gt; subLists = SafariSplit(urlParser.GetPath(), &quot;/&quot;);</span>
+<span class="lineNum">     640 </span><span class="lineCov">          1 :         if (subLists.empty())</span>
+<span class="lineNum">     641 </span><span class="lineNoCov">          0 :             return;</span>
+<span class="lineNum">     642 </span>            : 
+<span class="lineNum">     643 </span><span class="lineCov">          3 :         std::string locusId = subLists[subLists.size()-1];</span>
+<span class="lineNum">     644 </span><span class="lineCov">          1 :         if (IS_VALID_UUID(locusId))</span>
+<span class="lineNum">     645 </span>            :         {
+<span class="lineNum">     646 </span><span class="lineNoCov">          0 :             m_locusId = locusId;</span>
+<span class="lineNum">     647 </span><span class="lineNoCov">          0 :             OTTER_INFO_THIS(&quot;COttVenue::GetLocusIdInContext, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; locusId:&quot; &lt;&lt; m_locusId);</span>
+<span class="lineNum">     648 </span>            :         }
+<span class="lineNum">     649 </span>            :         else
+<span class="lineNum">     650 </span><span class="lineCov">         16 :             OTTER_WARNING_THIS(&quot;COttVenue::GetLocusIdInContext, last=&quot; &lt;&lt; locusId );</span>
+<span class="lineNum">     651 </span>            :     }    
+<a name="652"><span class="lineNum">     652 </span>            : }</a>
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span><span class="lineCov">          6 : void COttVenue::GetSiteUrlInContext(const Json::Value&amp; inContext)</span>
+<span class="lineNum">     655 </span>            : {
+<span class="lineNum">     656 </span><span class="lineCov">          6 :     if (JSON_IS_A_VALID_STRING(inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_EUREKA_INFO][JSON_KEY_SITE_URL]))</span>
+<span class="lineNum">     657 </span>            :     {
+<span class="lineNum">     658 </span><span class="lineNoCov">          0 :         m_siteUrl = inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_EUREKA_INFO][JSON_KEY_SITE_URL].asString();</span>
+<span class="lineNum">     659 </span><span class="lineNoCov">          0 :         OTTER_INFO_THIS(&quot;COttVenue::GetSiteUrlInContext, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; m_siteUrl:&quot; &lt;&lt; m_siteUrl);</span>
+<span class="lineNum">     660 </span>            :     }
+<a name="661"><span class="lineNum">     661 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     662 </span>            : 
+<span class="lineNum">     663 </span><span class="lineCov">          6 : void COttVenue::GetEnable1080PResolutionInContext(const Json::Value&amp; inContext)</span>
+<span class="lineNum">     664 </span>            : {
+<span class="lineNum">     665 </span><span class="lineCov">          6 :         m_isEnableNBR1080P = CCspVideoComposeKey::IsEnableNBR1080P(inContext);</span>
+<span class="lineNum">     666 </span><span class="lineCov">          6 :         m_streamingResolution = CCspVideoComposeKey::GetStreamingResolution(inContext);</span>
+<span class="lineNum">     667 </span>            : 
+<span class="lineNum">     668 </span><span class="lineCov">        114 :     OTTER_INFO_THIS(&quot;COttVenue::GetEnable1080PResolutionInContext, venueId:&quot; &lt;&lt; m_venueId &lt;&lt; &quot; m_isEnableNBR1080P:&quot; &lt;&lt; m_isEnableNBR1080P &lt;&lt; &quot; m_streamingResolution:&quot; &lt;&lt; m_streamingResolution);</span>
+<a name="669"><span class="lineNum">     669 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     670 </span>            : 
+<span class="lineNum">     671 </span><span class="lineCov">          6 : void COttVenue::SetNbrSessionStreamId(const Json::Value&amp; inContext)</span>
+<span class="lineNum">     672 </span>            : {
+<span class="lineNum">     673 </span><span class="lineCov">          6 :         std::string sessionType = inContext[JSON_KEY_SESSION_TYPE].asString();</span>
+<span class="lineNum">     674 </span><span class="lineCov">          6 :         if(SESSION_TYPE_WEBEX_NBR == sessionType &amp;&amp; inContext[JSON_KEY_EXTEND_INFO].isObject() &amp;&amp; inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_RTMP_STREAM_URL].isString())</span>
+<span class="lineNum">     675 </span>            :     {
+<span class="lineNum">     676 </span>            :                 //rtmpStreamUrl example: rtmp://localhost:1935/live?confid=221336515882518416&amp;trackingID=wbxcb_6488d581-6be0-46b6-b592-f745630b2746/ae9b48bc817f103aa6b3005056a3c35b
+<span class="lineNum">     677 </span><span class="lineNoCov">          0 :         std::string rtmpStreamUrl = inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_RTMP_STREAM_URL].asString();</span>
+<span class="lineNum">     678 </span><span class="lineNoCov">          0 :                 auto pos = rtmpStreamUrl.rfind('/');</span>
+<span class="lineNum">     679 </span><span class="lineNoCov">          0 :         if (pos == std::string::npos)</span>
+<span class="lineNum">     680 </span><span class="lineNoCov">          0 :                 OTTER_ERROR_THIS(&quot;COttVenue::SetNbrSessionStreamId, unexpected error rtmpStreamUrl:&quot; &lt;&lt; rtmpStreamUrl);</span>
+<span class="lineNum">     681 </span>            :         else
+<span class="lineNum">     682 </span>            :         {
+<span class="lineNum">     683 </span><span class="lineNoCov">          0 :                 pos += 1;</span>
+<span class="lineNum">     684 </span><span class="lineNoCov">          0 :                 m_nbrSessionStreamId = rtmpStreamUrl.substr(pos);</span>
+<a name="685"><span class="lineNum">     685 </span>            :         }        </a>
+<span class="lineNum">     686 </span>            :     }
+<span class="lineNum">     687 </span><span class="lineCov">          9 : }</span>
+<span class="lineNum">     688 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

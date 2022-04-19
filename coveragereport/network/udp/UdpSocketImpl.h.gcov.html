@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/udp/UdpSocketImpl.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/udp</a> - UdpSocketImpl.h<span style="font-size: 80%;"> (source / <a href="UdpSocketImpl.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * Copyright 2011, Cisco Systems Inc.
+<span class="lineNum">       3 </span>            :  */
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #ifndef UDPSOCKET_IMPL_H
+<span class="lineNum">       6 </span>            : #define UDPSOCKET_IMPL_H
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &lt;boost/enable_shared_from_this.hpp&gt;
+<span class="lineNum">       9 </span>            : #include &lt;boost/optional.hpp&gt;
+<span class="lineNum">      10 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      11 </span>            : #include &lt;functional&gt;
+<span class="lineNum">      12 </span>            : #include &quot;UdpSocketDefines.h&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : using namespace boost::asio::ip;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace UDP {
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :     typedef std::function&lt;void (uint8_t*, std::size_t, udp::endpoint&amp;)&gt; RecvCallback;
+<span class="lineNum">      19 </span>            :     typedef std::function&lt;void (const boost::system::error_code&amp; , std::size_t)&gt; SendCallback;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            :     class CUdpSocketImpl : public std::enable_shared_from_this&lt;CUdpSocketImpl&gt; {
+<span class="lineNum">      22 </span>            :     public:
+<span class="lineNum">      23 </span>            :         CUdpSocketImpl(boost::asio::io_service&amp; io, const udp::endpoint&amp; inLocalEndpoint);
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            :         virtual ~CUdpSocketImpl();
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            :         void SetReadHandler(RecvCallback func);
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :         virtual void AsyncSendTo(const uint8_t* inData, std::size_t inSize, const udp::endpoint&amp; inRemoteEndpoint, const SendCallback&amp; inCallback) = 0;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         virtual void AsyncSendTo(const std::string&amp; inData, const udp::endpoint&amp; inRemoteEndpoint, const SendCallback&amp;);
+<span class="lineNum">      32 </span>            : 
+<a name="33"><span class="lineNum">      33 </span>            :         virtual void Init();</a>
+<span class="lineNum">      34 </span>            : 
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">          1 :         virtual const udp::endpoint&amp; GetLocalEndpoint() const { return m_localEndpoint;};</span></a>
+<span class="lineNum">      36 </span>            : 
+<a name="37"><span class="lineNum">      37 </span><span class="lineNoCov">          0 :         virtual uint64_t GetNumReceive() const { return m_numRecv; }</span></a>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         virtual uint64_t GetNumTransmit() const { return m_numXmit; }</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :     protected:
+<span class="lineNum">      42 </span>            :         virtual void RegisterReadHandler() = 0;
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         virtual void HandleRead(const boost::system::error_code&amp; error, std::size_t bytes);
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :         virtual void HandleWrite(const boost::system::error_code&amp; error, std::size_t bytes, const SendCallback&amp; inCallback);
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">      49 </span>            :         udp::endpoint m_localEndpoint;
+<span class="lineNum">      50 </span>            :         RecvCallback m_recvCallback;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :         bool m_haveNewReadHandler;
+<span class="lineNum">      53 </span>            :         RecvCallback m_newReadHandler;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         UdpSocketAsioHandlerSharedPtr m_Handler;
+<span class="lineNum">      56 </span>            :         friend class CUdpSocketAsioHandler;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         uint64_t m_numRecv;
+<span class="lineNum">      59 </span>            :         uint64_t m_numXmit;
+<span class="lineNum">      60 </span>            :     };
+<span class="lineNum">      61 </span>            : };
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

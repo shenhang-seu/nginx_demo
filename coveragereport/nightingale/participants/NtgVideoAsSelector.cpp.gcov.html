@@ -1,0 +1,1231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/NtgVideoAsSelector.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - NtgVideoAsSelector.cpp<span style="font-size: 80%;"> (source / <a href="NtgVideoAsSelector.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">348</td>
+            <td class="headerCovTableEntry">531</td>
+            <td class="headerCovTableEntryLo">65.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">45</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntryMed">77.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;utility&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">       3 </span>            : #include &quot;NtgParticipantManager.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;CmeServiceProperties.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">       9 </span>            : /// class CNtgVideoAsSelector
+<span class="lineNum">      10 </span>            : /////////////////////////////////////////////////////////////////////
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">         40 : CNtgVideoAsSelector::CNtgVideoAsSelector(</span>
+<span class="lineNum">      13 </span>            :     const UpdateSelectorSubscriptionFunc&amp; inUpdateASScrFunc)
+<span class="lineNum">      14 </span><span class="lineCov">        120 : : m_updateASScrFunc(inUpdateASScrFunc)</span>
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span><span class="lineCov">        600 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::CNtgVideoAsSelector&quot;);</span>
+<span class="lineNum">      17 </span><span class="lineCov">         40 : }</span>
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineCov">        280 : CNtgVideoAsSelector::~CNtgVideoAsSelector()</span>
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span><span class="lineCov">        600 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::~CNtgVideoAsSelector&quot;);</span>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         40 : }</span></a>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::Release()</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :     m_cmeVideoScrContext-&gt;Release();</span>
+<a name="27"><span class="lineNum">      27 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">         11 : void CNtgVideoAsSelector::AddVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span><span class="lineCov">         22 :     if(m_layoutMgr-&gt;AddVideoComposeKey(inVideoComposeKey, m_cmeVideoScrContext-&gt;GetScrRequestNum()))</span>
+<span class="lineNum">      32 </span><span class="lineCov">          6 :         AdjustPickedVideoSoureOrResolutionByLayout();</span>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">         11 : }</span></a>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineCov">          8 : void CNtgVideoAsSelector::RemoveVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      36 </span>            : {
+<span class="lineNum">      37 </span><span class="lineCov">         16 :     if(m_layoutMgr-&gt;RemoveVideoComposeKey(inVideoComposeKey, m_cmeVideoScrContext-&gt;GetScrRequestNum()))</span>
+<span class="lineNum">      38 </span><span class="lineCov">          5 :         AdjustPickedVideoSoureOrResolutionByLayout();</span>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::UpdateVideoComposeKey(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey)</span>
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :     if(m_layoutMgr-&gt;UpdateVideoComposeKey(inOldVideoComposeKey, inNewVideoComposeKey, m_cmeVideoScrContext-&gt;GetScrRequestNum()))</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         AdjustPickedVideoSoureOrResolutionByLayout();</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : /*
+<span class="lineNum">      48 </span>            :  * To simplify the implement, several rules regarding SCR messages are applied.
+<span class="lineNum">      49 </span>            :  *      1. Only two priorities are involved, i.e., 0 and 199.
+<span class="lineNum">      50 </span>            :  *      2. For lower priority requests, VIDs (Sub-session Channel IDs) always start with 1 and step by 1. e.g., if the only Prominent layout is desired then 6 requests with VIDs (1, 2, 3, 4, 5, 6) should be carried in the SCR, later if a grid layout is added then MAX_NUM_OF_EQUAL_VIDEO_SOURCES requests with VIDs from 1 to MAX_NUM_OF_EQUAL_VIDEO_SOURCES should be carried in the updated SCR.
+<span class="lineNum">      51 </span>            :  *      3. At most one higher priority request is included in the SCR, and the request VID is fixed (such as 27) and should not be changed during the call.
+<span class="lineNum">      52 </span>            :  */
+<span class="lineNum">      53 </span><span class="lineCov">         16 : void CNtgVideoAsSelector::HandleCmeVideoScrParseResult(const VidVector&amp; inAddedVids, const VidVector&amp; inModifiedVids, const VidVector&amp; inRemovedVids)</span>
+<span class="lineNum">      54 </span>            : {
+<span class="lineNum">      55 </span><span class="lineCov">         16 :     std::stringstream strAddedVids;</span>
+<span class="lineNum">      56 </span><span class="lineCov">         88 :     for (auto addedVid : inAddedVids)</span>
+<span class="lineNum">      57 </span>            :     {
+<span class="lineNum">      58 </span><span class="lineCov">         24 :         strAddedVids &lt;&lt; (int)addedVid &lt;&lt; &quot; &quot;;</span>
+<span class="lineNum">      59 </span>            :     }
+<span class="lineNum">      60 </span><span class="lineCov">         32 :     std::stringstream strModifiedVids;</span>
+<span class="lineNum">      61 </span><span class="lineCov">         64 :     for (auto modifiedVid : inModifiedVids)</span>
+<span class="lineNum">      62 </span>            :     {
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         strModifiedVids &lt;&lt; (int)modifiedVid &lt;&lt; &quot; &quot;;</span>
+<span class="lineNum">      64 </span>            :     }
+<span class="lineNum">      65 </span><span class="lineCov">         32 :     std::stringstream strRemovedVids;</span>
+<span class="lineNum">      66 </span><span class="lineCov">         64 :     for (auto removedVid : inRemovedVids)</span>
+<span class="lineNum">      67 </span>            :     {
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :         strRemovedVids &lt;&lt; (int)removedVid &lt;&lt; &quot; &quot;;</span>
+<span class="lineNum">      69 </span>            :     }
+<span class="lineNum">      70 </span><span class="lineCov">        384 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::HandleCmeVideoScrParseResult, addedVids[&quot; &lt;&lt; strAddedVids.str() &lt;&lt; &quot;] modifiedVids[&quot; &lt;&lt; strModifiedVids.str() &lt;&lt; &quot;] removedVids[&quot; &lt;&lt; strRemovedVids.str() &lt;&lt; &quot;]&quot;); /* remove the last char '\n' */</span>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">      73 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">      74 </span>            :     //remove picked video source according currently scr and layout
+<span class="lineNum">      75 </span><span class="lineCov">         16 :     auto numRemovedVideoSources = GetNeedRemovePickedVideoSourceNum();</span>
+<span class="lineNum">      76 </span><span class="lineCov">         16 :     if (numRemovedVideoSources &gt; 0) </span>
+<span class="lineNum">      77 </span>            :     {
+<span class="lineNum">      78 </span>            :         /* Remove those picked video sources beyond desired. */
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         RemoveParticipantsFromPickedList(numRemovedVideoSources, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">      80 </span>            :     }
+<span class="lineNum">      81 </span>            :     //reattach picked video source
+<span class="lineNum">      82 </span><span class="lineCov">         16 :     if (!inRemovedVids.empty())</span>
+<span class="lineNum">      83 </span>            :     {
+<span class="lineNum">      84 </span>            :         /* Replace removed VIDs with unattached ones. */
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">      86 </span>            :         {
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :             auto lowPriorityVid = pickedVideoSource.second-&gt;GetVidArray()[0];</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :             for (auto removedVid : inRemovedVids)</span>
+<span class="lineNum">      89 </span>            :             {
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 if (lowPriorityVid == removedVid)</span>
+<span class="lineNum">      91 </span>            :                 {
+<span class="lineNum">      92 </span><span class="lineCov">          2 :                     m_cmeVideoScrContext-&gt;ChangeLowPriorityVid(pickedVideoSource.second);</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                     removedVideoSources.insert(pickedVideoSource.second);</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                     addedVideoSources.insert(pickedVideoSource.second);</span>
+<span class="lineNum">      95 </span>            :                     break;
+<span class="lineNum">      96 </span>            :                 }
+<span class="lineNum">      97 </span>            :             }
+<span class="lineNum">      98 </span>            :         }
+<span class="lineNum">      99 </span>            :     }
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineCov">         64 :     for (auto modifiedVid : inModifiedVids)</span>
+<span class="lineNum">     102 </span>            :     {
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         auto pickedVideoSource = FindPickedVideoSourceByVid(modifiedVid);</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         if (pickedVideoSource &amp;&amp; (modifiedVid == m_cmeVideoScrContext-&gt;GetHighPriorityVid() || !pickedVideoSource-&gt;IsActiveSpeaker())) /* If it's lower priority VID of the active speaker, just ignore it. */</span>
+<span class="lineNum">     105 </span>            :         {
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :             pickedVideoSource-&gt;SetVideoSize(m_cmeVideoScrContext-&gt;GetRequestVideoSize(modifiedVid));</span>
+<span class="lineNum">     107 </span>            :             removedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     108 </span>            :             addedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span>            :     }
+<span class="lineNum">     111 </span><span class="lineCov">         16 :     auto numAddVideoSources = GetNeedAddPickedVideoSourceNum();</span>
+<span class="lineNum">     112 </span><span class="lineCov">         16 :     if (numAddVideoSources)</span>
+<span class="lineNum">     113 </span>            :     {
+<span class="lineNum">     114 </span><span class="lineCov">          5 :         AddParticipantsToPickedList(numAddVideoSources, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     115 </span>            :     }
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span><span class="lineCov">         16 :     if (m_activeSpeakerNodeId == 0)</span>
+<span class="lineNum">     118 </span><span class="lineCov">         14 :         SelectActiveSpeakerFromPickedList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     119 </span>            :     else 
+<span class="lineNum">     120 </span>            :     {
+<span class="lineNum">     121 </span><span class="lineCov">          2 :         NtgVideoSourceSharedPtr activeVideoSource = FindPickedVideoSourceByNodeId(m_activeSpeakerNodeId);</span>
+<span class="lineNum">     122 </span><span class="lineCov">          2 :         if (activeVideoSource)</span>
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span><span class="lineCov">          4 :             uint16_t vidNum = activeVideoSource-&gt;GetVidArray().size();</span>
+<span class="lineNum">     125 </span><span class="lineCov">          6 :             uint16_t highVidNum = m_cmeVideoScrContext-&gt;GetHighPriorityNum();</span>
+<span class="lineNum">     126 </span><span class="lineCov">          2 :             if ((vidNum &gt;= 2) &amp;&amp; (highVidNum == 0))</span>
+<span class="lineNum">     127 </span>            :             {
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                 NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::HandleCmeVideoScrParseResult, detach high priority vid activeNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId);</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :                 DetachHighPriorityVid(m_activeSpeakerNodeId, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     130 </span>            :             }
+<span class="lineNum">     131 </span><span class="lineCov">          2 :             else if ((vidNum &lt;= 1) &amp;&amp; (highVidNum == 1))</span>
+<span class="lineNum">     132 </span>            :             {
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                 NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::HandleCmeVideoScrParseResult, attach high priority vid activeNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId);</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                 AttachHighPriorityVid(m_activeSpeakerNodeId, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     135 </span>            :             }
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span>            :     }
+<span class="lineNum">     138 </span>            :     //fix bug webex-107684
+<span class="lineNum">     139 </span>            :     //when Edonus update SCR, nightingale should response SCA even subscribers don't change
+<span class="lineNum">     140 </span><span class="lineCov">         32 :     AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     141 </span><span class="lineCov">         16 : }</span>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::ForceSubscribtion()</span>
+<span class="lineNum">     144 </span>            : {
+<span class="lineNum">     145 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     146 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     147 </span>            :     //for case:showActive on changed to off
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :     auto numRemovedVideoSources = GetNeedRemovePickedVideoSourceNum();</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :     if (numRemovedVideoSources &gt; 0) </span>
+<span class="lineNum">     150 </span>            :     {
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         RemoveParticipantsFromPickedList(numRemovedVideoSources, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     152 </span>            :     }
+<span class="lineNum">     153 </span>            :     //for case:showActive off changed to on
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :     auto numAddVideoSources = GetNeedAddPickedVideoSourceNum();</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :     if (numAddVideoSources)</span>
+<span class="lineNum">     156 </span>            :     {
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :         AddParticipantsToPickedList(numAddVideoSources, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     158 </span>            :     }
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :     AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::ForceSubscribtion&quot;);</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineCov">        114 : void CNtgVideoAsSelector::AddParticipant(const NtgParticipantSharedPtr&amp; inParticipant)</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span><span class="lineCov">       2280 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AddParticipant, nodeId:&quot; &lt;&lt; inParticipant-&gt;GetNodeId() &lt;&lt; &quot; nodeName:&quot; &lt;&lt; inParticipant-&gt;GetNodeName());</span>
+<span class="lineNum">     166 </span><span class="lineCov">        456 :     m_participants.insert(std::make_pair(inParticipant-&gt;GetNodeId(), inParticipant));</span>
+<span class="lineNum">     167 </span><span class="lineCov">        228 :     if (inParticipant-&gt;IsPickable())</span>
+<span class="lineNum">     168 </span>            :     {
+<span class="lineNum">     169 </span>            :         NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     170 </span>            :         NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     171 </span>            :         //only add participant need adjust subscribe
+<span class="lineNum">     172 </span><span class="lineCov">         36 :         if (AddParticipantToPickedList(inParticipant, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     173 </span>            :         {
+<span class="lineNum">     174 </span><span class="lineCov">          8 :             AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     175 </span>            :         }
+<span class="lineNum">     176 </span>            :     }
+<span class="lineNum">     177 </span><span class="lineCov">        114 : }</span>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineCov">        120 : void CNtgVideoAsSelector::RemoveParticipants(const NodeIdTypeVector&amp; inNodeIdVector)</span>
+<span class="lineNum">     180 </span>            : {
+<span class="lineNum">     181 </span><span class="lineCov">        570 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::RemoveParticipants, num:&quot; &lt;&lt; inNodeIdVector.size());</span>
+<span class="lineNum">     182 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     183 </span>            :     NtgVideoSourceSet addedVideoSources; 
+<span class="lineNum">     184 </span><span class="lineCov">         30 :     uint16_t numRemovedVideoSources = 0;</span>
+<span class="lineNum">     185 </span><span class="lineCov">        150 :     for (auto nodeId : inNodeIdVector)</span>
+<span class="lineNum">     186 </span>            :     {
+<span class="lineNum">     187 </span><span class="lineCov">         30 :         RemoveHistoryActiveSerialNum(nodeId);</span>
+<span class="lineNum">     188 </span><span class="lineCov">         60 :         const auto iter = m_participants.find(nodeId);</span>
+<span class="lineNum">     189 </span><span class="lineCov">         60 :         if (iter != m_participants.end())</span>
+<span class="lineNum">     190 </span>            :         {
+<span class="lineNum">     191 </span><span class="lineCov">         30 :             m_participants.erase(iter);</span>
+<span class="lineNum">     192 </span><span class="lineCov">         30 :             bool isActiveSpeakerNodeId = (nodeId == GetActiveSpeaker());</span>
+<span class="lineNum">     193 </span><span class="lineCov">         30 :             if (RemoveParticipantFromPickedList(nodeId, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     194 </span>            :             {
+<span class="lineNum">     195 </span>            :                 //not active user removed
+<span class="lineNum">     196 </span><span class="lineCov">          1 :                 if (!isActiveSpeakerNodeId)</span>
+<span class="lineNum">     197 </span><span class="lineCov">          1 :                     ++numRemovedVideoSources;</span>
+<span class="lineNum">     198 </span>            :             }
+<span class="lineNum">     199 </span>            :             else
+<span class="lineNum">     200 </span>            :             {
+<span class="lineNum">     201 </span>            :                 //fix production crash
+<span class="lineNum">     202 </span><span class="lineCov">         29 :                 if (isActiveSpeakerNodeId)</span>
+<span class="lineNum">     203 </span>            :                 {
+<span class="lineNum">     204 </span><span class="lineCov">         48 :                     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::RemoveParticipants, active user removed, but not in picked source list nodeId:&quot; &lt;&lt; nodeId);</span>
+<span class="lineNum">     205 </span><span class="lineCov">          3 :                     ResetActiveSpeaker();</span>
+<span class="lineNum">     206 </span>            :                 }
+<span class="lineNum">     207 </span>            :             }
+<span class="lineNum">     208 </span>            :         }
+<span class="lineNum">     209 </span>            :     }
+<span class="lineNum">     210 </span><span class="lineCov">         30 :     if (removedVideoSources.empty())</span>
+<span class="lineNum">     211 </span><span class="lineCov">         30 :         return; /* No one is removed from the picked list */</span>
+<span class="lineNum">     212 </span><span class="lineCov">          1 :     if (numRemovedVideoSources &gt; 0)</span>
+<span class="lineNum">     213 </span><span class="lineCov">          1 :         AddParticipantsToPickedList(numRemovedVideoSources, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     214 </span><span class="lineCov">          1 :     AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     215 </span>            : }
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            : //it's specific case, participants add/remove to/from RS selector, don't need add new participant to picked video source until scr update
+<span class="lineNum">     218 </span>            : //handle scr will trigger add/remove picked video source
+<span class="lineNum">     219 </span><span class="lineCov">         17 : void CNtgVideoAsSelector::AdjustParticipants(const NtgParticipantMap&amp; inAddedParticipants, const NodeIdTypeVector&amp; inRemovedNodeIds, NtgParticipantMap&amp; outRemovedParticipants)</span>
+<span class="lineNum">     220 </span>            : {
+<span class="lineNum">     221 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     222 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     223 </span>            :     //add participant
+<span class="lineNum">     224 </span><span class="lineCov">         17 :     m_participants.insert(inAddedParticipants.begin(), inAddedParticipants.end());</span>
+<span class="lineNum">     225 </span>            :     //remove participant
+<span class="lineNum">     226 </span><span class="lineCov">         71 :     for (auto nodeId : inRemovedNodeIds)</span>
+<span class="lineNum">     227 </span>            :     {
+<span class="lineNum">     228 </span>            :         //remove picked video source
+<span class="lineNum">     229 </span><span class="lineCov">          3 :         NtgVideoSourceSharedPtr videoSource = FindPickedVideoSourceByNodeId(nodeId);</span>
+<span class="lineNum">     230 </span><span class="lineCov">          3 :         if (videoSource)</span>
+<span class="lineNum">     231 </span>            :         {
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :             m_cmeVideoScrContext-&gt;DetachVids(videoSource);</span>
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :             m_pickedVideoSources.erase(nodeId);</span>
+<span class="lineNum">     234 </span>            :             removedVideoSources.insert(videoSource);
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AdjustParticipants, move to rs nodeId:&quot; &lt;&lt; nodeId);</span>
+<span class="lineNum">     236 </span>            :         }
+<span class="lineNum">     237 </span><span class="lineCov">          3 :         if (nodeId == m_activeSpeakerNodeId)</span>
+<span class="lineNum">     238 </span>            :         {
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :             ResetActiveSpeaker();</span>
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :             NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AdjustParticipants, active video source removed nodeId:&quot; &lt;&lt; nodeId);</span>
+<span class="lineNum">     241 </span>            :         }
+<span class="lineNum">     242 </span>            :         //remove participants
+<span class="lineNum">     243 </span><span class="lineCov">          6 :         auto iter = m_participants.find(nodeId);</span>
+<span class="lineNum">     244 </span><span class="lineCov">          6 :         if (iter != m_participants.end())</span>
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :             outRemovedParticipants[nodeId] = iter-&gt;second;</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :             m_participants.erase(iter);</span>
+<span class="lineNum">     248 </span>            :         }
+<span class="lineNum">     249 </span>            :     }
+<span class="lineNum">     250 </span><span class="lineCov">         17 :     UpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     251 </span><span class="lineCov">         17 : }</span>
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::ClearAllParticipants()</span>
+<span class="lineNum">     254 </span>            : {
+<span class="lineNum">     255 </span><span class="lineCov">         17 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::ClearAllParticipants, num:&quot; &lt;&lt; m_participants.size());</span>
+<span class="lineNum">     256 </span>            :     NodeIdTypeVector nodeIdVector;
+<span class="lineNum">     257 </span><span class="lineCov">          2 :     nodeIdVector.reserve(m_participants.size());</span>
+<span class="lineNum">     258 </span><span class="lineCov">          5 :     for (const auto&amp; participant : m_participants)</span>
+<span class="lineNum">     259 </span>            :     {
+<span class="lineNum">     260 </span><span class="lineCov">          1 :         nodeIdVector.push_back(participant.first);</span>
+<span class="lineNum">     261 </span>            :     }
+<span class="lineNum">     262 </span><span class="lineCov">          1 :     RemoveParticipants(nodeIdVector);</span>
+<span class="lineNum">     263 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span><span class="lineCov">        158 : NtgParticipantSharedPtr CNtgVideoAsSelector::GetParticipant(NodeIdType inNodeId)</span>
+<span class="lineNum">     266 </span>            : {
+<span class="lineNum">     267 </span><span class="lineCov">        316 :     auto iter = m_participants.find(inNodeId);</span>
+<span class="lineNum">     268 </span><span class="lineCov">        316 :     if (iter == m_participants.end())</span>
+<span class="lineNum">     269 </span><span class="lineCov">          3 :         return nullptr;</span>
+<span class="lineNum">     270 </span><span class="lineCov">        155 :     return iter-&gt;second;</span>
+<span class="lineNum">     271 </span>            : }
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">         99 : void CNtgVideoAsSelector::AddMmpInfo(NodeIdType inNodeId, const NtgMmpInfoSharedPtr&amp; inMmpInfo, bool inIsTpCallback)</span>
+<span class="lineNum">     274 </span>            : {
+<span class="lineNum">     275 </span><span class="lineCov">         99 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     276 </span><span class="lineCov">        198 :     if (participant == nullptr)</span>
+<span class="lineNum">     277 </span>            :     {
+<span class="lineNum">     278 </span><span class="lineCov">         99 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AddMmpInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; videoCSI:&quot; &lt;&lt; inMmpInfo-&gt;GetVideoCsi() &lt;&lt; &quot; isTpCallback:&quot; &lt;&lt; inIsTpCallback);</span>
+<span class="lineNum">     279 </span>            :         return;
+<span class="lineNum">     280 </span>            :     }
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span><span class="lineCov">       2079 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AddMmpInfo, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; videoCSI:&quot; &lt;&lt; inMmpInfo-&gt;GetVideoCsi() &lt;&lt; &quot; isTpCallback:&quot; &lt;&lt; inIsTpCallback);</span>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :     /* Update the picked video source. */
+<span class="lineNum">     285 </span><span class="lineCov">         99 :     auto pickedVideoSource = FindPickedVideoSourceByNodeId(inNodeId);</span>
+<span class="lineNum">     286 </span><span class="lineCov">         99 :     if (pickedVideoSource)</span>
+<span class="lineNum">     287 </span>            :     {
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :         pickedVideoSource-&gt;UpdateParticipantInfo(participant);</span>
+<span class="lineNum">     289 </span>            :     }
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineCov">         99 :     auto videoSourceType = participant-&gt;GetVideoSourceType();</span>
+<span class="lineNum">     292 </span><span class="lineCov">         99 :     if (videoSourceType == CNtgParticipant::VS_LEGACY_WEBEX)</span>
+<span class="lineNum">     293 </span>            :     {
+<span class="lineNum">     294 </span><span class="lineCov">         74 :         CSP_ASSERT(participant-&gt;IsPickable());</span>
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :         NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     297 </span>            :         NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     298 </span><span class="lineCov">         74 :         if (pickedVideoSource)</span>
+<span class="lineNum">     299 </span>            :         {
+<span class="lineNum">     300 </span>            :             /* If the participant has already been in the picked list, it's the case that the video CSI is changed. */
+<span class="lineNum">     301 </span>            :             removedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     302 </span>            :             addedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :             UpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     304 </span>            :         }
+<span class="lineNum">     305 </span>            :         else
+<span class="lineNum">     306 </span>            :         {
+<span class="lineNum">     307 </span>            :             /* Add new picked legacy webex participant. */
+<span class="lineNum">     308 </span><span class="lineCov">         74 :             if (AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     309 </span>            :             {
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                 AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     311 </span>            :             }
+<span class="lineNum">     312 </span>            :         }
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            :         return;
+<span class="lineNum">     315 </span>            :     }
+<span class="lineNum">     316 </span>            :     /*
+<span class="lineNum">     317 </span>            :      * Do nothing for TP call-in participants and TP call-back participants as there is no change on their CSIs. 
+<span class="lineNum">     318 </span>            :      * TP call-in participant's CSI lists in CNtgParticipant::m_tpCallinVideoCsiVector
+<span class="lineNum">     319 </span>            :      * TP call-back participant's CSI lists in CNtgParticipant::m_tpCallbackInfo-&gt;GetTpCallbackEurekaInfo()-&gt;GetTpVideoCsiVector()
+<span class="lineNum">     320 </span>            :      */
+<span class="lineNum">     321 </span>            : }
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span><span class="lineCov">          8 : void CNtgVideoAsSelector::AddTpCallbackInfo(NodeIdType inNodeId, const NtgTpInfoSharedPtr&amp; inTpInfo)</span>
+<span class="lineNum">     324 </span>            : {
+<span class="lineNum">     325 </span><span class="lineCov">          8 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     326 </span><span class="lineCov">         16 :     if (participant == nullptr)</span>
+<span class="lineNum">     327 </span>            :     {
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AddTpCallbackInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     329 </span><span class="lineCov">          8 :         return;</span>
+<span class="lineNum">     330 </span>            :     }
+<span class="lineNum">     331 </span>            : 
+<span class="lineNum">     332 </span><span class="lineCov">        128 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AddTpCallbackInfo, nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     335 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     336 </span><span class="lineCov">          8 :     auto pickedVideoSource = FindPickedVideoSourceByNodeId(inNodeId);</span>
+<span class="lineNum">     337 </span><span class="lineCov">          8 :     if (pickedVideoSource)</span>
+<span class="lineNum">     338 </span>            :     {
+<span class="lineNum">     339 </span>            :         /* Remove VideoSource and add a new one as the video CSI has changed. */
+<span class="lineNum">     340 </span>            :         removedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :         pickedVideoSource-&gt;UpdateParticipantInfo(participant);</span>
+<span class="lineNum">     342 </span>            :         addedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :         UpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     344 </span>            :     }
+<span class="lineNum">     345 </span>            :     else
+<span class="lineNum">     346 </span>            :     {
+<span class="lineNum">     347 </span>            :         /* Add the TP call-back participant to the picked list. */
+<span class="lineNum">     348 </span><span class="lineCov">          8 :         if (AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     349 </span>            :         {
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :             AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     351 </span>            :         }
+<span class="lineNum">     352 </span>            :     }
+<span class="lineNum">     353 </span>            : }
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::RemoveTpCallbackInfo(NodeIdType inNodeId)</span>
+<span class="lineNum">     356 </span>            : {
+<span class="lineNum">     357 </span><span class="lineCov">          1 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     358 </span><span class="lineCov">          2 :     if (participant == nullptr)</span>
+<span class="lineNum">     359 </span>            :     {
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::RemoveTpCallbackInfo, participant not found! nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     361 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">     362 </span>            :     }
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span><span class="lineCov">         16 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::RemoveTpCallbackInfo, nodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     367 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     368 </span><span class="lineCov">          1 :     auto pickedVideoSource = FindPickedVideoSourceByNodeId(inNodeId);</span>
+<span class="lineNum">     369 </span><span class="lineCov">          1 :     if (pickedVideoSource)</span>
+<span class="lineNum">     370 </span>            :     {
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :         if (participant-&gt;IsPickable())</span>
+<span class="lineNum">     372 </span>            :         {
+<span class="lineNum">     373 </span>            :             /* Remove VideoSource and add a new one as the video CSI has changed. */
+<span class="lineNum">     374 </span>            :             removedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :             pickedVideoSource-&gt;UpdateParticipantInfo(participant);</span>
+<span class="lineNum">     376 </span>            :             addedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :             UpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     378 </span>            :         }
+<span class="lineNum">     379 </span>            :         else
+<span class="lineNum">     380 </span>            :         {
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :             RemoveParticipantFromPickedList(inNodeId, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     382 </span>            :             /* Add a new participant to the picked list. */
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :             AddParticipantsToPickedList(1, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 :             AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     385 </span>            :         }
+<span class="lineNum">     386 </span>            :     }
+<span class="lineNum">     387 </span><span class="lineCov">          1 :     else if (participant-&gt;IsPickable())</span>
+<span class="lineNum">     388 </span>            :     {
+<span class="lineNum">     389 </span><span class="lineCov">          1 :         auto num = addedVideoSources.size();</span>
+<span class="lineNum">     390 </span><span class="lineCov">          1 :         if (AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     391 </span>            :         {
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :             AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     393 </span>            :         }
+<span class="lineNum">     394 </span>            :         /* ASSERT: Should never add a new video source here */
+<span class="lineNum">     395 </span><span class="lineCov">          1 :         CSP_ASSERT(num == addedVideoSources.size()); </span>
+<span class="lineNum">     396 </span>            :     }    
+<span class="lineNum">     397 </span>            : }
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineCov">         26 : void CNtgVideoAsSelector::UpdateActiveSpeaker(NodeIdType inActiveSpeakerNodeId, bool inActiveSpeakerMoveRsToAs)</span>
+<span class="lineNum">     400 </span>            : {
+<span class="lineNum">     401 </span><span class="lineCov">         26 :     if (inActiveSpeakerNodeId == 0)</span>
+<span class="lineNum">     402 </span>            :     {
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, inActiveSpeakerNodeId is 0! old:&quot; &lt;&lt; GetActiveSpeaker());</span>
+<span class="lineNum">     404 </span><span class="lineCov">         25 :         return;</span>
+<span class="lineNum">     405 </span>            :     }
+<span class="lineNum">     406 </span>            : 
+<span class="lineNum">     407 </span><span class="lineCov">         26 :     if (inActiveSpeakerNodeId == m_activeSpeakerNodeId)</span>
+<span class="lineNum">     408 </span>            :     {
+<span class="lineNum">     409 </span>            :         //webex-208659
+<span class="lineNum">     410 </span>            :         //the Csp select first user as active video, but the priority is lower  
+<span class="lineNum">     411 </span>            :         //need update priority to make sure the active video don't be removed 
+<span class="lineNum">     412 </span><span class="lineCov">          8 :         m_activeSpeakerHistory.Add(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     413 </span>            :         return;
+<span class="lineNum">     414 </span>            :     }
+<span class="lineNum">     415 </span><span class="lineCov">         18 :     const auto participant = GetParticipant(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     416 </span><span class="lineCov">         36 :     if (participant == nullptr)</span>
+<span class="lineNum">     417 </span>            :     {
+<span class="lineNum">     418 </span><span class="lineCov">         36 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgParticipantManager::UpdateActiveSpeaker, candidate not found! old:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; new:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     419 </span>            :         return;
+<span class="lineNum">     420 </span>            :     }
+<span class="lineNum">     421 </span><span class="lineCov">         16 :     if (!participant-&gt;IsPickable())</span>
+<span class="lineNum">     422 </span>            :     {
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, candidate not pickable! old:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; new:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     424 </span>            :         return;
+<span class="lineNum">     425 </span>            :     }
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">         16 :     auto oldActiveSpeakerNodeId = m_activeSpeakerNodeId;</span>
+<span class="lineNum">     428 </span><span class="lineCov">         16 :     m_activeSpeakerNodeId = inActiveSpeakerNodeId;</span>
+<span class="lineNum">     429 </span><span class="lineCov">         16 :     m_activeSpeakerHistory.Add(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     430 </span><span class="lineCov">        288 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, old:&quot; &lt;&lt; oldActiveSpeakerNodeId &lt;&lt; &quot; new:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span><span class="lineCov">         32 :     if (m_pickedVideoSources.empty())</span>
+<span class="lineNum">     433 </span>            :     {
+<span class="lineNum">     434 </span><span class="lineCov">         15 :         if (inActiveSpeakerMoveRsToAs)</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, when active speaker move rs to as nodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     436 </span>            :         else
+<span class="lineNum">     437 </span>            :         {
+<span class="lineNum">     438 </span><span class="lineCov">        240 :             NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, m_pickedVideoSources is empty (which may be due to not receiving SCR from CME node)! nodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     439 </span>            :             return;
+<span class="lineNum">     440 </span>            :         }
+<span class="lineNum">     441 </span>            :     }
+<span class="lineNum">     442 </span>            : 
+<span class="lineNum">     443 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     444 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     445 </span><span class="lineCov">          3 :     if (FindPickedVideoSourceByNodeId(inActiveSpeakerNodeId) == nullptr)</span>
+<span class="lineNum">     446 </span>            :     {
+<span class="lineNum">     447 </span>            :         /* Active speaker is not in the picked list, so one of the picked participants should be replaced with the new active speaker. 
+<span class="lineNum">     448 </span>            :          * Prefer a participant that is least active recently.
+<span class="lineNum">     449 </span>            :          */
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :         DetachHighPriorityVid(oldActiveSpeakerNodeId, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     451 </span>            :         //if active is tp user, try to replace no video source tp user
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :         if ((m_layoutMgr-&gt;GetMaxPickableCountByLayout() &gt; 1) &amp;&amp; participant-&gt;IsTpParticipant() &amp;&amp; RemoveNoVideoTpFromPickedList(removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     453 </span>            :         {
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::UpdateActiveSpeaker, replace no video source Tp user&quot;);</span>
+<span class="lineNum">     455 </span>            :         }
+<span class="lineNum">     456 </span>            :         else
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :             RemoveParticipantsFromPickedList(1, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     458 </span>            :         
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :         AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     460 </span>            :     }
+<span class="lineNum">     461 </span>            :     else
+<span class="lineNum">     462 </span>            :     {
+<span class="lineNum">     463 </span>            :         /* Both oldActiveSpeaker and newActiveSpeaker need be removed and re-added since both their vidArray have been modified. */
+<span class="lineNum">     464 </span><span class="lineCov">          1 :         ReattachHighPriorityVid(oldActiveSpeakerNodeId, inActiveSpeakerNodeId, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     465 </span>            :     }
+<span class="lineNum">     466 </span>            : 
+<span class="lineNum">     467 </span>            :     /* Need to update subscription as the active speaker has changed. */
+<span class="lineNum">     468 </span><span class="lineCov">          1 :     AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<a name="469"><span class="lineNum">     469 </span>            : }</a>
+<span class="lineNum">     470 </span>            : 
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::UpdateHistoryActiveSerialNum(NodeIdType inActiveSpeakerNodeId)</span>
+<span class="lineNum">     472 </span>            : {
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :     const auto participant = GetParticipant(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     474 </span><span class="lineNoCov">          0 :     if (participant == nullptr)</span>
+<span class="lineNum">     475 </span>            :     {
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::UpdateHistoryActiveSerialNum, active speaker not in participants! inNodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     477 </span>            :         return;
+<span class="lineNum">     478 </span>            :     }
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :     if (!participant-&gt;IsPickable())</span>
+<span class="lineNum">     480 </span>            :     {
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateHistoryActiveSerialNum, active speaker not pickable! inNodeId:&quot; &lt;&lt; inActiveSpeakerNodeId);</span>
+<span class="lineNum">     482 </span>            :         return;
+<span class="lineNum">     483 </span>            :     }
+<span class="lineNum">     484 </span>            :     //to make sure active/stage view user priority
+<span class="lineNum">     485 </span><span class="lineNoCov">          0 :     m_activeSpeakerHistory.Add(inActiveSpeakerNodeId);</span>
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 :     m_activeSpeakerHistory.Add(m_activeSpeakerNodeId);</span>
+<span class="lineNum">     487 </span>            : }
+<span class="lineNum">     488 </span>            : 
+<span class="lineNum">     489 </span><span class="lineCov">         31 : void CNtgVideoAsSelector::UpdateVideoSourceStatus(NodeIdType inNodeId, bool inIsOpen)</span>
+<span class="lineNum">     490 </span>            : {
+<span class="lineNum">     491 </span><span class="lineCov">         31 :     auto participant = GetParticipant(inNodeId);</span>
+<span class="lineNum">     492 </span><span class="lineCov">         62 :     if (participant == nullptr)</span>
+<span class="lineNum">     493 </span>            :     {
+<span class="lineNum">     494 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateVideoSourceStatus, participant not found! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; isOpen:&quot; &lt;&lt; inIsOpen);</span>
+<span class="lineNum">     495 </span>            :         return;
+<span class="lineNum">     496 </span>            :     }
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span><span class="lineCov">        620 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::UpdateVideoSourceStatus, nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; isOpen:&quot; &lt;&lt; inIsOpen &lt;&lt;&quot; participant-&gt;IsVideoSourceOpen() &quot;&lt;&lt;participant-&gt;IsVideoSourceOpen());</span>
+<span class="lineNum">     499 </span><span class="lineCov">         31 :     if (participant-&gt;IsVideoSourceOpen() == inIsOpen)</span>
+<span class="lineNum">     500 </span>            :         return;
+<span class="lineNum">     501 </span>            :     
+<span class="lineNum">     502 </span><span class="lineCov">         29 :     participant-&gt;UpdateVideoSourceStatus(inIsOpen);</span>
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     505 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     506 </span><span class="lineCov">         29 :     auto pickedVideoSource = FindPickedVideoSourceByNodeId(inNodeId);</span>
+<span class="lineNum">     507 </span><span class="lineCov">         29 :     if (pickedVideoSource)</span>
+<span class="lineNum">     508 </span>            :     {
+<span class="lineNum">     509 </span>            :         /* The participant is in the picked list. Update VideoSource for the participant. */
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :         pickedVideoSource-&gt;UpdateParticipantInfo(participant);</span>
+<span class="lineNum">     511 </span>            :         removedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     512 </span>            :         addedVideoSources.insert(pickedVideoSource);
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :         UpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     514 </span>            :     }
+<span class="lineNum">     515 </span><span class="lineCov">         29 :     else if ((m_layoutMgr-&gt;GetMaxPickableCountByLayout() &gt; 1) &amp;&amp; inIsOpen &amp;&amp; participant-&gt;IsTpParticipant() &amp;&amp; participant-&gt;IsPickable())</span>
+<span class="lineNum">     516 </span>            :     {
+<span class="lineNum">     517 </span><span class="lineCov">          5 :         if (RemoveNoVideoTpFromPickedList(removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     518 </span>            :         {
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :             if (!AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     520 </span>            :             {
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :                 NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::UpdateVideoSourceStatus, AddParticipantToPickedList fail! nodeId:&quot; &lt;&lt; inNodeId &lt;&lt; &quot; isOpen:&quot; &lt;&lt; inIsOpen);</span>
+<span class="lineNum">     522 </span>            :             }
+<span class="lineNum">     523 </span><span class="lineNoCov">          0 :             AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     524 </span>            :         }
+<span class="lineNum">     525 </span>            :     }
+<span class="lineNum">     526 </span>            : 
+<span class="lineNum">     527 </span><span class="lineCov">         29 :     DumpSnapshot();    </span>
+<span class="lineNum">     528 </span>            : }
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span><span class="lineCov">         83 : JsonValue CNtgVideoAsSelector::ToJson() const</span>
+<span class="lineNum">     531 </span>            : {
+<span class="lineNum">     532 </span><span class="lineCov">         83 :     JsonValue info;</span>
+<span class="lineNum">     533 </span><span class="lineCov">         83 :     const NtgParticipantMap&amp; participants = m_participants;</span>
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span><span class="lineCov">         83 :     info[&quot;activeSpeakerNodeId&quot;] = m_activeSpeakerNodeId;</span>
+<span class="lineNum">     536 </span><span class="lineCov">         83 :     info[&quot;numParticipants&quot;] = participants.size();</span>
+<span class="lineNum">     537 </span><span class="lineCov">        166 :     info[&quot;numPickedVideoSources&quot;] = m_pickedVideoSources.size();</span>
+<span class="lineNum">     538 </span>            :     //disable scr, too many log
+<span class="lineNum">     539 </span>            :     //info[&quot;cmeVideoScrContext&quot;] = m_cmeVideoScrContext-&gt;ToJson();
+<span class="lineNum">     540 </span>            :     //info[&quot;shareStarted&quot;] = m_layoutMgr-&gt;IsShareStart().ToJson();
+<span class="lineNum">     541 </span>            : 
+<span class="lineNum">     542 </span><span class="lineCov">        166 :     JsonValue jsonLayouts(Json::arrayValue);</span>
+<span class="lineNum">     543 </span><span class="lineCov">        375 :     for (const auto&amp; videoComposeKey : m_layoutMgr-&gt;GetVideoComposeKeys())</span>
+<span class="lineNum">     544 </span>            :     {
+<span class="lineNum">     545 </span><span class="lineCov">         43 :         JsonValue jsonLayout;</span>
+<span class="lineNum">     546 </span><span class="lineCov">         43 :         jsonLayout[&quot;video&quot;] = videoComposeKey.GetVideoLayout();</span>
+<span class="lineNum">     547 </span><span class="lineCov">         43 :         jsonLayout[&quot;content&quot;] = videoComposeKey.GetContentLayout();</span>
+<span class="lineNum">     548 </span><span class="lineCov">         43 :         jsonLayouts.append(jsonLayout);</span>
+<span class="lineNum">     549 </span><span class="lineCov">         43 :     }</span>
+<span class="lineNum">     550 </span><span class="lineCov">         83 :     info[&quot;layouts&quot;] = jsonLayouts;</span>
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineCov">        166 :     JsonValue jsonParticipants(Json::arrayValue);</span>
+<span class="lineNum">     553 </span><span class="lineCov">        554 :     for (const auto&amp; participant : participants)</span>
+<span class="lineNum">     554 </span>            :     {
+<span class="lineNum">     555 </span><span class="lineCov">        222 :         jsonParticipants.append(participant.second-&gt;ToJson());</span>
+<span class="lineNum">     556 </span>            :     }
+<span class="lineNum">     557 </span><span class="lineCov">         83 :     info[&quot;participants&quot;] = jsonParticipants;</span>
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span><span class="lineCov">        166 :     JsonValue jsonPickedList(Json::arrayValue);</span>
+<span class="lineNum">     560 </span><span class="lineCov">        359 :     for (const auto&amp; videoSource : m_pickedVideoSources)</span>
+<span class="lineNum">     561 </span>            :     {
+<span class="lineNum">     562 </span><span class="lineCov">         27 :         jsonPickedList.append(videoSource.second-&gt;ToJson());</span>
+<span class="lineNum">     563 </span>            :     }
+<span class="lineNum">     564 </span><span class="lineCov">         83 :     info[&quot;pickedList&quot;] = jsonPickedList;</span>
+<span class="lineNum">     565 </span>            : 
+<span class="lineNum">     566 </span><span class="lineCov">         83 :     return info;</span>
+<span class="lineNum">     567 </span>            : }
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubcribeForRealActiveSpeakerChange(NodeIdType newRealActiveSpeaker, NodeIdType oldRealActiveSpeaker)</span>
+<span class="lineNum">     570 </span>            : {
+<span class="lineNum">     571 </span><span class="lineNoCov">          0 :     const auto participant = GetParticipant(newRealActiveSpeaker);</span>
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 :     if (participant == nullptr)</span>
+<span class="lineNum">     573 </span>            :     {
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AdjustSubcribeForRealActiveSpeakerChange, candidate not found! old:&quot; &lt;&lt; oldRealActiveSpeaker &lt;&lt; &quot; new:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     575 </span>            :         return;
+<span class="lineNum">     576 </span>            :     }
+<span class="lineNum">     577 </span><span class="lineNoCov">          0 :     if (!participant-&gt;IsPickable())</span>
+<span class="lineNum">     578 </span>            :     {
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AdjustSubcribeForRealActiveSpeakerChange, candidate not pickable! old:&quot; &lt;&lt; oldRealActiveSpeaker &lt;&lt; &quot; new:&quot; &lt;&lt; newRealActiveSpeaker);</span>
+<span class="lineNum">     580 </span>            :         return;
+<span class="lineNum">     581 </span>            :     }
+<span class="lineNum">     582 </span><span class="lineNoCov">          0 :     auto pickedVideoSource = FindPickedVideoSourceByNodeId(newRealActiveSpeaker);</span>
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :     if (!pickedVideoSource &amp;&amp; (m_layoutMgr-&gt;GetMaxPickableCountByLayout() &gt; 1))//to make sure not remove stage view user</span>
+<span class="lineNum">     584 </span>            :     {
+<span class="lineNum">     585 </span>            :         NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     586 </span>            :         NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :         if (RemoveNoVideoTpFromPickedList(removedVideoSources, addedVideoSources))</span>
+<span class="lineNum">     588 </span>            :         {
+<span class="lineNum">     589 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AdjustSubcribeForRealActiveSpeakerChange, replace no video source Tp user&quot;);</span>
+<span class="lineNum">     590 </span>            :         }
+<span class="lineNum">     591 </span>            :         else
+<span class="lineNum">     592 </span><span class="lineNoCov">          0 :             RemoveParticipantsFromPickedList(1, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     593 </span>            :         
+<span class="lineNum">     594 </span><span class="lineNoCov">          0 :         AddParticipantToPickedList(participant, removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     595 </span>            :         /* Need to update subscription as the active speaker has changed. */
+<span class="lineNum">     596 </span><span class="lineNoCov">          0 :         AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     597 </span>            :     }
+<span class="lineNum">     598 </span>            : }
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span><span class="lineCov">         11 : void CNtgVideoAsSelector::AdjustPickedVideoSoureOrResolutionByLayout()</span>
+<span class="lineNum">     601 </span>            : {
+<span class="lineNum">     602 </span>            :     NtgVideoSourceSet addedVideoSources;
+<span class="lineNum">     603 </span>            :     NtgVideoSourceSet removedVideoSources;
+<span class="lineNum">     604 </span><span class="lineCov">         11 :     AdjustPickedVideoSourceList(removedVideoSources, addedVideoSources);</span>
+<span class="lineNum">     605 </span><span class="lineCov">         11 :     AdjustAndUpdateSubscribersList(removedVideoSources, addedVideoSources);</span>
+<a name="606"><span class="lineNum">     606 </span><span class="lineCov">         11 : }</span></a>
+<span class="lineNum">     607 </span>            : 
+<span class="lineNum">     608 </span><span class="lineCov">         11 : bool CNtgVideoAsSelector::AdjustPickedVideoSourceList(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     609 </span>            : {
+<span class="lineNum">     610 </span>            :     //add or remove source should compared with picked video source count
+<span class="lineNum">     611 </span><span class="lineCov">         11 :     uint16_t maxVideoSourceNum = GetMaxVideoSourceNum();//m_layoutMgr-&gt;GetMaxPickableCountByLayout();</span>
+<span class="lineNum">     612 </span><span class="lineCov">         11 :     uint16_t pickedVideoSourcesNum = GetPickedVideoSourceNum();</span>
+<span class="lineNum">     613 </span><span class="lineCov">         11 :     if (pickedVideoSourcesNum &lt; maxVideoSourceNum)</span>
+<span class="lineNum">     614 </span>            :     {
+<span class="lineNum">     615 </span><span class="lineCov">          4 :         AddParticipantsToPickedList(maxVideoSourceNum - pickedVideoSourcesNum, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     616 </span><span class="lineCov">          4 :         return true;</span>
+<span class="lineNum">     617 </span>            :     }
+<span class="lineNum">     618 </span><span class="lineCov">          7 :     else if (pickedVideoSourcesNum &gt; maxVideoSourceNum)</span>
+<span class="lineNum">     619 </span>            :     {
+<span class="lineNum">     620 </span><span class="lineCov">          1 :         RemoveParticipantsFromPickedList(pickedVideoSourcesNum - maxVideoSourceNum, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     621 </span><span class="lineCov">          1 :         return true;</span>
+<span class="lineNum">     622 </span>            :     }
+<span class="lineNum">     623 </span>            :     return false;
+<span class="lineNum">     624 </span>            : }
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span>            : //1.active speaker on the front
+<span class="lineNum">     627 </span>            : //2.then the latest active speakers in history(the more recently speakers, the more forward)
+<a name="628"><span class="lineNum">     628 </span>            : //3.normal paticipants</a>
+<span class="lineNum">     629 </span>            : //4.non video source TP
+<span class="lineNum">     630 </span><span class="lineCov">         10 : void CNtgVideoAsSelector::AddParticipantsToPickedList(uint16_t inMaxNum, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     631 </span>            : {
+<span class="lineNum">     632 </span><span class="lineCov">        160 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AddParticipantsToPickedList, addNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     633 </span>            :     NtgParticipantList addedPickedParticipants;
+<span class="lineNum">     634 </span><span class="lineCov">         30 :     auto isActiveSpeakerPicked = (FindPickedVideoSourceByNodeId(m_activeSpeakerNodeId) != nullptr);</span>
+<span class="lineNum">     635 </span><span class="lineCov">         10 :     SelectParticipantsFromParticipantList(inMaxNum, isActiveSpeakerPicked, addedPickedParticipants);</span>
+<span class="lineNum">     636 </span>            :     /* If active speaker is not in the picked list, add it. */
+<span class="lineNum">     637 </span><span class="lineCov">         10 :     if (m_activeSpeakerNodeId != 0 &amp;&amp; !isActiveSpeakerPicked)</span>
+<span class="lineNum">     638 </span>            :     {
+<span class="lineNum">     639 </span><span class="lineNoCov">          0 :         auto activeParticipant = GetParticipant(m_activeSpeakerNodeId);</span>
+<span class="lineNum">     640 </span><span class="lineNoCov">          0 :         if(activeParticipant &amp;&amp; activeParticipant-&gt;IsPickable())</span>
+<span class="lineNum">     641 </span>            :         {
+<span class="lineNum">     642 </span>            :             /* It might happen if the SCR message is received later than the ASN message. */
+<span class="lineNum">     643 </span><span class="lineNoCov">          0 :             NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AddParticipantsToPickedList, active speaker not in the picked list! activeSpeakerNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; maxNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :             addedPickedParticipants.push_front(activeParticipant);    </span>
+<span class="lineNum">     645 </span>            :         }
+<span class="lineNum">     646 </span>            :         else
+<span class="lineNum">     647 </span>            :         {
+<span class="lineNum">     648 </span><span class="lineNoCov">          0 :             NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::AddParticipantsToPickedList, active speaker not in the picked list and unpickable, so reset it activeSpeakerNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; maxNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     649 </span><span class="lineNoCov">          0 :             m_activeSpeakerNodeId = 0;//reset active speaker video</span>
+<span class="lineNum">     650 </span>            :         }
+<span class="lineNum">     651 </span>            :     }
+<span class="lineNum">     652 </span><span class="lineCov">         10 :     if (addedPickedParticipants.size() &gt; inMaxNum)</span>
+<span class="lineNum">     653 </span><span class="lineNoCov">          0 :         addedPickedParticipants.resize(inMaxNum);</span>
+<span class="lineNum">     654 </span>            :     /* Insert participants into the picked list. */
+<span class="lineNum">     655 </span><span class="lineCov">         40 :     for (const auto&amp; participant : addedPickedParticipants)</span>
+<span class="lineNum">     656 </span>            :     {
+<span class="lineNum">     657 </span><span class="lineNoCov">          0 :         if (!AddParticipantToPickedList(participant, outRemovedVideoSources, outAddedVideoSources))</span>
+<span class="lineNum">     658 </span>            :             break;
+<span class="lineNum">     659 </span>            :     }
+<span class="lineNum">     660 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span><span class="lineCov">        119 : bool CNtgVideoAsSelector::AddParticipantToPickedList(const NtgParticipantSharedPtr&amp; inParticipant, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     663 </span>            : {
+<span class="lineNum">     664 </span>            :     //according contend or video layout calculate pickable count 
+<span class="lineNum">     665 </span><span class="lineCov">        246 :     if (!inParticipant-&gt;IsPickable() || IsPickedListFull())</span>
+<span class="lineNum">     666 </span>            :         return false;
+<span class="lineNum">     667 </span>            :     //generate video source and add to picked list
+<span class="lineNum">     668 </span><span class="lineCov">         16 :     auto addedVideoSource = inParticipant-&gt;GenerateVideoSource();</span>
+<span class="lineNum">     669 </span><span class="lineCov">         11 :     if (!m_cmeVideoScrContext-&gt;AttachLowPriorityVid(addedVideoSource))</span>
+<span class="lineNum">     670 </span>            :     {
+<span class="lineNum">     671 </span><span class="lineNoCov">          0 :         NIGHTINGALE_ERROR_THIS(&quot;CNtgVideoAsSelector::AddParticipantToPickedList, can't attach lower priority vid nodeId:&quot; &lt;&lt; inParticipant-&gt;GetNodeId());</span>
+<span class="lineNum">     672 </span>            :         return false;
+<span class="lineNum">     673 </span>            :     }
+<span class="lineNum">     674 </span><span class="lineCov">         24 :     m_pickedVideoSources.insert(std::make_pair(addedVideoSource-&gt;GetNodeId(), addedVideoSource));</span>
+<span class="lineNum">     675 </span>            :     //if active video isn't ready, select this user as dafault active video
+<span class="lineNum">     676 </span><span class="lineCov">          8 :     if (m_activeSpeakerNodeId == 0 || m_activeSpeakerNodeId == addedVideoSource-&gt;GetNodeId())</span>
+<span class="lineNum">     677 </span>            :     {
+<span class="lineNum">     678 </span><span class="lineCov">          3 :         m_activeSpeakerNodeId = addedVideoSource-&gt;GetNodeId();</span>
+<span class="lineNum">     679 </span><span class="lineCov">          6 :         m_cmeVideoScrContext-&gt;AttachHighPriorityVid(addedVideoSource);</span>
+<span class="lineNum">     680 </span>            :     }
+<span class="lineNum">     681 </span>            :     //add to output list
+<span class="lineNum">     682 </span>            :     outAddedVideoSources.insert(addedVideoSource);
+<span class="lineNum">     683 </span><span class="lineCov">          8 :     return true;</span>
+<a name="684"><span class="lineNum">     684 </span>            : }</a>
+<span class="lineNum">     685 </span>            : 
+<span class="lineNum">     686 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::RemoveParticipantsFromPickedList(uint16_t inNum, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     687 </span>            : {
+<span class="lineNum">     688 </span><span class="lineCov">          3 :     while (inNum-- &gt; 0)</span>
+<span class="lineNum">     689 </span>            :     {
+<span class="lineNum">     690 </span><span class="lineCov">          2 :         if (!m_pickedVideoSources.empty())</span>
+<span class="lineNum">     691 </span>            :         {
+<span class="lineNum">     692 </span><span class="lineCov">          1 :             NodeIdType nodeId = SelectLowestPriorityParticipantFromPickedList();</span>
+<span class="lineNum">     693 </span><span class="lineCov">          1 :             RemoveParticipantFromPickedList(nodeId, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     694 </span>            :         }
+<span class="lineNum">     695 </span>            :         else
+<span class="lineNum">     696 </span>            :             break;
+<span class="lineNum">     697 </span>            :     }
+<span class="lineNum">     698 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     699 </span>            : 
+<span class="lineNum">     700 </span><span class="lineCov">          5 : bool CNtgVideoAsSelector::RemoveNoVideoTpFromPickedList(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     701 </span>            : {
+<span class="lineNum">     702 </span><span class="lineCov">         20 :     for (const auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">     703 </span>            :     {
+<span class="lineNum">     704 </span><span class="lineNoCov">          0 :         if ((pickedVideoSource.first == m_activeSpeakerNodeId) || (0 != m_activeSpeakerHistory.GetSerialNum(pickedVideoSource.first)))</span>
+<span class="lineNum">     705 </span><span class="lineNoCov">          0 :             continue;</span>
+<span class="lineNum">     706 </span>            :         
+<span class="lineNum">     707 </span><span class="lineNoCov">          0 :         NtgParticipantMap&amp; participants = m_participants;</span>
+<span class="lineNum">     708 </span><span class="lineNoCov">          0 :         NtgParticipantSharedPtr participant = nullptr;</span>
+<span class="lineNum">     709 </span><span class="lineNoCov">          0 :         auto iter = participants.find(pickedVideoSource.first);</span>
+<span class="lineNum">     710 </span><span class="lineNoCov">          0 :         if (iter != participants.end())</span>
+<span class="lineNum">     711 </span><span class="lineNoCov">          0 :             participant = iter-&gt;second;</span>
+<span class="lineNum">     712 </span>            : 
+<span class="lineNum">     713 </span><span class="lineNoCov">          0 :         if (participant &amp;&amp; participant-&gt;IsTpParticipant() &amp;&amp; !participant-&gt;IsVideoSourceOpen())</span>
+<span class="lineNum">     714 </span>            :         {
+<span class="lineNum">     715 </span><span class="lineNoCov">          0 :             NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::RemoveNoVideoTpFromPickedList, inNodeId:&quot; &lt;&lt; pickedVideoSource.first);</span>
+<span class="lineNum">     716 </span><span class="lineNoCov">          0 :             RemoveParticipantFromPickedList(pickedVideoSource.first, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     717 </span><span class="lineNoCov">          0 :             return true;</span>
+<span class="lineNum">     718 </span>            :         }
+<span class="lineNum">     719 </span>            :     }
+<span class="lineNum">     720 </span>            :     return false;
+<span class="lineNum">     721 </span>            : }
+<span class="lineNum">     722 </span>            : 
+<span class="lineNum">     723 </span><span class="lineCov">         31 : bool CNtgVideoAsSelector::RemoveParticipantFromPickedList(NodeIdType inNodeId, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     724 </span>            : {
+<span class="lineNum">     725 </span><span class="lineCov">         62 :     auto iter = m_pickedVideoSources.find(inNodeId);</span>
+<span class="lineNum">     726 </span><span class="lineCov">         62 :     if (iter == m_pickedVideoSources.end())</span>
+<span class="lineNum">     727 </span>            :     {
+<span class="lineNum">     728 </span>            :         return false;
+<span class="lineNum">     729 </span>            :     }
+<span class="lineNum">     730 </span>            : 
+<span class="lineNum">     731 </span><span class="lineCov">          2 :     auto removedVideoSource = iter-&gt;second;</span>
+<span class="lineNum">     732 </span><span class="lineCov">          2 :     m_cmeVideoScrContext-&gt;DetachVids(removedVideoSource);</span>
+<span class="lineNum">     733 </span><span class="lineCov">          2 :     m_pickedVideoSources.erase(iter);</span>
+<span class="lineNum">     734 </span>            :     outAddedVideoSources.erase(removedVideoSource);
+<span class="lineNum">     735 </span>            :     outRemovedVideoSources.insert(removedVideoSource);
+<span class="lineNum">     736 </span><span class="lineCov">          2 :     if (inNodeId == m_activeSpeakerNodeId)</span>
+<span class="lineNum">     737 </span>            :     {
+<span class="lineNum">     738 </span><span class="lineNoCov">          0 :         SelectActiveSpeakerFromPickedList(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     739 </span>            :     }
+<span class="lineNum">     740 </span>            : 
+<span class="lineNum">     741 </span><span class="lineCov">          2 :     return true;</span>
+<span class="lineNum">     742 </span>            : }
+<span class="lineNum">     743 </span>            : 
+<span class="lineNum">     744 </span><span class="lineCov">         14 : void CNtgVideoAsSelector::SelectActiveSpeakerFromPickedList(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     745 </span>            : {
+<span class="lineNum">     746 </span><span class="lineCov">         28 :     if (m_pickedVideoSources.empty())</span>
+<span class="lineNum">     747 </span>            :     {
+<span class="lineNum">     748 </span><span class="lineCov">        224 :         NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::SelectActiveSpeakerFromPickedList, cannot get new active speaker as the list is empty! old:&quot; &lt;&lt; m_activeSpeakerNodeId);</span>
+<span class="lineNum">     749 </span><span class="lineCov">         14 :         m_activeSpeakerNodeId = 0;</span>
+<span class="lineNum">     750 </span><span class="lineCov">         28 :         return;</span>
+<span class="lineNum">     751 </span>            :     }
+<span class="lineNum">     752 </span>            : 
+<span class="lineNum">     753 </span><span class="lineNoCov">          0 :     auto oldActiveSpeakerNodeId = m_activeSpeakerNodeId;</span>
+<span class="lineNum">     754 </span><span class="lineNoCov">          0 :     m_activeSpeakerNodeId = m_pickedVideoSources.begin()-&gt;first;</span>
+<span class="lineNum">     755 </span><span class="lineNoCov">          0 :     ReattachHighPriorityVid(oldActiveSpeakerNodeId, m_activeSpeakerNodeId, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     756 </span>            : }
+<span class="lineNum">     757 </span>            : 
+<span class="lineNum">     758 </span><span class="lineCov">          1 : NodeIdType CNtgVideoAsSelector::SelectLowestPriorityParticipantFromPickedList()</span>
+<span class="lineNum">     759 </span>            : {
+<span class="lineNum">     760 </span><span class="lineCov">          1 :     uint32_t minSerialNum = CSP_MAX_UINT32;</span>
+<span class="lineNum">     761 </span><span class="lineCov">          1 :     NtgVideoSourceSharedPtr lowestPriorityVideoSource;</span>
+<span class="lineNum">     762 </span><span class="lineCov">          6 :     for (const auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">     763 </span>            :     {
+<span class="lineNum">     764 </span><span class="lineCov">          4 :         auto serialNum = m_activeSpeakerHistory.GetSerialNum(pickedVideoSource.first);</span>
+<span class="lineNum">     765 </span><span class="lineCov">          2 :         if (serialNum &lt; minSerialNum)</span>
+<span class="lineNum">     766 </span>            :         {
+<span class="lineNum">     767 </span><span class="lineCov">          2 :             minSerialNum = serialNum;</span>
+<span class="lineNum">     768 </span><span class="lineCov">          2 :             lowestPriorityVideoSource = pickedVideoSource.second;</span>
+<span class="lineNum">     769 </span>            :         }
+<span class="lineNum">     770 </span>            :     }
+<span class="lineNum">     771 </span><span class="lineCov">          2 :     return lowestPriorityVideoSource-&gt;GetNodeId();</span>
+<span class="lineNum">     772 </span>            : }
+<span class="lineNum">     773 </span>            : 
+<span class="lineNum">     774 </span><span class="lineCov">         10 : void CNtgVideoAsSelector::SelectParticipantsFromParticipantList(uint16_t inMaxNum, bool&amp; outActiveSpeakerPicked, NtgParticipantList&amp; outParticipants)</span>
+<span class="lineNum">     775 </span>            : {
+<span class="lineNum">     776 </span><span class="lineCov">        160 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::SelectParticipantsFromParticipantList, addNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     777 </span>            :     NtgParticipantList noVideoSourceTpParticipants;
+<span class="lineNum">     778 </span>            :     std::map&lt;uint32_t, NtgParticipantSharedPtr&gt; activeHistoryParticipants;
+<span class="lineNum">     779 </span><span class="lineCov">         10 :     uint16_t addedNum = 0;</span>
+<span class="lineNum">     780 </span>            :     //active speaker history
+<span class="lineNum">     781 </span><span class="lineCov">         10 :     const std::map&lt;NodeIdType, uint32_t&gt;&amp; activeSpeakerHistory = m_activeSpeakerHistory.GetActiveSpeakerHistory();</span>
+<span class="lineNum">     782 </span><span class="lineCov">         40 :     for (auto element : activeSpeakerHistory)</span>
+<span class="lineNum">     783 </span>            :     {
+<span class="lineNum">     784 </span><span class="lineNoCov">          0 :         if (FindPickedVideoSourceByNodeId(element.first) == nullptr)</span>
+<span class="lineNum">     785 </span>            :         {
+<span class="lineNum">     786 </span><span class="lineNoCov">          0 :             NtgParticipantSharedPtr participant = GetParticipant(element.first);</span>
+<span class="lineNum">     787 </span><span class="lineNoCov">          0 :             if (participant &amp;&amp; participant-&gt;IsPickable())</span>
+<span class="lineNum">     788 </span>            :             {
+<span class="lineNum">     789 </span><span class="lineNoCov">          0 :                 if (element.first == m_activeSpeakerNodeId)</span>
+<span class="lineNum">     790 </span>            :                 {
+<span class="lineNum">     791 </span>            :                     /* It might happen if the SCR message is received later than the ASN message. */
+<span class="lineNum">     792 </span><span class="lineNoCov">          0 :                     NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::SelectParticipantsFromParticipantList, active speaker is pickable but not in the picked list! m_activeSpeakerNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; maxNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     793 </span><span class="lineNoCov">          0 :                     outActiveSpeakerPicked = true;</span>
+<span class="lineNum">     794 </span>            :                 }
+<span class="lineNum">     795 </span><span class="lineNoCov">          0 :                 activeHistoryParticipants[element.second] = participant;</span>
+<span class="lineNum">     796 </span><span class="lineNoCov">          0 :                 addedNum++;</span>
+<span class="lineNum">     797 </span>            :             } 
+<span class="lineNum">     798 </span>            :         }
+<span class="lineNum">     799 </span>            :     }
+<span class="lineNum">     800 </span>            :     //normal participant
+<span class="lineNum">     801 </span><span class="lineCov">         10 :     if (addedNum &lt; inMaxNum)</span>
+<span class="lineNum">     802 </span>            :     {
+<span class="lineNum">     803 </span><span class="lineCov">         10 :         NtgParticipantMap&amp; participants = m_participants;</span>
+<span class="lineNum">     804 </span>            :         /* Search for participants that can be added to the picked list.  and Tp no video lower priority*/
+<span class="lineNum">     805 </span><span class="lineCov">         47 :         for (const auto&amp; participant : participants)</span>
+<span class="lineNum">     806 </span>            :         {
+<span class="lineNum">     807 </span><span class="lineCov">         21 :             bool notInPickedVideoSourceList = (FindPickedVideoSourceByNodeId(participant.first) == nullptr);</span>
+<span class="lineNum">     808 </span><span class="lineCov">         14 :             bool notInActiveSpeakerHistory = (m_activeSpeakerHistory.GetSerialNum(participant.first) &lt;= 0);//priotiry</span>
+<span class="lineNum">     809 </span><span class="lineCov">          7 :             if (participant.second-&gt;IsPickable() &amp;&amp; notInPickedVideoSourceList &amp;&amp; notInActiveSpeakerHistory)</span>
+<span class="lineNum">     810 </span>            :             {              
+<span class="lineNum">     811 </span><span class="lineNoCov">          0 :                 if (participant.first == m_activeSpeakerNodeId)</span>
+<span class="lineNum">     812 </span>            :                 {
+<span class="lineNum">     813 </span>            :                     /* It might happen if the SCR message is received later than the ASN message. */
+<span class="lineNum">     814 </span><span class="lineNoCov">          0 :                     NIGHTINGALE_WARNING_THIS(&quot;CNtgVideoAsSelector::SelectParticipantsFromParticipantList, active speaker is pickable but not in the picked list! m_activeSpeakerNodeId:&quot; &lt;&lt; m_activeSpeakerNodeId &lt;&lt; &quot; maxNum:&quot; &lt;&lt; inMaxNum);</span>
+<span class="lineNum">     815 </span><span class="lineNoCov">          0 :                     outActiveSpeakerPicked = true;</span>
+<span class="lineNum">     816 </span>            :                 } 
+<span class="lineNum">     817 </span><span class="lineNoCov">          0 :                 else if (participant.second-&gt;IsTpParticipant() &amp;&amp; !participant.second-&gt;IsVideoSourceOpen())</span>
+<span class="lineNum">     818 </span>            :                 {
+<span class="lineNum">     819 </span><span class="lineNoCov">          0 :                     noVideoSourceTpParticipants.push_back(participant.second);</span>
+<span class="lineNum">     820 </span>            :                     continue;
+<span class="lineNum">     821 </span>            :                 }
+<span class="lineNum">     822 </span><span class="lineNoCov">          0 :                 outParticipants.push_back(participant.second);</span>
+<span class="lineNum">     823 </span><span class="lineNoCov">          0 :                 if (++addedNum &gt;= inMaxNum)</span>
+<span class="lineNum">     824 </span>            :                     break;
+<span class="lineNum">     825 </span>            :             }
+<span class="lineNum">     826 </span>            :         }
+<span class="lineNum">     827 </span>            :     }
+<span class="lineNum">     828 </span>            :     //make sure active speaker history in front
+<span class="lineNum">     829 </span><span class="lineCov">         40 :     for (const auto&amp; participant : activeHistoryParticipants)</span>
+<span class="lineNum">     830 </span><span class="lineNoCov">          0 :         outParticipants.push_front(participant.second);</span>
+<span class="lineNum">     831 </span><span class="lineCov">         10 :     if (addedNum &lt; inMaxNum)</span>
+<span class="lineNum">     832 </span>            :     {
+<span class="lineNum">     833 </span><span class="lineCov">         40 :         for (const auto&amp; tpParticipant : noVideoSourceTpParticipants)</span>
+<span class="lineNum">     834 </span>            :         {
+<span class="lineNum">     835 </span><span class="lineNoCov">          0 :             outParticipants.push_back(tpParticipant);</span>
+<span class="lineNum">     836 </span><span class="lineNoCov">          0 :             if (++addedNum &gt;= inMaxNum)</span>
+<span class="lineNum">     837 </span>            :                 break;
+<span class="lineNum">     838 </span>            :         }
+<span class="lineNum">     839 </span>            :     }
+<span class="lineNum">     840 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">     841 </span>            : 
+<span class="lineNum">     842 </span><span class="lineCov">        160 : NtgVideoSourceSharedPtr CNtgVideoAsSelector::FindPickedVideoSourceByNodeId(NodeIdType inNodeId)</span>
+<span class="lineNum">     843 </span>            : {
+<span class="lineNum">     844 </span><span class="lineCov">        320 :     auto iter = m_pickedVideoSources.find(inNodeId);</span>
+<span class="lineNum">     845 </span><span class="lineCov">        320 :     if (iter == m_pickedVideoSources.end())</span>
+<span class="lineNum">     846 </span><span class="lineCov">        150 :         return nullptr;</span>
+<span class="lineNum">     847 </span><span class="lineCov">         10 :     return iter-&gt;second;</span>
+<span class="lineNum">     848 </span>            : }
+<span class="lineNum">     849 </span>            : 
+<span class="lineNum">     850 </span><span class="lineNoCov">          0 : NtgVideoSourceSharedPtr CNtgVideoAsSelector::FindPickedVideoSourceByVid(VidType inVid)</span>
+<span class="lineNum">     851 </span>            : {
+<span class="lineNum">     852 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">     853 </span>            :     {
+<span class="lineNum">     854 </span><span class="lineNoCov">          0 :         for (const auto&amp; vid : pickedVideoSource.second-&gt;GetVidArray())</span>
+<span class="lineNum">     855 </span>            :         {
+<span class="lineNum">     856 </span><span class="lineNoCov">          0 :             if (vid == inVid)</span>
+<span class="lineNum">     857 </span>            :             {
+<span class="lineNum">     858 </span><span class="lineNoCov">          0 :                 return pickedVideoSource.second;</span>
+<span class="lineNum">     859 </span>            :             }
+<span class="lineNum">     860 </span>            :         }
+<span class="lineNum">     861 </span>            :     }
+<span class="lineNum">     862 </span><span class="lineNoCov">          0 :     return nullptr;</span>
+<a name="863"><span class="lineNum">     863 </span>            : }</a>
+<span class="lineNum">     864 </span>            : 
+<span class="lineNum">     865 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::ReattachHighPriorityVid(NodeIdType inOldActiveSpeakerNodeId, NodeIdType inNewActiveSpeakerNodeId, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     866 </span>            : {
+<span class="lineNum">     867 </span>            :     // NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::ReattachHighPriorityVid, old:&quot; &lt;&lt; inOldActiveSpeakerNodeId &lt;&lt; &quot; new:&quot; &lt;&lt; inNewActiveSpeakerNodeId);
+<span class="lineNum">     868 </span><span class="lineCov">          1 :     DetachHighPriorityVid(inOldActiveSpeakerNodeId, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     869 </span><span class="lineCov">          1 :     AttachHighPriorityVid(inNewActiveSpeakerNodeId, outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     870 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     871 </span>            : 
+<span class="lineNum">     872 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::AttachHighPriorityVid(NodeIdType inNodeId, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     873 </span>            : {
+<span class="lineNum">     874 </span><span class="lineCov">         16 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::AttachHighPriorityVid, inNodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     875 </span>            : 
+<span class="lineNum">     876 </span><span class="lineCov">          2 :     auto iter = m_pickedVideoSources.find(inNodeId);</span>
+<span class="lineNum">     877 </span><span class="lineCov">          2 :     if (iter != m_pickedVideoSources.end())</span>
+<span class="lineNum">     878 </span>            :     {
+<span class="lineNum">     879 </span><span class="lineCov">          1 :         m_cmeVideoScrContext-&gt;AttachHighPriorityVid(iter-&gt;second);</span>
+<span class="lineNum">     880 </span><span class="lineCov">          1 :         outRemovedVideoSources.insert(iter-&gt;second);</span>
+<span class="lineNum">     881 </span><span class="lineCov">          1 :         outAddedVideoSources.insert(iter-&gt;second);</span>
+<span class="lineNum">     882 </span>            :     }
+<span class="lineNum">     883 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     884 </span>            : 
+<span class="lineNum">     885 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::DetachHighPriorityVid(NodeIdType inNodeId, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     886 </span>            : {
+<span class="lineNum">     887 </span><span class="lineCov">         16 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::DetachHighPriorityVid, inNodeId:&quot; &lt;&lt; inNodeId);</span>
+<span class="lineNum">     888 </span>            : 
+<span class="lineNum">     889 </span><span class="lineCov">          2 :     auto iter = m_pickedVideoSources.find(inNodeId);</span>
+<span class="lineNum">     890 </span><span class="lineCov">          2 :     if (iter != m_pickedVideoSources.end())</span>
+<span class="lineNum">     891 </span>            :     {
+<span class="lineNum">     892 </span><span class="lineNoCov">          0 :         m_cmeVideoScrContext-&gt;DetachHighPriorityVid(iter-&gt;second);</span>
+<span class="lineNum">     893 </span><span class="lineNoCov">          0 :         outRemovedVideoSources.insert(iter-&gt;second);</span>
+<span class="lineNum">     894 </span><span class="lineNoCov">          0 :         outAddedVideoSources.insert(iter-&gt;second);</span>
+<span class="lineNum">     895 </span>            :     }
+<a name="896"><span class="lineNum">     896 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     897 </span>            : 
+<span class="lineNum">     898 </span><span class="lineCov">         16 : uint16_t  CNtgVideoAsSelector::GetNeedRemovePickedVideoSourceNum()const</span>
+<span class="lineNum">     899 </span>            : {
+<span class="lineNum">     900 </span><span class="lineCov">         16 :     uint16_t maxVideoSourceNum = GetMaxVideoSourceNum();</span>
+<span class="lineNum">     901 </span><span class="lineCov">         32 :     if (m_pickedVideoSources.size() &gt; maxVideoSourceNum)</span>
+<span class="lineNum">     902 </span>            :     {
+<span class="lineNum">     903 </span><span class="lineNoCov">          0 :         uint16_t removeVideoSourceNum = m_pickedVideoSources.size() - maxVideoSourceNum;</span>
+<span class="lineNum">     904 </span><span class="lineNoCov">          0 :         NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::GetNeedRemovePickedVideoSourceNum, maxVideoSourceNum:&quot; &lt;&lt; maxVideoSourceNum &lt;&lt; &quot;, removeVideoSourceNum:&quot; &lt;&lt; removeVideoSourceNum);</span>
+<span class="lineNum">     905 </span><span class="lineNoCov">          0 :         return removeVideoSourceNum;</span>
+<span class="lineNum">     906 </span>            :     }
+<span class="lineNum">     907 </span><span class="lineCov">        304 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::GetNeedRemovePickedVideoSourceNum, maxVideoSourceNum:&quot; &lt;&lt; maxVideoSourceNum &lt;&lt; &quot;, pickedVideoSources:&quot; &lt;&lt; m_pickedVideoSources.size());</span>
+<span class="lineNum">     908 </span>            :     return 0;
+<a name="909"><span class="lineNum">     909 </span>            : }</a>
+<span class="lineNum">     910 </span>            : 
+<span class="lineNum">     911 </span><span class="lineCov">         16 : uint16_t  CNtgVideoAsSelector::GetNeedAddPickedVideoSourceNum()const</span>
+<span class="lineNum">     912 </span>            : {
+<span class="lineNum">     913 </span><span class="lineCov">         16 :     uint16_t maxVideoSourceNum = GetMaxVideoSourceNum();</span>
+<span class="lineNum">     914 </span><span class="lineCov">         32 :     if (maxVideoSourceNum &gt; m_pickedVideoSources.size())</span>
+<span class="lineNum">     915 </span>            :     {
+<span class="lineNum">     916 </span><span class="lineCov">         10 :         uint16_t addVideoSourceNum = maxVideoSourceNum - m_pickedVideoSources.size();</span>
+<span class="lineNum">     917 </span><span class="lineCov">         90 :         NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::GetNeedAddPickedVideoSourceNum, maxVideoSourceNum:&quot; &lt;&lt; maxVideoSourceNum &lt;&lt; &quot;, addVideoSourceNum:&quot; &lt;&lt; addVideoSourceNum);</span>
+<span class="lineNum">     918 </span><span class="lineCov">          5 :         return addVideoSourceNum;</span>
+<span class="lineNum">     919 </span>            :     }
+<span class="lineNum">     920 </span>            :     
+<span class="lineNum">     921 </span><span class="lineCov">        209 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::GetNeedAddPickedVideoSourceNum, maxVideoSourceNum:&quot; &lt;&lt; maxVideoSourceNum &lt;&lt; &quot;, pickedVideoSources:&quot; &lt;&lt; m_pickedVideoSources.size());</span>
+<span class="lineNum">     922 </span>            :     return 0;
+<a name="923"><span class="lineNum">     923 </span>            : }</a>
+<span class="lineNum">     924 </span>            : 
+<span class="lineNum">     925 </span><span class="lineCov">        162 : uint16_t CNtgVideoAsSelector::GetMaxVideoSourceNum()const</span>
+<span class="lineNum">     926 </span>            : {
+<span class="lineNum">     927 </span><span class="lineCov">        486 :     if(m_cmeVideoScrContext-&gt;GetNumRequestedVideoSources() &lt; m_layoutMgr-&gt;GetMaxPickableCountByLayout())</span>
+<span class="lineNum">     928 </span><span class="lineCov">        411 :         return m_cmeVideoScrContext-&gt;GetNumRequestedVideoSources();</span>
+<span class="lineNum">     929 </span>            :     else
+<span class="lineNum">     930 </span><span class="lineCov">         50 :         return m_layoutMgr-&gt;GetMaxPickableCountByLayout();</span>
+<a name="931"><span class="lineNum">     931 </span>            : }</a>
+<span class="lineNum">     932 </span>            : 
+<span class="lineNum">     933 </span><span class="lineCov">         37 : void CNtgVideoAsSelector::AdjustAndUpdateSubscribersList(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     934 </span>            : {
+<span class="lineNum">     935 </span><span class="lineCov">         37 :     AdjustSubscription(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     936 </span><span class="lineCov">         37 :     UpdateSubscribersList(outRemovedVideoSources, outAddedVideoSources);</span>
+<a name="937"><span class="lineNum">     937 </span><span class="lineCov">         37 : }</span></a>
+<span class="lineNum">     938 </span>            : 
+<span class="lineNum">     939 </span><span class="lineCov">         54 : void CNtgVideoAsSelector::UpdateSubscribersList(const NtgVideoSourceSet&amp; inRemovedVideoSources, const NtgVideoSourceSet&amp; inAddedVideoSources, bool inForce)</span>
+<span class="lineNum">     940 </span>            : {
+<span class="lineNum">     941 </span><span class="lineCov">         98 :     if (!inAddedVideoSources.empty() || !inRemovedVideoSources.empty() || inForce)</span>
+<span class="lineNum">     942 </span><span class="lineCov">         12 :         m_updateASScrFunc(inRemovedVideoSources, inAddedVideoSources);</span>
+<span class="lineNum">     943 </span>            : 
+<span class="lineNum">     944 </span><span class="lineCov">         54 :     DumpSnapshot();</span>
+<span class="lineNum">     945 </span><span class="lineCov">         54 : }</span>
+<span class="lineNum">     946 </span>            : 
+<span class="lineNum">     947 </span>            : /*
+<a name="948"><span class="lineNum">     948 </span>            :  * All subscription adjustments refer to the design document https://wiki.cisco.com/display/CSP/Change+on+Video+Subscription </a>
+<span class="lineNum">     949 </span>            :  */
+<span class="lineNum">     950 </span><span class="lineCov">         37 : void CNtgVideoAsSelector::AdjustSubscription(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     951 </span>            : {
+<span class="lineNum">     952 </span>            :     //adjust add and remove picked video source in Handle scr, so we can ignore this code
+<span class="lineNum">     953 </span>            :     //adjust video size
+<span class="lineNum">     954 </span><span class="lineCov">         37 :     if (m_layoutMgr-&gt;IsShareStart())</span>
+<span class="lineNum">     955 </span>            :         AdjustShareYesSubscription(outRemovedVideoSources, outAddedVideoSources);
+<span class="lineNum">     956 </span>            :     else
+<span class="lineNum">     957 </span><span class="lineCov">         31 :         AdjustShareNoSubscription(outRemovedVideoSources, outAddedVideoSources);</span>
+<a name="958"><span class="lineNum">     958 </span><span class="lineCov">         37 : }</span></a>
+<span class="lineNum">     959 </span>            : 
+<span class="lineNum">     960 </span><span class="lineCov">         31 : void CNtgVideoAsSelector::AdjustShareNoSubscription(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">     961 </span>            : {
+<span class="lineNum">     962 </span><span class="lineCov">         62 :     uint32_t bitmap = m_layoutMgr-&gt;GetVideoLayoutBitmap();</span>
+<span class="lineNum">     963 </span><span class="lineCov">         62 :     if (m_layoutMgr-&gt;IsStageViewLayout())</span>
+<span class="lineNum">     964 </span>            :     {
+<span class="lineNum">     965 </span><span class="lineNoCov">          0 :         AdjustSubscriptionOnShareNoLayoutStageView(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     966 </span>            :     }
+<span class="lineNum">     967 </span><span class="lineCov">         31 :     else if (bitmap &amp; CSP_SHARE_NO_LAYOUT_EQUAL)</span>
+<span class="lineNum">     968 </span>            :     {
+<span class="lineNum">     969 </span>            :         //equal or equal &amp; backgroundonly
+<span class="lineNum">     970 </span><span class="lineCov">          3 :         if ((bitmap == CSP_SHARE_NO_LAYOUT_EQUAL) || (bitmap == (CSP_SHARE_NO_LAYOUT_EQUAL|CSP_SHARE_NO_LAYOUT_BACKGROUND_ONLY)))</span>
+<span class="lineNum">     971 </span>            :         {
+<span class="lineNum">     972 </span><span class="lineNoCov">          0 :             AdjustSubscriptionOnShareNoLayoutEqual(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     973 </span><span class="lineNoCov">          0 :             return;</span>
+<span class="lineNum">     974 </span>            :         }
+<span class="lineNum">     975 </span>            :         //equal with prominent or single
+<span class="lineNum">     976 </span><span class="lineCov">          3 :         else if ((bitmap &amp; CSP_SHARE_NO_LAYOUT_PROMINENT) || (bitmap &amp; CSP_SHARE_NO_LAYOUT_SINGLE))</span>
+<span class="lineNum">     977 </span>            :         {
+<span class="lineNum">     978 </span><span class="lineCov">          3 :             AdjustSubscriptionOnShareNoLayoutEqualAndProminent(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     979 </span><span class="lineCov">          3 :             return;</span>
+<span class="lineNum">     980 </span>            :         }
+<span class="lineNum">     981 </span>            :     }
+<span class="lineNum">     982 </span><span class="lineCov">         28 :     else if (bitmap &amp; CSP_SHARE_NO_LAYOUT_PROMINENT)</span>
+<span class="lineNum">     983 </span>            :     {
+<span class="lineNum">     984 </span>            :         //prominet only or prominet &amp; single or backgroundonly
+<span class="lineNum">     985 </span><span class="lineCov">         13 :         AdjustSubscriptionOnShareNoLayoutProminent(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     986 </span><span class="lineCov">         13 :         return;</span>
+<span class="lineNum">     987 </span>            :     }
+<span class="lineNum">     988 </span><span class="lineCov">         15 :     else if (bitmap &amp; CSP_SHARE_NO_LAYOUT_SINGLE)</span>
+<span class="lineNum">     989 </span>            :     {
+<span class="lineNum">     990 </span>            :         //prominet only or prominet &amp; single or backgroundonly
+<span class="lineNum">     991 </span><span class="lineCov">          3 :         AdjustSubscriptionOnShareNoLayoutProminent(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     992 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">     993 </span>            :     }
+<span class="lineNum">     994 </span><span class="lineCov">         12 :     else if (bitmap &amp; CSP_SHARE_NO_LAYOUT_BACKGROUND_ONLY)</span>
+<span class="lineNum">     995 </span>            :     {
+<span class="lineNum">     996 </span><span class="lineCov">          1 :         AdjustSubscriptionOnShareNoLayoutBackgroundOnly(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">     997 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">     998 </span>            :     }
+<a name="999"><span class="lineNum">     999 </span>            : }</a>
+<span class="lineNum">    1000 </span>            : 
+<span class="lineNum">    1001 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustShareYesSubscription(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1002 </span>            : {
+<span class="lineNum">    1003 </span><span class="lineCov">          6 :     AdjustSubscriptionOnShareYes(outRemovedVideoSources, outAddedVideoSources);</span>
+<span class="lineNum">    1004 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1005 </span>            : 
+<span class="lineNum">    1006 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareNoLayoutEqual(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1007 </span>            : {
+<span class="lineNum">    1008 </span><span class="lineNoCov">          0 :     auto numPickedVideoSources = m_pickedVideoSources.size();</span>
+<span class="lineNum">    1009 </span><span class="lineNoCov">          0 :     EMediaVideoSize newVideoSize = VIDEO_SIZE_360P;</span>
+<span class="lineNum">    1010 </span>            : 
+<span class="lineNum">    1011 </span><span class="lineNoCov">          0 :     if (numPickedVideoSources == 1)</span>
+<span class="lineNum">    1012 </span>            :     {
+<span class="lineNum">    1013 </span>            :         newVideoSize = VIDEO_SIZE_720P;
+<span class="lineNum">    1014 </span>            :     }
+<span class="lineNum">    1015 </span><span class="lineNoCov">          0 :     else if (numPickedVideoSources &gt; 1 &amp;&amp; numPickedVideoSources &lt;= 4)</span>
+<span class="lineNum">    1016 </span>            :     {
+<span class="lineNum">    1017 </span>            :         newVideoSize = VIDEO_SIZE_360P;
+<span class="lineNum">    1018 </span>            :     }
+<span class="lineNum">    1019 </span>            :     else
+<span class="lineNum">    1020 </span>            :     {
+<span class="lineNum">    1021 </span><span class="lineNoCov">          0 :         CSP_ASSERT(numPickedVideoSources &gt; 4 &amp;&amp; numPickedVideoSources &lt;= MAX_NUM_OF_EQUAL_VIDEO_SOURCES);</span>
+<span class="lineNum">    1022 </span>            :         newVideoSize = VIDEO_SIZE_180P;
+<span class="lineNum">    1023 </span>            :     }
+<span class="lineNum">    1024 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1025 </span>            :     {
+<span class="lineNum">    1026 </span><span class="lineNoCov">          0 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, newVideoSize);</span>
+<span class="lineNum">    1027 </span>            :     }
+<span class="lineNum">    1028 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1029 </span>            : 
+<span class="lineNum">    1030 </span><span class="lineCov">         16 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareNoLayoutProminent(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1031 </span>            : {
+<span class="lineNum">    1032 </span><span class="lineCov">         83 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1033 </span>            :     {
+<span class="lineNum">    1034 </span>            :         /* Active speaker is always 720p. */
+<span class="lineNum">    1035 </span><span class="lineCov">         19 :         if (pickedVideoSource.second-&gt;GetNodeId() == m_activeSpeakerNodeId)</span>
+<span class="lineNum">    1036 </span>            :         {
+<span class="lineNum">    1037 </span><span class="lineCov">         11 :             SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_720P);</span>
+<span class="lineNum">    1038 </span>            :         }
+<span class="lineNum">    1039 </span>            :         else
+<span class="lineNum">    1040 </span>            :         {
+<span class="lineNum">    1041 </span><span class="lineCov">          8 :             SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1042 </span>            :         }
+<span class="lineNum">    1043 </span>            :     }
+<span class="lineNum">    1044 </span><span class="lineCov">         16 : }</span>
+<span class="lineNum">    1045 </span>            : 
+<span class="lineNum">    1046 </span><span class="lineCov">          1 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareNoLayoutBackgroundOnly(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1047 </span>            : {
+<span class="lineNum">    1048 </span><span class="lineCov">          4 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1049 </span>            :     {
+<span class="lineNum">    1050 </span><span class="lineNoCov">          0 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1051 </span>            :     }
+<span class="lineNum">    1052 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">    1053 </span>            : 
+<span class="lineNum">    1054 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareNoLayoutStageView(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1055 </span>            : {
+<span class="lineNum">    1056 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1057 </span>            :     {
+<span class="lineNum">    1058 </span><span class="lineNoCov">          0 :         if (pickedVideoSource.second-&gt;GetNodeId() == m_activeSpeakerNodeId)</span>
+<span class="lineNum">    1059 </span>            :         {
+<span class="lineNum">    1060 </span><span class="lineNoCov">          0 :             if (m_layoutMgr-&gt;IsShowActiveInStageVideo())</span>
+<span class="lineNum">    1061 </span><span class="lineNoCov">          0 :                 SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_360P);</span>
+<span class="lineNum">    1062 </span>            :             else
+<span class="lineNum">    1063 </span><span class="lineNoCov">          0 :                 SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1064 </span>            :         }
+<span class="lineNum">    1065 </span>            :         else
+<span class="lineNum">    1066 </span>            :         {
+<span class="lineNum">    1067 </span><span class="lineNoCov">          0 :             SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1068 </span>            :         }
+<span class="lineNum">    1069 </span>            :     }
+<span class="lineNum">    1070 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1071 </span>            : 
+<span class="lineNum">    1072 </span><span class="lineCov">          3 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareNoLayoutEqualAndProminent(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1073 </span>            : {
+<span class="lineNum">    1074 </span><span class="lineCov">          6 :     auto numPickedVideoSources = m_pickedVideoSources.size();</span>
+<span class="lineNum">    1075 </span><span class="lineCov">          3 :     EMediaVideoSize newVideoSize = VIDEO_SIZE_360P;</span>
+<span class="lineNum">    1076 </span>            : 
+<span class="lineNum">    1077 </span><span class="lineCov">          3 :     if (numPickedVideoSources == 1)</span>
+<span class="lineNum">    1078 </span>            :     {
+<span class="lineNum">    1079 </span>            :         newVideoSize = VIDEO_SIZE_720P;
+<span class="lineNum">    1080 </span>            :     }
+<span class="lineNum">    1081 </span><span class="lineCov">          3 :     else if (numPickedVideoSources &gt; 1 &amp;&amp; numPickedVideoSources &lt;= 4)</span>
+<span class="lineNum">    1082 </span>            :     {
+<span class="lineNum">    1083 </span>            :         newVideoSize = VIDEO_SIZE_360P;
+<span class="lineNum">    1084 </span>            :     }
+<span class="lineNum">    1085 </span>            :     else
+<span class="lineNum">    1086 </span>            :     {
+<span class="lineNum">    1087 </span><span class="lineCov">         54 :         CSP_ASSERT(numPickedVideoSources &gt; 4 &amp;&amp; numPickedVideoSources &lt;= MAX_NUM_OF_EQUAL_VIDEO_SOURCES);</span>
+<span class="lineNum">    1088 </span>            :         newVideoSize = VIDEO_SIZE_180P;
+<span class="lineNum">    1089 </span>            :     }
+<span class="lineNum">    1090 </span><span class="lineCov">         12 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1091 </span>            :     {
+<span class="lineNum">    1092 </span>            :         /* Active speaker is always 720p. */
+<span class="lineNum">    1093 </span><span class="lineNoCov">          0 :         if (pickedVideoSource.second-&gt;GetNodeId() == m_activeSpeakerNodeId)</span>
+<span class="lineNum">    1094 </span>            :         {
+<span class="lineNum">    1095 </span><span class="lineNoCov">          0 :             SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_720P);</span>
+<span class="lineNum">    1096 </span>            :         }
+<span class="lineNum">    1097 </span>            :         else
+<span class="lineNum">    1098 </span>            :         {
+<span class="lineNum">    1099 </span><span class="lineNoCov">          0 :             SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, newVideoSize);</span>
+<span class="lineNum">    1100 </span>            :         }
+<span class="lineNum">    1101 </span>            :     }
+<span class="lineNum">    1102 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">    1103 </span>            : 
+<span class="lineNum">    1104 </span><span class="lineCov">          6 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareYes(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1105 </span>            : {
+<span class="lineNum">    1106 </span><span class="lineCov">         27 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1107 </span>            :     {
+<span class="lineNum">    1108 </span><span class="lineCov">          3 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1109 </span>            :     }
+<span class="lineNum">    1110 </span><span class="lineCov">          6 : }</span>
+<span class="lineNum">    1111 </span>            : 
+<span class="lineNum">    1112 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareYesLayoutProminent(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1113 </span>            : {
+<span class="lineNum">    1114 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1115 </span>            :     {
+<span class="lineNum">    1116 </span><span class="lineNoCov">          0 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1117 </span>            :     }
+<span class="lineNum">    1118 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1119 </span>            : 
+<span class="lineNum">    1120 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareYesLayoutSinglePlusSpeaker(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1121 </span>            : {
+<span class="lineNum">    1122 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1123 </span>            :     {
+<span class="lineNum">    1124 </span><span class="lineNoCov">          0 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1125 </span>            :     }
+<span class="lineNum">    1126 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1127 </span>            : 
+<span class="lineNum">    1128 </span><span class="lineNoCov">          0 : void CNtgVideoAsSelector::AdjustSubscriptionOnShareYesLayoutProminentAndSinglePlusSpeaker(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources)</span>
+<span class="lineNum">    1129 </span>            : {
+<span class="lineNum">    1130 </span><span class="lineNoCov">          0 :     for (auto&amp; pickedVideoSource : m_pickedVideoSources)</span>
+<span class="lineNum">    1131 </span>            :     {
+<span class="lineNum">    1132 </span><span class="lineNoCov">          0 :         SetPickedSourceVideoSize(pickedVideoSource.second, outRemovedVideoSources, outAddedVideoSources, VIDEO_SIZE_180P);</span>
+<span class="lineNum">    1133 </span>            :     }
+<span class="lineNum">    1134 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">    1135 </span>            : 
+<span class="lineNum">    1136 </span><span class="lineCov">         22 : void CNtgVideoAsSelector::SetPickedSourceVideoSize(const NtgVideoSourceSharedPtr&amp; inPickedVideoSource, NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources, EMediaVideoSize inVideoSize)</span>
+<span class="lineNum">    1137 </span>            : {
+<span class="lineNum">    1138 </span><span class="lineCov">         22 :     if (inPickedVideoSource-&gt;GetVideoSize() != inVideoSize)</span>
+<span class="lineNum">    1139 </span>            :     {
+<span class="lineNum">    1140 </span><span class="lineCov">          1 :         inPickedVideoSource-&gt;SetVideoSize(inVideoSize);</span>
+<span class="lineNum">    1141 </span>            :         outRemovedVideoSources.insert(inPickedVideoSource);
+<span class="lineNum">    1142 </span>            :         outAddedVideoSources.insert(inPickedVideoSource);
+<span class="lineNum">    1143 </span>            :     }
+<a name="1144"><span class="lineNum">    1144 </span><span class="lineCov">         22 : }</span></a>
+<span class="lineNum">    1145 </span>            : 
+<span class="lineNum">    1146 </span><span class="lineCov">         83 : void CNtgVideoAsSelector::DumpSnapshot() const</span>
+<span class="lineNum">    1147 </span>            : {
+<span class="lineNum">    1148 </span>            :     // TODO: remove the log in official release. 
+<span class="lineNum">    1149 </span><span class="lineCov">       1494 :     NIGHTINGALE_INFO_THIS(&quot;CNtgVideoAsSelector::DumpSnapshot - &quot; &lt;&lt; ::Desensitize(JsonWriter().write(ToJson())));</span>
+<a name="1150"><span class="lineNum">    1150 </span><span class="lineCov">         83 : }</span></a>
+<span class="lineNum">    1151 </span>            : 
+<span class="lineNum">    1152 </span><span class="lineNoCov">          0 : bool CNtgVideoAsSelector::IsPickedListFull()</span>
+<a name="1153"><span class="lineNum">    1153 </span>            : {</a>
+<span class="lineNum">    1154 </span><span class="lineCov">        119 :     return (GetMaxVideoSourceNum() &lt;= m_pickedVideoSources.size());//(m_layoutMgr-&gt;GetMaxPickableCountByLayout() &lt;= m_pickedVideoSources.size());</span>
+<span class="lineNum">    1155 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

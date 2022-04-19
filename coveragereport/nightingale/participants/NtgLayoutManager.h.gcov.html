@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/NtgLayoutManager.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - NtgLayoutManager.h<span style="font-size: 80%;"> (source / <a href="NtgLayoutManager.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Participant Manager: manages a unified participant list of a conference;
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Mar-29-2019  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef NTG_LAYOUT_MANAGER_H
+<span class="lineNum">      14 </span>            : #define NTG_LAYOUT_MANAGER_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">      17 </span>            : #include &lt;set&gt;
+<span class="lineNum">      18 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : class CNtgLayoutManager{
+<span class="lineNum">      21 </span>            : public:
+<span class="lineNum">      22 </span>            :     CNtgLayoutManager();
+<span class="lineNum">      23 </span>            :     ~CNtgLayoutManager();
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : public:
+<span class="lineNum">      26 </span>            :     const CspVideoComposeKeySet&amp; GetVideoComposeKeys() const { return m_videoComposeKeys; }
+<span class="lineNum">      27 </span>            :         //according content and video layout calculate pickable count
+<span class="lineNum">      28 </span>            :         uint32_t GetVideoLayoutBitmap();
+<span class="lineNum">      29 </span>            :         uint32_t GetContentLayoutBitmap();
+<span class="lineNum">      30 </span>            :         uint16_t GetMaxPickableCountByLayout();
+<span class="lineNum">      31 </span>            :     bool AddVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey, uint32_t inScrNum);
+<span class="lineNum">      32 </span>            :     bool RemoveVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey, uint32_t inScrNum);
+<span class="lineNum">      33 </span>            :     bool UpdateVideoComposeKey(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey, uint32_t inScrNum);
+<span class="lineNum">      34 </span>            :     bool CheckNeedReSubscription(uint32_t inOldVideoBitmap, uint32_t inUpdateVideoBitmap);
+<span class="lineNum">      35 </span>            :         bool IsSameAsPrevious(const CCspVideoComposeKey&amp; inVideoComposeKey)const;
+<span class="lineNum">      36 </span>            :     bool ShareNoLayoutEqual() const;
+<span class="lineNum">      37 </span>            :     bool ShareNoLayoutProminent() const;
+<span class="lineNum">      38 </span>            :     bool ShareYesLayoutProminent() const;
+<span class="lineNum">      39 </span>            :     bool ShareYesLayoutSinglePlusSpeaker() const;
+<span class="lineNum">      40 </span>            :     bool ShareNoLayoutEqualAndProminent() const;
+<span class="lineNum">      41 </span>            :     bool ShareYesLayoutProminentAndSinglePlusSpeaker() const;
+<span class="lineNum">      42 </span>            :     void UpdateContentSharingStatus(bool inContentSharing);
+<span class="lineNum">      43 </span>            :         bool IsDependOnScrUpdate(uint32_t inOldVideoBitmap, uint32_t inUpdateVideoBitmap, uint32_t inScrNum)const;
+<span class="lineNum">      44 </span>            :     bool IsShareStart() { return m_shareStarted; }
+<span class="lineNum">      45 </span>            :     bool IsShareStateSwitch() { return m_switchShareState; }
+<span class="lineNum">      46 </span>            :         bool IsStageViewLayout() const{ return m_stageViewLayout;}
+<span class="lineNum">      47 </span>            :     bool IsLockAttendeeInStage() const{ return m_lockAttendeeOnStageOnly; }
+<span class="lineNum">      48 </span>            :     bool IsShowActiveInStageVideo() const{ return m_showActiveInStageVideo; }
+<span class="lineNum">      49 </span>            :     bool IsShowActiveInStageContent() const{ return m_showActiveInStageDuringSharing; }
+<span class="lineNum">      50 </span><span class="lineCov">         17 :         void SetStageViewLayout(bool inStageViewLayout) { m_stageViewLayout = inStageViewLayout;}</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :     void SetStageLockAttendeeParamter(bool inIsLockAttendee) { m_lockAttendeeOnStageOnly = inIsLockAttendee; }</span>
+<span class="lineNum">      52 </span><span class="lineCov">          1 :     void SetStageShowActiveInVideo(bool inIsShowActiveInVideo) { m_showActiveInStageVideo = inIsShowActiveInVideo; }</span>
+<span class="lineNum">      53 </span><span class="lineCov">          1 :     void SetStageShowActiveInSharing(bool inIsShowActiveInSharing) { m_showActiveInStageDuringSharing = inIsShowActiveInSharing; }</span>
+<span class="lineNum">      54 </span>            :     void ResetShareStartStatus(bool inShareStarted) { m_shareStarted = inShareStarted; }
+<span class="lineNum">      55 </span>            :     void ResetShareStateSwitch(bool inSwitchShareState) { m_switchShareState = inSwitchShareState; }
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : private:
+<span class="lineNum">      58 </span>            :         //remember last video layout
+<span class="lineNum">      59 </span>            :         std::string m_lastVideoLayout;
+<span class="lineNum">      60 </span>            :         std::string m_lastContentLayout; 
+<span class="lineNum">      61 </span>            :     bool m_shareStarted = false;
+<span class="lineNum">      62 </span>            :         bool m_switchShareState = false;
+<span class="lineNum">      63 </span>            :         bool m_stageViewLayout = false;
+<span class="lineNum">      64 </span>            :     bool m_lockAttendeeOnStageOnly = false;
+<span class="lineNum">      65 </span>            :     bool m_showActiveInStageVideo = false;
+<span class="lineNum">      66 </span>            :     bool m_showActiveInStageDuringSharing = false;    
+<span class="lineNum">      67 </span>            :     CspVideoComposeKeySet m_videoComposeKeys;
+<span class="lineNum">      68 </span>            : };
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : #endif /* NTG_LAYOUT_MANAGER_H */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

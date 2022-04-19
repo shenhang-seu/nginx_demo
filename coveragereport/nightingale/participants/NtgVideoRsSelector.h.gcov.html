@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/NtgVideoRsSelector.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - NtgVideoRsSelector.h<span style="font-size: 80%;"> (source / <a href="NtgVideoRsSelector.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef NTG_PARTICIPANT_RS_SELECTOR_MGR_H</a>
+<span class="lineNum">       2 </span>            : #define NTG_PARTICIPANT_RS_SELECTOR_MGR_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;set&gt;
+<span class="lineNum">       5 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;NtgParticipant.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;CmeVideoScrManager.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;NtgLayoutManager.h&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : class CNtgVideoRsSelector
+<span class="lineNum">      12 </span>            : {
+<span class="lineNum">      13 </span>            : public:
+<span class="lineNum">      14 </span>            :     CNtgVideoRsSelector(const UpdateSelectorSubscriptionFunc&amp; inUpdateRSScrFunc);
+<span class="lineNum">      15 </span>            :     ~CNtgVideoRsSelector();
+<span class="lineNum">      16 </span>            :         
+<span class="lineNum">      17 </span>            :     void Release();
+<span class="lineNum">      18 </span><span class="lineCov">         36 :         void SetLayoutMgr(NtgLayoutMgrSharedPtr inNtgLayoutMgr) { m_layoutMgr = inNtgLayoutMgr; }</span>
+<span class="lineNum">      19 </span><span class="lineCov">         36 :     void SetCmeVideoScrMgr(CmeVideoScrSharedPtr inCmeVideoScrMgr) { m_cmeVideoScrContext = inCmeVideoScrMgr; }</span>
+<span class="lineNum">      20 </span>            :         void AdjustParticipants(const NtpRsVidCsiMap&amp; inVidCsis, const NtgRsNodeIdCsiMap&amp; inRsNodeIdCsis, NodeIdTypeVector&amp; outNodeIds, NtgParticipantMap&amp; outRemoveParticipants);
+<span class="lineNum">      21 </span>            :     void HandleCmeVideoScrParseResult(const NtpRsVidCsiMap&amp; inVidCsis);
+<span class="lineNum">      22 </span>            :         void ForceSubscribtion();
+<span class="lineNum">      23 </span>            :         void AddParticipant(const NtgParticipantSharedPtr&amp; inParticipant);
+<span class="lineNum">      24 </span>            :         void AddParticipants(const NtgParticipantMap inParticipants);
+<span class="lineNum">      25 </span>            :         void RemoveParticipants(const NodeIdTypeVector&amp; inNodeIdVector);
+<span class="lineNum">      26 </span>            :         void ClearAllParticipants();
+<span class="lineNum">      27 </span>            :         void AddMmpInfo(NodeIdType inNodeId, const NtgMmpInfoSharedPtr&amp; inMmpInfo, bool inIsTpCallback);
+<span class="lineNum">      28 </span>            :         void AddTpCallbackInfo(NodeIdType inNodeId, const NtgTpInfoSharedPtr&amp; inTpInfo);
+<span class="lineNum">      29 </span>            :         void RemoveTpCallbackInfo(NodeIdType inNodeId);
+<span class="lineNum">      30 </span>            :         void UpdateVideoSourceStatus(NodeIdType inNodeId, bool inIsOpen);
+<span class="lineNum">      31 </span>            :         JsonValue ToJson() const;
+<span class="lineNum">      32 </span>            :         void DumpSnapshot() const;
+<span class="lineNum">      33 </span>            :         void RecordToHistory(const NtgRsCsiNodeIdMap&amp; inRsCsiNodeIds);
+<span class="lineNum">      34 </span><span class="lineCov">         29 :         bool IsParticipantEmpty()const {return m_participants.empty();}</span>
+<span class="lineNum">      35 </span>            :         NtgParticipantSharedPtr GetParticipant(NodeIdType inNodeId);
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : protected:
+<span class="lineNum">      38 </span>            :         void AddScr(VidType inVid, CsiType inCsi, NtgVideoSourceSet&amp; outAddedVideoSources, NtgVideoSourceSet&amp; outRemovedVideoSources);
+<span class="lineNum">      39 </span>            :         void RemoveScr(VidType inVid, CsiType inCsi, NtgVideoSourceSet&amp; outAddedVideoSources, NtgVideoSourceSet&amp; outRemovedVideoSources);
+<span class="lineNum">      40 </span>            :         void AdjustPickedVideSource();
+<span class="lineNum">      41 </span>            :         void AdjustResolution(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources);
+<span class="lineNum">      42 </span>            :         void CheckParticipantCsiChange(NodeIdType inNodeId);
+<span class="lineNum">      43 </span>            :         void UnsubscribeAllPickedVideoSource();
+<span class="lineNum">      44 </span>            :         void AddPickedVideoSource(CsiType inCsi, NtgVideoSourceSharedPtr inVideoSource);
+<span class="lineNum">      45 </span>            :         void RemovePickedVideoSource(NodeIdType inNodeId);
+<span class="lineNum">      46 </span>            :         void RemovePickedVideoSource(NodeIdType inNodeId, NtgVideoSourceSet&amp; outRemovedVideoSources);
+<span class="lineNum">      47 </span>            :         void ConvertToNodeIdCsiMap(const NtpRsVidCsiMap&amp; inVidCsis);
+<span class="lineNum">      48 </span>            :         NtgVideoSourceSharedPtr FindPickedVideoSourceByCsi(CsiType inCsi, bool inAdd);
+<span class="lineNum">      49 </span>            :         NtgVideoSourceSharedPtr FindPickedVideoSourceByNodeId(NodeIdType inNodeId);
+<span class="lineNum">      50 </span>            :         NtgVideoSourceSharedPtr GenerateVideoSource(NodeIdType inNodeId);
+<span class="lineNum">      51 </span>            :         void UpdateSubscription(NtgVideoSourceSet&amp; outRemovedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources);
+<span class="lineNum">      52 </span>            :         NodeIdType GetNodeIdByCsi(CsiType inCsi);
+<span class="lineNum">      53 </span>            :         EMediaVideoSize GetResolution();
+<span class="lineNum">      54 </span>            :         bool IsParticipantInScr(NodeIdType inNodeId)const;
+<span class="lineNum">      55 </span>            :         bool IsDifferentCsi(CsiType inCsi, NtgVideoSourceSharedPtr inVideoSource)const;
+<span class="lineNum">      56 </span><span class="lineCov">         17 :         bool IsContentSharing()const { return m_layoutMgr-&gt;IsShareStart(); }</span>
+<span class="lineNum">      57 </span><span class="lineCov">         15 :         bool IsActiveInStageVideo()const { return m_layoutMgr-&gt;IsShowActiveInStageVideo(); }</span>
+<span class="lineNum">      58 </span><span class="lineCov">          2 :         bool IsActiveInStageContent()const { return m_layoutMgr-&gt;IsShowActiveInStageContent(); }</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : private:
+<span class="lineNum">      61 </span>            :     UpdateSelectorSubscriptionFunc m_updateRSScrFunc;
+<span class="lineNum">      62 </span>            :     CmeVideoScrSharedPtr m_cmeVideoScrContext;
+<span class="lineNum">      63 </span>            :     NtgLayoutMgrSharedPtr m_layoutMgr;
+<span class="lineNum">      64 </span>            :         NtgParticipantMap m_participants;
+<span class="lineNum">      65 </span>            :     NtgVideoSourceMap m_pickedVideoSources;
+<span class="lineNum">      66 </span>            :         NtpRsVidCsiMap m_rsVidCsis;
+<span class="lineNum">      67 </span>            :         NtgRsNodeIdCsiMap m_rsNodeIdCsis;
+<span class="lineNum">      68 </span>            :         NtgRsCsiNodeIdMap m_csiNodeIdHistory;
+<span class="lineNum">      69 </span>            : };
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : #endif /* NTG_PARTICIPANT_RS_SELECTOR_MGR_H */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

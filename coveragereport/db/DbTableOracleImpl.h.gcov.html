@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - db/DbTableOracleImpl.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">db</a> - DbTableOracleImpl.h<span style="font-size: 80%;"> (source / <a href="DbTableOracleImpl.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * DataTableOracleImpl.h
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  *  Created on: 2017/8/4
+<span class="lineNum">       5 </span>            :  *      Author: xinxzhu
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #ifndef SRC_DB_DBTABLEORACLEIMPL_H_
+<span class="lineNum">       9 </span>            : #define SRC_DB_DBTABLEORACLEIMPL_H_
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &lt;map&gt;
+<span class="lineNum">      12 </span>            : #include &lt;string&gt;
+<span class="lineNum">      13 </span>            : #include &lt;chrono&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &quot;occi.h&quot;
+<span class="lineNum">      16 </span>            : #include &quot;DbDefines.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;DbRow.h&quot;
+<span class="lineNum">      18 </span>            : #include &lt;thread&gt;
+<span class="lineNum">      19 </span>            : #include &quot;boost/date_time/posix_time/posix_time.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &lt;boost/asio/steady_timer.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &quot;DbTableImpl.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : using namespace oracle::occi;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : class CDbTableOracleImpl : public CDbTableImpl
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            : public:
+<span class="lineNum">      28 </span>            :     CDbTableOracleImpl(EDbTableName inTableName);
+<span class="lineNum">      29 </span>            :     virtual ~CDbTableOracleImpl();
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :     DbRecordListSharedPtr ExecuteQuery(const std::string&amp; inSql);
+<span class="lineNum">      32 </span>            :     DbRecordListSharedPtr ExecutePlaceholderQuery(const std::string&amp; inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys);
+<span class="lineNum">      33 </span>            :     SafariResult ExecuteUpdate(const std::string&amp; inSql);
+<span class="lineNum">      34 </span>            :     SafariResult ExecutePlaceholderUpdate(const std::string&amp; inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys);
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :     void AsyncExecuteQuery(const std::string&amp; inSql, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      37 </span>            :     void AsyncExecuteUpdate(const std::string&amp; inSql, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      38 </span>            :     void AsyncExcutePlaceholderQuery(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback);
+<span class="lineNum">      39 </span>            :     void AsyncExcutePlaceholderUpdate(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback);
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : protected:
+<span class="lineNum">      42 </span>            :     DbRecordListSharedPtr ConvertToRecordList(ResultSet* inResultSet);
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         void StartTimer();
+<span class="lineNum">      45 </span>            :         void StopTimer();
+<a name="46"><span class="lineNum">      46 </span>            :         void HandleTimer(boost::asio::steady_timer* inTimer, const boost::system::error_code&amp; inErrorCode);</a>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">         18 :         std::shared_ptr&lt;CDbTableOracleImpl&gt; get_shared_from_this(){ return std::dynamic_pointer_cast&lt;CDbTableOracleImpl&gt;(shared_from_this());}</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : private:
+<span class="lineNum">      51 </span>            :     boost::asio::io_service&amp; m_appIoService; // Added by Webber Zheng, Dec 05 2017.
+<span class="lineNum">      52 </span>            :     boost::asio::io_service&amp; m_dbIoService;
+<span class="lineNum">      53 </span>            :     boost::asio::steady_timer m_monitorTimer;
+<span class="lineNum">      54 </span>            :     std::string m_executeSqlSentense;        // Added by Haidong for HandleTimer log print. Nov 08 2018.
+<a name="55"><span class="lineNum">      55 </span>            : };</a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">         19 : class CDbOracleRow : public IDbRow</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span>            : public:
+<span class="lineNum">      60 </span><span class="lineCov">         38 :     CDbOracleRow(ResultSet* inResultSet):m_result(inResultSet){};</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :     virtual std::string GetString(int inColIndex);
+<span class="lineNum">      63 </span>            :     virtual int GetInt(int inColIndex);
+<span class="lineNum">      64 </span>            :     virtual double GetDouble(int inColIndex);
+<span class="lineNum">      65 </span>            :     virtual boost::posix_time::ptime GetDateTime(int inColIndex);
+<span class="lineNum">      66 </span>            :     virtual boost::posix_time::ptime GetTimestamp(int inColIndex);
+<span class="lineNum">      67 </span>            :     virtual bool GetBoolean(int inColIndex);
+<span class="lineNum">      68 </span>            :     virtual std::string GetCLob(int inColIndex);
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : private:
+<span class="lineNum">      71 </span>            :     ResultSet* m_result;
+<span class="lineNum">      72 </span>            : };
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : #endif /* SRC_DB_DBTABLEORACLEIMPL_H_ */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/localsocket/LocalSocketPackMutual.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/localsocket</a> - LocalSocketPackMutual.h<span style="font-size: 80%;"> (source / <a href="LocalSocketPackMutual.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">139</td>
+            <td class="headerCovTableEntry">174</td>
+            <td class="headerCovTableEntryMed">79.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryHi">93.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * UNIX DOMAIN SOCKET API(local socket)
+<span class="lineNum">       3 </span>            :  * provide both client/server version, use for safari packet length socket TCP
+<span class="lineNum">       4 </span>            :  * Provide a packet stream, with a header of data size
+<span class="lineNum">       5 </span>            :  *
+<span class="lineNum">       6 </span>            :  * | 1 BYTE| 4 BYTES | data ...
+<span class="lineNum">       7 </span>            :  * | FLAG  | lenght  | data ...
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * Author: Rossl@cisco.com
+<span class="lineNum">      10 </span>            :  * Date: 20171026, initial version
+<span class="lineNum">      11 </span>            :  */
+<span class="lineNum">      12 </span>            : #ifndef _SAFARI_LOCAL_SOCKET_MUTUAL_
+<span class="lineNum">      13 </span>            : #define _SAFARI_LOCAL_SOCKET_MUTUAL_
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">      16 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">      17 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/array.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/bind.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/enable_shared_from_this.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/shared_ptr.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/format.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;LoggerApi.h&gt;
+<span class="lineNum">      25 </span>            : #include &quot;LocalSocket.h&quot;
+<span class="lineNum">      26 </span>            : #include &quot;LocalSocketBase.h&quot;
+<span class="lineNum">      27 </span>            : #include &quot;LocalSocketIOStatics.h&quot;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : #if defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : typedef std::function&lt;void(const boost::system::error_code&amp; )&gt; PackSocketErrorFunc;
+<span class="lineNum">      34 </span>            : typedef std::function&lt;void(uint8_t*, std::size_t )&gt; PackSocketDataFunc;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : const char LOCALSOCKET_PACK_FLAG = 0xB1;
+<span class="lineNum">      37 </span>            : #define INVALID_LENGTH 0xFFFFFFFF
+<span class="lineNum">      38 </span>            : #define MAX_BUFFER_SIZE 1024*1024*10
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : namespace LOCALSOCKET
+<a name="41"><span class="lineNum">      41 </span>            : {</a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         71 : static void swap(void* pData, int size) {</span>
+<span class="lineNum">      44 </span>            :         static int s_nDummy = 1;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineCov">         71 :         if (*(char*) (&amp;s_nDummy) != 0) {</span>
+<span class="lineNum">      47 </span>            :                 char* pch = (char*) pData;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">        142 :                 for (int i = 0; i &lt; (size &gt;&gt; 1); i++) {</span>
+<span class="lineNum">      50 </span>            :                         char chTemp;
+<span class="lineNum">      51 </span><span class="lineCov">        142 :                         chTemp = pch[i];</span>
+<span class="lineNum">      52 </span><span class="lineCov">        142 :                         pch[i] = pch[size - 1 - i];</span>
+<span class="lineNum">      53 </span><span class="lineCov">        142 :                         pch[size - 1 - i] = chTemp;</span>
+<span class="lineNum">      54 </span>            :                 }
+<span class="lineNum">      55 </span>            :         }
+<span class="lineNum">      56 </span><span class="lineCov">         71 : }</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : class CLocalSocketPackMutual : public boost::enable_shared_from_this&lt;CLocalSocketPackMutual&gt;
+<span class="lineNum">      59 </span>            : {
+<span class="lineNum">      60 </span>            : public:
+<span class="lineNum">      61 </span><span class="lineCov">         48 :         CLocalSocketPackMutual(boost::asio::io_service&amp; inIoService, int inBufferSize)</span>
+<span class="lineNum">      62 </span>            :         : m_bStop(true)
+<span class="lineNum">      63 </span>            :         , m_recvPackDataSize(inBufferSize)
+<span class="lineNum">      64 </span>            :         , m_recvPackDataLen(INVALID_LENGTH)
+<span class="lineNum">      65 </span>            :         , m_isWriteReady(false)
+<span class="lineNum">      66 </span><span class="lineCov">        288 :         , m_statics(new CLocalSocketIOStatics(inIoService) )</span>
+<span class="lineNum">      67 </span>            :         {
+<span class="lineNum">      68 </span><span class="lineCov">        912 :                 LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::CLocalSocketPackMutual&quot;</span>
+<span class="lineNum">      69 </span>            :                                 &lt;&lt; &quot; inBufferSize:&quot; &lt;&lt; inBufferSize &lt;&lt; &quot; statics:&quot; &lt;&lt; m_statics);
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineCov">         96 :                 if ( m_statics.get())</span>
+<span class="lineNum">      72 </span><span class="lineCov">         96 :                         m_statics-&gt;Start();</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">         48 :                 if (m_recvPackDataSize &gt; 0)</span>
+<span class="lineNum">      75 </span><span class="lineCov">         48 :                         m_recvPackData.reset(new char[m_recvPackDataSize]);</span>
+<span class="lineNum">      76 </span>            :                 else
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::CLocalSocketPackMutual buffer is not create&quot; );</span>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">         48 :         };</span></a>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">         70 :         virtual ~CLocalSocketPackMutual() </span>
+<span class="lineNum">      81 </span><span class="lineCov">        385 :         {</span>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">         35 :                 m_socket.reset();</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">         35 :                 if ( m_statics.get() )</span>
+<span class="lineNum">      86 </span><span class="lineCov">         70 :                         m_statics-&gt;Stop();</span>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">        525 :                 LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::~CLocalSocketPackMutual&quot;);</span>
+<a name="89"><span class="lineNum">      89 </span><span class="lineCov">         70 :         }</span></a>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">         26 :         virtual void SetSocket(boost::shared_ptr&lt;stream_protocol::socket&gt; inSocket)</span>
+<span class="lineNum">      92 </span>            :         {
+<span class="lineNum">      93 </span><span class="lineCov">         26 :                 m_socket = inSocket;</span>
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">         26 :         };</span></a>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">         91 :         virtual void UpdataStatus( bool inbStop)</span>
+<span class="lineNum">      97 </span>            :         {
+<span class="lineNum">      98 </span><span class="lineCov">         91 :                 m_bStop = inbStop;</span>
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">         91 :                 if (m_bStop )</span>
+<span class="lineNum">     101 </span>            :                 {
+<span class="lineNum">     102 </span><span class="lineCov">       1170 :                         LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::UpdataStatus m_bStop:&quot; &lt;&lt; inbStop</span>
+<span class="lineNum">     103 </span>            :                                         &lt;&lt; &quot; socket:&quot; &lt;&lt; m_socket.get()
+<span class="lineNum">     104 </span>            :                                         );
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span><span class="lineCov">         65 :                         m_isWriteReady = false;</span>
+<span class="lineNum">     107 </span>            :                 }
+<span class="lineNum">     108 </span>            :                 else
+<span class="lineNum">     109 </span>            :                 {
+<span class="lineNum">     110 </span><span class="lineCov">        416 :                         LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::UpdataStatus:&quot; &lt;&lt; inbStop);</span>
+<span class="lineNum">     111 </span><span class="lineCov">         26 :                         m_isWriteReady = true;</span>
+<span class="lineNum">     112 </span>            :                 }
+<span class="lineNum">     113 </span><span class="lineCov">         91 :         };</span>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<span class="lineNum">     115 </span>            :         //this API to keep reference of caller, otherwise, caller may be destroy
+<span class="lineNum">     116 </span><span class="lineCov">        182 :         virtual void UpdateCaller(const LocalSocketHandlerPtr&amp; inCaller)</span>
+<span class="lineNum">     117 </span>            :         {
+<span class="lineNum">     118 </span><span class="lineCov">       1638 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::UpdateCaller&quot;</span>
+<span class="lineNum">     119 </span>            :                                 &lt;&lt; &quot; inCaller:&quot;&lt;&lt; inCaller.get() );
+<span class="lineNum">     120 </span><span class="lineCov">         91 :                 m_callerRef = inCaller;</span>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">         91 :         }</span></a>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">         26 :         virtual void UpdateSocketFunc ( const PackSocketErrorFunc&amp; inFunc, const PackSocketDataFunc&amp; inDataFunc)</span>
+<span class="lineNum">     124 </span>            :         {
+<span class="lineNum">     125 </span><span class="lineCov">         26 :                 m_errorFunc = inFunc;</span>
+<span class="lineNum">     126 </span><span class="lineCov">         26 :                 m_dataFunc = inDataFunc;</span>
+<span class="lineNum">     127 </span><span class="lineCov">         26 :         }</span>
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         virtual void Send(const char* inBuffer, std::size_t inSize)</span>
+<span class="lineNum">     130 </span>            :         {
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                 if ( m_bStop )</span>
+<span class="lineNum">     132 </span>            :                 {
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send STOP&quot;);</span>
+<span class="lineNum">     134 </span>            :                         return;
+<span class="lineNum">     135 </span>            :                 }
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     138 </span>            :                 {
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     140 </span>            :                         return;
+<span class="lineNum">     141 </span>            :                 }
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :                 if ( m_statics.get() )</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                         m_statics-&gt;UpdateWantSendBytes(inSize + 5);</span>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 if ( !m_isWriteReady || m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     147 </span>            :                 {
+<span class="lineNum">     148 </span>            :                         //need to wait until all send is fine, not handle in SendNow function
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                         m_sendDataList.push_back(boost::shared_ptr&lt;std::string&gt;(new std::string(inBuffer,inSize)));</span>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :                         LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::Send(char*), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     153 </span>            :                                         &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     154 </span>            :                                         &lt;&lt; &quot; size:&quot; &lt;&lt; inSize);
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :                         if ( m_sendDataList.size() &gt; 50)</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                                 LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send(String), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     158 </span>            :                                                                         &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     159 </span>            :                                                                         &lt;&lt; &quot; size:&quot; &lt;&lt; inSize);
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :                         return;
+<span class="lineNum">     162 </span>            :                 }
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::Send inSize:&quot; &lt;&lt; inSize);</span>
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                 SendNow( std::string(inBuffer, inSize) );</span>
+<span class="lineNum">     167 </span>            :         }
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">         41 :         virtual void Send(const std::string&amp; inBuffer)</span>
+<span class="lineNum">     170 </span>            :         {
+<span class="lineNum">     171 </span><span class="lineCov">         41 :                 if ( m_bStop )</span>
+<span class="lineNum">     172 </span>            :                 {
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send STOP&quot;);</span>
+<span class="lineNum">     174 </span>            :                         return;
+<span class="lineNum">     175 </span>            :                 }
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineCov">        123 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     178 </span>            :                 {
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     180 </span>            :                         return;
+<span class="lineNum">     181 </span>            :                 }
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">         41 :                 if ( m_statics.get() )</span>
+<span class="lineNum">     184 </span><span class="lineCov">         82 :                         m_statics-&gt;UpdateWantSendBytes(inBuffer.size() + 5);</span>
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span><span class="lineCov">         73 :                 if ( !m_isWriteReady || m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     187 </span>            :                 {
+<span class="lineNum">     188 </span>            :                         //need to wait until all send is fine, not handle in SendNow function
+<span class="lineNum">     189 </span><span class="lineCov">         18 :                         m_sendDataList.push_back(boost::shared_ptr&lt;std::string&gt;(new std::string(inBuffer)));</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">        189 :                         LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::Send(String), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     192 </span>            :                                         &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     193 </span>            :                                         &lt;&lt; &quot; size:&quot; &lt;&lt; inBuffer.size());
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineCov">         18 :                         if ( m_sendDataList.size() &gt;= 50)</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                                 LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Send(String), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     197 </span>            :                                                                         &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     198 </span>            :                                                                         &lt;&lt; &quot; size:&quot; &lt;&lt; inBuffer.size());
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :                         return;
+<span class="lineNum">     201 </span>            :                 }
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">        544 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::Send inSize:&quot; &lt;&lt; inBuffer.size());</span>
+<span class="lineNum">     204 </span><span class="lineCov">         32 :                 SendNow( inBuffer);</span>
+<span class="lineNum">     205 </span>            :         }
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         32 :         virtual void SendNow(const std::string&amp; inBuffer)</span>
+<span class="lineNum">     208 </span>            :         {
+<span class="lineNum">     209 </span>            :                 //just stop all send if stop
+<span class="lineNum">     210 </span><span class="lineCov">         32 :                 if ( m_bStop )</span>
+<span class="lineNum">     211 </span>            :                 {
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::SendNow STOP&quot;);</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                         return;</span>
+<span class="lineNum">     214 </span>            :                 }
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span><span class="lineCov">        128 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     217 </span>            :                 {
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::SendNow SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     219 </span>            :                         return;
+<span class="lineNum">     220 </span>            :                 }
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineCov">         64 :                 if ( !m_isWriteReady || m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     223 </span>            :                 {
+<span class="lineNum">     224 </span>            :                         //need to wait until all send is fine, not handle in SendNow function
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::SendNow, not ready error, inSize:&quot;</span>
+<span class="lineNum">     226 </span>            :                                         &lt;&lt; inBuffer.size());
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            :                         return;
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :                 }
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span><span class="lineCov">         32 :                 m_isWriteReady = false;</span>
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineCov">         32 :                 m_currentSendDataLen = inBuffer.size() ;</span>
+<span class="lineNum">     235 </span><span class="lineCov">         32 :                 swap(&amp;m_currentSendDataLen, 4);</span>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">         32 :                 m_flag = LOCALSOCKET_PACK_FLAG;</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :                 std::vector&lt;boost::asio::const_buffer&gt; buffers;
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            :                 //write flag
+<span class="lineNum">     242 </span><span class="lineCov">         96 :                 buffers.push_back(boost::asio::buffer(&amp;m_flag, 1 ));</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :                 //write size
+<span class="lineNum">     245 </span><span class="lineCov">         96 :                 buffers.push_back(boost::asio::buffer(&amp;m_currentSendDataLen, 4 ));</span>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            :                 //write data
+<span class="lineNum">     248 </span><span class="lineCov">         64 :                 m_currentSendData.reset(new std::string(inBuffer) );</span>
+<span class="lineNum">     249 </span><span class="lineCov">        192 :                 buffers.push_back(boost::asio::buffer(m_currentSendData-&gt;c_str(), inBuffer.size() ));</span>
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span><span class="lineCov">         64 :             boost::asio::async_write(*m_socket.get(),</span>
+<span class="lineNum">     252 </span>            :                         buffers,
+<span class="lineNum">     253 </span>            :                         boost::asio::transfer_at_least(inBuffer.size()+5),
+<span class="lineNum">     254 </span>            :                     boost::bind(&amp;CLocalSocketPackMutual::HandleWrite,
+<span class="lineNum">     255 </span>            :                     shared_from_this(),
+<span class="lineNum">     256 </span>            :                     boost::asio::placeholders::error,
+<span class="lineNum">     257 </span>            :                     boost::asio::placeholders::bytes_transferred,
+<span class="lineNum">     258 </span>            :                     inBuffer.size() + 5,
+<span class="lineNum">     259 </span><span class="lineCov">        160 :                     0));</span>
+<span class="lineNum">     260 </span>            :         }
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span><span class="lineCov">         68 :         virtual void HandleWrite(const boost::system::error_code&amp; inError,</span>
+<span class="lineNum">     263 </span>            :                         int inAleadySendSize, int inWantSendSize,
+<span class="lineNum">     264 </span>            :                         int inConsumeSendBufferSize)
+<span class="lineNum">     265 </span>            :         {
+<span class="lineNum">     266 </span><span class="lineCov">         35 :                 if ( inAleadySendSize != inWantSendSize)</span>
+<span class="lineNum">     267 </span>            :                 {
+<span class="lineNum">     268 </span><span class="lineCov">         19 :                         LSOCK_ERROR_THIS(&quot;CLocalSocketPackMutual::HandleWrite, send NOT finish&quot;</span>
+<span class="lineNum">     269 </span>            :                                         &lt;&lt; &quot; inWantSendSize:&quot; &lt;&lt; inWantSendSize
+<span class="lineNum">     270 </span>            :                                         &lt;&lt; &quot; inAleadySendSize:&quot; &lt;&lt; inAleadySendSize);
+<span class="lineNum">     271 </span>            :                 }
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span>            :                 //just stop all send if stop
+<span class="lineNum">     274 </span><span class="lineCov">         35 :                 if ( m_bStop )</span>
+<span class="lineNum">     275 </span>            :                 {
+<span class="lineNum">     276 </span><span class="lineCov">         30 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandleWrite STOP&quot;);</span>
+<span class="lineNum">     277 </span>            :                         return;
+<span class="lineNum">     278 </span>            :                 }
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineCov">        106 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     281 </span>            :                 {
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandleWrite SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     283 </span>            :                         return;
+<span class="lineNum">     284 </span>            :                 }
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span><span class="lineCov">         33 :             if (!inError)</span>
+<span class="lineNum">     287 </span>            :             {
+<span class="lineNum">     288 </span><span class="lineCov">         32 :                 if ( m_statics.get() )</span>
+<span class="lineNum">     289 </span><span class="lineCov">         64 :                         m_statics-&gt;UpdateSendBytes(inAleadySendSize);</span>
+<span class="lineNum">     290 </span><span class="lineCov">         32 :                 m_isWriteReady = true;</span>
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span><span class="lineCov">         32 :                 m_currentSendData.reset();</span>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            :                 // try to send data in send buffer
+<span class="lineNum">     295 </span><span class="lineCov">          6 :                 for (int i = 0; i &lt;  inConsumeSendBufferSize; i++)</span>
+<span class="lineNum">     296 </span><span class="lineCov">          6 :                         m_sendDataList.pop_front();</span>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineCov">         64 :                 if ( m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     299 </span>            :                 {
+<span class="lineNum">     300 </span>            :                         //send data in buffer
+<span class="lineNum">     301 </span><span class="lineCov">          7 :                         m_isWriteReady = false;</span>
+<span class="lineNum">     302 </span><span class="lineCov">          7 :                         int sendAllSize = 0;</span>
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span><span class="lineCov">          7 :                         int sendPackCount = 0;</span>
+<span class="lineNum">     305 </span>            :                         std::vector&lt;boost::asio::const_buffer&gt; buffers;
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            :                         //Ross, 20171107, only send one packet once, send multiple packet will not support
+<span class="lineNum">     308 </span>            :                         //the m_currentSendDataLen is only work for one packet
+<span class="lineNum">     309 </span><span class="lineCov">         49 :                                 for ( auto it = m_sendDataList.begin(); it !=  m_sendDataList.end() &amp;&amp; sendPackCount &lt; 1; it ++)</span>
+<span class="lineNum">     310 </span>            :                                 {
+<span class="lineNum">     311 </span><span class="lineCov">         21 :                                         m_currentSendDataLen = (*it)-&gt;length() ;</span>
+<span class="lineNum">     312 </span><span class="lineCov">          7 :                                         swap(&amp;m_currentSendDataLen, 4);</span>
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span><span class="lineCov">          7 :                                         m_flag = LOCALSOCKET_PACK_FLAG;</span>
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            :                                         //write flag
+<span class="lineNum">     317 </span><span class="lineCov">         21 :                                         buffers.push_back(boost::asio::buffer(&amp;m_flag, 1 ));</span>
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :                                         //write size
+<span class="lineNum">     320 </span><span class="lineCov">         21 :                                         buffers.push_back(boost::asio::buffer(&amp;m_currentSendDataLen, 4 ));</span>
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span>            :                                         //write data
+<span class="lineNum">     323 </span><span class="lineCov">         42 :                                         buffers.push_back(boost::asio::buffer((*it)-&gt;c_str(), (*it)-&gt;length()));</span>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">          7 :                                         sendPackCount++;</span>
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span><span class="lineCov">         21 :                                         sendAllSize += (*it)-&gt;length() + 5 ; //Header;</span>
+<span class="lineNum">     328 </span>            :                                 }
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span><span class="lineCov">        196 :                                 LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::HandleWrite &quot;</span>
+<span class="lineNum">     331 </span>            :                                                 &lt;&lt; &quot; inConsumeSendBufferSize:&quot; &lt;&lt; inConsumeSendBufferSize
+<span class="lineNum">     332 </span>            :                                                 &lt;&lt; &quot; inWantSendSize:&quot; &lt;&lt; inWantSendSize
+<span class="lineNum">     333 </span>            :                                                 &lt;&lt; &quot; inAleadySendSize:&quot; &lt;&lt; inAleadySendSize
+<span class="lineNum">     334 </span>            :                                                 &lt;&lt; &quot; sendPackCount:&quot; &lt;&lt; sendPackCount
+<span class="lineNum">     335 </span>            :                                                 &lt;&lt; &quot; bufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     336 </span>            :                                                 &lt;&lt; &quot; sendAllDataLength:&quot; &lt;&lt; sendAllSize);
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span><span class="lineCov">         14 :                             boost::asio::async_write(*m_socket.get(),</span>
+<span class="lineNum">     339 </span>            :                                         buffers,
+<span class="lineNum">     340 </span>            :                                         boost::asio::transfer_at_least(sendAllSize),
+<span class="lineNum">     341 </span>            :                                     boost::bind(&amp;CLocalSocketPackMutual::HandleWrite,
+<span class="lineNum">     342 </span>            :                                     shared_from_this(),
+<span class="lineNum">     343 </span>            :                                     boost::asio::placeholders::error,
+<span class="lineNum">     344 </span>            :                                     boost::asio::placeholders::bytes_transferred,
+<span class="lineNum">     345 </span>            :                                     sendAllSize,
+<span class="lineNum">     346 </span><span class="lineCov">         28 :                                     sendPackCount));</span>
+<span class="lineNum">     347 </span>            :                 }
+<span class="lineNum">     348 </span>            :                 else
+<span class="lineNum">     349 </span><span class="lineCov">        525 :                         LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::HandleWrite All Done&quot;</span>
+<span class="lineNum">     350 </span>            :                                         &lt;&lt; &quot; inConsumeSendBufferSize:&quot; &lt;&lt; inConsumeSendBufferSize
+<span class="lineNum">     351 </span>            :                                         &lt;&lt; &quot; inWantSendSize:&quot; &lt;&lt; inWantSendSize
+<span class="lineNum">     352 </span>            :                                         &lt;&lt; &quot; inAleadySendSize:&quot; &lt;&lt; inAleadySendSize
+<span class="lineNum">     353 </span>            :                                         );
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            :             }
+<span class="lineNum">     356 </span>            :             else
+<span class="lineNum">     357 </span>            :             {
+<span class="lineNum">     358 </span><span class="lineCov">         24 :                 LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandleWrite inError:&quot; &lt;&lt; inError</span>
+<span class="lineNum">     359 </span>            :                                                                                 &lt;&lt; &quot; info:&quot; &lt;&lt; inError.message()
+<span class="lineNum">     360 </span>            :                                                                                 &lt;&lt; &quot; m_bStop:&quot; &lt;&lt; m_bStop
+<span class="lineNum">     361 </span>            :                                                                                 &lt;&lt; &quot; m_callerRef:&quot; &lt;&lt; m_callerRef.get());
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineCov">          3 :                 if ( m_errorFunc &amp;&amp; !m_bStop &amp;&amp; m_callerRef.get() )</span>
+<span class="lineNum">     364 </span><span class="lineCov">          1 :                         m_errorFunc(inError);</span>
+<span class="lineNum">     365 </span>            :             }
+<span class="lineNum">     366 </span>            :          }
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span><span class="lineCov">         87 :         virtual void Start()</span>
+<span class="lineNum">     369 </span>            :         {
+<span class="lineNum">     370 </span><span class="lineCov">         87 :                 if ( m_bStop )</span>
+<span class="lineNum">     371 </span>            :                 {
+<span class="lineNum">     372 </span><span class="lineCov">         15 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Start STOP&quot;);</span>
+<span class="lineNum">     373 </span>            :                         return;
+<span class="lineNum">     374 </span>            :                 }
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span><span class="lineCov">        344 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     377 </span>            :                 {
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::Start SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     379 </span>            :                         return;
+<span class="lineNum">     380 </span>            :                 }
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span>            :                 //LSOCKS_TRACK_LOG_INFO_THIS(&quot;CLocalSocketPackMutual::Work&quot; );
+<span class="lineNum">     383 </span><span class="lineCov">         86 :                 if ( m_recvPackDataLen == (int)INVALID_LENGTH )</span>
+<span class="lineNum">     384 </span>            :                 {
+<span class="lineNum">     385 </span>            :                         //read HEAD 5 bytes
+<span class="lineNum">     386 </span><span class="lineCov">        162 :                         boost::asio::async_read(*m_socket.get(), boost::asio::buffer(m_recvHeadData, 5),</span>
+<span class="lineNum">     387 </span>            :                         //m_socket-&gt;async_read_some(boost::asio::buffer(m_recvHeadData, 5),
+<span class="lineNum">     388 </span>            :                                           boost::bind(&amp;CLocalSocketPackMutual::HandlePackRead,
+<span class="lineNum">     389 </span>            :                                           shared_from_this(),
+<span class="lineNum">     390 </span>            :                                           boost::asio::placeholders::error,
+<span class="lineNum">     391 </span>            :                                           boost::asio::placeholders::bytes_transferred,
+<span class="lineNum">     392 </span><span class="lineCov">        324 :                                           true));</span>
+<span class="lineNum">     393 </span>            :                 }
+<span class="lineNum">     394 </span>            :                 else
+<span class="lineNum">     395 </span>            :                 {
+<span class="lineNum">     396 </span>            :                         //read data
+<span class="lineNum">     397 </span><span class="lineCov">         96 :                         boost::asio::async_read(*m_socket.get(), boost::asio::buffer(m_recvPackData.get(), m_recvPackDataLen),</span>
+<span class="lineNum">     398 </span>            :                         //m_socket-&gt;async_read_some(boost::asio::buffer(m_recvPackData.get(), m_recvPackDataLen),
+<span class="lineNum">     399 </span>            :                                           boost::bind(&amp;CLocalSocketPackMutual::HandlePackRead,
+<span class="lineNum">     400 </span>            :                                           shared_from_this(),
+<span class="lineNum">     401 </span>            :                                           boost::asio::placeholders::error,
+<span class="lineNum">     402 </span>            :                                           boost::asio::placeholders::bytes_transferred,
+<span class="lineNum">     403 </span><span class="lineCov">        192 :                                           false));</span>
+<span class="lineNum">     404 </span>            :                 }
+<span class="lineNum">     405 </span>            :         }
+<span class="lineNum">     406 </span>            : 
+<span class="lineNum">     407 </span><span class="lineCov">        134 :         virtual void HandlePackRead( const boost::system::error_code&amp; inError,</span>
+<span class="lineNum">     408 </span>            :                         size_t inSize, bool inIsHead)
+<span class="lineNum">     409 </span>            :         {
+<span class="lineNum">     410 </span>            :                 //LSOCKS_TRACK_LOG_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead&quot; );
+<span class="lineNum">     411 </span><span class="lineCov">         67 :                 if ( m_bStop )</span>
+<span class="lineNum">     412 </span>            :                 {
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead STOP&quot;);</span>
+<span class="lineNum">     414 </span>            :                         return;
+<span class="lineNum">     415 </span>            :                 }
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineCov">        201 :                 if( m_socket.get() == NULL || !m_socket-&gt;is_open())</span>
+<span class="lineNum">     418 </span>            :                 {
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead SOCKET CLOSE&quot;);</span>
+<span class="lineNum">     420 </span>            :                         return;
+<span class="lineNum">     421 </span>            :                 }
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineCov">         67 :                 bool bError = false;</span>
+<span class="lineNum">     424 </span><span class="lineCov">         67 :                 if (!inError)</span>
+<span class="lineNum">     425 </span>            :                 {
+<span class="lineNum">     426 </span><span class="lineCov">         64 :                         if ( !inIsHead )</span>
+<span class="lineNum">     427 </span>            :                         {
+<span class="lineNum">     428 </span>            :                                 //for receive real data pack
+<span class="lineNum">     429 </span><span class="lineCov">         32 :                                 if ( (int)inSize == m_recvPackDataLen)</span>
+<span class="lineNum">     430 </span>            :                                 {
+<span class="lineNum">     431 </span>            :                                         //data callback
+<span class="lineNum">     432 </span><span class="lineCov">         32 :                                         NotifyData((unsigned char*)m_recvPackData.get(), inSize);</span>
+<span class="lineNum">     433 </span><span class="lineCov">         32 :                                         m_recvPackDataLen = INVALID_LENGTH;</span>
+<span class="lineNum">     434 </span><span class="lineCov">         32 :                                         Start();</span>
+<span class="lineNum">     435 </span>            :                                 }
+<span class="lineNum">     436 </span>            :                                 else
+<span class="lineNum">     437 </span>            :                                 {
+<span class="lineNum">     438 </span>            :                                         //we get size is not same as we want size, should be error
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :                                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead, get packet size error,&quot;</span>
+<span class="lineNum">     440 </span>            :                                                         &lt;&lt; &quot; m_recvPackDataLen:&quot; &lt;&lt; m_recvPackDataLen
+<span class="lineNum">     441 </span>            :                                                         &lt;&lt; &quot; inSize:&quot; &lt;&lt; inSize);
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :                                         m_recvPackDataLen = INVALID_LENGTH;</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :                                         bError = true;</span>
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span>            :                                 }
+<span class="lineNum">     446 </span>            :                         }
+<span class="lineNum">     447 </span>            :                         else
+<span class="lineNum">     448 </span>            :                         {
+<span class="lineNum">     449 </span>            :                                 //for receive all pack data head, 5 bytes
+<span class="lineNum">     450 </span><span class="lineCov">         32 :                                 char flag = m_recvHeadData[0];</span>
+<span class="lineNum">     451 </span><span class="lineCov">         32 :                                 m_recvPackDataLen = *(int32_t*)(&amp;m_recvHeadData[1]);</span>
+<span class="lineNum">     452 </span><span class="lineCov">         32 :                                 swap( &amp;m_recvPackDataLen,4 );</span>
+<span class="lineNum">     453 </span>            : 
+<span class="lineNum">     454 </span>            :                                 //check packet flag
+<span class="lineNum">     455 </span><span class="lineCov">         32 :                                 if ( flag != LOCALSOCKET_PACK_FLAG )</span>
+<span class="lineNum">     456 </span>            :                                 {
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :                                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead, get packet flag error,&quot;</span>
+<span class="lineNum">     458 </span>            :                                                         &lt;&lt; &quot; def_flag:&quot;  &lt;&lt; (boost::format(&quot;%X&quot;) % int16_t(LOCALSOCKET_PACK_FLAG)).str()
+<span class="lineNum">     459 </span>            :                                                         &lt;&lt; &quot; flag:&quot;  &lt;&lt; (boost::format(&quot;%X&quot;) % int16_t(flag)).str() );
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :                                         m_recvPackDataLen = INVALID_LENGTH;</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :                                         bError = true;</span>
+<span class="lineNum">     462 </span>            :                                 }
+<span class="lineNum">     463 </span>            :                                 //check packet size, should not too big
+<span class="lineNum">     464 </span><span class="lineCov">         32 :                                 else if ( m_recvPackDataLen &gt; (int32_t) 0xEFFFFF)</span>
+<span class="lineNum">     465 </span>            :                                 {
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :                                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead, read packet size error,&quot;</span>
+<span class="lineNum">     467 </span>            :                                                         &lt;&lt; &quot; m_recvPackDataLen:&quot; &lt;&lt; m_recvPackDataLen
+<span class="lineNum">     468 </span>            :                                                         &lt;&lt; &quot; inSize:&quot; &lt;&lt; inSize);
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 :                                         m_recvPackDataLen = INVALID_LENGTH;</span>
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :                                         bError = true;</span>
+<span class="lineNum">     471 </span>            :                                 }
+<span class="lineNum">     472 </span><span class="lineCov">         32 :                                 else if ( m_recvPackDataLen &gt; (int)m_recvPackDataSize )</span>
+<span class="lineNum">     473 </span>            :                                 {
+<span class="lineNum">     474 </span>            :                                         //if buffer is not big enough, recreate buffer
+<span class="lineNum">     475 </span><span class="lineCov">         21 :                                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead, read packet size issue, recreateBuffer,&quot;</span>
+<span class="lineNum">     476 </span>            :                                                         &lt;&lt; &quot; m_recvPackDataLen:&quot; &lt;&lt; m_recvPackDataLen
+<span class="lineNum">     477 </span>            :                                                         &lt;&lt; &quot; m_recvPackDataSize:&quot; &lt;&lt; m_recvPackDataSize
+<span class="lineNum">     478 </span>            :                                                         &lt;&lt; &quot; inSize:&quot; &lt;&lt; inSize);
+<span class="lineNum">     479 </span>            : 
+<span class="lineNum">     480 </span><span class="lineCov">          1 :                                         m_recvPackDataSize = m_recvPackDataLen + 1;</span>
+<span class="lineNum">     481 </span><span class="lineCov">          1 :                                         m_recvPackData.reset(new char[m_recvPackDataSize]);</span>
+<span class="lineNum">     482 </span><span class="lineCov">          1 :                                         Start();</span>
+<span class="lineNum">     483 </span>            :                                 }
+<span class="lineNum">     484 </span>            :                                 else //all fine
+<span class="lineNum">     485 </span>            :                                 {
+<span class="lineNum">     486 </span>            :                                         // LSOCK_DEBUG_THIS(&quot;CLocalSocketPackMutual::HandlePackRead OK, m_recvPackDataLen:&quot;
+<span class="lineNum">     487 </span>            :                                         //              &lt;&lt; m_recvPackDataLen
+<span class="lineNum">     488 </span>            :                                         //              &lt;&lt; &quot; def_flag:&quot;  &lt;&lt; (boost::format(&quot;%X&quot;) % int16_t(LOCALSOCKET_PACK_FLAG)).str()
+<span class="lineNum">     489 </span>            :                                         //              &lt;&lt; &quot; flag:&quot;  &lt;&lt; (boost::format(&quot;%X&quot;) % int16_t(flag)).str() );
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span><span class="lineCov">         31 :                                         Start();</span>
+<span class="lineNum">     492 </span>            :                                 }
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span>            :                         }
+<span class="lineNum">     496 </span>            :                 }
+<span class="lineNum">     497 </span>            :                 else
+<span class="lineNum">     498 </span>            :                 {
+<span class="lineNum">     499 </span><span class="lineCov">         72 :                         LSOCK_INFO_THIS(&quot;CLocalSocketPackMutual::HandlePackRead inError:&quot; &lt;&lt; inError</span>
+<span class="lineNum">     500 </span>            :                                                                 &lt;&lt; &quot; info:&quot; &lt;&lt; inError.message()
+<span class="lineNum">     501 </span>            :                                                                 &lt;&lt; &quot; m_bStop:&quot; &lt;&lt; m_bStop
+<span class="lineNum">     502 </span>            :                                                                 &lt;&lt; &quot; m_callerRef:&quot; &lt;&lt; m_callerRef.get());
+<span class="lineNum">     503 </span>            :                         bError = true;
+<span class="lineNum">     504 </span>            : 
+<span class="lineNum">     505 </span>            :                 }
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span><span class="lineCov">         67 :                 if ( bError)</span>
+<span class="lineNum">     508 </span>            :                 {
+<span class="lineNum">     509 </span>            :                         //must be last only call, since maybe delete by up-layer
+<span class="lineNum">     510 </span><span class="lineCov">          9 :                         if (m_errorFunc &amp;&amp; !m_bStop &amp;&amp; m_callerRef.get() )</span>
+<span class="lineNum">     511 </span><span class="lineCov">          3 :                                 m_errorFunc(inError);</span>
+<span class="lineNum">     512 </span>            :                 }
+<span class="lineNum">     513 </span>            :         }
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineCov">         32 :         void NotifyData(unsigned char* inData, size_t inSize)</span>
+<span class="lineNum">     516 </span>            :         {
+<span class="lineNum">     517 </span><span class="lineCov">         32 :                 if ( m_statics.get())</span>
+<span class="lineNum">     518 </span><span class="lineCov">         64 :                         m_statics-&gt;UpdateReceiveBytes(inSize + 5);</span>
+<span class="lineNum">     519 </span><span class="lineCov">         64 :                 if ( m_dataFunc &amp;&amp; !m_bStop)</span>
+<span class="lineNum">     520 </span><span class="lineCov">         32 :                         m_dataFunc(inData, inSize );</span>
+<span class="lineNum">     521 </span><span class="lineCov">         32 :         }</span>
+<span class="lineNum">     522 </span>            : 
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span>            : protected:
+<span class="lineNum">     525 </span>            :         LocalSocketClientPtr m_handler;
+<span class="lineNum">     526 </span>            :         boost::shared_ptr&lt;stream_protocol::socket&gt; m_socket;
+<span class="lineNum">     527 </span>            :         PackSocketErrorFunc m_errorFunc;
+<span class="lineNum">     528 </span>            :         PackSocketDataFunc m_dataFunc;
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :         bool m_bStop;
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span>            :         //boost::array&lt;char, MAX_BUFFER_SIZE&gt; m_recvPackData;
+<span class="lineNum">     533 </span>            :         boost::shared_ptr&lt;char[]&gt; m_recvPackData;
+<span class="lineNum">     534 </span>            :         int32_t m_recvPackDataSize ;
+<span class="lineNum">     535 </span>            :         boost::array&lt;char, 5&gt; m_recvHeadData;
+<span class="lineNum">     536 </span>            :         int32_t m_recvPackDataLen;
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span>            :         LocalSocketHandlerPtr m_callerRef;
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span>            :         bool m_isWriteReady;
+<span class="lineNum">     542 </span>            :         std::list&lt;boost::shared_ptr&lt;std::string&gt; &gt; m_sendDataList;
+<span class="lineNum">     543 </span>            :         boost::shared_ptr&lt;std::string&gt; m_currentSendData;
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span>            :         char m_flag;
+<span class="lineNum">     546 </span>            :         uint32_t m_currentSendDataLen;
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span>            :         boost::shared_ptr&lt;CLocalSocketIOStatics&gt; m_statics;
+<span class="lineNum">     549 </span>            : };
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            : };//namespace LOCALSOCKET
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span>            : #else // defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">     554 </span>            : # error Local sockets not available on this platform.
+<span class="lineNum">     555 </span>            : #endif // defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">     556 </span>            : 
+<span class="lineNum">     557 </span>            : #endif //_SAFARI_LOCAL_SOCKET_MUTUAL_
+<span class="lineNum">     558 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/CspVideoComposeKey.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - CspVideoComposeKey.h<span style="font-size: 80%;"> (source / <a href="CspVideoComposeKey.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">57.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Video Composing Key defines a spec of VideoComposeEngine to compose video frames as specified layout and resolution.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Jun-12-2018  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef CSP_VIDEO_COMPOSE_KEY_H
+<span class="lineNum">      14 </span>            : #define CSP_VIDEO_COMPOSE_KEY_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;string&gt;
+<span class="lineNum">      17 </span>            : #include &lt;list&gt;
+<span class="lineNum">      18 </span>            : #include &lt;set&gt;
+<span class="lineNum">      19 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">      20 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : class CCspVideoComposeKey;
+<span class="lineNum">      23 </span>            : typedef std::list&lt;CCspVideoComposeKey&gt; CspVideoComposeKeyList;
+<span class="lineNum">      24 </span>            : typedef std::set&lt;CCspVideoComposeKey&gt; CspVideoComposeKeySet;
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : class CCspVideoDimension
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span>            : public:
+<span class="lineNum">      29 </span>            :     CCspVideoDimension() {}
+<span class="lineNum">      30 </span>            :     CCspVideoDimension(uint32_t inWidth, uint32_t inHeight, uint32_t inFrameSize)
+<span class="lineNum">      31 </span>            :     : m_width(inWidth)
+<span class="lineNum">      32 </span>            :     , m_height(inHeight)
+<span class="lineNum">      33 </span>            :     , m_frameSize(inFrameSize)
+<span class="lineNum">      34 </span>            :     {}
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : public:
+<span class="lineNum">      37 </span>            :     uint32_t m_width = 0; // in pixels
+<span class="lineNum">      38 </span>            :     uint32_t m_height = 0; // in pixels
+<span class="lineNum">      39 </span>            :     uint32_t m_frameSize = 0; // in macro blocks
+<span class="lineNum">      40 </span>            : };
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : enum ECspVideoLayout
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span>            :     CSP_SHARE_NO_LAYOUT_EQUAL                   = 1,
+<span class="lineNum">      45 </span>            :         CSP_SHARE_NO_LAYOUT_PROMINENT               = 2,
+<span class="lineNum">      46 </span>            :         CSP_SHARE_NO_LAYOUT_SINGLE                  = 4,
+<span class="lineNum">      47 </span>            :         CSP_SHARE_NO_LAYOUT_BACKGROUND_ONLY         = 8,
+<span class="lineNum">      48 </span>            :         CSP_SHARE_YES_LAYOUT_PROMINENT              = 16,
+<span class="lineNum">      49 </span>            :         CSP_SHARE_YES_LAYOUT_SINGLE_PLUS_SPEAKER    = 32,
+<span class="lineNum">      50 </span>            :         CSP_SHARE_YES_LAYOUT_SINGLE                 = 64
+<span class="lineNum">      51 </span>            : };
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineCov">        192 : const std::set&lt;std::string&gt; CspSupportedVideoLayoutSet {</span>
+<span class="lineNum">      54 </span>            :     VIDEO_LAYOUT_PROMINENT,
+<span class="lineNum">      55 </span>            :     VIDEO_LAYOUT_EQUAL,
+<span class="lineNum">      56 </span>            :     VIDEO_LAYOUT_SINGLE,
+<span class="lineNum">      57 </span>            :     VIDEO_LAYOUT_BACKGROUND_ONLY
+<span class="lineNum">      58 </span><span class="lineCov">         64 : };</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">        192 : const std::set&lt;std::string&gt; CspSupportedContentLayoutSet {</span>
+<span class="lineNum">      61 </span>            :     VIDEO_LAYOUT_PROMINENT,
+<span class="lineNum">      62 </span>            :     VIDEO_LAYOUT_SINGLE_PLUS_SPEAKER,
+<span class="lineNum">      63 </span>            :     VIDEO_LAYOUT_SINGLE
+<span class="lineNum">      64 </span><span class="lineCov">         64 : };</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : class CCspVideoComposeKey
+<span class="lineNum">      68 </span>            : {
+<span class="lineNum">      69 </span>            : public:
+<span class="lineNum">      70 </span>            :         CCspVideoComposeKey();
+<span class="lineNum">      71 </span>            :     CCspVideoComposeKey(
+<span class="lineNum">      72 </span>            :         const std::string&amp; inVideoLayout, 
+<span class="lineNum">      73 </span>            :         const std::string&amp; inContentLayout, 
+<span class="lineNum">      74 </span>            :         uint32_t inResolution,
+<span class="lineNum">      75 </span>            :         bool inRetainOriginalContentResolution,
+<span class="lineNum">      76 </span>            :         uint32_t inPeriodicKeyframes,
+<span class="lineNum">      77 </span>            :         const std::string&amp; inLogoUrl);
+<span class="lineNum">      78 </span>            :     CCspVideoComposeKey(const Json::Value&amp; inJsonValue, const std::string&amp; inCspSessionType = SESSION_TYPE_WEBEX_FB_LIVE, const std::string&amp; inToggleLogoControlList = &quot;&quot;, bool inIsEnableNBR1080P = false, uint32_t inStreamingResolution = 0);
+<span class="lineNum">      79 </span>            :     CCspVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">      80 </span>            :         ~CCspVideoComposeKey();
+<span class="lineNum">      81 </span>            :     CCspVideoComposeKey&amp; operator = (const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">      82 </span>            :     bool operator == (const CCspVideoComposeKey&amp; inVideoComposeKey) const;
+<span class="lineNum">      83 </span>            :     Json::Value ToJson() const;
+<span class="lineNum">      84 </span>            :     std::string ToString() const;
+<span class="lineNum">      85 </span>            :     operator std::string() const;
+<span class="lineNum">      86 </span>            :     const std::string&amp; GetVideoLayout() const;
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :     void SetVideoLayout(const std::string&amp; videoLayout) {m_videoLayout = videoLayout;};</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :     void SetContentLayout(const std::string&amp; contentLayout) {m_contentLayout = contentLayout;};</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :     void SetEnableFollowSyncedLayoutParam(const bool isEnableFollowSyncedLayout) {m_enableFollowSyncedLayout = isEnableFollowSyncedLayout;};</span>
+<span class="lineNum">      90 </span>            :     const std::string&amp; GetContentLayout() const;
+<span class="lineNum">      91 </span>            :     const bool GetEnableFollowSyncedLayoutParam() const;
+<span class="lineNum">      92 </span>            :     uint32_t GetResolution() const;
+<span class="lineNum">      93 </span>            :     uint32_t GetMaxFrameSize() const;
+<span class="lineNum">      94 </span>            :     bool RetainOriginalContentResolution() const;
+<span class="lineNum">      95 </span>            :     uint32_t GetPeriodicKeyframes() const;
+<span class="lineNum">      96 </span>            :     const std::string&amp; GetLogoUrl() const;
+<span class="lineNum">      97 </span>            :     int GetHeight() const;
+<span class="lineNum">      98 </span>            :     int GetWidth() const;
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            :     static void GetListByJsonBodyOrCspSessionType(const Json::Value&amp; inJsonBody, const std::string&amp; inCspSessionType, CspVideoComposeKeyList&amp; outVideoComposeKeyList);
+<span class="lineNum">     101 </span>            :     static void GetListByJsonArray(const Json::Value&amp; inJsonArray, const std::string&amp; inToggleLogoControlList, const std::string&amp; inCspSessionType, bool inIsEnableNBR1080P, uint32_t inStreamingResolution, CspVideoComposeKeyList&amp; outVideoComposeKeyList);
+<span class="lineNum">     102 </span>            :     static void GetListByCspSessionType(const std::string&amp; inCspSessionType, const std::string&amp; inToggleLogoControlList, bool inIsEnableNBR1080P, uint32_t inStreamingResolution, CspVideoComposeKeyList&amp; outVideoComposeKeyList);
+<span class="lineNum">     103 </span>            :     static std::string GetLogoUrlByCspSessionType(const std::string&amp; inCspSessionType, const std::string&amp; inToggleLogoControlList = &quot;&quot;);
+<span class="lineNum">     104 </span>            :     static uint32_t GetPeriodicKeyframesByCspSessionType(const std::string&amp; inCspSessionType);
+<span class="lineNum">     105 </span>            :     // static bool IsValidVideoComposeKey(const Json::Value&amp; inJsonValue);
+<span class="lineNum">     106 </span>            :     static uint32_t GetMaxFrameSize(uint32_t inResolution);
+<span class="lineNum">     107 </span>            :     static int GetHeight(uint32_t inResolution);
+<span class="lineNum">     108 </span>            :     static int GetWidth(uint32_t inResolution);
+<span class="lineNum">     109 </span>            :     static CCspVideoDimension ConvertPixels2VideoDimension(uint32_t inNumPixels);
+<span class="lineNum">     110 </span>            :     static uint32_t GetStreamingResolution(const Json::Value&amp; inJsonBody);
+<span class="lineNum">     111 </span>            :     static bool IsEnableNBR1080P(const Json::Value&amp; inJsonBody);
+<span class="lineNum">     112 </span>            :     static void ChangeEnableFollowSyncedLayoutToBool(Json::Value&amp; videoComposeKeyList);
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : private:
+<span class="lineNum">     115 </span>            :     void SetLogoUrl(const std::string&amp; inLogoUrl) { m_logoUrl = inLogoUrl; };
+<span class="lineNum">     116 </span>            :     static bool IsLayoutInJsonArraySupported(const Json::Value&amp; inJsonArray);
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : private:
+<span class="lineNum">     119 </span>            :     std::string m_videoLayout = VIDEO_LAYOUT_PROMINENT;
+<span class="lineNum">     120 </span>            :     std::string m_contentLayout = VIDEO_LAYOUT_SINGLE_PLUS_SPEAKER;
+<span class="lineNum">     121 </span>            :     bool m_enableFollowSyncedLayout = false;
+<span class="lineNum">     122 </span>            :         uint32_t m_resolution = VIDEO_RESOLUTION_720P;
+<span class="lineNum">     123 </span>            :     bool m_retainOriginalContentResolution = false;
+<span class="lineNum">     124 </span>            :     uint32_t m_periodicKeyframes = 30; /* How often a keyframe should be generated, in seconds. */
+<span class="lineNum">     125 </span>            :     std::string m_logoUrl;
+<span class="lineNum">     126 </span>            : };
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            : bool operator &lt; (const CCspVideoComposeKey&amp; inLhs, const CCspVideoComposeKey&amp; inRhs);
+<span class="lineNum">     129 </span>            : std::ostream&amp; operator &lt;&lt; (std::ostream&amp; inOs, const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : #endif //CSP_VIDEO_COMPOSE_KEY_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/feeder/OttAvPacketSender.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/feeder</a> - OttAvPacketSender.h<span style="font-size: 80%;"> (source / <a href="OttAvPacketSender.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef OTTER_AV_PACKET_SENDER_H</a>
+<span class="lineNum">       2 </span>            : #define OTTER_AV_PACKET_SENDER_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">       5 </span>            : #include &lt;queue&gt;
+<span class="lineNum">       6 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">       7 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">       8 </span>            : extern &quot;C&quot;{
+<span class="lineNum">       9 </span>            : #include &lt;libavformat/avformat.h&gt;
+<span class="lineNum">      10 </span>            : #include &lt;libavutil/mathematics.h&gt;
+<span class="lineNum">      11 </span>            : #include &lt;libavutil/time.h&gt;
+<span class="lineNum">      12 </span>            : }
+<span class="lineNum">      13 </span>            : #include &quot;SafariStatistics.h&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : enum DropMode{
+<span class="lineNum">      16 </span>            :     DROP_NONE,
+<span class="lineNum">      17 </span>            :     DROP_BEGIN,
+<span class="lineNum">      18 </span>            :     DROP_END
+<span class="lineNum">      19 </span>            : };
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : class COttAvPacketSender{
+<span class="lineNum">      22 </span>            : public:
+<span class="lineNum">      23 </span>            :     COttAvPacketSender(CSerialTaskQueue&amp; inRtmpSerialTaskQueue, const ResultCallback&amp; inErrorCallback);
+<span class="lineNum">      24 </span>            :     ~COttAvPacketSender();
+<span class="lineNum">      25 </span>            :     void Release(SafariResult inErrorCode = SAFARI_OK, const std::string&amp; inMessage = &quot;&quot;);
+<span class="lineNum">      26 </span>            :     void ClearPacketQueue();
+<span class="lineNum">      27 </span>            :     void SetOutputContext(AVFormatContext* inOutputContext);
+<span class="lineNum">      28 </span>            :     void SendAvPacket(AVPacket&amp; inPacket, bool inIsVideo);
+<span class="lineNum">      29 </span><span class="lineCov">         17 :     uint32_t GetSendBufferSize() const { return m_sendBufferSize.load(std::memory_order_relaxed); }</span>
+<span class="lineNum">      30 </span>            :     CStatisticCount&amp; GetNumDroppedPackets() { return m_numDroppedPackets; }
+<span class="lineNum">      31 </span>            :         void HandleStatisticsTimer(bool inIsOneMinute);
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : private:
+<span class="lineNum">      34 </span>            :     void SetDropMode();
+<span class="lineNum">      35 </span>            :     void LoopRtmpThread();
+<span class="lineNum">      36 </span>            :     static bool IsKeyFrame(AVPacket&amp; inPacket);
+<span class="lineNum">      37 </span>            :         void IncreaseSendBufferSize(uint32_t inSize, uint32_t inPackets = 1);
+<span class="lineNum">      38 </span>            :         void DecreaseSendBufferSize(uint32_t inSize, uint32_t inPackets = 1);
+<span class="lineNum">      39 </span>            :         void PrintMediaStatistics();
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : private:
+<span class="lineNum">      42 </span>            :     AVFormatContext* m_outputContext;
+<span class="lineNum">      43 </span>            :     std::queue&lt;AVPacket&gt; m_packetQueue;
+<span class="lineNum">      44 </span>            :     std::mutex m_packetQueueMutex;
+<span class="lineNum">      45 </span>            :     std::atomic&lt;uint32_t&gt; m_sendBufferSize;
+<span class="lineNum">      46 </span>            :     uint32_t m_maxSendBufferSize;
+<span class="lineNum">      47 </span>            :     CSerialTaskQueue&amp; m_rtmpSerialTaskQueue;
+<span class="lineNum">      48 </span>            :     ResultCallback m_errorCallback;
+<span class="lineNum">      49 </span>            :     int m_dropMode;
+<span class="lineNum">      50 </span>            :     CStatisticCount m_numDroppedPackets;
+<span class="lineNum">      51 </span>            :         std::mutex m_sendMediaMutex;
+<span class="lineNum">      52 </span>            :         uint32_t m_sendMediaSize = 0;
+<span class="lineNum">      53 </span>            :         uint32_t m_sendMediaPackets = 0;
+<span class="lineNum">      54 </span>            :     uint32_t m_inputMediaSize = 0;
+<span class="lineNum">      55 </span>            :     uint32_t m_inputMediaPackets = 0;
+<span class="lineNum">      56 </span>            :     uint32_t m_outputMediaSize = 0;
+<span class="lineNum">      57 </span>            :     uint32_t m_outputMediaPackets = 0;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : #ifdef ENABLE_DUMP_MEDIA
+<span class="lineNum">      60 </span>            :     FILE* m_h264File;
+<span class="lineNum">      61 </span>            :     AVFormatContext* m_audioFormatContext;
+<span class="lineNum">      62 </span>            : #endif
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :     friend class COttRtmpFeeder;
+<span class="lineNum">      65 </span>            : };
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #endif /* OTTER_AV_PACKET_SENDER_H */
+<span class="lineNum">      68 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

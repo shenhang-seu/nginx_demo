@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/feeder/OttFeeder.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/feeder</a> - OttFeeder.cpp<span style="font-size: 80%;"> (source / <a href="OttFeeder.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntryHi">97.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntryMed">82.4 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;OttRtmpFeeder.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;OttDashFeeder.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;OttMultimediaSession.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;OttVenue.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;CspVenueId.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;CspAssert.h&quot;
+<a name="8"><span class="lineNum">       8 </span>            : #include &quot;OtterConfig.h&quot;</a>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">         24 : OttFeederSharedPtr COttFeederFactory::CreateFeeder(OttMultimediaSessionSharedPtr inSession)</span>
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">         24 :         if (inSession-&gt;GetSessionType() == SESSION_TYPE_WEBEX_MEETING_LIVE)</span>
+<span class="lineNum">      13 </span><span class="lineCov">          6 :         return OttFeederSharedPtr(new COttDashFeeder(inSession));</span>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :     // [EXTENSION] May need more work when new session type is introduced in future.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :     // By default, create an RTMP feeder;
+<span class="lineNum">      18 </span>            :     // For sessions with RTMP feeder, there should be only one videoComposeKey and one subscriber. 
+<span class="lineNum">      19 </span><span class="lineCov">        399 :     CSP_ASSERT(inSession-&gt;GetVideoComposeKeyList().size() == 1);</span>
+<span class="lineNum">      20 </span><span class="lineCov">         21 :     static CThreadPool s_rtmpThreadPool(THREAD_NAME_RTMP, RTMP_THREAD_NUM);</span>
+<span class="lineNum">      21 </span><span class="lineCov">         42 :     return OttFeederSharedPtr(new COttRtmpFeeder(inSession, s_rtmpThreadPool));</span>
+<a name="22"><span class="lineNum">      22 </span>            : }</a>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">         24 : IOttFeeder::IOttFeeder(OttMultimediaSessionSharedPtr inSession)</span>
+<span class="lineNum">      25 </span>            : : m_isReleased(false)
+<span class="lineNum">      26 </span><span class="lineCov">         48 : , m_session(inSession)</span>
+<span class="lineNum">      27 </span>            : {
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">         24 : }</span></a>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">         48 : IOttFeeder::~IOttFeeder()</span>
+<span class="lineNum">      31 </span>            : {
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         24 : }</span></a>
+<span class="lineNum">      33 </span>            : 
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">          2 : OttVenueSharedPtr&amp; IOttFeeder::GetVenue() </span></a>
+<span class="lineNum">      35 </span>            : { 
+<span class="lineNum">      36 </span><span class="lineCov">         26 :     return m_session-&gt;GetVenue(); </span>
+<a name="37"><span class="lineNum">      37 </span>            : }</a>
+<span class="lineNum">      38 </span>            : 
+<a name="39"><span class="lineNum">      39 </span><span class="lineNoCov">          0 : const OttVenueSharedPtr&amp; IOttFeeder::GetVenue() const</span></a>
+<span class="lineNum">      40 </span>            : { 
+<span class="lineNum">      41 </span><span class="lineCov">         55 :     return m_session-&gt;GetVenue(); </span>
+<span class="lineNum">      42 </span>            : }
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineCov">         53 : const CCspVenueId&amp; IOttFeeder::GetVenueId() const</span>
+<span class="lineNum">      45 </span>            : {
+<span class="lineNum">      46 </span><span class="lineCov">         55 :     return GetVenue()-&gt;GetVenueId();</span>
+<a name="47"><span class="lineNum">      47 </span>            : }</a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">         53 : const CspSessionIdType&amp; IOttFeeder::GetSessionId() const</span>
+<span class="lineNum">      50 </span>            : {
+<span class="lineNum">      51 </span><span class="lineCov">         55 :     return m_session-&gt;GetSessionId();</span>
+<span class="lineNum">      52 </span>            : }
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">         24 : boost::asio::io_service&amp; IOttFeeder::GetMainThreadIoService() </span>
+<span class="lineNum">      55 </span>            : { 
+<span class="lineNum">      56 </span><span class="lineCov">         24 :     return GetVenue()-&gt;GetMainThreadIoService(); </span>
+<a name="57"><span class="lineNum">      57 </span>            : }</a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          1 : const std::string&amp; IOttFeeder::GetSessionType() const</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">          1 :     return m_session-&gt;GetSessionType();</span>
+<a name="62"><span class="lineNum">      62 </span>            : }</a>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">          2 : void IOttFeeder::PostError2MainThread(SafariResult inReason, const std::string&amp; inMessage)</span>
+<a name="65"><span class="lineNum">      65 </span>            : {</a>
+<span class="lineNum">      66 </span><span class="lineCov">          2 :     auto self = shared_from_this();</span>
+<span class="lineNum">      67 </span><span class="lineCov">         18 :     CThreadPoster(GetMainThreadIoService(), [self, this, inReason, inMessage]() {</span>
+<span class="lineNum">      68 </span><span class="lineCov">          2 :         if (m_isReleased)</span>
+<span class="lineNum">      69 </span>            :             return;
+<span class="lineNum">      70 </span><span class="lineCov">          2 :         HandleError(inReason, inMessage);</span>
+<span class="lineNum">      71 </span><span class="lineCov">          6 :     });</span>
+<span class="lineNum">      72 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          2 : IN_MAIN_THREAD void IOttFeeder::HandleError(SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">      75 </span>            : {
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov">         46 :     OTTER_WARNING_THIS(&quot;IOttFeeder::HandleError, venueId:&quot; &lt;&lt; GetVenueId() &lt;&lt; &quot; sessionId:&quot; &lt;&lt; GetSessionId() &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span></a>
+<span class="lineNum">      77 </span><span class="lineCov">          2 :     m_session-&gt;HandleFeederError(this, inReason, inMessage);</span>
+<span class="lineNum">      78 </span><span class="lineCov">          5 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/TAReceiver.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - TAReceiver.h<span style="font-size: 80%;"> (source / <a href="TAReceiver.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">62.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef TARECEIVER_H_</a>
+<span class="lineNum">       2 </span>            : #define TARECEIVER_H_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;string.h&gt;
+<span class="lineNum">       5 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;ReceiverInterface.h&quot;
+<span class="lineNum">       7 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 : struct TARtpChannel</span>
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span>            :         CmeSessionIdType m_cmeSessionId;
+<span class="lineNum">      12 </span>            :     unsigned int m_csi;
+<span class="lineNum">      13 </span>            :         IWMEMediaRtpChannel* m_rtpChannel;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         TARtpChannel(const CmeSessionIdType&amp; inCmeSessionId = &quot;&quot;)
+<span class="lineNum">      16 </span>            :                 : m_cmeSessionId(inCmeSessionId)
+<span class="lineNum">      17 </span>            :                 , m_csi(0)
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :                 , m_rtpChannel(NULL)</span>
+<span class="lineNum">      19 </span>            :         {}
+<span class="lineNum">      20 </span>            : };
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : struct TASource
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span>            :         FILE* m_file;
+<span class="lineNum">      25 </span>            :         unsigned int m_count;
+<span class="lineNum">      26 </span>            :         std::string m_buffer;
+<span class="lineNum">      27 </span>            :         std::vector&lt;TARtpChannel&gt; m_rtpChannelList;
+<span class="lineNum">      28 </span>            :         TASource()
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">        120 :                 :m_file(NULL), m_count(0)</span></a>
+<span class="lineNum">      30 </span>            :         {}
+<span class="lineNum">      31 </span><span class="lineCov">         48 :         ~TASource()</span>
+<span class="lineNum">      32 </span><span class="lineCov">         48 :         {</span>
+<span class="lineNum">      33 </span><span class="lineCov">         48 :             if (m_file)</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :             fclose(m_file);</span>
+<span class="lineNum">      35 </span><span class="lineCov">         48 :                 m_file = NULL;</span>
+<span class="lineNum">      36 </span><span class="lineCov">         48 :                 m_count = 0;</span>
+<span class="lineNum">      37 </span><span class="lineCov">         48 :         }</span>
+<span class="lineNum">      38 </span>            : };
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : struct TASessionResult
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span>            :     int m_result;
+<span class="lineNum">      43 </span>            :         bool m_exist;
+<span class="lineNum">      44 </span>            :         TASessionResult()
+<span class="lineNum">      45 </span>            :                 : m_result(0)
+<span class="lineNum">      46 </span><span class="lineCov">         30 :                 , m_exist(true)</span>
+<span class="lineNum">      47 </span>            :         {}
+<span class="lineNum">      48 </span>            : };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">        340 : struct TARoster</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span>            :     unsigned int m_nodeId;
+<span class="lineNum">      53 </span>            :     unsigned int m_asCsi;
+<span class="lineNum">      54 </span>            :         unsigned int m_audioCsi;
+<span class="lineNum">      55 </span>            :         unsigned int m_videoCsi;
+<span class="lineNum">      56 </span>            :     std::string m_name;
+<span class="lineNum">      57 </span>            : };
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : class CTAReceiver: public IMeetingReceiver
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span>            : public:
+<span class="lineNum">      62 </span>            :         typedef IMeetingReceiver ParentType;
+<span class="lineNum">      63 </span>            :         CTAReceiver(const NtgVenueSharedPtr&amp; inVenue, boost::asio::io_service&amp; inIoService);
+<span class="lineNum">      64 </span>            :         virtual ~CTAReceiver();
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :     // IMeetingReceiver
+<span class="lineNum">      67 </span>            :         virtual SafariResult JoinMeetingInSdkThread(const Json::Value&amp; inContext);
+<span class="lineNum">      68 </span>            :         virtual SafariResult LeaveMeetingInSdkThread();
+<span class="lineNum">      69 </span>            :         virtual void JoinMediaSessionsInSdkThread(const Json::Value&amp; inSignalling) override;
+<span class="lineNum">      70 </span>            :         virtual SafariResult OpenCmeSendonlySessionInSdkThread(const Json::Value&amp; inSignalling);
+<span class="lineNum">      71 </span>            :         virtual SafariResult CloseCmeSendonlySessionInSdkThread(const Json::Value&amp; inSignalling); 
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :         // INtgCmeMediaRelayerSink
+<span class="lineNum">      74 </span>            :         virtual void OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel) override;
+<a name="75"><span class="lineNum">      75 </span>            :     virtual void OnVideoSCR(const CmeSessionIdType&amp; inCmeSessionId, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount) override;</a>
+<a name="76"><span class="lineNum">      76 </span>            :         virtual void OnAudioSCR(const CmeSessionIdType&amp; inCmeSessionId, unsigned int inCount, WMERtpExtend* inRtpExtend) override;</a>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         virtual void OnMediaRtpData(EMediaSessionType inType, const std::string&amp; inRtpPacket) override {}</span>
+<a name="78"><span class="lineNum">      78 </span><span class="lineNoCov">          0 :     virtual void OnMediaRtcpData(EMediaSessionType inType, const std::string&amp; inRtcpPacket) override {}</span></a>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">         36 :         std::shared_ptr&lt;CTAReceiver&gt; get_shared_from_this() { return std::dynamic_pointer_cast&lt;CTAReceiver&gt;(shared_from_this());}</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         
+<span class="lineNum">      83 </span>            : private:
+<span class="lineNum">      84 </span>            :         SafariResult ParseTAReceiverPara(const Json::Value&amp; inContext);
+<span class="lineNum">      85 </span>            :         TARoster GenerateTARoster(unsigned int inNodeId, std::string&amp; inName);
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         void PostRoster();
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :     //yuv data
+<span class="lineNum">      90 </span>            :         void ScheduleTimer(boost::asio::steady_timer* inTimer);
+<span class="lineNum">      91 </span>            :         void HandleTimer(boost::asio::steady_timer* inTimer, const boost::system::error_code&amp; inErrorCode);
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         void SendAudioData();
+<span class="lineNum">      94 </span>            :         void SendVideoData(TASource&amp; inSource);
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         bool ReadAudioData(FILE* inHandle, std::string&amp; outData);
+<span class="lineNum">      97 </span>            :         bool ReadVideoData(FILE* inHandle, std::string&amp; outData, unsigned int&amp; outFlag);
+<span class="lineNum">      98 </span>            :         static uint32_t GetTimestamp();
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            :         void CreateASRtpChannel(const CmeSessionIdType&amp; inCmeSessionId);
+<span class="lineNum">     101 </span>            :         void AnnounceInvalidSource(VideoScrInfo&amp; inActiveSCR, VideoSCRList&amp; inSCRList);
+<span class="lineNum">     102 </span>            :         void RemoveTARtpChannels(const CmeSessionIdType&amp; inCmeSessionId);
+<span class="lineNum">     103 </span>            :         void RemoveTARtpChannelsOnMediaSource(const CmeSessionIdType&amp; inCmeSessionId, TASource&amp; inTaSource);
+<span class="lineNum">     104 </span>            :         void ClearTASources();
+<span class="lineNum">     105 </span>            :         void PrintVideoStatus(VideoScrInfo&amp; inActiveSCR, VideoSCRList&amp; inSCRList);
+<span class="lineNum">     106 </span>            :         void ReportContentSharingEvent(bool inAS, unsigned int inResolution);
+<span class="lineNum">     107 </span>            :         void ParseVideoScr(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount, VideoScrInfo&amp; outActiveSCR, VideoSCRList&amp; outSCRList);
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :         uint16_t GetAudioSeqId(){ return (m_audioSeqId++);}</span>
+<span class="lineNum">     109 </span>            :         
+<span class="lineNum">     110 </span>            : private:
+<span class="lineNum">     111 </span>            :         boost::asio::steady_timer m_taAudioTimer;
+<span class="lineNum">     112 </span>            :         boost::asio::steady_timer m_taVideoTimer;
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :         //session result
+<span class="lineNum">     115 </span>            :         TASessionResult m_meetingResult;
+<span class="lineNum">     116 </span>            :         TASessionResult m_videoResult;
+<span class="lineNum">     117 </span>            :         TASessionResult m_audioResult;
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :         //video resolution count
+<span class="lineNum">     120 </span>            :         TASource m_720p;
+<span class="lineNum">     121 </span>            :         TASource m_360p;
+<span class="lineNum">     122 </span>            :         TASource m_180p;
+<span class="lineNum">     123 </span>            :         TASource m_90p;
+<span class="lineNum">     124 </span>            :         TASource m_as;
+<span class="lineNum">     125 </span>            :         TASource m_audio;
+<span class="lineNum">     126 </span>            :         //roster
+<span class="lineNum">     127 </span>            :         TARoster m_activeRoster;
+<span class="lineNum">     128 </span>            :         std::vector&lt;TARoster&gt; m_rosterList;
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :         bool m_bActiveAvatar;
+<span class="lineNum">     131 </span>            :         std::string m_fileDirectory;
+<span class="lineNum">     132 </span>            :         uint16_t m_mediaSessionBitmap = 0;
+<span class="lineNum">     133 </span>            :         //fix bug[webex-74810]
+<span class="lineNum">     134 </span>            :         uint16_t m_audioSeqId = 0;
+<span class="lineNum">     135 </span>            : };
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : #endif /* TARECEIVER_H_ */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

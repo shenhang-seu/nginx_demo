@@ -1,0 +1,452 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/cme/CmeSession.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/cme</a> - CmeSession.h<span style="font-size: 80%;"> (source / <a href="CmeSession.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryMed">87.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    CME Session Definitions.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Dec-28-2018  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef OTT_CME_SESSION_H
+<span class="lineNum">      14 </span>            : #define OTT_CME_SESSION_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/asio/steady_timer.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;CspVenueId.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;IoServiceWrapper.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;UdpSocket.h&quot;
+<span class="lineNum">      23 </span>            : #include &quot;WbxMMPSDKDefine.h&quot;
+<span class="lineNum">      24 </span>            : #include &quot;SafariStatistics.h&quot;
+<span class="lineNum">      25 </span>            : #include &quot;CspRtpSession.h&quot;
+<span class="lineNum">      26 </span>            : #include &quot;CspLatmParser.h&quot;
+<span class="lineNum">      27 </span>            : #include &quot;CmeSpeakerAttribution.h&quot;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : using namespace UDP;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : class CCmeServiceProperties;
+<span class="lineNum">      32 </span>            : class CCspRtpSession;
+<span class="lineNum">      33 </span>            : typedef std::shared_ptr&lt;CCspRtpSession&gt; CspRtpSessionSharedPtr;
+<span class="lineNum">      34 </span>            : typedef std::vector&lt;CspRtpSessionSharedPtr&gt; CspRtpSessionSharedPtrVector;
+<span class="lineNum">      35 </span>            : class CCspSipClient;
+<span class="lineNum">      36 </span>            : typedef std::shared_ptr&lt;CCspSipClient&gt; CspSipClientSharedPtr;
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : class CCmeSessionFactory
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span>            : public:
+<span class="lineNum">      41 </span>            :     static CmeSendonlySessionSharedPtr CreateSendonlySession(
+<span class="lineNum">      42 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">      43 </span>            :         const CmeSessionIdType&amp; inSessionId);
+<span class="lineNum">      44 </span>            :     static CmeRecvonlyAudioSessionSharedPtr CreateRecvonlyAudioSession(
+<span class="lineNum">      45 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">      46 </span>            :         const CmeSessionIdType&amp; inSessionId,
+<span class="lineNum">      47 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">      48 </span>            :         const ReceiveStreamCallback&amp; inCallback, 
+<span class="lineNum">      49 </span>            :         const ResultCallback&amp; inSubscribeResultCallback);
+<span class="lineNum">      50 </span>            :     static CmeRecvonlyVideoSessionSharedPtr CreateRecvonlyVideoSession(
+<span class="lineNum">      51 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">      52 </span>            :         const CmeSessionIdType&amp; inSessionId,
+<span class="lineNum">      53 </span>            :         const CCspVideoComposeKey&amp; inVideoComposeKey, 
+<span class="lineNum">      54 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">      55 </span>            :         const ReceiveStreamCallback&amp; inCallback,
+<span class="lineNum">      56 </span>            :         const std::string&amp; inCspSessionType);
+<span class="lineNum">      57 </span>            : };
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : class ICmeSession: public std::enable_shared_from_this&lt;ICmeSession&gt;
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span>            : public:
+<span class="lineNum">      62 </span>            :     virtual ~ICmeSession();
+<span class="lineNum">      63 </span>            :     virtual void OpenFirstTime(const WssUrlType&amp; inCmeNodeUrl); /* Open for the first time */
+<span class="lineNum">      64 </span>            :     virtual void Release();
+<span class="lineNum">      65 </span>            :     virtual void Open(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">      66 </span>            :     virtual void Close(SafariResult inReason = SAFARI_OK);
+<span class="lineNum">      67 </span>            :     void RoapOK(const JsonValue&amp; inAnswerRoap);
+<span class="lineNum">      68 </span>            :     virtual JsonValue GenerateOpenSessionMessage() = 0;
+<span class="lineNum">      69 </span>            :     JsonValue GenerateOfferRoap(const std::string&amp; inOfferSdp);
+<span class="lineNum">      70 </span>            :     virtual void OnMessage(const JsonValue&amp; inMessage);
+<span class="lineNum">      71 </span>            :     void Reopen(const WssUrlType&amp; inCmeNodeUrl, SafariResult inReason); /* Open on failover */
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :     OttVenueSharedPtr&amp; GetVenue();
+<span class="lineNum">      74 </span>            :     const OttVenueSharedPtr&amp; GetVenue() const;
+<span class="lineNum">      75 </span>            :     const CCspVenueId&amp; GetVenueId() const;
+<span class="lineNum">      76 </span>            :         const std::string&amp; GetLocusId() const ;
+<span class="lineNum">      77 </span>            :     const std::string&amp; GetSiteUrl() const ;
+<span class="lineNum">      78 </span>            :         const std::string&amp; GetLocusSessionId() const { return m_locusSessionId; }
+<span class="lineNum">      79 </span>            :     const std::string&amp; GetConferenceId() const;
+<span class="lineNum">      80 </span>            :     const CCmeServiceProperties&amp; GetCmeServiceProperties() const;
+<span class="lineNum">      81 </span>            :     const std::string&amp; GetMediaServiceId() const;
+<span class="lineNum">      82 </span>            :     bool EnableMultistream() const;
+<span class="lineNum">      83 </span>            :     const CmeSessionIdType&amp; GetSessionId() const { return m_sessionId; }
+<span class="lineNum">      84 </span>            :     const WssUrlType&amp; GetCmeNodeUrl() const { return m_cmeNodeUrl; }
+<span class="lineNum">      85 </span>            :     const bool IsOpen() const { return m_isOpen; }
+<span class="lineNum">      86 </span>            :     const std::string&amp; GetOfferSdp() const { return m_offerSdp; }
+<span class="lineNum">      87 </span>            :     const std::string&amp; GetAnswerSdp() const { return m_answerSdp; }
+<span class="lineNum">      88 </span>            :     virtual ECmeSessionType GetSessionType() const = 0;
+<span class="lineNum">      89 </span>            :     virtual JsonValue ToJson() const;
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :     static std::string GenerateCmeSessionId(ECmeSessionType inCmeSessionType);
+<span class="lineNum">      92 </span>            :         static const char* GetMediaTypeString(ECmeSessionType inCmeSessionType);
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : protected:
+<span class="lineNum">      95 </span>            :     ICmeSession(CmeServiceSharedPtr inCmeService, const CmeSessionIdType&amp; inSessionId);
+<span class="lineNum">      96 </span>            :     boost::asio::io_service&amp; GetMainThreadIoService();
+<span class="lineNum">      97 </span>            :     boost::asio::io_service&amp; GetStreamThreadIoService();
+<span class="lineNum">      98 </span>            :     bool OnMessageAnswer(const JsonValue&amp; inMessageData);
+<span class="lineNum">      99 </span>            :     virtual bool OnReceiveAnswerSdp(const std::string&amp; inAnswerSdp) = 0;
+<span class="lineNum">     100 </span>            :     SafariResult CheckRoapAnswer(const JsonValue&amp; inRoap);
+<span class="lineNum">     101 </span>            :     void OnMessageSession(const JsonValue&amp; inMessageData);
+<span class="lineNum">     102 </span>            :     void OnMessageSessionQuiesce();
+<span class="lineNum">     103 </span>            :     void OnMessageSessionClose(const std::string&amp; inReason);
+<span class="lineNum">     104 </span>            :     void OnMessageError(const JsonValue&amp; inMessageData);
+<span class="lineNum">     105 </span>            :     void WriteOpenSessionRttMetrics(SafariResult inResult);
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     virtual JsonValue GenerateRoapHeaders() const = 0;
+<span class="lineNum">     108 </span>            :     virtual void Failover(SafariResult inErrorCode, const std::string&amp; inMessage) = 0;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : private:
+<span class="lineNum">     111 </span>            :     void HandleTimer(boost::asio::steady_timer* inTimer, const boost::system::error_code&amp; inErrorCode);
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :     bool HaveEverOpenedSuccessfully() const { return !m_answerSdp.empty(); }</span>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : protected:
+<span class="lineNum">     115 </span>            :     bool m_released;
+<span class="lineNum">     116 </span>            :     CmeServiceSharedPtr m_cmeService;
+<span class="lineNum">     117 </span>            :     CmeSessionIdType m_sessionId;
+<span class="lineNum">     118 </span>            :     std::string m_locusSessionId;
+<span class="lineNum">     119 </span>            :     WssUrlType m_cmeNodeUrl;
+<span class="lineNum">     120 </span>            :     uint16_t m_roapSeq;
+<span class="lineNum">     121 </span>            :     bool m_isOpen;
+<span class="lineNum">     122 </span>            :     std::string m_offerSdp;
+<span class="lineNum">     123 </span>            :     std::string m_answerSdp;
+<span class="lineNum">     124 </span>            :     std::chrono::steady_clock::time_point m_openCmeSessionStartTime;
+<span class="lineNum">     125 </span>            :     boost::asio::steady_timer m_openOrFailoverTimer;
+<span class="lineNum">     126 </span>            : };
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            : class CCmeSendonlySession: public ICmeSession
+<span class="lineNum">     129 </span>            : {
+<span class="lineNum">     130 </span>            : public:
+<span class="lineNum">     131 </span>            :     typedef ICmeSession ParentType;
+<span class="lineNum">     132 </span>            :     CCmeSendonlySession(CmeServiceSharedPtr inCmeService, const CmeSessionIdType&amp; inSessionId);
+<span class="lineNum">     133 </span>            :     virtual ~CCmeSendonlySession();
+<span class="lineNum">     134 </span>            :     virtual void Release();
+<span class="lineNum">     135 </span>            :     virtual void Open(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">     136 </span>            :     virtual void Close(SafariResult inReason = SAFARI_OK);
+<span class="lineNum">     137 </span>            :     virtual JsonValue GenerateOpenSessionMessage();
+<span class="lineNum">     138 </span>            :     virtual void OnMessage(const JsonValue&amp; inMessage);
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :     void UpdateRosterList(const JsonValue&amp; inLocus);
+<a name="141"><span class="lineNum">     141 </span>            :     void ContentSharingStart();</a>
+<span class="lineNum">     142 </span>            :     void ContentSharingStop();
+<span class="lineNum">     143 </span><span class="lineCov">          5 :     virtual ECmeSessionType GetSessionType() const { return ECmeSessionType::SENDONLY; }</span>
+<span class="lineNum">     144 </span>            :     virtual JsonValue ToJson() const;
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : protected:
+<span class="lineNum">     147 </span>            :     virtual bool OnReceiveAnswerSdp(const std::string&amp; inAnswerSdp);
+<span class="lineNum">     148 </span>            :     void OnMessageFloor(const JsonValue&amp; inMessageData);
+<span class="lineNum">     149 </span>            :     virtual JsonValue GenerateRoapHeaders() const;
+<span class="lineNum">     150 </span>            :     virtual void Failover(SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : private:
+<span class="lineNum">     153 </span>            :     uint16_t m_audioLocalPort;
+<span class="lineNum">     154 </span>            :     uint16_t m_videoLocalPort;
+<span class="lineNum">     155 </span>            :     uint16_t m_contentLocalPort;
+<span class="lineNum">     156 </span>            :     std::string m_audioSrtpKey;
+<span class="lineNum">     157 </span>            :     std::string m_videoSrtpKey;
+<span class="lineNum">     158 </span>            :     std::string m_contentSrtpKey;
+<span class="lineNum">     159 </span>            : };
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : class CCmeRecvonlySession: public ICmeSession, public ICspRtpSessionSink
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span>            : public:
+<span class="lineNum">     164 </span>            :     typedef ICmeSession ParentType;
+<span class="lineNum">     165 </span>            :     CCmeRecvonlySession(
+<span class="lineNum">     166 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">     167 </span>            :         const CmeSessionIdType&amp; inSessionId,
+<span class="lineNum">     168 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">     169 </span>            :         const ReceiveStreamCallback&amp; inCallback);
+<span class="lineNum">     170 </span>            :     virtual ~CCmeRecvonlySession();
+<span class="lineNum">     171 </span>            :     virtual void OpenFirstTime(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">     172 </span>            :     virtual void Release();
+<span class="lineNum">     173 </span>            :     virtual void Open(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">     174 </span>            :     virtual void Close(SafariResult inReason = SAFARI_OK);
+<span class="lineNum">     175 </span>            :     virtual JsonValue GenerateOpenSessionMessage() = 0;
+<span class="lineNum">     176 </span>            :     virtual JsonValue ToJson() const;
+<span class="lineNum">     177 </span>            :     virtual void UpdateSessionLayout(const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :     void SubscribeStream(const CspSessionIdType&amp; inCspSessionId, const ReceiveStreamCallback &amp; inCallback);
+<span class="lineNum">     180 </span>            :     void UnsubscribeStream(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">     181 </span>            :     void OnReceiveRtpPacket(const std::string&amp; inPacket);
+<span class="lineNum">     182 </span>            :     void OnReceiveRtcpPacket(const std::string&amp; inPacket);
+<span class="lineNum">     183 </span>            :     void OnSendRtcpResult(const boost::system::error_code&amp; inErrorCode, std::size_t inBytesTransferred);
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :     void HandleStatisticsTimer(bool inIsOneMinute);
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : protected:
+<span class="lineNum">     188 </span>            :     virtual bool OnReceiveAnswerSdp(const std::string&amp; inAnswerSdp);
+<span class="lineNum">     189 </span>            :     virtual JsonValue GenerateRoapHeaders() const;
+<span class="lineNum">     190 </span>            :     virtual void DoMoreOnReceiveAnswerSdp(bool inAnswerForOpenSession) = 0;
+<span class="lineNum">     191 </span>            :     virtual void DoMoreForSessionCloseInStreamThread() = 0;
+<a name="192"><span class="lineNum">     192 </span>            :     virtual void RemoveMyself() = 0;</a>
+<span class="lineNum">     193 </span>            :     virtual EMediaSessionType GetMediaSessionType() const = 0;
+<span class="lineNum">     194 </span><span class="lineCov">          3 :         virtual bool NeedReleasePreviousRtpSession(bool inAnswerForOpenSession, const std::string&amp; inAnswerSdp) { return true;}</span>
+<span class="lineNum">     195 </span>            :     // virtual uint32_t GetMediaDuration() const = 0;
+<span class="lineNum">     196 </span>            :     void OnOutputMediaFrame(uint32_t inSsrc, uint32_t inTimestamp, bool inIsIdr, const std::string&amp; inFrame);
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            :     void PrintCmeRecvLossRateCategorySummary();
+<span class="lineNum">     199 </span>            :         void TryToReCreateRtpSession(uint32_t inSsrc, bool inRtp);
+<span class="lineNum">     200 </span>            :         void CreateRtpSession(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp);
+<span class="lineNum">     201 </span>            :         void ReleaseRtpSession();
+<span class="lineNum">     202 </span><span class="lineCov">         12 :         void SetReCreateRtpSessionStatus(bool inStatus){ m_waitForNewSsrcInStream = inStatus; m_rtcpCountInStream = 0;}</span>
+<span class="lineNum">     203 </span>            :         void CacheRtcpPacket(const std::string&amp; inPacket);
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            : public:
+<span class="lineNum">     206 </span>            :     /* Implement ICspRtpSessionSink. */
+<span class="lineNum">     207 </span>            :     virtual void OnSubscribe(EMediaSessionType inType, const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount);
+<span class="lineNum">     208 </span>            :     virtual void OnAnnounce(EMediaSessionType inType, const WBXSubsessionChannelAnnounce&amp; inAnnounce);
+<span class="lineNum">     209 </span>            :     virtual void OnPictureLossIndication(EMediaSessionType inType, const IWMEMediaRtpChannel* inRtpChannel);
+<span class="lineNum">     210 </span>            :     virtual void OnOutputRtcpPacket(EMediaSessionType inType, const std::string&amp; inRtcpPacket);
+<span class="lineNum">     211 </span>            :     virtual void OnOutputRtpPacket(EMediaSessionType inType, const std::string&amp; inRtpPacket);
+<span class="lineNum">     212 </span>            :     virtual void OnOutputAudioFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, const std::string&amp; inAudioFrame);
+<span class="lineNum">     213 </span>            :     virtual void OnOutputVideoFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, bool inIsIdr, const std::string&amp; inVideoFrame);
+<span class="lineNum">     214 </span>            :     virtual void OnRtpPacketLoss(uint32_t inSsrc, uint32_t inLossCount);
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            : protected:
+<span class="lineNum">     217 </span>            :     std::map&lt;CspSessionIdType, ReceiveStreamCallback&gt; m_receiveStreamCallbacks;
+<span class="lineNum">     218 </span>            :     std::mutex m_receiveStreamCallbacksMutex;
+<span class="lineNum">     219 </span>            :         CspSessionIdType m_cspSessionId;
+<span class="lineNum">     220 </span>            :     uint16_t m_localPort;
+<span class="lineNum">     221 </span>            :     uint16_t m_remotePort;
+<span class="lineNum">     222 </span>            :     std::string m_remoteIp;
+<span class="lineNum">     223 </span>            :     std::string m_srtpKey;
+<span class="lineNum">     224 </span>            :         std::string m_offerSdpInStream;
+<span class="lineNum">     225 </span>            :     std::string m_answerSdpInStream;
+<span class="lineNum">     226 </span>            :         bool m_waitForNewSsrcInStream;
+<span class="lineNum">     227 </span>            :         uint32_t m_rtcpCountInStream;
+<span class="lineNum">     228 </span>            :     UdpSocketSharedPtr m_rtpSocket;
+<span class="lineNum">     229 </span>            :     UdpSocketSharedPtr m_rtcpSocket;
+<span class="lineNum">     230 </span>            :     CspRtpSessionSharedPtr m_rtpSession;
+<span class="lineNum">     231 </span>            :     bool m_haveReceivedRtpPacket;
+<span class="lineNum">     232 </span>            :     bool m_haveOutputMediaFrame;
+<span class="lineNum">     233 </span>            :     uint32_t m_latestRtpTimestamp; // The latest timestamp from RTP session.
+<span class="lineNum">     234 </span>            :     uint32_t m_subscribeTimestamp; // Timestamp maintained for subscribers. 
+<span class="lineNum">     235 </span>            :                                    /* Two reasons why use m_subscribeTimestamp but not reuse m_latestRtpTimestamp for subscribers who require monotonic timestamps.
+<span class="lineNum">     236 </span>            :                                       1. m_latestRtpTimestamp might be a big uint32 value close to 0xFFFFFFFF that eventually wraps around to zero. 
+<span class="lineNum">     237 </span>            :                                       2. m_latestRtpTimestamp might change to a small value due to Linux NTP time sync. 
+<span class="lineNum">     238 </span>            :                                     */
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            :     volatile bool m_waitForRoapAnswer;
+<span class="lineNum">     241 </span>            :     std::list&lt;std::string&gt; m_cachedRtcpPackets;
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span>            :     uint32_t m_rtpPacketReceiveTotalNum;
+<span class="lineNum">     244 </span>            :     uint32_t m_rtpPacketLossTotalNum;
+<span class="lineNum">     245 </span>            :     CStatisticCount m_rtpPacketReceiveNum;
+<span class="lineNum">     246 </span>            :     CStatisticCount m_rtpPacketLossNum;
+<span class="lineNum">     247 </span>            :     CStatisticCount m_frameReceiveNum;
+<span class="lineNum">     248 </span>            :     CStatisticBitRate m_bitRate;
+<span class="lineNum">     249 </span>            :         CStatisticCount m_lossRate;
+<span class="lineNum">     250 </span>            :         CStatisticCount m_jitterNum;
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span>            :     CCategoryStatistic m_lossRateCategoryStatistic;
+<span class="lineNum">     253 </span>            : };
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            : class CCmeRecvonlyAudioSession: public CCmeRecvonlySession
+<span class="lineNum">     256 </span>            : {
+<span class="lineNum">     257 </span>            : public:
+<span class="lineNum">     258 </span>            :     typedef CCmeRecvonlySession ParentType;
+<span class="lineNum">     259 </span>            :     CCmeRecvonlyAudioSession(
+<span class="lineNum">     260 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">     261 </span>            :         const CmeSessionIdType&amp; inSessionId,
+<span class="lineNum">     262 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">     263 </span>            :         const ReceiveStreamCallback&amp; inCallback, 
+<span class="lineNum">     264 </span>            :         const ResultCallback&amp; inSubscribeResultCallback);
+<span class="lineNum">     265 </span>            :     virtual ~CCmeRecvonlyAudioSession();
+<span class="lineNum">     266 </span>            :     virtual void Release();
+<a name="267"><span class="lineNum">     267 </span>            :     virtual void Open(const WssUrlType&amp; inCmeNodeUrl);</a>
+<span class="lineNum">     268 </span>            :     virtual JsonValue GenerateOpenSessionMessage();
+<span class="lineNum">     269 </span><span class="lineCov">          8 :     virtual ECmeSessionType GetSessionType() const { return ECmeSessionType::RECVONLY_AUDIO; }</span>
+<span class="lineNum">     270 </span>            :     void SubscribeResultCallback(SafariResult inResult, const std::string&amp; inMessage);
+<span class="lineNum">     271 </span>            :     void SubscribeSpeakerAttribution(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">     272 </span>            :     void UnsubscribeSpeakerAttribution(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">     273 </span>            :     void UpdateRosterList(const JsonValue&amp; inMessage);
+<span class="lineNum">     274 </span>            :     void HandleStatisticsTimer(bool inIsOneMinute);
+<span class="lineNum">     275 </span>            :     void ReportSpeakerAttributionToSrs(bool inForce);
+<span class="lineNum">     276 </span>            :     
+<span class="lineNum">     277 </span>            : protected:
+<span class="lineNum">     278 </span>            :     virtual void DoMoreOnReceiveAnswerSdp(bool inAnswerForOpenSession);
+<span class="lineNum">     279 </span>            :     virtual void DoMoreForSessionCloseInStreamThread();
+<a name="280"><span class="lineNum">     280 </span>            :     virtual void RemoveMyself();</a>
+<span class="lineNum">     281 </span>            :     virtual void Failover(SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">     282 </span><span class="lineCov">          3 :     virtual EMediaSessionType GetMediaSessionType() const { return MEDIA_AUDIO_SESSION; }</span>
+<span class="lineNum">     283 </span>            :     // virtual uint32_t GetMediaDuration() const { return CSP_AUDIO_AAC_SAMPLE_NUM_PER_FRAME; }
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span>            : public:
+<span class="lineNum">     286 </span>            :     virtual void OnOutputAudioFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, const std::string&amp; inAudioFrame);
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span>            : private:
+<span class="lineNum">     289 </span>            :     CCspLatmParser m_latmParser;
+<span class="lineNum">     290 </span>            :     ResultCallback m_subscribeResultCallback;
+<span class="lineNum">     291 </span>            :     CCmeSpeakerAttribution m_speakerAttribution;
+<span class="lineNum">     292 </span>            : };
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            : typedef std::function&lt;void (uint32_t inSsrc)&gt; IndicatePictureLossFunc;
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            : /* COttPliTrigger instance is working in the stream thread. */
+<span class="lineNum">     297 </span>            : class COttPliTrigger
+<span class="lineNum">     298 </span>            : {
+<span class="lineNum">     299 </span>            : public:
+<span class="lineNum">     300 </span>            :     COttPliTrigger(boost::asio::io_service&amp; inIoService, const IndicatePictureLossFunc&amp; inIndicatePictureLossFunc);
+<span class="lineNum">     301 </span>            :     ~COttPliTrigger();
+<span class="lineNum">     302 </span>            :     void Initialize(uint32_t inSsrc);
+<span class="lineNum">     303 </span>            :     void Release();
+<span class="lineNum">     304 </span>            :     uint32_t GetSsrc() const;
+<span class="lineNum">     305 </span>            :     void Trigger();
+<span class="lineNum">     306 </span>            :     void Cancel();
+<span class="lineNum">     307 </span>            :     void OnIdrReceived();
+<span class="lineNum">     308 </span>            :     void OnRtpPacketLoss();
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span>            : private:
+<span class="lineNum">     311 </span>            :     void ScheduleDeferPliTimer(const std::chrono::seconds&amp; inSeconds);
+<span class="lineNum">     312 </span>            :     void ScheduleRetryTimer();
+<span class="lineNum">     313 </span>            :     void HandleTimer(boost::asio::steady_timer* inTimer, const boost::system::error_code&amp; inErrorCode);
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            : private:
+<span class="lineNum">     316 </span>            :     std::chrono::steady_clock::time_point m_latestIdrTimestamp;
+<span class="lineNum">     317 </span>            :     boost::asio::steady_timer m_deferPliTimer;
+<span class="lineNum">     318 </span>            :     bool m_deferPliTimerScheduled;
+<span class="lineNum">     319 </span>            :     boost::asio::steady_timer m_retryTimer;
+<span class="lineNum">     320 </span>            :     bool m_retryTimerScheduled;
+<span class="lineNum">     321 </span>            :     IndicatePictureLossFunc m_indicatePictureLoss;
+<span class="lineNum">     322 </span>            :     uint32_t m_ssrc;
+<span class="lineNum">     323 </span>            : };
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span>            : class CCmeRecvonlyVideoSession: public CCmeRecvonlySession
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            : public:
+<span class="lineNum">     329 </span>            :     typedef CCmeRecvonlySession ParentType;
+<span class="lineNum">     330 </span>            :     CCmeRecvonlyVideoSession(
+<span class="lineNum">     331 </span>            :         CmeServiceSharedPtr inCmeService,
+<span class="lineNum">     332 </span>            :         const CmeSessionIdType&amp; inSessionId,
+<span class="lineNum">     333 </span>            :         const CCspVideoComposeKey&amp; inVideoComposeKey, 
+<span class="lineNum">     334 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">     335 </span>            :         const ReceiveStreamCallback&amp; inCallback,
+<span class="lineNum">     336 </span>            :         const std::string&amp; inCspSessionType);
+<span class="lineNum">     337 </span>            :     virtual ~CCmeRecvonlyVideoSession();
+<span class="lineNum">     338 </span>            :     virtual void OpenFirstTime(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">     339 </span>            :     virtual void Release();
+<a name="340"><span class="lineNum">     340 </span>            :     virtual void Open(const WssUrlType&amp; inCmeNodeUrl);</a>
+<span class="lineNum">     341 </span>            :     virtual JsonValue GenerateOpenSessionMessage();
+<span class="lineNum">     342 </span><span class="lineCov">         22 :     virtual ECmeSessionType GetSessionType() const { return ECmeSessionType::RECVONLY_VIDEO; }</span>
+<span class="lineNum">     343 </span>            :     virtual JsonValue ToJson() const;
+<span class="lineNum">     344 </span>            :     virtual void UpdateSessionLayout(const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span>            :     void TriggerPli();
+<span class="lineNum">     347 </span>            :     void ContentSharingStart(uint32_t inResolution);
+<span class="lineNum">     348 </span>            :     void ContentSharingStop();
+<span class="lineNum">     349 </span>            :     void HandleStatisticsTimer(bool inIsOneMinute);
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            : protected:
+<span class="lineNum">     352 </span>            :     virtual void DoMoreOnReceiveAnswerSdp(bool inAnswerForOpenSession);
+<span class="lineNum">     353 </span>            :     virtual void DoMoreForSessionCloseInStreamThread();
+<a name="354"><span class="lineNum">     354 </span>            :     virtual void RemoveMyself();</a>
+<span class="lineNum">     355 </span>            :     virtual void Failover(SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">     356 </span><span class="lineCov">          3 :     virtual EMediaSessionType GetMediaSessionType() const { return MEDIA_VIDEO_SESSION; }</span>
+<span class="lineNum">     357 </span>            :         virtual bool NeedReleasePreviousRtpSession(bool inAnswerForOpenSession, const std::string&amp; inAnswerSdp);
+<span class="lineNum">     358 </span>            :     // virtual uint32_t GetMediaDuration() const { return CSP_VIDEO_CLOCK_RATE_DEFAULT / CSP_VIDEO_FRAME_RATE_DEFAULT; }
+<span class="lineNum">     359 </span>            :     std::string GetCryptoSalt(const std::string&amp; inSdp);
+<span class="lineNum">     360 </span>            :  
+<span class="lineNum">     361 </span>            : public:
+<span class="lineNum">     362 </span>            :     virtual void OnOutputVideoFrame(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, bool inIsIdr, const std::string&amp; inVideoFrame);
+<span class="lineNum">     363 </span>            :     virtual void OnRtpPacketLoss(uint32_t inSsrc, uint32_t inLossCount);
+<span class="lineNum">     364 </span>            : 
+<span class="lineNum">     365 </span>            : private:
+<span class="lineNum">     366 </span>            :     CCspVideoComposeKey m_videoComposeKey;
+<span class="lineNum">     367 </span>            :     int m_outputFrameHeight = 0;
+<span class="lineNum">     368 </span>            :     COttPliTrigger m_pliTrigger;
+<span class="lineNum">     369 </span>            :     CStatisticCount m_keyFrameNum;
+<span class="lineNum">     370 </span>            :         CStatisticCount m_pliNum;
+<span class="lineNum">     371 </span>            :     std::string m_cspSessionType;
+<span class="lineNum">     372 </span>            :         //webex-185311
+<span class="lineNum">     373 </span>            :     //solution: will fix at 3.11.0
+<span class="lineNum">     374 </span>            : };
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/venue/OttVenueManager.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/venue</a> - OttVenueManager.h<span style="font-size: 80%;"> (source / <a href="OttVenueManager.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Venue Manager: manages the life cycle of venue instances;
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Jun-01-2018  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef OTTER_VENUE_MANAGER_H
+<span class="lineNum">      14 </span>            : #define OTTER_VENUE_MANAGER_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;LocalService.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;SpeakerAttributionTransmitter.h&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : typedef std::function&lt;void(int32_t inDelta)&gt; OnLoadChangeCallback;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : class COttVenueManager
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span>            : public:
+<span class="lineNum">      26 </span>            :     static COttVenueManager&amp; Instance();
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :     ~COttVenueManager();
+<span class="lineNum">      29 </span>            :     bool Initialize(boost::asio::io_service&amp; inIoService, OnLoadChangeCallback inCallback);
+<span class="lineNum">      30 </span>            :     void Release();
+<span class="lineNum">      31 </span>            :     void UpdateLoad(int32_t inDelta);
+<span class="lineNum">      32 </span>            :     void StartSession(const Json::Value&amp; inContext, const ResultCallback&amp; inCallback);
+<span class="lineNum">      33 </span>            :     void StopSession(const ConfIdType&amp; inConfId, const CspSessionIdType&amp; inSessionId);
+<span class="lineNum">      34 </span>            :     void PauseSession(const ConfIdType&amp; inConfId, const CspSessionIdType&amp; inSessionId, const SessionSequenceType&amp; inSessionSequence, const ResultCallback&amp; inCallback);
+<span class="lineNum">      35 </span>            :     void ResumeSession(const ConfIdType&amp; inConfId, const CspSessionIdType&amp; inSessionId, const SessionSequenceType&amp; inSessionSequence, const ResultCallback&amp; inCallback);
+<span class="lineNum">      36 </span>            :         void UpdateSessionLayout(const ConfIdType&amp; inConfId, const CspSessionIdType&amp; inSessionId, const SessionSequenceType&amp; inSessionSequence, const Json::Value&amp; inComposeKeyList, const ResultCallback&amp; inCallback);
+<span class="lineNum">      37 </span>            :     void RemoveVenue(const OttVenueSharedPtr&amp; inVenue, SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">      38 </span>            :     boost::asio::io_service&amp; GetMainThreadIoService() { return *m_mainThreadIoService; }
+<span class="lineNum">      39 </span><span class="lineCov">          2 :     LocalServiceClientSharedPtr GetLocalServiceClient() { return m_localServiceClient; }</span>
+<span class="lineNum">      40 </span>            :     std::size_t GetVenueNum() const { return m_venues.size(); }
+<span class="lineNum">      41 </span>            :     std::size_t GetSessionNum() const;
+<span class="lineNum">      42 </span>            :     Json::Value ToJson(bool inVerbose) const;
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :     void ReportSpeakerAttributionToTransmitter(const JsonValue&amp; inMessage, bool inForce);
+<span class="lineNum">      45 </span>            :     void HandleReportToSrsTimer();
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : private:
+<span class="lineNum">      48 </span>            :     COttVenueManager();
+<span class="lineNum">      49 </span>            :     OttVenueSharedPtr GetVenue(const CCspVenueId&amp; inVenueId);
+<span class="lineNum">      50 </span>            :     OttVenueSharedPtr CreateVenue(const CCspVenueId&amp; inVenueId);
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : private:
+<span class="lineNum">      53 </span>            :     boost::asio::io_service* m_mainThreadIoService;
+<span class="lineNum">      54 </span>            :     OnLoadChangeCallback m_onLoadChangeCallback;
+<span class="lineNum">      55 </span>            :     LocalServiceClientSharedPtr m_localServiceClient;
+<span class="lineNum">      56 </span>            :     OttVenueSharedPtrMap m_venues;
+<span class="lineNum">      57 </span>            :     CSpeakerAttributionTransmitter m_speakerAttributionTransmitter;
+<span class="lineNum">      58 </span>            : };
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : #endif /* OTTER_VENUE_MANAGER_H */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

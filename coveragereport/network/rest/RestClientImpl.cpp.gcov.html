@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/rest/RestClientImpl.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/rest</a> - RestClientImpl.cpp<span style="font-size: 80%;"> (source / <a href="RestClientImpl.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">107</td>
+            <td class="headerCovTableEntry">129</td>
+            <td class="headerCovTableEntryMed">82.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;RestClientImpl.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;RestUtil.h&quot;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : using namespace RestNetwork;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span><span class="lineCov">         74 : CRestClientImpl::CRestClientImpl(boost::asio::io_service&amp; inIoService,const std::string&amp; inUrl, const std::string&amp; inUUID)</span>
+<span class="lineNum">       7 </span>            :     :m_client(CHttpClientFactory::CreateHttpClient(inIoService,inUrl))
+<span class="lineNum">       8 </span><span class="lineCov">        296 :     ,m_waiting(false)</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span><span class="lineCov">         74 :     if(inUUID.empty()){</span>
+<span class="lineNum">      11 </span><span class="lineCov">        118 :         m_uuid = GenerateUUID();</span>
+<span class="lineNum">      12 </span>            :     }else{
+<span class="lineNum">      13 </span><span class="lineCov">         15 :         m_uuid = inUUID;</span>
+<span class="lineNum">      14 </span>            :     }
+<span class="lineNum">      15 </span><span class="lineCov">         74 :     RegisterHttpCallback();</span>
+<span class="lineNum">      16 </span><span class="lineCov">         74 : }</span>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">        370 : CRestClientImpl::~CRestClientImpl()</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">         74 :     Release();</span>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">         74 : }</span></a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">         74 : void CRestClientImpl::Release()</span>
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span><span class="lineCov">         74 :     m_responseCallback = nullptr;</span>
+<span class="lineNum">      26 </span><span class="lineCov">         74 :     if(m_client.get() != nullptr)</span>
+<span class="lineNum">      27 </span><span class="lineCov">         57 :         m_client-&gt;Close();</span>
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">         74 : }</span></a>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : std::string CRestClientImpl::GenerateUUID()</span>
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span><span class="lineCov">         59 :     return NEW_UUID();</span>
+<a name="33"><span class="lineNum">      33 </span>            : }</a>
+<span class="lineNum">      34 </span>            : 
+<a name="35"><span class="lineNum">      35 </span><span class="lineNoCov">          0 : std::string CRestClientImpl::TrackingId()</span></a>
+<span class="lineNum">      36 </span>            : {
+<span class="lineNum">      37 </span><span class="lineCov">         10 :     return m_uuid;</span>
+<a name="38"><span class="lineNum">      38 </span>            : }</a>
+<span class="lineNum">      39 </span>            : 
+<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 : void CRestClientImpl::SetTrackingId(const std::string&amp; inTrackingId)</span></a>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span><span class="lineCov">          1 :     m_uuid = inTrackingId;</span>
+<a name="43"><span class="lineNum">      43 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineCov">          1 : void CRestClientImpl::SetHeader(const std::string&amp; inKey, const std::string&amp; inValue)</span>
+<span class="lineNum">      46 </span>            : {
+<span class="lineNum">      47 </span><span class="lineCov">          2 :     m_hearders.insert(std::map&lt;std::string, std::string&gt;::value_type(inKey, inValue));</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">          2 : SafariResult CRestClientImpl::Get(const std::string&amp; inPath)</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span><span class="lineCov">          2 :     return Request(HTTP_GET, inPath, JsonValue());</span>
+<a name="53"><span class="lineNum">      53 </span>            : }</a>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">         10 : std::string CRestClientImpl::JsonToString(const JsonValue&amp; inValue)</span>
+<span class="lineNum">      56 </span>            : {
+<span class="lineNum">      57 </span>            :     std::string jsonString;
+<span class="lineNum">      58 </span><span class="lineCov">         10 :     CRestUtil::JsonToString(inValue, jsonString);</span>
+<span class="lineNum">      59 </span><span class="lineCov">         10 :     return jsonString;</span>
+<a name="60"><span class="lineNum">      60 </span>            : }</a>
+<span class="lineNum">      61 </span>            : 
+<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Post(const std::string&amp; inPath, const JsonValue&amp; inBody)</span></a>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineCov">          6 :     return Request(HTTP_POST, inPath, inBody);</span>
+<a name="65"><span class="lineNum">      65 </span>            : }</a>
+<span class="lineNum">      66 </span>            : 
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Post(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span></a>
+<span class="lineNum">      68 </span>            : {
+<span class="lineNum">      69 </span><span class="lineCov">          1 :     return Request(HTTP_POST, inPath, inBodyStr);</span>
+<a name="70"><span class="lineNum">      70 </span>            : }</a>
+<span class="lineNum">      71 </span>            : 
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Put(const std::string&amp; inPath, const JsonValue&amp; inBody)</span></a>
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span><span class="lineCov">          2 :     return Request(HTTP_PUT, inPath, inBody);</span>
+<a name="75"><span class="lineNum">      75 </span>            : }</a>
+<span class="lineNum">      76 </span>            : 
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Put(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span></a>
+<span class="lineNum">      78 </span>            : {
+<span class="lineNum">      79 </span><span class="lineCov">          1 :     return Request(HTTP_PUT, inPath, inBodyStr);</span>
+<a name="80"><span class="lineNum">      80 </span>            : }</a>
+<span class="lineNum">      81 </span>            : 
+<a name="82"><span class="lineNum">      82 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Delete(const std::string&amp; inPath, const JsonValue&amp; inBody)</span></a>
+<span class="lineNum">      83 </span>            : {
+<span class="lineNum">      84 </span><span class="lineCov">          2 :     return Request(HTTP_DELETE, inPath, inBody);</span>
+<a name="85"><span class="lineNum">      85 </span>            : }</a>
+<span class="lineNum">      86 </span>            : 
+<a name="87"><span class="lineNum">      87 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Delete(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span></a>
+<span class="lineNum">      88 </span>            : {
+<span class="lineNum">      89 </span><span class="lineCov">          1 :     return Request(HTTP_DELETE, inPath, inBodyStr);</span>
+<a name="90"><span class="lineNum">      90 </span>            : }</a>
+<span class="lineNum">      91 </span>            : 
+<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Patch(const std::string&amp; inPath, const JsonValue&amp; inBody)</span></a>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineCov">          2 :     return Request(HTTP_PATCH, inPath, inBody);</span>
+<a name="95"><span class="lineNum">      95 </span>            : }</a>
+<span class="lineNum">      96 </span>            : 
+<a name="97"><span class="lineNum">      97 </span><span class="lineNoCov">          0 : SafariResult CRestClientImpl::Patch(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span></a>
+<span class="lineNum">      98 </span>            : {
+<span class="lineNum">      99 </span><span class="lineCov">          1 :     return Request(HTTP_PATCH, inPath, inBodyStr);</span>
+<a name="100"><span class="lineNum">     100 </span>            : }</a>
+<span class="lineNum">     101 </span>            : 
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 : bool CRestClientImpl::TryWaiting()</span></a>
+<span class="lineNum">     103 </span>            : {
+<span class="lineNum">     104 </span><span class="lineCov">         17 :     bool waiting = false;</span>
+<span class="lineNum">     105 </span><span class="lineCov">         17 :     return m_waiting.compare_exchange_strong(waiting, true);</span>
+<a name="106"><span class="lineNum">     106 </span>            : }</a>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 : void CRestClientImpl::StopWaiting()</span>
+<span class="lineNum">     109 </span>            : {
+<span class="lineNum">     110 </span><span class="lineCov">          9 :     m_waiting = false;</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 : }</span>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineCov">         74 : void CRestClientImpl::RegisterHttpCallback()</span>
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span>            :     // response and error will only pick one to be called
+<span class="lineNum">     117 </span><span class="lineCov">        188 :     if(m_client.get() == nullptr)</span>
+<span class="lineNum">     118 </span><span class="lineCov">         74 :         return;</span>
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">          9 :     m_client-&gt;SetResponseHandler([this](const CHttpResponse&amp; inHttpResponse){</span>
+<span class="lineNum">     121 </span><span class="lineCov">          9 :         StopWaiting();</span>
+<span class="lineNum">     122 </span><span class="lineCov">         18 :         if(m_responseCallback){</span>
+<span class="lineNum">     123 </span><span class="lineCov">         27 :             const_cast&lt;CHttpResponse&amp;&gt;(inHttpResponse).SetHeader(TRACKING_ID, TrackingId());</span>
+<span class="lineNum">     124 </span><span class="lineCov">          9 :             RestResponseSharedPtr restResponse(new CRestResponse(inHttpResponse));</span>
+<span class="lineNum">     125 </span><span class="lineCov">          9 :             m_responseCallback(restResponse);</span>
+<span class="lineNum">     126 </span>            :         }
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span><span class="lineCov">        180 :     });</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :     m_client-&gt;SetErrorHandler([this](SafariResult inResult){</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         StopWaiting();</span>
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :         if(m_responseCallback){</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :             RestResponseSharedPtr restResponse(new CRestResponse(inResult, TrackingId()));</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :             m_responseCallback(restResponse);</span>
+<span class="lineNum">     134 </span>            :         }
+<span class="lineNum">     135 </span><span class="lineCov">        171 :     });</span>
+<span class="lineNum">     136 </span>            : }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineCov">         14 : SafariResult CRestClientImpl::Request(const HttpMethod&amp; inMethod, const std::string&amp; inPath, const JsonValue&amp; inBody)</span>
+<span class="lineNum">     139 </span>            : {
+<span class="lineNum">     140 </span><span class="lineCov">         27 :     if(m_client.get() == nullptr)</span>
+<span class="lineNum">     141 </span>            :         return SAFARI_ERROR_HTTP_INVALID_URL;
+<span class="lineNum">     142 </span><span class="lineCov">         13 :     if(!TryWaiting()){</span>
+<span class="lineNum">     143 </span>            :         return SAFARI_ERROR_REST_SEND_BUSY;
+<span class="lineNum">     144 </span>            :     }
+<span class="lineNum">     145 </span><span class="lineCov">         13 :     CHttpRequest request;</span>
+<span class="lineNum">     146 </span><span class="lineCov">         13 :     SafariResult result = request.SetPath(inPath);</span>
+<span class="lineNum">     147 </span><span class="lineCov">         13 :     if(result != SAFARI_OK)</span>
+<span class="lineNum">     148 </span>            :         return result;
+<span class="lineNum">     149 </span><span class="lineCov">         13 :     request.SetMethod(inMethod);</span>
+<span class="lineNum">     150 </span><span class="lineCov">         13 :     request.SetHeader(TRACKING_ID,m_uuid);</span>
+<span class="lineNum">     151 </span><span class="lineCov">         52 :     for (auto const&amp; header : m_hearders)</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         request.SetHeader(header.first, header.second);</span>
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span><span class="lineCov">         13 :     if (!inBody.isNull())</span>
+<span class="lineNum">     155 </span><span class="lineCov">         20 :         request.SetBody(JsonToString(inBody));</span>
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span><span class="lineCov">         26 :     return m_client-&gt;Open(request);</span>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : }
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">          4 : SafariResult CRestClientImpl::Request(const HttpMethod&amp; inMethod, const std::string&amp; inPath, const std::string&amp; inBodyStr)</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineCov">          8 :     if(m_client.get() == nullptr)</span>
+<span class="lineNum">     164 </span>            :         return SAFARI_ERROR_HTTP_INVALID_URL;
+<span class="lineNum">     165 </span><span class="lineCov">          4 :     if(!TryWaiting()){</span>
+<span class="lineNum">     166 </span>            :         return SAFARI_ERROR_REST_SEND_BUSY;
+<span class="lineNum">     167 </span>            :     }
+<span class="lineNum">     168 </span><span class="lineCov">          4 :     CHttpRequest request;</span>
+<span class="lineNum">     169 </span><span class="lineCov">          4 :     SafariResult result = request.SetPath(inPath);</span>
+<span class="lineNum">     170 </span><span class="lineCov">          4 :     if(result != SAFARI_OK)</span>
+<span class="lineNum">     171 </span>            :         return result;
+<span class="lineNum">     172 </span><span class="lineCov">          4 :     request.SetMethod(inMethod);</span>
+<span class="lineNum">     173 </span><span class="lineCov">          4 :     request.SetHeader(TRACKING_ID,m_uuid);</span>
+<span class="lineNum">     174 </span><span class="lineCov">         16 :     for (auto const&amp; header : m_hearders)</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :         request.SetHeader(header.first, header.second);</span>
+<span class="lineNum">     176 </span><span class="lineCov">          4 :     request.SetBody(inBodyStr);</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span><span class="lineCov">          8 :     return m_client-&gt;Open(request);</span>
+<a name="179"><span class="lineNum">     179 </span>            : }</a>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">         65 : CRestClientSharedPtr CRestClientFactory::CreateRestClient(boost::asio::io_service&amp; inIoService,const std::string&amp; inUrl, const std::string&amp; inUUID)</span>
+<span class="lineNum">     182 </span>            : {
+<span class="lineNum">     183 </span><span class="lineCov">         65 :     return std::make_shared&lt;CRestClient&gt;(inIoService,inUrl,inUUID);</span>
+<span class="lineNum">     184 </span>            : }
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : /***
+<span class="lineNum">     188 </span>            : *
+<span class="lineNum">     189 </span>            : * implement of CRestClient
+<span class="lineNum">     190 </span>            : *
+<a name="191"><span class="lineNum">     191 </span>            : */</a>
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineCov">          9 : CRestClient::CRestClient(boost::asio::io_service&amp; inIoService,const std::string&amp; inUrl, const std::string&amp; inUUID)</span>
+<span class="lineNum">     194 </span>            :     : m_impl(std::make_shared&lt;CRestClientImpl&gt;(inIoService,inUrl,inUUID))
+<span class="lineNum">     195 </span><span class="lineCov">          9 : {}</span>
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span><span class="lineCov">         74 : CRestClient::~CRestClient()</span>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">          9 : {}</span></a>
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span><span class="lineCov">         10 : void CRestClient::SetCallback(const ResponseCallback&amp; inResponseCallback)</span>
+<span class="lineNum">     201 </span>            : {
+<span class="lineNum">     202 </span><span class="lineCov">         10 :     m_impl-&gt;SetCallback(inResponseCallback);</span>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span><span class="lineCov">          1 : void CRestClient::SetHeader(const std::string&amp; inKey, const std::string&amp; inValue)</span>
+<span class="lineNum">     206 </span>            : {
+<span class="lineNum">     207 </span><span class="lineCov">          1 :     m_impl-&gt;SetHeader(inKey, inValue);</span>
+<span class="lineNum">     208 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">          1 : void CRestClient::SetTrackingId(const std::string&amp; inTrackingId)</span>
+<span class="lineNum">     211 </span>            : {
+<span class="lineNum">     212 </span><span class="lineCov">          1 :     m_impl-&gt;SetTrackingId(inTrackingId);</span>
+<a name="213"><span class="lineNum">     213 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">          2 : SafariResult CRestClient::Get(const std::string&amp; inPath)</span>
+<span class="lineNum">     216 </span>            : {
+<span class="lineNum">     217 </span><span class="lineCov">          2 :     return m_impl-&gt;Get(inPath);</span>
+<span class="lineNum">     218 </span>            : }
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineCov">          6 : SafariResult CRestClient::Post(const std::string&amp; inPath, const JsonValue&amp; inBody)</span>
+<span class="lineNum">     221 </span>            : {
+<span class="lineNum">     222 </span><span class="lineCov">         12 :     return m_impl-&gt;Post(inPath,inBody);</span>
+<span class="lineNum">     223 </span>            : }
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineCov">          1 : SafariResult CRestClient::Post(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span>
+<span class="lineNum">     226 </span>            : {
+<span class="lineNum">     227 </span><span class="lineCov">          2 :     return m_impl-&gt;Post(inPath,inBodyStr);</span>
+<span class="lineNum">     228 </span>            : }
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span><span class="lineCov">          2 : SafariResult CRestClient::Put(const std::string&amp; inPath, const JsonValue&amp; inBody)</span>
+<span class="lineNum">     231 </span>            : {
+<span class="lineNum">     232 </span><span class="lineCov">          4 :     return m_impl-&gt;Put(inPath,inBody);</span>
+<span class="lineNum">     233 </span>            : }
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span><span class="lineCov">          1 : SafariResult CRestClient::Put(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span>
+<span class="lineNum">     236 </span>            : {
+<span class="lineNum">     237 </span><span class="lineCov">          2 :     return m_impl-&gt;Put(inPath,inBodyStr);</span>
+<span class="lineNum">     238 </span>            : }
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineCov">          2 : SafariResult CRestClient::Delete(const std::string&amp; inPath, const JsonValue&amp; inBody)</span>
+<span class="lineNum">     241 </span>            : {
+<span class="lineNum">     242 </span><span class="lineCov">          4 :     return m_impl-&gt;Delete(inPath,inBody);</span>
+<span class="lineNum">     243 </span>            : }
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">          1 : SafariResult CRestClient::Delete(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span>
+<span class="lineNum">     246 </span>            : {
+<span class="lineNum">     247 </span><span class="lineCov">          2 :     return m_impl-&gt;Delete(inPath,inBodyStr);</span>
+<span class="lineNum">     248 </span>            : }
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineCov">          2 : SafariResult CRestClient::Patch(const std::string&amp; inPath, const JsonValue&amp; inBody)</span>
+<span class="lineNum">     251 </span>            : {
+<span class="lineNum">     252 </span><span class="lineCov">          4 :     return m_impl-&gt;Patch(inPath,inBody);</span>
+<span class="lineNum">     253 </span>            : }
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineCov">          1 : SafariResult CRestClient::Patch(const std::string&amp; inPath, const std::string&amp; inBodyStr)</span>
+<span class="lineNum">     256 </span>            : {
+<span class="lineNum">     257 </span><span class="lineCov">          2 :     return m_impl-&gt;Patch(inPath,inBodyStr);</span>
+<span class="lineNum">     258 </span>            : }
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span><span class="lineCov">          1 : std::string CRestClient::TrackingId()</span>
+<a name="261"><span class="lineNum">     261 </span>            : {</a>
+<span class="lineNum">     262 </span><span class="lineCov">          2 :     return m_impl-&gt;TrackingId();</span>
+<span class="lineNum">     263 </span><span class="lineCov">         54 : }</span>
+<span class="lineNum">     264 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

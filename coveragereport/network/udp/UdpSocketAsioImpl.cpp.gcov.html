@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/udp/UdpSocketAsioImpl.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/udp</a> - UdpSocketAsioImpl.cpp<span style="font-size: 80%;"> (source / <a href="UdpSocketAsioImpl.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * Copyright 2011, Cisco Systems Inc.
+<span class="lineNum">       3 </span>            :  */
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #include &lt;functional&gt;
+<span class="lineNum">       6 </span>            : #include &quot;UdpSocketAsioHandler.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;UdpSocketAsioImpl.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;LoggerApi.h&quot;
+<span class="lineNum">       9 </span>            : 
+<a name="10"><span class="lineNum">      10 </span>            : using namespace UDP;</a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          2 : CUdpSocketAsioImpl::CUdpSocketAsioImpl(boost::asio::io_service&amp; inIO, const udp::endpoint&amp; inLocalEndpoint)</span>
+<span class="lineNum">      13 </span><span class="lineCov">          2 : :CUdpSocketImpl(inIO, inLocalEndpoint), m_socket(inIO, inLocalEndpoint)</span>
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span><span class="lineCov">         34 :     LOG_INFO_THIS(&quot;UDP&quot;, &quot;&quot;, &quot;CUdpSocketAsioImpl::CUdpSocketAsioImpl, localPort:&quot; &lt;&lt; m_localEndpoint.port());</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">          6 : CUdpSocketAsioImpl::~CUdpSocketAsioImpl()</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">         40 :     LOG_INFO_THIS(&quot;UDP&quot;, &quot;&quot;, &quot;CUdpSocketAsioImpl::~CUdpSocketAsioImpl, localPort:&quot; &lt;&lt; m_localEndpoint.port() &lt;&lt; &quot; isSocketOpen:&quot; &lt;&lt; m_socket.is_open());</span>
+<span class="lineNum">      21 </span>            :     try {
+<span class="lineNum">      22 </span><span class="lineCov">          4 :         if (m_socket.is_open()) {</span>
+<span class="lineNum">      23 </span><span class="lineCov">          2 :             m_socket.close();</span>
+<span class="lineNum">      24 </span><span class="lineCov">          2 :             m_socket.cancel();</span>
+<span class="lineNum">      25 </span>            :         }
+<span class="lineNum">      26 </span><span class="lineCov">          2 :     } catch (std::exception&amp; e) {</span>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :     }
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          3 : void CUdpSocketAsioImpl::RegisterReadHandler()</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineCov">          3 :     m_socket.async_receive_from(boost::asio::buffer(m_Handler-&gt;m_RecvData),</span>
+<span class="lineNum">      34 </span><span class="lineCov">          3 :                                m_Handler-&gt;m_RemoteUDP,</span>
+<span class="lineNum">      35 </span>            :                                std::bind(&amp;CUdpSocketAsioHandler::HandleRead, m_Handler,
+<span class="lineNum">      36 </span>            :                                          std::placeholders::_1,
+<span class="lineNum">      37 </span><span class="lineCov">         15 :                                          std::placeholders::_2));</span>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">          1 : void CUdpSocketAsioImpl::AsyncSendTo(const uint8_t* inData, std::size_t inSize,</span>
+<span class="lineNum">      41 </span>            :                                      const udp::endpoint&amp; inRemoteEndpoint, const SendCallback&amp; inCallback)
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span>            :     // only transmit inData if &lt;= MAX_NETWORK_BUFFER_SIZE
+<span class="lineNum">      44 </span><span class="lineCov">          1 :     if (inSize &gt; MAX_NETWORK_BUFFER_SIZE) {</span>
+<span class="lineNum">      45 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">      46 </span>            :     }
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :     m_socket.async_send_to(boost::asio::buffer(inData, inSize), inRemoteEndpoint,
+<span class="lineNum">      49 </span>            :                            std::bind(&amp;CUdpSocketAsioHandler::HandleWrite, m_Handler,
+<span class="lineNum">      50 </span>            :                                      std::placeholders::_1,
+<a name="51"><span class="lineNum">      51 </span>            :                                      std::placeholders::_2,</a>
+<span class="lineNum">      52 </span><span class="lineCov">          4 :                                      inCallback));</span>
+<span class="lineNum">      53 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

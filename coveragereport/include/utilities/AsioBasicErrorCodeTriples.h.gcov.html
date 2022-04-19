@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/AsioBasicErrorCodeTriples.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - AsioBasicErrorCodeTriples.h<span style="font-size: 80%;"> (source / <a href="AsioBasicErrorCodeTriples.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">32</td>
+            <td class="headerCovTableEntryLo">3.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    ASIO basic error code triples: &lt;boost::asio::error::basic_errno, linux errno, SAFARI errno&gt;
+<span class="lineNum">       6 </span>            : ///    boost::asio::error::basic_errnos are defined in &lt;boost/asio/error.hpp&gt;
+<span class="lineNum">       7 </span>            : ///
+<span class="lineNum">       8 </span>            : /// Author:
+<span class="lineNum">       9 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">      10 </span>            : ///
+<span class="lineNum">      11 </span>            : /// History:
+<span class="lineNum">      12 </span>            : ///    Nov-20-2017  Initial version
+<span class="lineNum">      13 </span>            : /******************************************************************************/
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : ASIO_BASIC_ERROR_CODE_TRIPLE(access_denied,                                     EACCES,                 SAFARI_ERROR_ACCESS_DENIED)
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(address_family_not_supported,      EAFNOSUPPORT,   SAFARI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED2)</span>
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(address_in_use,                            EADDRINUSE,             SAFARI_ERROR_ADDRESS_IN_USE2)</span>
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(already_connected,                         EISCONN,                SAFARI_ERROR_ALREADY_CONNECTED2)</span>
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(already_started,                           EALREADY,               SAFARI_ERROR_ALREADY_STARTED)</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(broken_pipe,                                       EPIPE,                  SAFARI_ERROR_BROKEN_PIPE2)</span>
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(connection_aborted,                        ECONNABORTED,   SAFARI_ERROR_CONNECTION_ABORTED2)</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(connection_refused,                        ECONNREFUSED,   SAFARI_ERROR_CONNECTION_REFUSED2)</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(connection_reset,                          ECONNRESET,             SAFARI_ERROR_CONNECTION_RESET2)</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(bad_descriptor,                            EBADF,                  SAFARI_ERROR_BAD_DESCRIPTOR)</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(fault,                                                     EFAULT,                 SAFARI_ERROR_FAULT)</span>
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(host_unreachable,                          EHOSTUNREACH,   SAFARI_ERROR_HOST_UNREACHABLE2)</span>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(in_progress,                                       EINPROGRESS,    SAFARI_ERROR_IN_PROGRESS)</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(interrupted,                                       EINTR,                  SAFARI_ERROR_INTERRUPTED2)</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(invalid_argument,                          EINVAL,                 SAFARI_ERROR_INVALID_ARGUMENT2)</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(message_size,                                      EMSGSIZE,               SAFARI_ERROR_MESSAGE_SIZE2)</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(name_too_long,                                     ENAMETOOLONG,   SAFARI_ERROR_NAME_TOO_LONG)</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(network_down,                                      ENETDOWN,               SAFARI_ERROR_NETWORK_DOWN2)</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(network_reset,                                     ENETRESET,              SAFARI_ERROR_NETWORK_RESET2)</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(network_unreachable,                       ENETUNREACH,    SAFARI_ERROR_NETWORK_UNREACHABLE2)</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_descriptors,                            EMFILE,                 SAFARI_ERROR_NO_DESCRIPTORS)</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_buffer_space,                           ENOBUFS,                SAFARI_ERROR_NO_BUFFER_SPACE2)</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_memory,                                         ENOMEM,                 SAFARI_ERROR_NO_MEMORY)</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_permission,                                     EPERM,                  SAFARI_ERROR_NO_PERMISSION)</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_protocol_option,                        ENOPROTOOPT,    SAFARI_ERROR_NO_PROTOCOL_OPTION2)</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(no_such_device,                            ENODEV,                 SAFARI_ERROR_NO_SUCH_DEVICE2)</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(not_connected,                                     ENOTCONN,               SAFARI_ERROR_NOT_CONNECTED2)</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(not_socket,                                        ENOTSOCK,               SAFARI_ERROR_NOT_SOCKET)</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(operation_aborted,                         ECANCELED,              SAFARI_ERROR_OPERATION_ABORTED)</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(operation_not_supported,           EOPNOTSUPP,             SAFARI_ERROR_OPERATION_NOT_SUPPORTED2)</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(shut_down,                                         ESHUTDOWN,              SAFARI_ERROR_SHUT_DOWN)</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(timed_out,                                         ETIMEDOUT,              SAFARI_ERROR_TIME_OUT)</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 : ASIO_BASIC_ERROR_CODE_TRIPLE(try_again,                                         EAGAIN,                 SAFARI_ERROR_TRY_AGAIN2)</span>
+<span class="lineNum">      48 </span>            : //ASIO_BASIC_ERROR_CODE_TRIPLE(would_block,                                     EWOULDBLOCK,    SAFARI_ERROR_WOULD_BLOCK)
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

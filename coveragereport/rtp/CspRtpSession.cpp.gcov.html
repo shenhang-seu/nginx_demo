@@ -1,0 +1,841 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - rtp/CspRtpSession.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">rtp</a> - CspRtpSession.cpp<span style="font-size: 80%;"> (source / <a href="CspRtpSession.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">301</td>
+            <td class="headerCovTableEntry">365</td>
+            <td class="headerCovTableEntryMed">82.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntryLo">72.5 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;endian.h&gt;</a>
+<span class="lineNum">       2 </span>            : #include &quot;CspRtpSession.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;CspJitterBuffer.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;CspRtpSessionDefine.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #define CSP_AUDIO_BUFFER_MAX 300 //10seconds
+<span class="lineNum">       8 </span>            : #define CSP_VIDEO_BUFFER_MAX 5000//10seconds
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">         22 : CCspRtpSession::CCspRtpSession(EMediaSessionType inType, boost::asio::io_service* inIoService, bool inCallback2MmpSdkThread, bool inEnableMultistream)</span>
+<span class="lineNum">      11 </span>            : : m_stopFlag(false)
+<span class="lineNum">      12 </span>            : , m_release(false)
+<span class="lineNum">      13 </span>            : , m_mediaType(inType)
+<span class="lineNum">      14 </span>            : , m_ssrcId(10)
+<span class="lineNum">      15 </span>            : , m_ioService(inIoService)
+<span class="lineNum">      16 </span>            : , m_callback2MmpSdkThread(inCallback2MmpSdkThread)
+<span class="lineNum">      17 </span>            : , m_sink(NULL)
+<span class="lineNum">      18 </span>            : , m_jitterBuffer(CCspJitterBufferFactory::CreateJitterBuffer(inType, std::bind(&amp;CCspRtpSession::OnRtpPacketLoss, this, std::placeholders::_1, std::placeholders::_2)))
+<span class="lineNum">      19 </span>            : , m_hasRtcpHandlerReceivedSrPacket(false)
+<span class="lineNum">      20 </span>            : , m_enableMultistream(inEnableMultistream)
+<span class="lineNum">      21 </span>            : , m_rtpCount(0)
+<span class="lineNum">      22 </span>            : , m_rtcpCount(0)
+<span class="lineNum">      23 </span>            : , m_nalCount(0)
+<span class="lineNum">      24 </span><span class="lineCov">        176 : , m_rtcpSsrc(0)</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineCov">        462 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::CCspRtpSession, inType=&quot;&lt;&lt;GetMediaTypeString(inType)&lt;&lt;&quot;, inCallback2MmpSdkThread=&quot;&lt;&lt;m_callback2MmpSdkThread&lt;&lt;&quot;, inEnableMultistream=&quot;&lt;&lt;inEnableMultistream);</span>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #ifdef CSP_DUMP_NAL_DATA
+<span class="lineNum">      29 </span>            :     m_file = NULL;
+<span class="lineNum">      30 </span>            :     m_audioFile = NULL;
+<span class="lineNum">      31 </span>            : #endif
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         22 : }</span></a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">        195 : CCspRtpSession::~CCspRtpSession()</span>
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">         23 :     Release();</span>
+<span class="lineNum">      37 </span><span class="lineCov">        460 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::~CCspRtpSession, rtpCount=&quot;&lt;&lt;m_rtpCount&lt;&lt;&quot;, rtcpCount=&quot;&lt;&lt;m_rtcpCount&lt;&lt;&quot;, nalCount&quot;&lt;&lt;m_nalCount);</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : #ifdef CSP_DUMP_NAL_DATA
+<span class="lineNum">      40 </span>            :     if (NULL != m_file)
+<span class="lineNum">      41 </span>            :         fclose(m_file);
+<span class="lineNum">      42 </span>            :     m_file = NULL;
+<span class="lineNum">      43 </span>            :     if (NULL != m_audioFile)
+<span class="lineNum">      44 </span>            :         fclose(m_audioFile);
+<span class="lineNum">      45 </span>            :     m_audioFile = NULL;
+<span class="lineNum">      46 </span>            : #endif
+<span class="lineNum">      47 </span><span class="lineCov">         34 : }</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">         12 : bool CCspRtpSession::Initialize(const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp, ICspRtpSessionSink* inSink)</span>
+<span class="lineNum">      50 </span>            : {
+<span class="lineNum">      51 </span><span class="lineCov">        204 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, inMediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">      52 </span><span class="lineCov">         12 :     m_sink = inSink;</span>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :     // It's weird here to change the AAC sample rate from 32000 to 90000. 
+<span class="lineNum">      55 </span>            :     // It seems to be a bug of the WME RTP session moodule and need be fixed in the future. 
+<span class="lineNum">      56 </span><span class="lineCov">         36 :     ::ReplaceSubStr(const_cast&lt;std::string&amp;&gt;(inOfferSdp), &quot;MP4A-LATM/32000&quot;, &quot;MP4A-LATM/90000&quot;);</span>
+<span class="lineNum">      57 </span><span class="lineCov">         36 :     ::ReplaceSubStr(const_cast&lt;std::string&amp;&gt;(inAnswerSdp), &quot;MP4A-LATM/32000&quot;, &quot;MP4A-LATM/90000&quot;);</span>
+<span class="lineNum">      58 </span>            :     
+<span class="lineNum">      59 </span>            :     //init video
+<span class="lineNum">      60 </span>            :     //srtp
+<span class="lineNum">      61 </span>            :     SdpMediaAttributeMap offerMap;
+<span class="lineNum">      62 </span>            :     SdpMediaAttributeMap answerMap;
+<span class="lineNum">      63 </span>            :     SdpMediaAttributeMap::iterator iter;
+<span class="lineNum">      64 </span>            :     
+<span class="lineNum">      65 </span><span class="lineCov">         48 :     if (!CSdpUtilities::ParseAnswerSdp( inOfferSdp, offerMap) || ((iter=offerMap.find(GetSdpSessionType())) == offerMap.end()))</span>
+<span class="lineNum">      66 </span>            :     {
+<span class="lineNum">      67 </span><span class="lineCov">         16 :         RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::Initialize, parse offer sdp fail, sdp=&quot;&lt;&lt;inOfferSdp);</span>
+<span class="lineNum">      68 </span>            :         return false;
+<span class="lineNum">      69 </span>            :     }
+<span class="lineNum">      70 </span><span class="lineCov">         11 :     m_offerSdp = iter-&gt;second;</span>
+<span class="lineNum">      71 </span>            :     
+<span class="lineNum">      72 </span><span class="lineCov">         44 :     if (!CSdpUtilities::ParseAnswerSdp( inAnswerSdp, answerMap) || ((iter=answerMap.find(GetSdpSessionType())) == answerMap.end()))</span>
+<span class="lineNum">      73 </span>            :     {
+<span class="lineNum">      74 </span><span class="lineCov">         16 :         RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::Initialize, parse answer sdp fail, sdp=&quot;&lt;&lt;inAnswerSdp);</span>
+<span class="lineNum">      75 </span>            :         return false;
+<span class="lineNum">      76 </span>            :     }
+<span class="lineNum">      77 </span><span class="lineCov">         10 :     m_answerSdp = iter-&gt;second;</span>
+<span class="lineNum">      78 </span>            :     
+<span class="lineNum">      79 </span>            :     WBXSecurityConfiguration answerConfigure;//recv
+<span class="lineNum">      80 </span>            :     WBXSecurityConfiguration offerConfigure;//send
+<span class="lineNum">      81 </span><span class="lineCov">         10 :     bool answerFlag  = GetSrtpRecvPara(answerConfigure);</span>
+<span class="lineNum">      82 </span><span class="lineCov">         10 :     bool offerFlag = GetSrtpSendPara(offerConfigure);</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineCov">         10 :     if (m_callback2MmpSdkThread)</span>
+<span class="lineNum">      85 </span><span class="lineCov">         18 :         m_rtpSession = CWMEMediaRtpSessionProvider::CreateRtpSession(m_mediaType, NULL);</span>
+<span class="lineNum">      86 </span>            :     else
+<span class="lineNum">      87 </span><span class="lineCov">          2 :         m_rtpSession = CWMEMediaRtpSessionProvider::CreateRtpSession(m_mediaType, m_ioService);</span>
+<span class="lineNum">      88 </span>            :     
+<span class="lineNum">      89 </span><span class="lineCov">         84 :     RTP_SESSION_ASSERTE_RETURN(m_rtpSession.get(), false);</span>
+<span class="lineNum">      90 </span><span class="lineCov">         10 :     m_rtpSession-&gt;Initialize(m_enableMultistream);</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :     //rtp data callback
+<span class="lineNum">      93 </span><span class="lineCov">         20 :     m_rtpSession-&gt;SetRtpCallback(std::bind(&amp;CCspRtpSession::OnMediaRtpData, shared_from_this(), std::placeholders::_1, std::placeholders::_2), </span>
+<span class="lineNum">      94 </span><span class="lineCov">        110 :             std::bind(&amp;CCspRtpSession::OnMediaRtcpData, shared_from_this(), std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">      95 </span>            :     //nal data callback
+<span class="lineNum">      96 </span><span class="lineCov">         20 :     m_rtpSession-&gt;SetNalCallback(std::bind(&amp;CCspRtpSession::OnMediaAudioNal, shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7), </span>
+<span class="lineNum">      97 </span><span class="lineCov">        110 :             std::bind(&amp;CCspRtpSession::OnMediaVideoNal, shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7, std::placeholders::_8, std::placeholders::_9));</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         10 :     if (answerFlag)</span>
+<span class="lineNum">     100 </span><span class="lineCov">         20 :         m_rtpSession-&gt;SetSecurityConfiguration(WBX_STREAM_IN, answerConfigure);</span>
+<span class="lineNum">     101 </span><span class="lineCov">         10 :     if (offerFlag)</span>
+<span class="lineNum">     102 </span><span class="lineCov">         20 :         m_rtpSession-&gt;SetSecurityConfiguration(WBX_STREAM_OUT, offerConfigure);</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :      //rtp extension
+<span class="lineNum">     105 </span><span class="lineCov">          3 :     for (int i = 0; i &lt; m_offerSdp.extensionCount; i++)</span>
+<span class="lineNum">     106 </span>            :     {
+<span class="lineNum">     107 </span><span class="lineCov">         12 :         m_rtpSession-&gt;SetRTPExtension(m_offerSdp.extension[i].uri.c_str(), m_offerSdp.extension[i].id, ConvertSdpToWbxDirection(m_offerSdp.extension[i].direction));</span>
+<span class="lineNum">     108 </span><span class="lineCov">         54 :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, url=&quot; &lt;&lt;m_offerSdp.extension[i].uri&lt;&lt;&quot;, id=&quot;&lt;&lt;m_offerSdp.extension[i].id);</span>
+<span class="lineNum">     109 </span>            :     }
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span><span class="lineCov">         10 :     if (MEDIA_AUDIO_SESSION == m_mediaType)</span>
+<span class="lineNum">     112 </span>            :     {   
+<span class="lineNum">     113 </span>            :         //codec
+<span class="lineNum">     114 </span>            :         //out
+<span class="lineNum">     115 </span><span class="lineCov">          9 :         for (int i = 0; i &lt; m_offerSdp.codecCount; i++)</span>
+<span class="lineNum">     116 </span>            :         {
+<span class="lineNum">     117 </span><span class="lineCov">          9 :             if ( (sdp::CT_OPUS == m_offerSdp.codec[i].codec) &amp;&amp;  m_offerSdp.codec[i].opusPara.isValid)//only opus</span>
+<span class="lineNum">     118 </span>            :             {
+<span class="lineNum">     119 </span><span class="lineCov">          2 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_OPUS, m_offerSdp.codec[i].playload, m_offerSdp.codec[i].opusPara.maxSampleRate, WBX_STREAM_OUT);</span>
+<span class="lineNum">     120 </span><span class="lineCov">         18 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, audio opus payload=&quot; &lt;&lt;m_offerSdp.codec[i].playload&lt;&lt;&quot;, maxSampleRate=&quot;&lt;&lt;m_offerSdp.codec[i].opusPara.maxSampleRate);</span>
+<span class="lineNum">     121 </span>            :             }
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">          9 :             if ( (sdp::CT_MP4_LATM == m_offerSdp.codec[i].codec) &amp;&amp;  m_offerSdp.codec[i].aacPara.isValid)//only opus</span>
+<span class="lineNum">     124 </span>            :             {
+<span class="lineNum">     125 </span><span class="lineCov">          8 :                 SdpAacCodecPara&amp; aacPara = m_offerSdp.codec[i].aacPara;</span>
+<span class="lineNum">     126 </span>            :                 // Just bollow OPUS codec type (WBX_WmeCodecType_OPUS) since AAC codec type is not defined yet. 
+<span class="lineNum">     127 </span><span class="lineCov">         16 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_OPUS, m_offerSdp.codec[i].playload, CSP_AUDIO_AAC_SAMPLE_RATE_DEFAULT, WBX_STREAM_OUT);</span>
+<span class="lineNum">     128 </span><span class="lineCov">        192 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, audio aac payload=&quot; &lt;&lt;m_offerSdp.codec[i].playload&lt;&lt;&quot;, bitrate=&quot;&lt;&lt;aacPara.bitrate&lt;&lt;&quot;, level=&quot;&lt;&lt;aacPara.level&lt;&lt;&quot;, profile=&quot;&lt;&lt;aacPara.profile&lt;&lt;&quot;, object_type=&quot;&lt;&lt;aacPara.object_type);</span>
+<span class="lineNum">     129 </span>            :             }
+<span class="lineNum">     130 </span>            :         }
+<span class="lineNum">     131 </span>            :         //in
+<span class="lineNum">     132 </span><span class="lineCov">          9 :         for (int i = 0; i &lt; m_answerSdp.codecCount; i++)</span>
+<span class="lineNum">     133 </span>            :         { 
+<span class="lineNum">     134 </span><span class="lineCov">          9 :             if ( (sdp::CT_OPUS == m_answerSdp.codec[i].codec) &amp;&amp;  m_answerSdp.codec[i].opusPara.isValid)//only opus</span>
+<span class="lineNum">     135 </span>            :             {
+<span class="lineNum">     136 </span><span class="lineCov">          2 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_OPUS, m_answerSdp.codec[i].playload, m_answerSdp.codec[i].opusPara.maxSampleRate, WBX_STREAM_IN);</span>
+<span class="lineNum">     137 </span><span class="lineCov">         18 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, audio opus payload=&quot; &lt;&lt;m_answerSdp.codec[i].playload&lt;&lt;&quot;, maxSampleRate=&quot;&lt;&lt;m_answerSdp.codec[i].opusPara.maxSampleRate);</span>
+<span class="lineNum">     138 </span>            :             }
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span><span class="lineCov">          9 :             if ( (sdp::CT_MP4_LATM == m_answerSdp.codec[i].codec) &amp;&amp;  m_answerSdp.codec[i].aacPara.isValid)//only opus</span>
+<span class="lineNum">     141 </span>            :             {
+<span class="lineNum">     142 </span><span class="lineCov">          8 :                 SdpAacCodecPara&amp; aacPara = m_offerSdp.codec[i].aacPara;</span>
+<span class="lineNum">     143 </span>            :                 // Just bollow OPUS codec type (WBX_WmeCodecType_OPUS) since AAC codec type is not defined yet. 
+<span class="lineNum">     144 </span><span class="lineCov">         16 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_OPUS, m_answerSdp.codec[i].playload, CSP_AUDIO_AAC_SAMPLE_RATE_DEFAULT, WBX_STREAM_IN);</span>
+<span class="lineNum">     145 </span><span class="lineCov">        192 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, audio aac payload=&quot; &lt;&lt;m_answerSdp.codec[i].playload&lt;&lt;&quot;, bitrate=&quot;&lt;&lt;aacPara.bitrate&lt;&lt;&quot;, level=&quot;&lt;&lt;aacPara.level&lt;&lt;&quot;, profile=&quot;&lt;&lt;aacPara.profile&lt;&lt;&quot;, object_type=&quot;&lt;&lt;aacPara.object_type);</span>
+<span class="lineNum">     146 </span>            :             }
+<span class="lineNum">     147 </span>            :         }
+<span class="lineNum">     148 </span>            :     }
+<span class="lineNum">     149 </span><span class="lineCov">          1 :     else if ((MEDIA_VIDEO_SESSION == m_mediaType) || (MEDIA_HFPS_AS_SESSION == m_mediaType))</span>
+<span class="lineNum">     150 </span>            :     {
+<span class="lineNum">     151 </span><span class="lineCov">          2 :         m_rtpSession-&gt;SetMaxPacketSize(1400);</span>
+<span class="lineNum">     152 </span>            :         //codec
+<span class="lineNum">     153 </span>            :         //out
+<span class="lineNum">     154 </span><span class="lineCov">          1 :         for (int i = 0; i &lt; m_offerSdp.codecCount; i++)</span>
+<span class="lineNum">     155 </span>            :         {
+<span class="lineNum">     156 </span><span class="lineCov">          1 :             if ( (sdp::CT_H264 == m_offerSdp.codec[i].codec) &amp;&amp;  m_offerSdp.codec[i].codecPara.isValid)</span>
+<span class="lineNum">     157 </span>            :             {
+<span class="lineNum">     158 </span><span class="lineCov">          2 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_AVC, m_offerSdp.codec[i].playload, WBX_DEFAULT_VIDIO_CAPTURE_CLOCK_RATE, WBX_STREAM_OUT);</span>
+<span class="lineNum">     159 </span><span class="lineCov">         16 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, video h264 payload=&quot; &lt;&lt;m_offerSdp.codec[i].playload);</span>
+<span class="lineNum">     160 </span>            :             }
+<span class="lineNum">     161 </span>            :         }
+<span class="lineNum">     162 </span>            :         //in
+<span class="lineNum">     163 </span><span class="lineCov">          1 :         for (int i = 0; i &lt; m_answerSdp.codecCount; i++)</span>
+<span class="lineNum">     164 </span>            :         {
+<span class="lineNum">     165 </span><span class="lineCov">          1 :             if ( (sdp::CT_H264 == m_answerSdp.codec[i].codec) &amp;&amp;  m_answerSdp.codec[i].codecPara.isValid)</span>
+<span class="lineNum">     166 </span>            :             {
+<span class="lineNum">     167 </span><span class="lineCov">          2 :                 m_rtpSession-&gt;RegisterPayloadType(WBX_WmeCodecType_AVC, m_answerSdp.codec[i].playload, WBX_DEFAULT_VIDIO_CAPTURE_CLOCK_RATE, WBX_STREAM_IN);</span>
+<span class="lineNum">     168 </span><span class="lineCov">         16 :                 RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, video h264 payload=&quot; &lt;&lt;m_answerSdp.codec[i].playload);</span>
+<span class="lineNum">     169 </span>            :             }
+<span class="lineNum">     170 </span>            :         }
+<span class="lineNum">     171 </span>            :     }
+<span class="lineNum">     172 </span><span class="lineCov">        150 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, finish RegisterPayloadType.&quot;);</span>
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            :     //rtcp policy
+<span class="lineNum">     175 </span><span class="lineCov">         20 :     std::shared_ptr&lt;CCspRtpSession&gt; inSession = std::dynamic_pointer_cast&lt;CCspRtpSession&gt;(shared_from_this());</span>
+<span class="lineNum">     176 </span>            :     std::shared_ptr&lt;IWmeRtcpHandlerSink&gt; rtcpSink = std::dynamic_pointer_cast&lt;IWmeRtcpHandlerSink&gt;(inSession);
+<span class="lineNum">     177 </span>            :     
+<span class="lineNum">     178 </span><span class="lineCov">         20 :     IWmeRtcpHandler* rtcpHandler = m_rtpSession-&gt;GetRtcpHandler();</span>
+<span class="lineNum">     179 </span><span class="lineCov">         10 :     if (rtcpHandler)</span>
+<span class="lineNum">     180 </span>            :     {
+<span class="lineNum">     181 </span><span class="lineCov">         30 :         rtcpHandler-&gt;SetSink(rtcpSink);</span>
+<span class="lineNum">     182 </span>            :         //out
+<span class="lineNum">     183 </span><span class="lineCov">         12 :         for (int i = 0; i &lt; m_offerSdp.spropSourceCount; i++)</span>
+<span class="lineNum">     184 </span>            :         {
+<span class="lineNum">     185 </span><span class="lineCov">         23 :             for (unsigned int j = 0; j &lt; m_offerSdp.spropSource[i].count; j++)</span>
+<span class="lineNum">     186 </span><span class="lineCov">         23 :                 for (int k = 0; k &lt; m_offerSdp.spropSource[i].policyCount; k++)</span>
+<span class="lineNum">     187 </span>            :                 {
+<span class="lineNum">     188 </span><span class="lineCov">         23 :                     rtcpHandler-&gt;RegisterPolicyId(m_offerSdp.spropSource[i].id + j, ConvertSdpToWbxPolicy(m_offerSdp.spropSource[i].policy[k].name), m_offerSdp.spropSource[i].policy[k].id, WBX_STREAM_IN);</span>
+<span class="lineNum">     189 </span><span class="lineCov">        460 :                     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, out id=&quot; &lt;&lt;(m_offerSdp.spropSource[i].id + j)&lt;&lt;&quot;, name=&quot;&lt;&lt;m_offerSdp.spropSource[i].policy[k].name</span>
+<span class="lineNum">     190 </span>            :                             &lt;&lt;&quot;, id =&quot;&lt;&lt;m_offerSdp.spropSource[i].policy[k].id);
+<span class="lineNum">     191 </span>            :                 }
+<span class="lineNum">     192 </span>            :         }
+<span class="lineNum">     193 </span>            :         //in
+<span class="lineNum">     194 </span><span class="lineCov">          2 :         for (int i = 0; i &lt; m_answerSdp.spropSourceCount; i++)</span>
+<span class="lineNum">     195 </span>            :         {
+<span class="lineNum">     196 </span><span class="lineCov">         10 :             for (unsigned int j = 0; j &lt; m_answerSdp.spropSource[i].count; j++)</span>
+<span class="lineNum">     197 </span><span class="lineCov">         10 :                 for (int k = 0; k &lt; m_answerSdp.spropSource[i].policyCount; k++)</span>
+<span class="lineNum">     198 </span>            :                 {
+<span class="lineNum">     199 </span><span class="lineCov">         10 :                     rtcpHandler-&gt;RegisterPolicyId(m_answerSdp.spropSource[i].id + j, ConvertSdpToWbxPolicy(m_answerSdp.spropSource[i].policy[k].name), m_answerSdp.spropSource[i].policy[k].id, WBX_STREAM_OUT);</span>
+<span class="lineNum">     200 </span><span class="lineCov">        200 :                     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, in id=&quot; &lt;&lt;(m_answerSdp.spropSource[i].id + j)&lt;&lt;&quot;, name=&quot;&lt;&lt;m_answerSdp.spropSource[i].policy[k].name</span>
+<span class="lineNum">     201 </span>            :                             &lt;&lt;&quot;, id =&quot;&lt;&lt;m_answerSdp.spropSource[i].policy[k].id);
+<span class="lineNum">     202 </span>            :                 }
+<span class="lineNum">     203 </span>            :         }
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            :         //both dir
+<span class="lineNum">     206 </span><span class="lineCov">         10 :         uint32_t keepLiveInternal = 5000;</span>
+<span class="lineNum">     207 </span><span class="lineCov">         10 :         if ((m_callback2MmpSdkThread) &amp;&amp; (MEDIA_VIDEO_SESSION == m_mediaType))</span>
+<span class="lineNum">     208 </span><span class="lineCov">          1 :             keepLiveInternal = 1000;</span>
+<span class="lineNum">     209 </span><span class="lineCov">         10 :         rtcpHandler-&gt;EnableRtcpKeepLive(WBX_STREAM_IN, keepLiveInternal);</span>
+<span class="lineNum">     210 </span><span class="lineCov">         10 :         rtcpHandler-&gt;EnableRtcpKeepLive(WBX_STREAM_OUT, keepLiveInternal);</span>
+<span class="lineNum">     211 </span>            :     }
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineCov">        150 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Initialize, done.&quot;);</span>
+<span class="lineNum">     214 </span><span class="lineCov">         10 :     return true;</span>
+<a name="215"><span class="lineNum">     215 </span>            : }</a>
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">         27 : void CCspRtpSession::Release()</span>
+<span class="lineNum">     218 </span>            : {
+<span class="lineNum">     219 </span><span class="lineCov">         27 :     if (m_release)</span>
+<span class="lineNum">     220 </span><span class="lineCov">         27 :         return;</span>
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineCov">        391 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Release, mediaType=&quot; &lt;&lt; GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span><span class="lineCov">         23 :     m_stopFlag = true;</span>
+<span class="lineNum">     225 </span><span class="lineCov">         23 :     m_release = true;</span>
+<span class="lineNum">     226 </span><span class="lineCov">         23 :     if (m_rtpSession.get())</span>
+<span class="lineNum">     227 </span>            :     {
+<span class="lineNum">     228 </span><span class="lineCov">         10 :         m_rtpSession-&gt;Stop();</span>
+<span class="lineNum">     229 </span>            :         //release rtp session object
+<span class="lineNum">     230 </span><span class="lineCov">         20 :         m_rtpSession = NULL;</span>
+<span class="lineNum">     231 </span>            :     }
+<span class="lineNum">     232 </span>            :     //fix crash, rtp/rtcp callback in wme smooth thread
+<span class="lineNum">     233 </span><span class="lineCov">         23 :     m_sink = NULL;</span>
+<span class="lineNum">     234 </span><span class="lineCov">         23 :     m_rtpChannelMap.clear();</span>
+<a name="235"><span class="lineNum">     235 </span>            : }</a>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">          1 : Json::Value CCspRtpSession::ToJson() const</span>
+<span class="lineNum">     238 </span>            : {
+<span class="lineNum">     239 </span><span class="lineCov">          1 :     Json::Value info;</span>
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineCov">          2 :     info[JSON_KEY_MEDIA_TYPE] = GetMediaTypeString(m_mediaType);</span>
+<span class="lineNum">     242 </span><span class="lineCov">          2 :     info[JSON_KEY_NUMBER_OF_RTP_CHANNELS] = m_rtpChannelMap.size();</span>
+<span class="lineNum">     243 </span><span class="lineCov">          1 :     info[JSON_KEY_JITTER_BUFFER] = m_jitterBuffer-&gt;ToJson();</span>
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">          1 :     return info;</span>
+<a name="246"><span class="lineNum">     246 </span>            : }</a>
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span><span class="lineCov">          1 : bool CCspRtpSession::Subscribe(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            : {
+<span class="lineNum">     251 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN(!m_stopFlag, false);</span>
+<span class="lineNum">     252 </span><span class="lineCov">         19 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Subscribe, inMediaType=&quot; &lt;&lt;GetMediaTypeString(m_mediaType) &lt;&lt;&quot;, inRequestCount=&quot;&lt;&lt;inRequestCount);</span>
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span><span class="lineCov">          1 :     IWmeRtcpHandler* rtcpHandler = NULL;         </span>
+<span class="lineNum">     255 </span><span class="lineCov">          1 :     if (m_rtpSession)</span>
+<span class="lineNum">     256 </span><span class="lineCov">          1 :         rtcpHandler = m_rtpSession-&gt;GetRtcpHandler();</span>
+<span class="lineNum">     257 </span><span class="lineCov">          1 :     if (rtcpHandler)</span>
+<span class="lineNum">     258 </span><span class="lineCov">          1 :         rtcpHandler-&gt;Subscribe(inRequests, inRequestCount);</span>
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            :     return true;
+<a name="261"><span class="lineNum">     261 </span>            : }</a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">          1 : bool CCspRtpSession::Announce(const WBXSubsessionChannelAnnounce&amp; inRnnounce, bool inNeedAck)</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN(!m_stopFlag, false);</span>
+<span class="lineNum">     266 </span><span class="lineCov">         19 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::Announce, inMediaType=&quot; &lt;&lt;GetMediaTypeString(m_mediaType) &lt;&lt;&quot;, inCount=&quot;&lt;&lt;inRnnounce.subSessionsAvailable);</span>
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span><span class="lineCov">          1 :     IWmeRtcpHandler* rtcpHandler = NULL;            </span>
+<span class="lineNum">     269 </span><span class="lineCov">          1 :     if (m_rtpSession)</span>
+<span class="lineNum">     270 </span><span class="lineCov">          1 :         rtcpHandler = m_rtpSession-&gt;GetRtcpHandler();</span>
+<span class="lineNum">     271 </span><span class="lineCov">          1 :     if (rtcpHandler)</span>
+<span class="lineNum">     272 </span><span class="lineCov">          1 :         rtcpHandler-&gt;Announce(inRnnounce, inNeedAck);</span>
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span>            :     return true;
+<a name="275"><span class="lineNum">     275 </span>            : }</a>
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineCov">          1 : void CCspRtpSession::PictureLossIndication(uint32_t inSsrc)</span>
+<span class="lineNum">     278 </span>            : {
+<span class="lineNum">     279 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineCov">          1 :     IWmeRtcpHandler* rtcpHandler = m_rtpSession-&gt;GetRtcpHandler();</span>
+<span class="lineNum">     282 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(NULL != rtcpHandler);</span>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">          1 :     bool outMsync = false;</span>
+<span class="lineNum">     285 </span><span class="lineCov">          1 :     rtcpHandler-&gt;IndicatePictureLoss(inSsrc, 0, 0, outMsync);</span>
+<span class="lineNum">     286 </span>            :     //RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::PictureLossIndication, inSsrc=&quot;&lt;&lt;inSsrc&lt;&lt;&quot;, outMsync=&quot;&lt;&lt;outMsync&lt;&lt;&quot;, result=&quot;&lt;&lt;result);
+<a name="287"><span class="lineNum">     287 </span>            : }</a>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineCov">          2 : void CCspRtpSession::InputRtpPacket(const std::string&amp; inRtpPacket)</span>
+<span class="lineNum">     290 </span>            : {
+<span class="lineNum">     291 </span><span class="lineCov">          2 :     if (!m_hasRtcpHandlerReceivedSrPacket)</span>
+<span class="lineNum">     292 </span>            :     {
+<span class="lineNum">     293 </span><span class="lineCov">          4 :         if (!m_firstSrPacket.empty())</span>
+<span class="lineNum">     294 </span>            :         {
+<span class="lineNum">     295 </span><span class="lineCov">          1 :             auto rtpSsrc = GetSsrcFromRtpPacket(inRtpPacket);</span>
+<span class="lineNum">     296 </span><span class="lineCov">          2 :             auto rtcpSsrc = GetSsrcFromRtcpPacket(m_firstSrPacket);</span>
+<span class="lineNum">     297 </span><span class="lineCov">          1 :             if (rtpSsrc == rtcpSsrc)</span>
+<span class="lineNum">     298 </span>            :             {
+<span class="lineNum">     299 </span>            :                 /* SR packet is received before the first RTP packet.
+<span class="lineNum">     300 </span>            :                    Must input an RTP packet before the first SR packet is input so that the WME RTP session can get the necessary RTP info (such as SSRC, etc.) for timestamp re-calculating. */
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :                 m_rtpSession-&gt;InputRtpPacket(inRtpPacket);</span>
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :                 m_rtpSession-&gt;GetRtcpHandler()-&gt;ReceiveRTCPPacket(m_firstSrPacket);</span>
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :                 m_hasRtcpHandlerReceivedSrPacket = true;</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     305 </span>            :             }
+<span class="lineNum">     306 </span>            :             /* Fix an issue that might happens in content share start/stop case of NBR sessions where Otter first receives an SR packet of the old resolution, then receives an SR packet of the new resolution. */
+<span class="lineNum">     307 </span><span class="lineCov">         21 :             RTP_SESSION_WARNING_THIS(&quot;CCspRtpSession::InputRtpPacket, SSRC not match! rtpSsrc:&quot; &lt;&lt; rtpSsrc &lt;&lt; &quot; rtcpSsrc:&quot; &lt;&lt; rtcpSsrc &lt;&lt; &quot; mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType));</span>
+<span class="lineNum">     308 </span><span class="lineCov">          1 :             m_firstSrPacket = &quot;&quot;;</span>
+<span class="lineNum">     309 </span>            :         }
+<span class="lineNum">     310 </span><span class="lineCov">          2 :         BufferRtpPacket(inRtpPacket);</span>
+<span class="lineNum">     311 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">     312 </span>            :     }
+<span class="lineNum">     313 </span>            :     
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :     auto emptyBuffer = InputBufferedRtpPackets();</span>
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :     if (!emptyBuffer)</span>
+<span class="lineNum">     316 </span>            :     {
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :         BufferRtpPacket(inRtpPacket);</span>
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     319 </span>            :     }
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :     m_rtpCount++;</span>
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 :     m_rtpSession-&gt;InputRtpPacket(inRtpPacket);</span>
+<a name="323"><span class="lineNum">     323 </span>            : }</a>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">          2 : void CCspRtpSession::InputRtcpPacket(const std::string&amp; inRtcpPacket)</span>
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span><span class="lineCov">          2 :     uint16_t packetType = (uint16_t)((uint8_t)inRtcpPacket[1]);</span>
+<span class="lineNum">     328 </span><span class="lineCov">          2 :     auto rtcpSsrc = GetSsrcFromRtcpPacket(inRtcpPacket);</span>
+<span class="lineNum">     329 </span><span class="lineCov">          2 :     if (m_rtcpSsrc != rtcpSsrc)</span>
+<span class="lineNum">     330 </span>            :     {
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::InputRtcpPacket, mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; SSRC:&quot; &lt;&lt; rtcpSsrc &lt;&lt; &quot; previous SSRC:&quot;&lt;&lt;m_rtcpSsrc);</span>
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :         m_rtcpSsrc = rtcpSsrc;</span>
+<span class="lineNum">     333 </span>            :     }    
+<span class="lineNum">     334 </span><span class="lineCov">         48 :     RTP_SESSION_DEBUG_THIS(&quot;CCspRtpSession::InputRtcpPacket, mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; PT:&quot; &lt;&lt; packetType &lt;&lt; &quot; SSRC:&quot; &lt;&lt; rtcpSsrc &lt;&lt; &quot; len:&quot; &lt;&lt; inRtcpPacket.length());</span>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineCov">          2 :     RTP_SESSION_RETURN_VOID(nullptr!= m_rtpSession.get());</span>
+<span class="lineNum">     337 </span><span class="lineCov">          2 :     IWmeRtcpHandler* rtcpHandler = m_rtpSession-&gt;GetRtcpHandler();</span>
+<span class="lineNum">     338 </span><span class="lineCov">          2 :     RTP_SESSION_RETURN_VOID(nullptr != rtcpHandler);</span>
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span><span class="lineCov">          2 :     if (!m_hasRtcpHandlerReceivedSrPacket)</span>
+<span class="lineNum">     341 </span>            :     {
+<span class="lineNum">     342 </span><span class="lineCov">          2 :         if (packetType == 200) // SR Packet PT=200</span>
+<span class="lineNum">     343 </span>            :         {
+<span class="lineNum">     344 </span><span class="lineCov">         48 :             RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::InputRtcpPacket, receive first SR packet, mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; PT:&quot; &lt;&lt; packetType &lt;&lt; &quot; SSRC:&quot; &lt;&lt; rtcpSsrc &lt;&lt; &quot; rtpBufferSize:&quot;&lt;&lt;m_inputRtpBuffer.size());</span>
+<span class="lineNum">     345 </span><span class="lineCov">          4 :             if (m_inputRtpBuffer.empty())</span>
+<span class="lineNum">     346 </span>            :             {
+<span class="lineNum">     347 </span><span class="lineCov">         21 :                 RTP_SESSION_WARNING_THIS(&quot;CCspRtpSession::InputRtcpPacket, SR packet is received before the first RTP packet! mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; PT:&quot; &lt;&lt; packetType &lt;&lt; &quot; SSRC:&quot; &lt;&lt; rtcpSsrc);</span>
+<span class="lineNum">     348 </span><span class="lineCov">          1 :                 m_firstSrPacket = inRtcpPacket;</span>
+<span class="lineNum">     349 </span>            :                 return;
+<span class="lineNum">     350 </span>            :             }
+<span class="lineNum">     351 </span>            :             else
+<span class="lineNum">     352 </span>            :             {
+<span class="lineNum">     353 </span>            :                 std::string firstRtpPacket;
+<span class="lineNum">     354 </span><span class="lineCov">          1 :                 do {</span>
+<span class="lineNum">     355 </span><span class="lineCov">          2 :                     auto rtpPacket = m_inputRtpBuffer.front();</span>
+<span class="lineNum">     356 </span><span class="lineCov">          1 :                     m_inputRtpBuffer.pop_front();</span>
+<span class="lineNum">     357 </span><span class="lineCov">          1 :                     auto rtpSsrc = GetSsrcFromRtpPacket(rtpPacket);</span>
+<span class="lineNum">     358 </span><span class="lineCov">          1 :                     if (rtpSsrc != rtcpSsrc)</span>
+<span class="lineNum">     359 </span>            :                     {
+<span class="lineNum">     360 </span><span class="lineCov">          1 :                         auto seqId = GetSeqIdFromRtpPacket(rtpPacket);</span>
+<span class="lineNum">     361 </span><span class="lineCov">         23 :                         RTP_SESSION_WARNING_THIS(&quot;CCspRtpSession::InputRtcpPacket, SSRC not match! Drop the RTP packet! rtpSsrc:&quot; &lt;&lt; rtpSsrc &lt;&lt; &quot; rtcpSsrc:&quot; &lt;&lt; rtcpSsrc &lt;&lt; &quot; mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; seqId:&quot; &lt;&lt; seqId);</span>
+<span class="lineNum">     362 </span>            :                         continue;
+<span class="lineNum">     363 </span>            :                     } 
+<span class="lineNum">     364 </span>            :                     firstRtpPacket = rtpPacket;
+<span class="lineNum">     365 </span>            :                     break; // A matching RTP packet is found.
+<span class="lineNum">     366 </span><span class="lineCov">          1 :                 } while (!m_inputRtpBuffer.empty());</span>
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span><span class="lineCov">          1 :                 if (firstRtpPacket.empty())</span>
+<span class="lineNum">     369 </span>            :                 {
+<span class="lineNum">     370 </span>            :                     /* Matching RTP packet is not found and m_inputRtpBuffer is empty now. */
+<span class="lineNum">     371 </span><span class="lineCov">         21 :                     RTP_SESSION_WARNING_THIS(&quot;CCspRtpSession::InputRtcpPacket, matching RTP packet not found! mediaType:&quot; &lt;&lt; GetMediaTypeString(m_mediaType) &lt;&lt; &quot; PT:&quot; &lt;&lt; packetType &lt;&lt; &quot; SSRC:&quot; &lt;&lt; rtcpSsrc);</span>
+<span class="lineNum">     372 </span><span class="lineCov">          1 :                     m_firstSrPacket = inRtcpPacket;</span>
+<span class="lineNum">     373 </span>            :                     return;
+<span class="lineNum">     374 </span>            :                 }
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            :                 /* Must input an RTP packet before the first SR packet is input so that the WME RTP session can get the necessary RTP info (such as SSRC, etc.) for timestamp re-calculating. */
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :                 m_rtpSession-&gt;InputRtpPacket(firstRtpPacket);</span>
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :                 m_hasRtcpHandlerReceivedSrPacket = true;</span>
+<span class="lineNum">     379 </span>            :             }
+<span class="lineNum">     380 </span>            :         }
+<span class="lineNum">     381 </span>            :     }
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :     m_rtcpCount++;</span>
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :     rtcpHandler-&gt;ReceiveRTCPPacket(inRtcpPacket);</span>
+<a name="384"><span class="lineNum">     384 </span>            : }</a>
+<span class="lineNum">     385 </span>            : 
+<span class="lineNum">     386 </span><span class="lineCov">          1 : IWMEMediaRtpChannel* CCspRtpSession::CreateRtpChannel(uint32_t inCsi, const WMERtpExtend&amp; inRtpExtend)</span>
+<span class="lineNum">     387 </span>            : {
+<span class="lineNum">     388 </span><span class="lineCov">          1 :     IWMEMediaRtpChannel* rtpChannel = NULL;</span>
+<span class="lineNum">     389 </span>            :     WMESourceKey sourceKey;
+<span class="lineNum">     390 </span><span class="lineCov">          1 :     sourceKey.csi = inCsi;</span>
+<span class="lineNum">     391 </span><span class="lineCov">          1 :     sourceKey.vid = 0;</span>
+<span class="lineNum">     392 </span><span class="lineCov">          1 :     if (inRtpExtend.vidCount &gt; 0)</span>
+<span class="lineNum">     393 </span><span class="lineCov">          1 :         sourceKey.vid = inRtpExtend.vidArray[0];</span>
+<span class="lineNum">     394 </span><span class="lineCov">         22 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::CreateRtpChannel, inCsi=&quot;&lt;&lt;inCsi&lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)sourceKey.vid&lt;&lt;&quot;, vidCount=&quot;&lt;&lt;(int)inRtpExtend.vidCount&lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)inRtpExtend.vidArray[0]);</span>
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span>            :     //try to find it first
+<span class="lineNum">     397 </span><span class="lineCov">          2 :     CspRtpChannelMap::iterator iter = m_rtpChannelMap.begin();</span>
+<span class="lineNum">     398 </span><span class="lineCov">          3 :     for ( ; iter != m_rtpChannelMap.end(); ++iter)</span>
+<span class="lineNum">     399 </span>            :     {
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 :         if ( (iter-&gt;second.csi == sourceKey.csi) &amp;&amp; (iter-&gt;second.vid == sourceKey.vid))</span>
+<span class="lineNum">     401 </span>            :         {
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 :             RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::CreateRtpChannel, already exist&quot;);</span>
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :             rtpChannel = iter-&gt;first;</span>
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">     405 </span>            :         }
+<span class="lineNum">     406 </span>            :     }
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            :     //create new one
+<span class="lineNum">     409 </span><span class="lineCov">          2 :     if (iter == m_rtpChannelMap.end())</span>
+<span class="lineNum">     410 </span>            :     {
+<span class="lineNum">     411 </span><span class="lineCov">          1 :         rtpChannel = CreateRtpChannel(IN_NAL_OUT_RTP, sourceKey);</span>
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineCov">          1 :         RTP_SESSION_ASSERTE_RETURN(NULL != rtpChannel, rtpChannel);</span>
+<span class="lineNum">     414 </span><span class="lineCov">          1 :         m_rtpChannelMap[rtpChannel] = sourceKey;</span>
+<span class="lineNum">     415 </span>            :     }
+<span class="lineNum">     416 </span>            :     
+<span class="lineNum">     417 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN(NULL != rtpChannel, rtpChannel);</span>
+<span class="lineNum">     418 </span><span class="lineCov">          1 :     rtpChannel-&gt;SetCsi( inCsi);</span>
+<span class="lineNum">     419 </span><span class="lineCov">          2 :     rtpChannel-&gt;SetSsrcId(GetSsrcId());</span>
+<span class="lineNum">     420 </span><span class="lineCov">          1 :     rtpChannel-&gt;UpdateRTPExtension(&amp;inRtpExtend);</span>
+<span class="lineNum">     421 </span>            :     
+<span class="lineNum">     422 </span><span class="lineCov">          1 :     return rtpChannel;</span>
+<a name="423"><span class="lineNum">     423 </span>            : }</a>
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span><span class="lineCov">          1 : void CCspRtpSession::RemoveRtpChannel(const IWMEMediaRtpChannel* inRtpChannel)</span>
+<span class="lineNum">     426 </span>            : {
+<span class="lineNum">     427 </span><span class="lineCov">          2 :     CspRtpChannelMap::iterator iter = m_rtpChannelMap.find((IWMEMediaRtpChannel*)inRtpChannel);</span>
+<span class="lineNum">     428 </span><span class="lineCov">          2 :     if (iter != m_rtpChannelMap.end())</span>
+<span class="lineNum">     429 </span>            :     {
+<span class="lineNum">     430 </span><span class="lineCov">          1 :         if(m_rtpSession.get())</span>
+<span class="lineNum">     431 </span><span class="lineCov">          2 :             m_rtpSession-&gt;RemoveSource( IN_NAL_OUT_RTP, iter-&gt;second);</span>
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span><span class="lineCov">         20 :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::RemoveRtpChannel, inCsi=&quot;&lt;&lt;iter-&gt;second.csi&lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)iter-&gt;second.vid);</span>
+<span class="lineNum">     434 </span><span class="lineCov">          1 :         m_rtpChannelMap.erase(iter);</span>
+<span class="lineNum">     435 </span>            :     }
+<span class="lineNum">     436 </span>            :     else
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::RemoveRtpChannel, don't find rtp channel&quot;);</span>
+<a name="438"><span class="lineNum">     438 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 : void CCspRtpSession::GetSessionStatistics(MediaOneSecondSample* outSendSample, MediaOneSecondSample* outRecvSample)</span>
+<span class="lineNum">     441 </span>            : {
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :     if (m_rtpSession)</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :         m_rtpSession-&gt;GetSessionStatistics(outSendSample, outRecvSample);</span>
+<a name="444"><span class="lineNum">     444 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span><span class="lineCov">          1 : void CCspRtpSession::OnPictureLossIndication(uint32_t inMediaSourceId, uint32_t inStreamId, WBXPLIInfo* inInfo)</span>
+<span class="lineNum">     447 </span>            : { 
+<span class="lineNum">     448 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     449 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span><span class="lineCov">          2 :     CspRtpChannelMap::iterator iter = m_rtpChannelMap.begin();</span>
+<span class="lineNum">     452 </span><span class="lineCov">          3 :     for ( ; iter != m_rtpChannelMap.end(); ++iter)</span>
+<span class="lineNum">     453 </span>            :     {
+<span class="lineNum">     454 </span><span class="lineCov">          2 :         if ( iter-&gt;first &amp;&amp; (iter-&gt;first-&gt;GetChannelId() == inMediaSourceId))</span>
+<span class="lineNum">     455 </span>            :         {
+<span class="lineNum">     456 </span><span class="lineCov">         20 :             RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnPictureLossIndication, inCsi=&quot;&lt;&lt;iter-&gt;second.csi&lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)iter-&gt;second.vid);</span>
+<span class="lineNum">     457 </span><span class="lineCov">          2 :             m_sink-&gt;OnPictureLossIndication( m_mediaType, iter-&gt;first);</span>
+<span class="lineNum">     458 </span>            :             return;
+<span class="lineNum">     459 </span>            :         }
+<span class="lineNum">     460 </span>            :     }
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :     RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::OnPictureLossIndication, can't find rtp channel, inMediaSourceId=&quot;&lt;&lt;inMediaSourceId&lt;&lt;&quot;, inStreamId=&quot;&lt;&lt;inStreamId);; </span>
+<a name="462"><span class="lineNum">     462 </span>            : }</a>
+<span class="lineNum">     463 </span>            : 
+<span class="lineNum">     464 </span><span class="lineCov">          1 : void CCspRtpSession::OnAnnounce(const WBXSubsessionChannelAnnounce&amp; inAnnounce)</span>
+<span class="lineNum">     465 </span>            : {
+<span class="lineNum">     466 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     467 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     468 </span>            : 
+<span class="lineNum">     469 </span><span class="lineCov">          1 :     m_sink-&gt;OnAnnounce( m_mediaType, inAnnounce);</span>
+<span class="lineNum">     470 </span><span class="lineCov">         15 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnAnnounce&quot;);</span>
+<a name="471"><span class="lineNum">     471 </span>            : }</a>
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span><span class="lineCov">          1 : void CCspRtpSession::OnSubscribe(const WBXSubsessionChannelRequest* inRequests, uint8_t inRequestCount)</span>
+<span class="lineNum">     474 </span>            : {
+<span class="lineNum">     475 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     476 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span><span class="lineCov">          1 :     m_sink-&gt;OnSubscribe(m_mediaType, inRequests, inRequestCount);</span>
+<span class="lineNum">     479 </span><span class="lineCov">         16 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnSubscribe, inRequestCount=&quot;&lt;&lt;inRequestCount);</span>
+<span class="lineNum">     480 </span>            : }
+<a name="481"><span class="lineNum">     481 </span>            : </a>
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span><span class="lineCov">          1 : void CCspRtpSession::OnRtpPacketLoss(uint32_t inSsrc, uint32_t inLossCount)</span>
+<span class="lineNum">     484 </span>            : {
+<span class="lineNum">     485 </span><span class="lineCov">          1 :     if (m_sink)</span>
+<span class="lineNum">     486 </span>            :     {
+<span class="lineNum">     487 </span><span class="lineCov">          1 :         m_sink-&gt;OnRtpPacketLoss(inSsrc, inLossCount);</span>
+<span class="lineNum">     488 </span>            :     }
+<a name="489"><span class="lineNum">     489 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span><span class="lineCov">          6 : const char* CCspRtpSession::GetMediaTypeString(EMediaSessionType inMediaType)</span>
+<span class="lineNum">     492 </span>            : {
+<span class="lineNum">     493 </span><span class="lineCov">         74 :     switch (inMediaType)</span>
+<span class="lineNum">     494 </span>            :     {
+<span class="lineNum">     495 </span>            :         case MEDIA_VIDEO_SESSION: return &quot;VIDEO&quot;;
+<span class="lineNum">     496 </span><span class="lineCov">          1 :         case MEDIA_AUDIO_SESSION: return &quot;AUDIO&quot;;</span>
+<span class="lineNum">     497 </span><span class="lineCov">          1 :         case MEDIA_LEGACY_AS_SESSION: return &quot;LEGACY_SHARE&quot;;</span>
+<span class="lineNum">     498 </span><span class="lineCov">          1 :         case MEDIA_HFPS_AS_SESSION: return &quot;HFPS_SHARE&quot;;</span>
+<span class="lineNum">     499 </span><span class="lineCov">          1 :         case MEDIA_PD_SESSION: return &quot;PD_SHARE&quot;;</span>
+<span class="lineNum">     500 </span><span class="lineCov">          1 :         default: return &quot;UNEXPECTED&quot;;</span>
+<span class="lineNum">     501 </span>            :     }
+<a name="502"><span class="lineNum">     502 </span>            : }</a>
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span><span class="lineNoCov">          0 : SeqIdType CCspRtpSession::GetSeqIdFromRtpPacket(const std::string&amp; inRtpPacket)</span>
+<span class="lineNum">     505 </span>            : {
+<span class="lineNum">     506 </span><span class="lineCov">          1 :     return be16toh(*(SeqIdType*)(&amp;inRtpPacket[2]));</span>
+<a name="507"><span class="lineNum">     507 </span>            : }</a>
+<span class="lineNum">     508 </span>            : 
+<span class="lineNum">     509 </span><span class="lineNoCov">          0 : uint32_t CCspRtpSession::GetSsrcFromRtpPacket(const std::string&amp; inRtpPacket)</span>
+<span class="lineNum">     510 </span>            : {
+<span class="lineNum">     511 </span><span class="lineCov">          2 :     return be32toh(*(uint32_t*)(&amp;inRtpPacket[8]));</span>
+<a name="512"><span class="lineNum">     512 </span>            : }</a>
+<span class="lineNum">     513 </span>            : 
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 : uint32_t CCspRtpSession::GetSsrcFromRtcpPacket(const std::string&amp; inRtcpPacket)</span>
+<span class="lineNum">     515 </span>            : {
+<span class="lineNum">     516 </span><span class="lineCov">          3 :     return be32toh(*(uint32_t*)(&amp;inRtcpPacket[4]));</span>
+<a name="517"><span class="lineNum">     517 </span>            : }</a>
+<span class="lineNum">     518 </span>            : 
+<span class="lineNum">     519 </span><span class="lineCov">          1 : void CCspRtpSession::OnMediaRtpData(void* inData, unsigned int inLen)</span>
+<span class="lineNum">     520 </span>            : {
+<span class="lineNum">     521 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     522 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineCov">          1 :     char* temp = (char*)inData;</span>
+<span class="lineNum">     525 </span>            : 
+<span class="lineNum">     526 </span><span class="lineCov">          1 :     uint32_t timestamp = *(uint32_t*)(temp+4);</span>
+<span class="lineNum">     527 </span><span class="lineCov">          1 :     timestamp = ntohl(timestamp);</span>
+<span class="lineNum">     528 </span>            :     
+<span class="lineNum">     529 </span><span class="lineCov">          1 :     uint32_t ssrc = *(uint32_t*)(temp+8);</span>
+<span class="lineNum">     530 </span><span class="lineCov">          1 :     ssrc = ntohl(ssrc);</span>
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span><span class="lineCov">          1 :     uint32_t csi = *(uint32_t*)(temp+12);</span>
+<span class="lineNum">     533 </span><span class="lineCov">          1 :     csi = ntohl(csi);</span>
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span><span class="lineCov">          1 :     uint16_t id = *(uint16_t*)(temp+16);</span>
+<span class="lineNum">     536 </span><span class="lineCov">          1 :     id = ntohs(id);</span>
+<span class="lineNum">     537 </span>            :   
+<span class="lineNum">     538 </span><span class="lineCov">          1 :     uint16_t length = *(uint16_t*)(temp+18);</span>
+<span class="lineNum">     539 </span><span class="lineCov">          1 :     length = ntohs(length);</span>
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span>            :     //uint8_t vidId = *(uint8_t*)(temp+20);
+<span class="lineNum">     542 </span>            :     //uint8_t vid = *(uint8_t*)(temp+21);
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span><span class="lineCov">          1 :     std::string rtp((const char*)inData, inLen);</span>
+<span class="lineNum">     545 </span><span class="lineCov">          1 :     if (0 != csi)</span>
+<span class="lineNum">     546 </span><span class="lineCov">          1 :         m_sink-&gt;OnOutputRtpPacket( m_mediaType, rtp);</span>
+<span class="lineNum">     547 </span>            :     else
+<span class="lineNum">     548 </span><span class="lineNoCov">          0 :         RTP_SESSION_WARNING_THIS(&quot;CCspRtpSession::OnMediaRtpData, drop csi=0&quot;);</span>
+<span class="lineNum">     549 </span>            :     //RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnMediaRtpData, inLen=&quot;&lt;&lt;inLen&lt;&lt;&quot;, timestamp=&quot;&lt;&lt;timestamp&lt;&lt;&quot;, SSRC=&quot;&lt;&lt;ssrc&lt;&lt;&quot;, CSI=&quot;&lt;&lt;csi&lt;&lt;&quot;, id=&quot;&lt;&lt;id&lt;&lt;&quot;, length=&quot;&lt;&lt;length&lt;&lt;&quot;, vid=&quot;&lt;&lt;(int)vid&lt;&lt;&quot;, vidId=&quot;&lt;&lt;(int)vidId);
+<a name="550"><span class="lineNum">     550 </span>            : }</a>
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineCov">          1 : void CCspRtpSession::OnMediaRtcpData(void* inData, unsigned int inLen)</span>
+<span class="lineNum">     553 </span>            : {
+<span class="lineNum">     554 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     555 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     556 </span>            : 
+<span class="lineNum">     557 </span><span class="lineCov">          1 :     std::string rtcp((const char*)inData, inLen);</span>
+<span class="lineNum">     558 </span><span class="lineCov">          1 :     m_sink-&gt;OnOutputRtcpPacket( m_mediaType, rtcp);</span>
+<span class="lineNum">     559 </span>            :     // RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnMediaRtcpData, inLen=&quot;&lt;&lt;inLen);
+<a name="560"><span class="lineNum">     560 </span>            : }</a>
+<span class="lineNum">     561 </span>            : 
+<span class="lineNum">     562 </span><span class="lineCov">          1 : void CCspRtpSession::OnMediaAudioNal(uint32_t inCsi, uint32_t inSsrc, uint32_t inTimestamp, uint32_t inSampleTimestamp, bool inIsRecovered, const std::string&amp; inNal, uint32_t inSeqId)</span>
+<span class="lineNum">     563 </span>            : {
+<span class="lineNum">     564 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     565 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     566 </span>            : 
+<span class="lineNum">     567 </span>            :     // RTP_SESSION_DEBUG_THIS(&quot;CCspRtpSession::OnMediaAudioNal, SSRC:&quot; &lt;&lt; inSsrc &lt;&lt; &quot; seqId:&quot; &lt;&lt; inSeqId &lt;&lt; &quot; TS:&quot; &lt;&lt; inTimestamp &lt;&lt; &quot; sampleTS:&quot; &lt;&lt; inSampleTimestamp &lt;&lt; &quot; size:&quot; &lt;&lt; inNal.size());
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span>            : #ifdef CSP_DUMP_NAL_DATA
+<span class="lineNum">     570 </span>            :     if (NULL == m_audioFile)
+<span class="lineNum">     571 </span>            :     {
+<span class="lineNum">     572 </span>            :         char file[1024]={0};
+<span class="lineNum">     573 </span>            :         sprintf(file, &quot;/opt/webex/csp/bin/svc_%ld.aac&quot;, (unsigned long)this);
+<span class="lineNum">     574 </span>            :         m_audioFile = fopen(file, &quot;wb&quot;);
+<span class="lineNum">     575 </span>            :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnMediaAudioNal, file=&quot;&lt;&lt;file);
+<span class="lineNum">     576 </span>            :     }
+<span class="lineNum">     577 </span>            :     unsigned int inLen = inNal.size();
+<span class="lineNum">     578 </span>            :     fwrite((void*)&amp;inLen, 1, sizeof(unsigned int), m_audioFile);
+<span class="lineNum">     579 </span>            :     fwrite((void*)inNal.c_str(), 1, inLen, m_audioFile);
+<span class="lineNum">     580 </span>            : #endif
+<a name="581"><span class="lineNum">     581 </span>            : </a>
+<span class="lineNum">     582 </span><span class="lineCov">          1 :     m_nalCount++;</span>
+<span class="lineNum">     583 </span><span class="lineCov">          1 :     m_jitterBuffer-&gt;ReceiveNal(std::make_shared&lt;CCspMediaNal&gt;(inCsi, inSsrc, inTimestamp, inSampleTimestamp, false, inNal, inSeqId), [this](const MediaNalSharedPtr&amp; inMediaNal){</span>
+<span class="lineNum">     584 </span><span class="lineNoCov">          0 :         m_sink-&gt;OnOutputAudioFrame(inMediaNal-&gt;GetCsi(), inMediaNal-&gt;GetSsrc(), inMediaNal-&gt;GetTimestamp(), inMediaNal-&gt;GetNal());</span>
+<span class="lineNum">     585 </span><span class="lineCov">          4 :     });</span>
+<a name="586"><span class="lineNum">     586 </span>            : }</a>
+<span class="lineNum">     587 </span>            : 
+<span class="lineNum">     588 </span><span class="lineCov">          1 : void CCspRtpSession::OnMediaVideoNal(unsigned int inSsrc, uint32_t inTimestamp, uint32_t inSampleTimestamp, bool inIsRecovered, bool inIsIdr, bool inIsEnd, const std::string&amp; inNal, uint32_t inSeqId, uint32_t inCount)</span>
+<span class="lineNum">     589 </span>            : {
+<span class="lineNum">     590 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(!m_stopFlag);</span>
+<span class="lineNum">     591 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN_VOID(m_sink);</span>
+<span class="lineNum">     592 </span>            : #ifdef CSP_DUMP_NAL_DATA
+<span class="lineNum">     593 </span>            :     if (NULL == m_file)
+<span class="lineNum">     594 </span>            :     {
+<span class="lineNum">     595 </span>            :         char file[1024]={0};
+<span class="lineNum">     596 </span>            :         sprintf(file, &quot;/opt/webex/csp/bin/svc_%ld.h264&quot;, (unsigned long)this);
+<span class="lineNum">     597 </span>            :         m_file = fopen(file, &quot;wb&quot;);
+<span class="lineNum">     598 </span>            :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::OnMediaVideoNal, file=&quot;&lt;&lt;file);
+<span class="lineNum">     599 </span>            :     }
+<span class="lineNum">     600 </span>            :     fwrite((void*)inNal.c_str(), 1, inNal.size(), m_file);
+<span class="lineNum">     601 </span>            : #endif
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span><span class="lineCov">          1 :     if (inNal.size()&gt;= 5 &amp;&amp; (((uint8_t)inNal[4] &amp; 0x1f) == 0x7)) // Keyframe includes an SPS/PPS. </span>
+<span class="lineNum">     604 </span><span class="lineNoCov">          0 :         inIsIdr = true;</span>
+<span class="lineNum">     605 </span>            : 
+<span class="lineNum">     606 </span>            :     // RTP_SESSION_DEBUG_THIS(&quot;CCspRtpSession::OnMediaVideoNal, SSRC:&quot; &lt;&lt; inSsrc &lt;&lt; &quot; seqId:&quot; &lt;&lt; inSeqId &lt;&lt; &quot; TS:&quot; &lt;&lt; inTimestamp &lt;&lt; &quot; sampleTS:&quot; &lt;&lt; inSampleTimestamp &lt;&lt; &quot; size:&quot; &lt;&lt; inNal.size() &lt;&lt; &quot; IDR:&quot; &lt;&lt; inIsIdr &lt;&lt; &quot; end:&quot; &lt;&lt; inIsEnd);
+<a name="607"><span class="lineNum">     607 </span>            : </a>
+<span class="lineNum">     608 </span><span class="lineCov">          1 :     m_nalCount++;</span>
+<span class="lineNum">     609 </span><span class="lineCov">          1 :     m_jitterBuffer-&gt;ReceiveNal(std::make_shared&lt;CCspMediaNal&gt;(0, inSsrc, inTimestamp, inSampleTimestamp, inIsIdr, inNal, inSeqId, inIsEnd, inCount), [this](const MediaNalSharedPtr&amp; inMediaNal){</span>
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 :         m_sink-&gt;OnOutputVideoFrame(inMediaNal-&gt;GetCsi(), inMediaNal-&gt;GetSsrc(), inMediaNal-&gt;GetTimestamp(), inMediaNal-&gt;IsIdr(), inMediaNal-&gt;GetNal());</span>
+<span class="lineNum">     611 </span><span class="lineCov">          4 :     });</span>
+<a name="612"><span class="lineNum">     612 </span>            : }</a>
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span><span class="lineCov">          1 : IWMEMediaRtpChannel* CCspRtpSession::CreateRtpChannel(EWMEMediaDirection inDir, const WMESourceKey&amp; inSourceKey)</span>
+<span class="lineNum">     615 </span>            : {
+<span class="lineNum">     616 </span><span class="lineCov">          1 :     RTP_SESSION_ASSERTE_RETURN(m_rtpSession.get(), NULL);</span>
+<span class="lineNum">     617 </span><span class="lineCov">          1 :     return m_rtpSession-&gt;AddSource( inDir, inSourceKey);</span>
+<a name="618"><span class="lineNum">     618 </span>            : }</a>
+<span class="lineNum">     619 </span>            : 
+<span class="lineNum">     620 </span><span class="lineNoCov">          0 : bool CCspRtpSession::GetSrtpSendPara(WBXSecurityConfiguration&amp; outPara)</span>
+<span class="lineNum">     621 </span>            : {
+<span class="lineNum">     622 </span><span class="lineCov">         10 :     return GetSrtpPara(m_offerSdp, outPara);</span>
+<a name="623"><span class="lineNum">     623 </span>            : }</a>
+<span class="lineNum">     624 </span>            : 
+<span class="lineNum">     625 </span><span class="lineNoCov">          0 : bool CCspRtpSession::GetSrtpRecvPara(WBXSecurityConfiguration&amp; outPara)</span>
+<span class="lineNum">     626 </span>            : {
+<span class="lineNum">     627 </span><span class="lineCov">         10 :     return GetSrtpPara(m_answerSdp, outPara);</span>
+<a name="628"><span class="lineNum">     628 </span>            : }</a>
+<span class="lineNum">     629 </span>            : 
+<span class="lineNum">     630 </span><span class="lineCov">         20 : bool CCspRtpSession::GetSrtpPara(const SdpMediaAttribute&amp; inSdp, WBXSecurityConfiguration&amp; outPara)</span>
+<span class="lineNum">     631 </span>            : {
+<span class="lineNum">     632 </span><span class="lineCov">         20 :     outPara.cryptoSuiteType = WBX_CST_AES_CM_128_HMAC_SHA1_80;        // Encryption and authentication transforms</span>
+<span class="lineNum">     633 </span><span class="lineCov">         40 :     outPara.masterKeySalt = std::string(&quot;vQeoEAA5tTWHAQGk2nILNfzlnYImQq7bGgjdMaVY&quot;);          // Binary string, Master Key || Master Salt</span>
+<span class="lineNum">     634 </span><span class="lineCov">         20 :     outPara.rtpSecurityService = WBX_SEC_SERVICE_CONF_AUTH;     // Security service for RTP packet, confidentiality and authentication</span>
+<span class="lineNum">     635 </span><span class="lineCov">         20 :     outPara.rtcpSecurityService = WBX_SEC_SERVICE_CONF_AUTH;    // Where RTCP packet should be encrypted/decrypted. Note: RTCP authentication is required, RFC3711-SRTP.</span>
+<span class="lineNum">     636 </span><span class="lineCov">         20 :     outPara.fecOrder = WBX_ORDER_SRTP_FEC;               // Relationship between FEC and SRTP, MARI negotiation have more high priority than SRTP negotiation.</span>
+<span class="lineNum">     637 </span><span class="lineCov">         20 :     outPara.ekt = NULL;</span>
+<span class="lineNum">     638 </span>            : 
+<span class="lineNum">     639 </span><span class="lineCov">         20 :     if (inSdp.cryptoCount &gt; 0)</span>
+<span class="lineNum">     640 </span>            :     {
+<span class="lineNum">     641 </span><span class="lineCov">         40 :         if (&quot;AES_CM_128_HMAC_SHA1_80&quot; == inSdp.crypto[0].crypto_suite)</span>
+<span class="lineNum">     642 </span><span class="lineCov">         20 :             outPara.cryptoSuiteType = WBX_CST_AES_CM_128_HMAC_SHA1_80;</span>
+<span class="lineNum">     643 </span><span class="lineNoCov">          0 :         else if (&quot;AES_CM_256_HMAC_SHA1_80&quot; == inSdp.crypto[0].crypto_suite)</span>
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :             outPara.cryptoSuiteType = WBX_CST_AES_CM_256_HMAC_SHA1_80;</span>
+<span class="lineNum">     645 </span><span class="lineNoCov">          0 :         else if (&quot;AES_CM_128_HMAC_SHA1_32&quot; == inSdp.crypto[0].crypto_suite)</span>
+<span class="lineNum">     646 </span><span class="lineNoCov">          0 :             outPara.cryptoSuiteType = WBX_CST_AES_CM_128_HMAC_SHA1_32;</span>
+<span class="lineNum">     647 </span>            :         else
+<span class="lineNum">     648 </span>            :         {
+<span class="lineNum">     649 </span><span class="lineNoCov">          0 :             RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::GetSrtpPara, unknown crypto suite type=&quot;&lt;&lt;inSdp.crypto[0].crypto_suite);</span>
+<span class="lineNum">     650 </span>            :             return false;
+<span class="lineNum">     651 </span>            :         }
+<span class="lineNum">     652 </span>            : 
+<span class="lineNum">     653 </span><span class="lineCov">         20 :         if (inSdp.crypto[0].keyCount &gt; 0)</span>
+<span class="lineNum">     654 </span>            :         { 
+<span class="lineNum">     655 </span><span class="lineCov">         20 :             std::string masterKeySalt = inSdp.crypto[0].key[0].key_salt;</span>
+<span class="lineNum">     656 </span><span class="lineCov">         20 :             Base64Decode( masterKeySalt, outPara.masterKeySalt);</span>
+<span class="lineNum">     657 </span>            :             //RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::GetSrtpPara, Base64 masterKeySalt=&quot;&lt;&lt;masterKeySalt&lt;&lt;&quot;, after masterKeySalt=&quot;&lt;&lt;outPara.masterKeySalt&lt;&lt;&quot;, len=&quot;&lt;&lt;outPara.masterKeySalt.size()&lt;&lt;&quot;, result=&quot;&lt;&lt;result);    
+<span class="lineNum">     658 </span>            :         }
+<span class="lineNum">     659 </span>            :         else
+<span class="lineNum">     660 </span>            :         {
+<span class="lineNum">     661 </span><span class="lineNoCov">          0 :             RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::GetSrtpPara, no crypto key&quot;);</span>
+<span class="lineNum">     662 </span>            :             return false;
+<span class="lineNum">     663 </span>            :         }
+<span class="lineNum">     664 </span>            : 
+<span class="lineNum">     665 </span><span class="lineCov">         20 :         outPara.rtpSecurityService = WBX_SEC_SERVICE_CONF_AUTH;     // Security service for RTP packet, confidentiality and authentication</span>
+<span class="lineNum">     666 </span><span class="lineCov">         20 :         outPara.rtcpSecurityService = WBX_SEC_SERVICE_CONF_AUTH;    // Where RTCP packet should be encrypted/decrypted. Note: RTCP authentication is required, RFC3711-SRTP.</span>
+<span class="lineNum">     667 </span><span class="lineCov">         20 :         outPara.fecOrder = WBX_ORDER_SRTP_FEC;               // Relationship between FEC and SRTP, MARI negotiation have more high priority than SRTP negotiation.</span>
+<span class="lineNum">     668 </span><span class="lineCov">         20 :         outPara.ekt = NULL;</span>
+<span class="lineNum">     669 </span>            : 
+<span class="lineNum">     670 </span><span class="lineCov">        320 :         RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::GetSrtpPara, type=&quot;&lt;&lt;outPara.cryptoSuiteType);//&lt;&lt;&quot;, masterKeySalt=&quot;&lt;&lt;outPara.masterKeySalt);       </span>
+<span class="lineNum">     671 </span>            :         return true;
+<span class="lineNum">     672 </span>            :     }
+<span class="lineNum">     673 </span>            :     else
+<span class="lineNum">     674 </span>            :     {
+<span class="lineNum">     675 </span><span class="lineNoCov">          0 :         RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::GetSrtpPara, no crypto&quot;);</span>
+<span class="lineNum">     676 </span>            :         return true;
+<span class="lineNum">     677 </span>            :     }
+<a name="678"><span class="lineNum">     678 </span>            : }</a>
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span><span class="lineNoCov">          0 : EWBXStreamDirection CCspRtpSession::ConvertSdpToWbxDirection(unsigned int inDir)</span>
+<span class="lineNum">     681 </span>            : {
+<span class="lineNum">     682 </span><span class="lineCov">          3 :     if (inDir == sdp::ext_map_direction_receive_only)</span>
+<span class="lineNum">     683 </span>            :         inDir = sdp::ext_map_direction_send_only;
+<span class="lineNum">     684 </span>            :   
+<span class="lineNum">     685 </span><span class="lineCov">          3 :     else if (inDir == sdp::ext_map_direction_send_only)</span>
+<span class="lineNum">     686 </span><span class="lineCov">          3 :         inDir = sdp::ext_map_direction_receive_only;</span>
+<span class="lineNum">     687 </span>            : 
+<span class="lineNum">     688 </span><span class="lineNoCov">          0 :     return (EWBXStreamDirection)inDir;</span>
+<a name="689"><span class="lineNum">     689 </span>            : }</a>
+<span class="lineNum">     690 </span>            : 
+<span class="lineNum">     691 </span><span class="lineCov">         33 : EWBXSCRRequestPolicyType CCspRtpSession::ConvertSdpToWbxPolicy(const std::string&amp; inPolicy)</span>
+<span class="lineNum">     692 </span>            : {
+<span class="lineNum">     693 </span><span class="lineCov">         33 :     EWBXSCRRequestPolicyType policy = WBX_POLICY_TYPE_NONE_POLICY;</span>
+<span class="lineNum">     694 </span>            :     
+<span class="lineNum">     695 </span><span class="lineCov">         66 :     if (std::string(&quot;as&quot;) == inPolicy)</span>
+<span class="lineNum">     696 </span>            :         policy = WBX_POLICY_TYPE_ACTIVE_SPEAKER;
+<span class="lineNum">     697 </span><span class="lineNoCov">          0 :     else if (std::string(&quot;rs&quot;) == inPolicy)</span>
+<span class="lineNum">     698 </span><span class="lineNoCov">          0 :         policy = WBX_POLICY_RECEIVER_SELECTED_SOURCE;</span>
+<span class="lineNum">     699 </span>            : 
+<span class="lineNum">     700 </span><span class="lineCov">        594 :     RTP_SESSION_INFO_THIS(&quot;CCspRtpSession::ConvertSdpToWbxPolicy, policy=&quot;&lt;&lt;policy&lt;&lt;&quot;, inPolicy=&quot;&lt;&lt;inPolicy);</span>
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span><span class="lineCov">         33 :     return policy;</span>
+<a name="703"><span class="lineNum">     703 </span>            : }</a>
+<span class="lineNum">     704 </span>            : 
+<a name="705"><span class="lineNum">     705 </span><span class="lineNoCov">          0 : ESdpMediaSessionType CCspRtpSession::GetSdpSessionType()</span></a>
+<span class="lineNum">     706 </span>            : { 
+<span class="lineNum">     707 </span><span class="lineCov">         24 :     if (MEDIA_VIDEO_SESSION == m_mediaType)</span>
+<span class="lineNum">     708 </span>            :         return VIDEO;
+<span class="lineNum">     709 </span><span class="lineCov">         21 :     else if (MEDIA_AUDIO_SESSION == m_mediaType)</span>
+<span class="lineNum">     710 </span>            :         return AUDIO;
+<span class="lineNum">     711 </span><span class="lineCov">          1 :     else if (MEDIA_HFPS_AS_SESSION == m_mediaType)</span>
+<span class="lineNum">     712 </span>            :         return VIDEO_SLIDES;
+<span class="lineNum">     713 </span>            : 
+<span class="lineNum">     714 </span><span class="lineNoCov">          0 :     return UNKNOWN;</span>
+<span class="lineNum">     715 </span>            : }
+<span class="lineNum">     716 </span>            : 
+<span class="lineNum">     717 </span><span class="lineCov">          1 : EWBXStreamDirection CCspRtpSession::GetSessionStatus(const std::string&amp; inOfferSdp)</span>
+<span class="lineNum">     718 </span>            : {
+<span class="lineNum">     719 </span><span class="lineCov">          1 :     EWBXStreamDirection dir = WBX_STREAM_NONE;</span>
+<span class="lineNum">     720 </span><span class="lineCov">          1 :     SessionDescriptionSharedPtr sdp = CSessionDescriptionFactory::Create(inOfferSdp);</span>
+<span class="lineNum">     721 </span><span class="lineCov">          1 :     if (sdp)</span>
+<span class="lineNum">     722 </span>            :     {
+<span class="lineNum">     723 </span><span class="lineCov">          1 :         ESdpMediaSessionStatus status = sdp-&gt;GetSessionStatus(GetSdpSessionType());</span>
+<span class="lineNum">     724 </span><span class="lineCov">          1 :         if (SEND_RECV == status)</span>
+<span class="lineNum">     725 </span>            :             dir = WBX_STREAM_INOUT;
+<span class="lineNum">     726 </span><span class="lineCov">          1 :         else if (SEND_ONLY == status)</span>
+<span class="lineNum">     727 </span>            :             dir = WBX_STREAM_OUT;
+<span class="lineNum">     728 </span><span class="lineNoCov">          0 :         else if (RECV_ONLY == status)</span>
+<span class="lineNum">     729 </span><span class="lineNoCov">          0 :             dir = WBX_STREAM_IN;</span>
+<span class="lineNum">     730 </span>            :     }
+<span class="lineNum">     731 </span><span class="lineCov">          2 :     return dir;</span>
+<a name="732"><span class="lineNum">     732 </span>            : }</a>
+<span class="lineNum">     733 </span>            : 
+<span class="lineNum">     734 </span><span class="lineCov">          2 : void CCspRtpSession::BufferRtpPacket(const std::string&amp; inRtpPacket)</span>
+<span class="lineNum">     735 </span>            : {
+<span class="lineNum">     736 </span><span class="lineCov">          2 :     m_inputRtpBuffer.push_back(inRtpPacket);</span>
+<span class="lineNum">     737 </span><span class="lineCov">          4 :     if ((MEDIA_AUDIO_SESSION == m_mediaType) &amp;&amp; (m_inputRtpBuffer.size() &gt; CSP_AUDIO_BUFFER_MAX))</span>
+<span class="lineNum">     738 </span>            :     {
+<span class="lineNum">     739 </span><span class="lineNoCov">          0 :         RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::BufferRtpPacket, drop first audio rtp packet m_hasRtcpHandlerReceivedSrPacket=&quot;&lt;&lt;m_hasRtcpHandlerReceivedSrPacket &lt;&lt;&quot;, rtp size=&quot;&lt;&lt;m_inputRtpBuffer.size());</span>
+<span class="lineNum">     740 </span><span class="lineNoCov">          0 :         m_inputRtpBuffer.pop_front();</span>
+<span class="lineNum">     741 </span>            :     }
+<span class="lineNum">     742 </span><span class="lineCov">          2 :     if ((MEDIA_VIDEO_SESSION == m_mediaType) &amp;&amp; (m_inputRtpBuffer.size() &gt; CSP_VIDEO_BUFFER_MAX))</span>
+<span class="lineNum">     743 </span>            :     {
+<span class="lineNum">     744 </span><span class="lineNoCov">          0 :         RTP_SESSION_ERROR_THIS(&quot;CCspRtpSession::BufferRtpPacket, drop first video rtp packet m_hasRtcpHandlerReceivedSrPacket=&quot;&lt;&lt;m_hasRtcpHandlerReceivedSrPacket &lt;&lt;&quot;, rtp size=&quot;&lt;&lt;m_inputRtpBuffer.size());</span>
+<span class="lineNum">     745 </span><span class="lineNoCov">          0 :         m_inputRtpBuffer.pop_front();</span>
+<span class="lineNum">     746 </span>            :     }
+<a name="747"><span class="lineNum">     747 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     748 </span>            : 
+<span class="lineNum">     749 </span><span class="lineNoCov">          0 : bool CCspRtpSession::InputBufferedRtpPackets()</span>
+<span class="lineNum">     750 </span>            : {
+<span class="lineNum">     751 </span><span class="lineNoCov">          0 :     if (m_inputRtpBuffer.empty())</span>
+<span class="lineNum">     752 </span>            :         return true;
+<span class="lineNum">     753 </span>            : 
+<span class="lineNum">     754 </span>            :     uint32_t inputNum = 0;
+<span class="lineNum">     755 </span><span class="lineNoCov">          0 :     do {</span>
+<span class="lineNum">     756 </span><span class="lineNoCov">          0 :         auto rtpPacket = m_inputRtpBuffer.front();</span>
+<span class="lineNum">     757 </span><span class="lineNoCov">          0 :         m_inputRtpBuffer.pop_front();</span>
+<span class="lineNum">     758 </span><span class="lineNoCov">          0 :         m_rtpSession-&gt;InputRtpPacket(rtpPacket);</span>
+<span class="lineNum">     759 </span><span class="lineNoCov">          0 :         ++inputNum;</span>
+<span class="lineNum">     760 </span><span class="lineNoCov">          0 :     } while (!m_inputRtpBuffer.empty() &amp;&amp; inputNum &lt; m_numOfBufferedRtpPacketToInput);</span>
+<span class="lineNum">     761 </span>            : 
+<a name="762"><span class="lineNum">     762 </span><span class="lineNoCov">          0 :     m_numOfBufferedRtpPacketToInput *= 2; // Double the number for the next input call. </span></a>
+<span class="lineNum">     763 </span><span class="lineNoCov">          0 :     return m_inputRtpBuffer.empty();</span>
+<span class="lineNum">     764 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     765 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

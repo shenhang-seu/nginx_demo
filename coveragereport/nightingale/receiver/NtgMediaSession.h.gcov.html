@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/receiver/NtgMediaSession.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/receiver</a> - NtgMediaSession.h<span style="font-size: 80%;"> (source / <a href="NtgMediaSession.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef NTG_MEDIA_SESSION_H_</a>
+<span class="lineNum">       2 </span>            : #define NTG_MEDIA_SESSION_H_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;WbxMMPSDKDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;WbxMMPSDKInterface.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : class CNtgMediaSession
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span>            : public:
+<span class="lineNum">      11 </span>            :         CNtgMediaSession();
+<span class="lineNum">      12 </span>            :         virtual ~CNtgMediaSession();
+<span class="lineNum">      13 </span>            :     void JoinSession();
+<span class="lineNum">      14 </span>            :         void JoinSessionResponse(EMediaSessionStatus inStatus);
+<span class="lineNum">      15 </span>            :     void GetSessionStatistics(uint32_t&amp; outDuration, uint32_t&amp; outFailCount, uint32_t&amp; outLeaveCount, EMediaSessionStatus&amp; outLastStatus
+<span class="lineNum">      16 </span>            :                 , uint32_t&amp; outFrameZeroTotalCount, uint32_t&amp; outContinueFrameZeroMaxCount);
+<span class="lineNum">      17 </span><span class="lineCov">          1 :         void SetSessionReconnectStatus(bool inStatus){ m_sessionReconnectStatus = inStatus;}</span>
+<span class="lineNum">      18 </span>            :         bool IsSessionReconnectStatus()const { return m_sessionReconnectStatus;}
+<span class="lineNum">      19 </span>            :         void FrameZeroStatistics(uint32_t inFrame);
+<span class="lineNum">      20 </span>            :     bool TryToSetSessionReconnectStatus();
+<span class="lineNum">      21 </span><span class="lineCov">          2 :     void ResetSessionContinuousJoinFailCount() {m_sessionContinuousJoinFailCount = 0;}</span>
+<span class="lineNum">      22 </span>            :     void Reset();
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : private:
+<span class="lineNum">      25 </span>            :         //monitor session join metrics
+<span class="lineNum">      26 </span>            :         bool m_sessionJoinFlag = false;
+<span class="lineNum">      27 </span>            :         uint32_t m_sessionJoinDuration = 0;//seconds
+<span class="lineNum">      28 </span>            :         uint32_t m_sessionJoinFailCount = 0;
+<span class="lineNum">      29 </span>            :         uint32_t m_sessionJoinLeaveCount = 0;
+<span class="lineNum">      30 </span>            :         EMediaSessionStatus m_sessionJoinStatus = MEDIA_SESSION_JOIN_SUCCESS;
+<span class="lineNum">      31 </span>            :         std::chrono::steady_clock::time_point m_sessionJoinStartTime;
+<span class="lineNum">      32 </span>            :         bool m_sessionReconnectStatus = false;
+<span class="lineNum">      33 </span>            :         //frame rate is zero total count
+<span class="lineNum">      34 </span>            :         uint32_t m_sessionFrameZeroTotalCount = 0;
+<span class="lineNum">      35 </span>            :         uint32_t m_sessionContinueFrameZeroCount = 0;
+<span class="lineNum">      36 </span>            :         uint32_t m_sessionContinueFrameZeroMaxCount = 0;
+<span class="lineNum">      37 </span>            :     //count for MEDIA_SESSION_JOIN_FAIL
+<span class="lineNum">      38 </span>            :     uint32_t m_sessionContinuousJoinFailCount = 0;
+<span class="lineNum">      39 </span>            : };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : typedef std::shared_ptr&lt;CNtgMediaSession&gt; NtgMediaSessionSharedPtr;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

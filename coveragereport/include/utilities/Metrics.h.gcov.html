@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/Metrics.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - Metrics.h<span style="font-size: 80%;"> (source / <a href="Metrics.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntryLo">71.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef METRICS_HPP</a>
+<span class="lineNum">       2 </span>            : #define METRICS_HPP
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;string&gt;
+<span class="lineNum">       5 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       6 </span>            : #include &quot;json/json.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         56 : const std::string APPLICATION_OTTER = &quot;otter&quot;;</span>
+<span class="lineNum">       9 </span><span class="lineCov">         56 : const std::string APPLICATION_NTG = &quot;ntg&quot;;</span>
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #define METRICS_HEAD_METRICSNAME &quot;metricName&quot;
+<span class="lineNum">      13 </span>            : #define METRICS_HEAD_FEATURENAME &quot;featureName&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : // suggested head fields
+<span class="lineNum">      16 </span>            : #define METRICS_HEAD_COMPONENTTYPE              &quot;componentType&quot;
+<span class="lineNum">      17 </span>            : #define METRICS_HEAD_COMPONENTADDRESS   &quot;componentAddress&quot;
+<span class="lineNum">      18 </span>            : #define METRICS_HEAD_COMPONENTVER               &quot;componentVer&quot;
+<span class="lineNum">      19 </span>            : #define METRICS_HEAD_SERVERID                   &quot;serverID&quot;
+<span class="lineNum">      20 </span>            : #define METRICS_HEAD_LOCATIONID                 &quot;locationID&quot;
+<span class="lineNum">      21 </span>            : #define METRICS_HEAD_CONFID                             &quot;confID&quot;
+<span class="lineNum">      22 </span>            : #define METRICS_HEAD_SESSION_ID                 &quot;sessionID&quot;
+<span class="lineNum">      23 </span>            : #define METRICS_HEAD_SESSION_TYPE               &quot;sessionType&quot;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : // mandatory head fields
+<span class="lineNum">      26 </span>            : #define METRICS_HEAD_TIMESTAMP                  &quot;timestamp&quot;
+<span class="lineNum">      27 </span>            : #define METRICS_HEAD_VALUES                             &quot;values&quot;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : // value fields
+<span class="lineNum">      30 </span>            : #define METRICS_VALUES_MIN                                      &quot;min&quot;
+<span class="lineNum">      31 </span>            : #define METRICS_VALUES_AVG                                      &quot;avg&quot;
+<span class="lineNum">      32 </span>            : #define METRICS_VALUES_MAX                                      &quot;max&quot;
+<span class="lineNum">      33 </span>            : #define METRICS_VALUES_TIME                                     &quot;time&quot;
+<span class="lineNum">      34 </span>            : #define METRICS_VALUES_RESULT                           &quot;result&quot;
+<span class="lineNum">      35 </span>            : #define METRICS_VALUES_MEDIA_TYPE                       &quot;mediaType&quot;
+<span class="lineNum">      36 </span>            : #define METRICS_VALUES_PLI_NUMBER                       &quot;pliNum&quot;
+<span class="lineNum">      37 </span>            : #define METRICS_VALUES_IDR_NUMBER                       &quot;idrNum&quot;
+<span class="lineNum">      38 </span>            : #define METRICS_VALUES_SOURCE_NUMBER            &quot;sourceNum&quot;
+<span class="lineNum">      39 </span>            : #define METRICS_VALUES_FRAME_NUMBER                     &quot;frameNum&quot;
+<span class="lineNum">      40 </span>            : #define METRICS_VALUES_FRAME_RATES                      &quot;frameRates&quot;
+<span class="lineNum">      41 </span>            : #define METRICS_VALUES_CME_MEDIA_SERVICE_ID     &quot;cmeMediaServiceId&quot;
+<span class="lineNum">      42 </span>            : #define METRICS_VALUES_REMOTE_IP                        &quot;remoteIp&quot;
+<span class="lineNum">      43 </span>            : #define METRICS_VALUES_RECV_NUM                 &quot;recvNum&quot;
+<span class="lineNum">      44 </span>            : #define METRICS_VALUES_LOSS_NUM                 &quot;lossNum&quot;
+<span class="lineNum">      45 </span>            : #define METRICS_VALUES_START_TIME                       &quot;startTime&quot;
+<span class="lineNum">      46 </span>            : #define METRICS_VALUES_END_TIME                         &quot;endTime&quot;
+<span class="lineNum">      47 </span>            : #define METRICS_VALUES_DURATION                         &quot;duration&quot;
+<span class="lineNum">      48 </span>            : #define METRICS_VALUES_SHARE_TYPE                       &quot;shareType&quot;
+<span class="lineNum">      49 </span>            : #define METRICS_VALUES_LOSS_RATE_HIGH_CNT   &quot;lossRateHighCnt&quot;
+<span class="lineNum">      50 </span>            : #define METRICS_VALUES_LOSS_RATE_MIDDLE_CNT &quot;lossRateMiddleCnt&quot;
+<span class="lineNum">      51 </span>            : #define METRICS_VALUES_LOSS_RATE_LOW_CNT    &quot;lossRateLowCnt&quot;
+<span class="lineNum">      52 </span>            : #define METRICS_VALUES_LOSS_RATE_HIGH_RATIO   &quot;lossRateHighRatio&quot;
+<span class="lineNum">      53 </span>            : #define METRICS_VALUES_LOSS_RATE_MIDDLE_RATIO &quot;lossRateMiddleRatio&quot;
+<span class="lineNum">      54 </span>            : #define METRICS_VALUES_LOSS_RATE_LOW_RATIO    &quot;lossRateLowRatio&quot;
+<span class="lineNum">      55 </span>            : #define METRICS_VALUES_LOSS_RATE_HIGH_CNT_PER_MINUTE   &quot;lossRateHighCntPerMinute&quot;
+<span class="lineNum">      56 </span>            : #define METRICS_VALUES_LOSS_RATE_MIDDLE_CNT_PER_MINUTE &quot;lossRateMiddleCntPerMinute&quot;
+<span class="lineNum">      57 </span>            : #define METRICS_VALUES_LOSS_RATE_LOW_CNT_PER_MINUTE    &quot;lossRateLowCntPerMinute&quot;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : #define METRICS_VALUES_TRACKING_ID               &quot;trackingId&quot;
+<span class="lineNum">      60 </span>            : #define METRICS_VALUES_HTTP_METHOD               &quot;method&quot;
+<span class="lineNum">      61 </span>            : #define METRICS_VALUES_HTTP_PATH                 &quot;path&quot;
+<span class="lineNum">      62 </span>            : #define METRICS_VALUES_HTTP_REQUEST_BODY         &quot;requestBody&quot;
+<span class="lineNum">      63 </span>            : #define METRICS_VALUES_HTTP_RESPONSE_BODY        &quot;responseBody&quot;
+<span class="lineNum">      64 </span>            : #define METRICS_VALUES_HTTP_STATUS               &quot;statusCode&quot;
+<span class="lineNum">      65 </span>            : #define METRICS_VALUES_HTTP_ERROR_CODE           &quot;errorCode&quot;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #define LOCAL_SOCKET_METRICS_NAME             &quot;localSocket&quot;
+<span class="lineNum">      68 </span>            : #define LOCAL_SOCKET_SEND                     &quot;send&quot;
+<span class="lineNum">      69 </span>            : #define LOCAL_SOCKET_RECV                     &quot;recv&quot;
+<span class="lineNum">      70 </span>            : #define METRICS_VALUES_FROM                   &quot;from&quot;
+<span class="lineNum">      71 </span>            : #define METRICS_VALUES_TO                     &quot;to&quot;
+<span class="lineNum">      72 </span>            : #define METRICS_VALUES_MESSAGE                &quot;message&quot;
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : #define HTTP_METRICS_NAME                     &quot;http&quot;
+<span class="lineNum">      75 </span>            : #define METRICS_FEATURE_HTTP_SERVER_REQUEST   &quot;serverRequest&quot;
+<span class="lineNum">      76 </span>            : #define METRICS_FEATURE_HTTP_SERVER_RESPONSE  &quot;serverResponse&quot;
+<span class="lineNum">      77 </span>            : #define METRICS_FEATURE_HTTP_CLIENT_REQUEST   &quot;clientRequest&quot;
+<span class="lineNum">      78 </span>            : #define METRICS_FEATURE_HTTP_CLIENT_RESPONSE  &quot;clientResponse&quot;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : #define NBR_SPEAKER_ATTRIBUTION_METRICS_NAME &quot;nbrSpeakerAttribution&quot;
+<span class="lineNum">      81 </span>            : #define METRICS_FEATURE_REPORT_SPEAKER_LIST_TO_SRS_FAIL &quot;reportSpeakerListToSrsFail&quot;
+<span class="lineNum">      82 </span>            : #define METRICS_VALUES_REPORT_FAIL_SPEAKER_LIST_SIZE &quot;reportFailSpeakerListSize&quot;
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : #ifndef UINT32
+<span class="lineNum">      85 </span>            : typedef unsigned int UINT32;
+<span class="lineNum">      86 </span>            : #endif
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : #ifndef INT32
+<span class="lineNum">      89 </span>            : typedef int INT32;
+<span class="lineNum">      90 </span>            : #endif
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            : #ifndef UINT64
+<span class="lineNum">      93 </span>            : typedef uint64_t UINT64;
+<span class="lineNum">      94 </span>            : #endif
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : #ifndef WORD
+<span class="lineNum">      97 </span>            : typedef unsigned short WORD;
+<span class="lineNum">      98 </span>            : #endif
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : namespace Metrics{
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :         struct MetricsWrapper{
+<span class="lineNum">     103 </span>            : 
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">        648 :                 struct MetricsValue{</span></a>
+<span class="lineNum">     105 </span>            :                         template&lt;typename T&gt;
+<span class="lineNum">     106 </span><span class="lineCov">       2016 :                         MetricsValue&amp; insert(const std::string&amp; k, const T&amp; v)</span>
+<span class="lineNum">     107 </span>            :                         {
+<span class="lineNum">     108 </span><span class="lineCov">       2016 :                                 valueContainer[k]=v;</span>
+<span class="lineNum">     109 </span><span class="lineCov">       2016 :                                 return *this;</span>
+<span class="lineNum">     110 </span>            :                         }
+<span class="lineNum">     111 </span>            :                         template&lt;typename T&gt;
+<span class="lineNum">     112 </span>            :                         MetricsValue&amp; insert(const std::string&amp; k, const std::vector&lt;T&gt;&amp; v)
+<span class="lineNum">     113 </span>            :                         {
+<span class="lineNum">     114 </span>            :                             valueContainer[k]=Json::Value(Json::arrayValue);
+<span class="lineNum">     115 </span>            :                             //for(size_t i=0;i&lt;v.size();i++)
+<span class="lineNum">     116 </span>            :                                 for(unsigned int i=0;i&lt;v.size();i++)
+<span class="lineNum">     117 </span>            :                             {
+<span class="lineNum">     118 </span>            :                                 valueContainer[k][i]=v[i];
+<span class="lineNum">     119 </span>            :                             }
+<span class="lineNum">     120 </span>            :                             return *this;
+<span class="lineNum">     121 </span>            :                         }
+<span class="lineNum">     122 </span>            :                         Json::Value&amp; get()
+<span class="lineNum">     123 </span>            :                         {
+<span class="lineNum">     124 </span>            :                                 return valueContainer;
+<span class="lineNum">     125 </span>            :                         }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :                 private:
+<span class="lineNum">     128 </span>            :                         Json::Value valueContainer;
+<span class="lineNum">     129 </span>            :                 };
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :                 struct MetricsTracer {
+<span class="lineNum">     132 </span>            :                         void trace(Json::Value&amp; jsonData);
+<span class="lineNum">     133 </span>            :                         void styledTrace(Json::Value&amp; jsonData);
+<span class="lineNum">     134 </span>            :                 };
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :                 MetricsWrapper(const std::string&amp; metricsName, const std::string&amp; featureName);
+<span class="lineNum">     138 </span>            :                 virtual ~MetricsWrapper()=0;
+<span class="lineNum">     139 </span>            :                 void writeMetrics(bool isStyled = false);
+<span class="lineNum">     140 </span>            :                 MetricsValue&amp; values();
+<span class="lineNum">     141 </span>            :                 MetricsValue&amp; head();
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :         private:
+<span class="lineNum">     144 </span>            :                 void initType(const std::string&amp; metricsName, const std::string&amp; featureName);
+<span class="lineNum">     145 </span>            :                 void initHead();
+<span class="lineNum">     146 </span>            :                 MetricsTracer m_metricsTracer;
+<span class="lineNum">     147 </span>            :                 MetricsValue m_values;
+<span class="lineNum">     148 </span>            :                 MetricsValue m_head;
+<span class="lineNum">     149 </span>            :         };
+<span class="lineNum">     150 </span>            : }
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : #endif
+<span class="lineNum">     153 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

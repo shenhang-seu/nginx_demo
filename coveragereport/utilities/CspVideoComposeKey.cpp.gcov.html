@@ -1,0 +1,501 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - utilities/CspVideoComposeKey.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">utilities</a> - CspVideoComposeKey.cpp<span style="font-size: 80%;"> (source / <a href="CspVideoComposeKey.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">188</td>
+            <td class="headerCovTableEntry">213</td>
+            <td class="headerCovTableEntryMed">88.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">32</td>
+            <td class="headerCovTableEntry">37</td>
+            <td class="headerCovTableEntryMed">86.5 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;cmath&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       3 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;SafariConfig.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;SafariUtilities.h&quot;
+<a name="7"><span class="lineNum">       7 </span>            : #include &quot;LoggerApi.h&quot;</a>
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span><span class="lineCov">         12 : CCspVideoComposeKey::CCspVideoComposeKey() </span>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">         12 : {}</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">        127 : CCspVideoComposeKey::CCspVideoComposeKey(</span>
+<span class="lineNum">      13 </span>            :             const std::string&amp; inVideoLayout, 
+<span class="lineNum">      14 </span>            :             const std::string&amp; inContentLayout, 
+<span class="lineNum">      15 </span>            :             uint32_t inResolution,
+<span class="lineNum">      16 </span>            :             bool inRetainOriginalContentResolution,
+<span class="lineNum">      17 </span>            :         uint32_t inPeriodicKeyframes,
+<span class="lineNum">      18 </span>            :         const std::string&amp; inLogoUrl)
+<span class="lineNum">      19 </span>            : : m_videoLayout(inVideoLayout)
+<span class="lineNum">      20 </span>            : , m_contentLayout(inContentLayout)
+<span class="lineNum">      21 </span>            : , m_resolution(inResolution)
+<span class="lineNum">      22 </span>            : , m_retainOriginalContentResolution(inRetainOriginalContentResolution)
+<span class="lineNum">      23 </span>            : , m_periodicKeyframes(inPeriodicKeyframes)
+<span class="lineNum">      24 </span><span class="lineCov">        127 : , m_logoUrl(inLogoUrl)</span>
+<span class="lineNum">      25 </span><span class="lineCov">        127 : {}</span>
+<span class="lineNum">      26 </span>            : 
+<a name="27"><span class="lineNum">      27 </span>            : //Add inToggleLogoControlList for WEBEX-110258: Add the Blacklist in the feature toggle which passed from CB.</a>
+<span class="lineNum">      28 </span>            : //If enable NBR 1080P or live streaming 1080P, resolution is 1080P
+<span class="lineNum">      29 </span><span class="lineCov">         16 : CCspVideoComposeKey::CCspVideoComposeKey(const Json::Value&amp; inJsonValue, const std::string&amp; inCspSessionType, const std::string&amp; inToggleLogoControlList, bool inIsEnableNBR1080P, uint32_t inStreamingResolution)</span>
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span><span class="lineCov">         48 :         if (JSON_IS_A_VALID_STRING(inJsonValue[JSON_KEY_VIDEO_LAYOUT]))</span>
+<span class="lineNum">      32 </span><span class="lineCov">         32 :                 m_videoLayout = inJsonValue[JSON_KEY_VIDEO_LAYOUT].asString();</span>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">         48 :         if (JSON_IS_A_VALID_STRING(inJsonValue[JSON_KEY_CONTENT_LAYOUT]))</span>
+<span class="lineNum">      35 </span><span class="lineCov">         32 :                 m_contentLayout = inJsonValue[JSON_KEY_CONTENT_LAYOUT].asString();</span>
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span><span class="lineCov">         16 :         if(JSON_IS_A_VALID_BOOL(inJsonValue[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT]))</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 m_enableFollowSyncedLayout = inJsonValue[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT].asBool();</span>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">         16 :         if (JSON_IS_A_VALID_UINT(inJsonValue[JSON_KEY_RESOLUTION]))</span>
+<span class="lineNum">      41 </span><span class="lineCov">         16 :                 m_resolution = inJsonValue[JSON_KEY_RESOLUTION].asUInt();</span>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         16 :         if (JSON_IS_A_VALID_BOOL(inJsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION]))</span>
+<span class="lineNum">      44 </span><span class="lineCov">         16 :                 m_retainOriginalContentResolution = inJsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION].asBool();</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :         else if (JSON_IS_A_VALID_UINT(inJsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION]))</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 m_retainOriginalContentResolution = (inJsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION].asUInt() != 0);</span>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">         16 :         if (JSON_IS_A_VALID_UINT(inJsonValue[JSON_KEY_PERIODIC_KEYFRAMES]))</span>
+<span class="lineNum">      49 </span><span class="lineCov">         16 :                 m_periodicKeyframes = inJsonValue[JSON_KEY_PERIODIC_KEYFRAMES].asUInt();</span>
+<span class="lineNum">      50 </span>            :         else
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 m_periodicKeyframes = GetPeriodicKeyframesByCspSessionType(inCspSessionType);</span>
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineCov">         18 :         if (JSON_IS_A_VALID_STRING(inJsonValue[JSON_KEY_LOGO_URL]))</span>
+<span class="lineNum">      54 </span><span class="lineCov">          2 :                 m_logoUrl = inJsonValue[JSON_KEY_LOGO_URL].asString();</span>
+<span class="lineNum">      55 </span>            :         else
+<span class="lineNum">      56 </span><span class="lineCov">         30 :                 m_logoUrl = GetLogoUrlByCspSessionType(inCspSessionType, inToggleLogoControlList);</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineCov">         16 :     if(inIsEnableNBR1080P &amp;&amp; inCspSessionType == SESSION_TYPE_WEBEX_NBR &amp;&amp; m_resolution == VIDEO_RESOLUTION_720P)</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         m_resolution = VIDEO_RESOLUTION_1080P;</span>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">         16 :         if((inStreamingResolution &gt;= VIDEO_RESOLUTION_1080P) &amp;&amp; (inCspSessionType!=SESSION_TYPE_WEBEX_NBR &amp;&amp; inCspSessionType!=SESSION_TYPE_WEBEX_MEETING_LIVE))</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 m_resolution = VIDEO_RESOLUTION_1080P;</span>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">         16 : }</span></a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">         43 : CCspVideoComposeKey::CCspVideoComposeKey(const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span><span class="lineCov">         43 :         operator =(inVideoComposeKey);</span>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">         43 : }</span></a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">        582 : CCspVideoComposeKey::~CCspVideoComposeKey() </span>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">        194 : {}</span></a>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineCov">         51 : CCspVideoComposeKey&amp; CCspVideoComposeKey::operator = (const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<span class="lineNum">      74 </span>            : {
+<span class="lineNum">      75 </span><span class="lineCov">         51 :     m_videoLayout = inVideoComposeKey.m_videoLayout;</span>
+<span class="lineNum">      76 </span><span class="lineCov">         51 :     m_contentLayout = inVideoComposeKey.m_contentLayout;</span>
+<span class="lineNum">      77 </span><span class="lineCov">         51 :     m_resolution = inVideoComposeKey.m_resolution;</span>
+<span class="lineNum">      78 </span><span class="lineCov">         51 :     m_retainOriginalContentResolution = inVideoComposeKey.m_retainOriginalContentResolution;</span>
+<span class="lineNum">      79 </span><span class="lineCov">         51 :     m_periodicKeyframes = inVideoComposeKey.m_periodicKeyframes;</span>
+<span class="lineNum">      80 </span><span class="lineCov">         51 :     m_logoUrl = inVideoComposeKey.m_logoUrl;</span>
+<span class="lineNum">      81 </span><span class="lineCov">         51 :         m_enableFollowSyncedLayout = inVideoComposeKey.m_enableFollowSyncedLayout;</span>
+<span class="lineNum">      82 </span><span class="lineCov">         51 :     return *this;</span>
+<a name="83"><span class="lineNum">      83 </span>            : }</a>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">          1 : bool CCspVideoComposeKey::operator == (const CCspVideoComposeKey&amp; inVideoComposeKey) const</span>
+<span class="lineNum">      86 </span>            : { 
+<span class="lineNum">      87 </span><span class="lineCov">          1 :     return m_videoLayout == inVideoComposeKey.m_videoLayout </span>
+<span class="lineNum">      88 </span><span class="lineCov">          1 :         &amp;&amp; m_contentLayout == inVideoComposeKey.m_contentLayout</span>
+<span class="lineNum">      89 </span><span class="lineCov">          1 :         &amp;&amp; m_resolution == inVideoComposeKey.m_resolution</span>
+<span class="lineNum">      90 </span>            :         &amp;&amp; m_retainOriginalContentResolution == inVideoComposeKey.m_retainOriginalContentResolution
+<span class="lineNum">      91 </span><span class="lineCov">          1 :         &amp;&amp; m_periodicKeyframes == inVideoComposeKey.m_periodicKeyframes</span>
+<span class="lineNum">      92 </span><span class="lineCov">          2 :         &amp;&amp; m_logoUrl == inVideoComposeKey.m_logoUrl;</span>
+<a name="93"><span class="lineNum">      93 </span>            : }</a>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">          4 : Json::Value CCspVideoComposeKey::ToJson() const </span>
+<span class="lineNum">      96 </span>            : { 
+<span class="lineNum">      97 </span><span class="lineCov">          4 :         Json::Value jsonValue;</span>
+<span class="lineNum">      98 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_VIDEO_LAYOUT] = m_videoLayout;</span>
+<span class="lineNum">      99 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_CONTENT_LAYOUT] = m_contentLayout;</span>
+<span class="lineNum">     100 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_RESOLUTION] = m_resolution;</span>
+<span class="lineNum">     101 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT] = m_enableFollowSyncedLayout;</span>
+<span class="lineNum">     102 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION] = m_retainOriginalContentResolution;</span>
+<span class="lineNum">     103 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_PERIODIC_KEYFRAMES] = m_periodicKeyframes;</span>
+<span class="lineNum">     104 </span><span class="lineCov">          4 :         jsonValue[JSON_KEY_LOGO_URL] = m_logoUrl;</span>
+<span class="lineNum">     105 </span><span class="lineCov">          4 :         return jsonValue;</span>
+<a name="106"><span class="lineNum">     106 </span>            : }</a>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineCov">         49 : std::string CCspVideoComposeKey::ToString() const </span>
+<span class="lineNum">     109 </span>            : { 
+<span class="lineNum">     110 </span><span class="lineCov">        833 :     return &quot;{&quot; + m_videoLayout + &quot;,&quot; + m_contentLayout + &quot;,&quot; + std::to_string(m_resolution) + &quot;,&quot; + (m_retainOriginalContentResolution?&quot;Y&quot;:&quot;N&quot;) + &quot;,&quot; + &quot;,&quot; + std::to_string(m_periodicKeyframes) + &quot;}&quot;; </span>
+<a name="111"><span class="lineNum">     111 </span>            : }</a>
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 : CCspVideoComposeKey::operator std::string() const </span>
+<span class="lineNum">     114 </span>            : { 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :         return ToString(); </span>
+<a name="116"><span class="lineNum">     116 </span>            : }</a>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineCov">        463 : const std::string&amp; CCspVideoComposeKey::GetVideoLayout() const </span>
+<span class="lineNum">     119 </span>            : { 
+<span class="lineNum">     120 </span><span class="lineCov">        463 :         return m_videoLayout; </span>
+<a name="121"><span class="lineNum">     121 </span>            : }</a>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">        147 : const std::string&amp; CCspVideoComposeKey::GetContentLayout() const </span>
+<span class="lineNum">     124 </span>            : { 
+<span class="lineNum">     125 </span><span class="lineCov">        147 :         return m_contentLayout; </span>
+<a name="126"><span class="lineNum">     126 </span>            : }</a>
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 : const bool CCspVideoComposeKey::GetEnableFollowSyncedLayoutParam() const</span>
+<span class="lineNum">     129 </span>            : {
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :     return m_enableFollowSyncedLayout;</span>
+<a name="131"><span class="lineNum">     131 </span>            : }</a>
+<span class="lineNum">     132 </span>            : 
+<a name="133"><span class="lineNum">     133 </span><span class="lineCov">          6 : uint32_t CCspVideoComposeKey::GetResolution() const </span></a>
+<span class="lineNum">     134 </span>            : { 
+<span class="lineNum">     135 </span><span class="lineCov">        134 :         return m_resolution; </span>
+<a name="136"><span class="lineNum">     136 </span>            : }</a>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineCov">         15 : uint32_t CCspVideoComposeKey::GetMaxFrameSize() const</span>
+<span class="lineNum">     139 </span>            : {
+<span class="lineNum">     140 </span><span class="lineCov">         30 :         return GetMaxFrameSize(m_resolution);</span>
+<a name="141"><span class="lineNum">     141 </span>            : }</a>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span><span class="lineCov">         11 : bool CCspVideoComposeKey::RetainOriginalContentResolution() const </span>
+<span class="lineNum">     144 </span>            : { 
+<span class="lineNum">     145 </span><span class="lineCov">        107 :         return m_retainOriginalContentResolution; </span>
+<a name="146"><span class="lineNum">     146 </span>            : }</a>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineCov">         25 : uint32_t CCspVideoComposeKey::GetPeriodicKeyframes() const</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span><span class="lineCov">         89 :         return m_periodicKeyframes;</span>
+<a name="151"><span class="lineNum">     151 </span>            : }</a>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineCov">         29 : const std::string&amp; CCspVideoComposeKey::GetLogoUrl() const </span>
+<span class="lineNum">     154 </span>            : { 
+<span class="lineNum">     155 </span><span class="lineCov">         29 :         return m_logoUrl; </span>
+<a name="156"><span class="lineNum">     156 </span>            : }</a>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 : int CCspVideoComposeKey::GetHeight() const</span>
+<span class="lineNum">     159 </span>            : {
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         return GetHeight(m_resolution);</span>
+<a name="161"><span class="lineNum">     161 </span>            : }</a>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 : int CCspVideoComposeKey::GetWidth() const</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :         return GetWidth(m_resolution);</span>
+<a name="166"><span class="lineNum">     166 </span>            : }</a>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineCov">         23 : bool CCspVideoComposeKey::IsLayoutInJsonArraySupported(const Json::Value&amp; inJsonArray)</span>
+<span class="lineNum">     169 </span>            : {
+<span class="lineNum">     170 </span><span class="lineCov">         23 :         if (JSON_IS_A_VALID_ARRAY(inJsonArray))</span>
+<span class="lineNum">     171 </span>            :         {
+<span class="lineNum">     172 </span><span class="lineCov">         59 :                 for(auto&amp; videoComposeKey : inJsonArray)</span>
+<span class="lineNum">     173 </span>            :                 {
+<span class="lineNum">     174 </span><span class="lineCov">         75 :                         if( !JSON_IS_A_VALID_STRING(videoComposeKey[JSON_KEY_VIDEO_LAYOUT]) </span>
+<span class="lineNum">     175 </span><span class="lineCov">         60 :                                 || !JSON_IS_A_VALID_STRING(videoComposeKey[JSON_KEY_CONTENT_LAYOUT])</span>
+<span class="lineNum">     176 </span><span class="lineCov">         60 :                                 || CspSupportedVideoLayoutSet.find(videoComposeKey[JSON_KEY_VIDEO_LAYOUT].asString()) == CspSupportedVideoLayoutSet.end()</span>
+<span class="lineNum">     177 </span><span class="lineCov">         57 :                                 || CspSupportedContentLayoutSet.find(videoComposeKey[JSON_KEY_CONTENT_LAYOUT].asString()) == CspSupportedContentLayoutSet.end())</span>
+<span class="lineNum">     178 </span><span class="lineCov">          1 :                                 return false;</span>
+<span class="lineNum">     179 </span>            :                         
+<span class="lineNum">     180 </span>            :                 }
+<span class="lineNum">     181 </span><span class="lineCov">         14 :                 return true;</span>
+<span class="lineNum">     182 </span>            :         }
+<span class="lineNum">     183 </span>            :         return false;
+<a name="184"><span class="lineNum">     184 </span>            : }</a>
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span><span class="lineCov">         23 : void CCspVideoComposeKey::GetListByJsonBodyOrCspSessionType(const Json::Value&amp; inJsonBody, const std::string&amp; inCspSessionType, CspVideoComposeKeyList&amp; outVideoComposeKeyList)</span>
+<span class="lineNum">     187 </span>            : {
+<span class="lineNum">     188 </span><span class="lineCov">         23 :         const Json::Value&amp; jsonArrayVideoComposeKeyList = inJsonBody[JSON_KEY_EXTEND_INFO][JSON_KEY_VIDEO_COMPOSE_KEY_LIST];</span>
+<span class="lineNum">     189 </span><span class="lineCov">         23 :         auto jsonToggleLogoControlList = GetFeatureToggleValue(inJsonBody[JSON_KEY_EXTEND_INFO][JSON_KEY_FEATURE_TOGGLES], CSP_FT_KEY_DISABLE_LOGO_SERVICE_LIST);</span>
+<span class="lineNum">     190 </span>            :         std::string strToggleLogoControlList;
+<span class="lineNum">     191 </span><span class="lineCov">         23 :         if(jsonToggleLogoControlList.isString())</span>
+<span class="lineNum">     192 </span><span class="lineCov">         28 :                 strToggleLogoControlList = jsonToggleLogoControlList.asString();</span>
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span><span class="lineCov">         23 :         bool isEnableNBR1080P = IsEnableNBR1080P(inJsonBody);</span>
+<span class="lineNum">     195 </span><span class="lineCov">         23 :         uint32_t streamingResolution = GetStreamingResolution(inJsonBody);</span>
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span><span class="lineCov">         23 :         if (IsLayoutInJsonArraySupported(jsonArrayVideoComposeKeyList))</span>
+<span class="lineNum">     198 </span><span class="lineCov">         14 :                 GetListByJsonArray(jsonArrayVideoComposeKeyList, strToggleLogoControlList, inCspSessionType, isEnableNBR1080P, streamingResolution, outVideoComposeKeyList);</span>
+<span class="lineNum">     199 </span>            :         else
+<span class="lineNum">     200 </span><span class="lineCov">         32 :                 GetListByCspSessionType(inCspSessionType, strToggleLogoControlList, isEnableNBR1080P, streamingResolution, outVideoComposeKeyList);</span>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">         14 : void CCspVideoComposeKey::GetListByJsonArray(const Json::Value&amp; inJsonArray, const std::string&amp; inToggleLogoControlList, const std::string&amp; inCspSessionType, bool inIsEnableNBR1080P, uint32_t inStreamingResolution, CspVideoComposeKeyList&amp; outVideoComposeKeyList)</span>
+<span class="lineNum">     204 </span>            : {
+<span class="lineNum">     205 </span><span class="lineCov">         14 :     if (JSON_IS_A_VALID_ARRAY(inJsonArray))</span>
+<span class="lineNum">     206 </span>            :     {
+<span class="lineNum">     207 </span><span class="lineCov">         14 :         for (uint32_t i = 0; i &lt; inJsonArray.size(); ++i)</span>
+<span class="lineNum">     208 </span>            :         {
+<span class="lineNum">     209 </span><span class="lineCov">         14 :             outVideoComposeKeyList.emplace_back(inJsonArray[i], inCspSessionType, inToggleLogoControlList, inIsEnableNBR1080P, inStreamingResolution);</span>
+<span class="lineNum">     210 </span>            :         }
+<span class="lineNum">     211 </span>            :     }
+<a name="212"><span class="lineNum">     212 </span><span class="lineCov">         14 : }</span></a>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineCov">         53 : void CCspVideoComposeKey::GetListByCspSessionType(const std::string&amp; inCspSessionType, const std::string&amp; inToggleLogoControlList, bool inIsEnableNBR1080P, uint32_t inStreamingResolution, CspVideoComposeKeyList&amp; outVideoComposeKeyList)</span>
+<span class="lineNum">     215 </span>            : {
+<span class="lineNum">     216 </span><span class="lineCov">         53 :         auto logoUrl = GetLogoUrlByCspSessionType(inCspSessionType, inToggleLogoControlList);</span>
+<span class="lineNum">     217 </span><span class="lineCov">         53 :         uint32_t periodicKeyframes = GetPeriodicKeyframesByCspSessionType(inCspSessionType); // In seconds. </span>
+<span class="lineNum">     218 </span><span class="lineCov">         53 :         if (inCspSessionType == SESSION_TYPE_WEBEX_MEETING_LIVE)</span>
+<span class="lineNum">     219 </span>            :         {
+<span class="lineNum">     220 </span><span class="lineCov">         11 :                 outVideoComposeKeyList.emplace_back(VIDEO_LAYOUT_PROMINENT, VIDEO_LAYOUT_PROMINENT, VIDEO_RESOLUTION_180P, false, periodicKeyframes, logoUrl);</span>
+<span class="lineNum">     221 </span><span class="lineCov">         11 :                 outVideoComposeKeyList.emplace_back(VIDEO_LAYOUT_PROMINENT, VIDEO_LAYOUT_PROMINENT, VIDEO_RESOLUTION_360P, false, periodicKeyframes, logoUrl);</span>
+<span class="lineNum">     222 </span><span class="lineCov">         11 :                 outVideoComposeKeyList.emplace_back(VIDEO_LAYOUT_PROMINENT, VIDEO_LAYOUT_PROMINENT, VIDEO_RESOLUTION_720P, true, periodicKeyframes, logoUrl);</span>
+<span class="lineNum">     223 </span><span class="lineCov">         11 :                 return;</span>
+<span class="lineNum">     224 </span>            :         }
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span><span class="lineCov">         42 :         uint32_t resolution = VIDEO_RESOLUTION_720P;</span>
+<span class="lineNum">     227 </span><span class="lineCov">         42 :         if (inCspSessionType == SESSION_TYPE_WEBEX_NBR)</span>
+<span class="lineNum">     228 </span>            :         {
+<span class="lineNum">     229 </span><span class="lineCov">          7 :             if(inIsEnableNBR1080P)</span>
+<span class="lineNum">     230 </span><span class="lineCov">          1 :             resolution = VIDEO_RESOLUTION_1080P;</span>
+<span class="lineNum">     231 </span><span class="lineCov">          7 :                 outVideoComposeKeyList.emplace_back(VIDEO_LAYOUT_PROMINENT, VIDEO_LAYOUT_PROMINENT, resolution, true, periodicKeyframes, logoUrl);</span>
+<span class="lineNum">     232 </span><span class="lineCov">          7 :                 return;</span>
+<span class="lineNum">     233 </span>            :         }
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span><span class="lineCov">         35 :         if(inStreamingResolution &gt;= VIDEO_RESOLUTION_1080P)</span>
+<span class="lineNum">     236 </span><span class="lineCov">          1 :                 resolution = VIDEO_RESOLUTION_1080P;</span>
+<span class="lineNum">     237 </span><span class="lineCov">         35 :         outVideoComposeKeyList.emplace_back(VIDEO_LAYOUT_PROMINENT, VIDEO_LAYOUT_SINGLE_PLUS_SPEAKER, resolution, false, periodicKeyframes, logoUrl);</span>
+<a name="238"><span class="lineNum">     238 </span>            : }</a>
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineCov">         29 : bool CCspVideoComposeKey::IsEnableNBR1080P(const Json::Value&amp; inJsonBody)</span>
+<span class="lineNum">     241 </span>            : {
+<span class="lineNum">     242 </span><span class="lineCov">         29 :     const auto&amp; cspInfo = inJsonBody[JSON_KEY_EXTEND_INFO][JSON_KEY_CSP_INFO];</span>
+<span class="lineNum">     243 </span><span class="lineCov">         29 :     if (cspInfo.isMember(CSP_FT_KEY_VIDEO_1080P_RESOLUTION_ENABLED) &amp;&amp; cspInfo[CSP_FT_KEY_VIDEO_1080P_RESOLUTION_ENABLED].isUInt())</span>
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :         return cspInfo[CSP_FT_KEY_VIDEO_1080P_RESOLUTION_ENABLED].asUInt() != 0;</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :         return false;
+<a name="247"><span class="lineNum">     247 </span>            : }</a>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 : void CCspVideoComposeKey::ChangeEnableFollowSyncedLayoutToBool(Json::Value&amp; videoComposeKeyList)</span>
+<span class="lineNum">     250 </span>            : {
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :     for (auto&amp; videoComposeKeyElem : videoComposeKeyList)</span>
+<span class="lineNum">     252 </span>            :     {
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                 if(videoComposeKeyElem.isMember(JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT) &amp;&amp; JSON_IS_A_VALID_UINT(videoComposeKeyElem[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT]))</span>
+<span class="lineNum">     254 </span>            :                 {
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                         if(videoComposeKeyElem[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT].asUInt())</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :                                 videoComposeKeyElem[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT] = true;</span>
+<span class="lineNum">     257 </span>            :                         else
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :                                 videoComposeKeyElem[JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT] = false;</span>
+<span class="lineNum">     259 </span>            :                 }
+<span class="lineNum">     260 </span>            :         }
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">         29 : uint32_t CCspVideoComposeKey::GetStreamingResolution(const Json::Value&amp; inJsonBody)</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span><span class="lineCov">         29 :         uint32_t streamingResolution = 0;</span>
+<span class="lineNum">     266 </span><span class="lineCov">         29 :         const auto&amp; cspStreamInfo = inJsonBody[JSON_KEY_EXTEND_INFO][JSON_KEY_CSP_STREAM_INFO];</span>
+<span class="lineNum">     267 </span><span class="lineCov">         29 :         if(cspStreamInfo.isMember(CSP_FT_KEY_STREAMING_RESOLUTION) &amp;&amp; cspStreamInfo[CSP_FT_KEY_STREAMING_RESOLUTION].isString())</span>
+<span class="lineNum">     268 </span>            :         {
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :                 if(cspStreamInfo[CSP_FT_KEY_STREAMING_RESOLUTION].asString() == &quot;1920x1080&quot;)</span>
+<span class="lineNum">     270 </span>            :                         streamingResolution = VIDEO_RESOLUTION_1080P;
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :                 else if( cspStreamInfo[CSP_FT_KEY_STREAMING_RESOLUTION].asString() == &quot;1280x720&quot;)</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :                         streamingResolution = VIDEO_RESOLUTION_720P;</span>
+<span class="lineNum">     273 </span>            :         }
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineCov">         29 :         return streamingResolution;</span>
+<a name="276"><span class="lineNum">     276 </span>            : }</a>
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span><span class="lineCov">         68 : std::string CCspVideoComposeKey::GetLogoUrlByCspSessionType(const std::string&amp; inCspSessionType, const std::string&amp; inToggleLogoControlList)</span>
+<span class="lineNum">     279 </span>            : {
+<span class="lineNum">     280 </span><span class="lineCov">         68 :         if(!inToggleLogoControlList.empty())</span>
+<span class="lineNum">     281 </span>            :         {
+<span class="lineNum">     282 </span><span class="lineCov">         22 :                 std::vector&lt;std::string&gt; logoControlList = SafariSplit(inToggleLogoControlList, &quot;,&quot;);</span>
+<span class="lineNum">     283 </span><span class="lineCov">         11 :                 std::string sessionType{inCspSessionType};</span>
+<span class="lineNum">     284 </span><span class="lineCov">         11 :                 std::transform(sessionType.begin(), sessionType.end(), sessionType.begin(), ::tolower);</span>
+<span class="lineNum">     285 </span><span class="lineCov">         58 :                 for(auto&amp; logoControlWord : logoControlList)</span>
+<span class="lineNum">     286 </span>            :                 {
+<span class="lineNum">     287 </span><span class="lineCov">         21 :                         std::transform(logoControlWord.begin(), logoControlWord.end(), logoControlWord.begin(), ::tolower);</span>
+<span class="lineNum">     288 </span>            :             logoControlWord.erase(std::remove_if(logoControlWord.begin(), logoControlWord.end(),
+<span class="lineNum">     289 </span><span class="lineCov">        138 :                                     [](unsigned char x){return std::isspace(x);}),</span>
+<span class="lineNum">     290 </span><span class="lineCov">         42 :                                     logoControlWord.end());</span>
+<span class="lineNum">     291 </span><span class="lineCov">         42 :             if(logoControlWord == std::string{&quot;all&quot;})</span>
+<span class="lineNum">     292 </span>            :             {
+<span class="lineNum">     293 </span>            :                 // The feature toggle has key word all, so return an empty URL.
+<span class="lineNum">     294 </span><span class="lineCov">         14 :                 LOG_INFO(&quot;VIDEO_COMPOSEKEY&quot;, &quot;&quot;, &quot;CCspVideoComposeKey::GetLogoUrlByCspSessionType, feature toggle has keyword all, return empty URL. sessionType=&quot; &lt;&lt; inCspSessionType);</span>
+<span class="lineNum">     295 </span><span class="lineCov">          1 :                 return &quot;&quot;;</span>
+<span class="lineNum">     296 </span>            :             }
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineCov">         20 :                         if(sessionType.find(logoControlWord) != sessionType.npos)</span>
+<span class="lineNum">     299 </span>            :                         {
+<span class="lineNum">     300 </span><span class="lineCov">         84 :                                 LOG_INFO(&quot;VIDEO_COMPOSEKEY&quot;, &quot;&quot;, &quot;CCspVideoComposeKey::GetLogoUrlByCspSessionType, sessionType is in the ToggleLogoControlList, sessionType=&quot; &lt;&lt; inCspSessionType);</span>
+<span class="lineNum">     301 </span>            :                                 // The session type is in the toggle-blacklist, so return an empty URL.
+<span class="lineNum">     302 </span><span class="lineCov">          6 :                                 return &quot;&quot;;</span>
+<span class="lineNum">     303 </span>            :                         }
+<span class="lineNum">     304 </span><span class="lineCov">          4 :                 }</span>
+<span class="lineNum">     305 </span>            :         }
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span><span class="lineCov">         61 :         JsonValue jsonConfigTargetsWithoutLogo;</span>
+<span class="lineNum">     308 </span><span class="lineCov">        122 :         CSafariConfig::GetJsonValue(&quot;otter.edonus.logoControl.targetsWithoutLogo&quot;, jsonConfigTargetsWithoutLogo);</span>
+<span class="lineNum">     309 </span><span class="lineCov">         61 :         if (JSON_IS_A_VALID_ARRAY(jsonConfigTargetsWithoutLogo))</span>
+<span class="lineNum">     310 </span>            :         {
+<span class="lineNum">     311 </span><span class="lineCov">         46 :                 for (auto i = 0u; i &lt; jsonConfigTargetsWithoutLogo.size(); ++i)</span>
+<span class="lineNum">     312 </span>            :                 {
+<span class="lineNum">     313 </span><span class="lineCov">        212 :                         if (JSON_IS_A_VALID_STRING(jsonConfigTargetsWithoutLogo[i]) &amp;&amp; jsonConfigTargetsWithoutLogo[i].asString() == inCspSessionType)</span>
+<span class="lineNum">     314 </span>            :                         {
+<span class="lineNum">     315 </span><span class="lineCov">         98 :                                 LOG_INFO(&quot;VIDEO_COMPOSEKEY&quot;, &quot;&quot;, &quot;CCspVideoComposeKey::GetLogoUrlByCspSessionType, sessionType is in the LocalConfigLogoControlList, sessionType=&quot; &lt;&lt; inCspSessionType);</span>
+<span class="lineNum">     316 </span>            :                                 // The session type is in the config-blacklist, so return an empty URL.
+<span class="lineNum">     317 </span><span class="lineCov">          7 :                                 return &quot;&quot;;</span>
+<span class="lineNum">     318 </span>            :                         }
+<span class="lineNum">     319 </span>            :                 }
+<span class="lineNum">     320 </span>            :         }
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span><span class="lineCov">        108 :         JsonValue jsonLogos;</span>
+<span class="lineNum">     323 </span><span class="lineCov">        108 :         CSafariConfig::GetJsonValue(&quot;otter.edonus.logoControl.logos&quot;, jsonLogos);</span>
+<span class="lineNum">     324 </span><span class="lineCov">         54 :         if (!JSON_IS_A_VALID_ARRAY(jsonLogos))</span>
+<span class="lineNum">     325 </span><span class="lineCov">         47 :                 return &quot;&quot;;</span>
+<span class="lineNum">     326 </span>            :         std::string defaultUrl;
+<span class="lineNum">     327 </span><span class="lineCov">         14 :         for (auto i = 0u; i &lt; jsonLogos.size(); ++i)</span>
+<span class="lineNum">     328 </span>            :         {
+<span class="lineNum">     329 </span><span class="lineCov">         49 :                 if (JSON_IS_A_VALID_STRING(jsonLogos[i][&quot;name&quot;]) &amp;&amp; jsonLogos[i][&quot;name&quot;].asString() == &quot;DEFAULT&quot; &amp;&amp; JSON_IS_A_VALID_STRING(jsonLogos[i][&quot;url&quot;]))</span>
+<span class="lineNum">     330 </span>            :                 {
+<span class="lineNum">     331 </span><span class="lineCov">         14 :                         defaultUrl = jsonLogos[i][&quot;url&quot;].asString();</span>
+<span class="lineNum">     332 </span>            :                 }
+<span class="lineNum">     333 </span>            :         }
+<span class="lineNum">     334 </span><span class="lineCov">         98 :         LOG_INFO(&quot;VIDEO_COMPOSEKEY&quot;, &quot;&quot;, &quot;CCspVideoComposeKey::GetLogoUrlByCspSessionType, return default URL, sessionType=&quot; &lt;&lt; inCspSessionType);</span>
+<span class="lineNum">     335 </span><span class="lineCov">         61 :         return defaultUrl;</span>
+<a name="336"><span class="lineNum">     336 </span>            : }</a>
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span><span class="lineCov">         53 : uint32_t CCspVideoComposeKey::GetPeriodicKeyframesByCspSessionType(const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     339 </span>            : {
+<span class="lineNum">     340 </span>            :         /* Use ',' as the delimiter as the custom CSP session type might contain the char '.' */
+<span class="lineNum">     341 </span><span class="lineCov">         53 :         std::string configNamePrefix = &quot;otter,edonus,periodicKeyframes,&quot;;</span>
+<span class="lineNum">     342 </span><span class="lineCov">         53 :         uint32_t defaultPeriodicKeyframes = 2;</span>
+<span class="lineNum">     343 </span><span class="lineCov">        106 :         CSafariConfig::GetUInt32Value(configNamePrefix + &quot;default&quot;, defaultPeriodicKeyframes, 2, ',');</span>
+<span class="lineNum">     344 </span><span class="lineCov">         53 :         if (inCspSessionType == SESSION_TYPE_WEBEX_NBR)</span>
+<span class="lineNum">     345 </span>            :         {
+<span class="lineNum">     346 </span><span class="lineCov">          7 :                 defaultPeriodicKeyframes = 30;</span>
+<span class="lineNum">     347 </span>            :         }
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span>            :         /*
+<span class="lineNum">     350 </span>            :          * configName looks like 
+<span class="lineNum">     351 </span>            :          *      &quot;otter.edonus.periodicKeyframes.WEBEX_MEETING_LIVE&quot;, 
+<span class="lineNum">     352 </span>            :          *      &quot;otter.edonus.periodicKeyframes.WEBEX_NBR&quot;,
+<span class="lineNum">     353 </span>            :          *      &quot;otter.edonus.periodicKeyframes.WEBEX_FB_LIVE&quot;, 
+<span class="lineNum">     354 </span>            :          *      ...
+<span class="lineNum">     355 </span>            :          */
+<span class="lineNum">     356 </span><span class="lineCov">         53 :         uint32_t periodicKeyframes = defaultPeriodicKeyframes;</span>
+<span class="lineNum">     357 </span><span class="lineCov">        106 :         CSafariConfig::GetUInt32Value(configNamePrefix + inCspSessionType, periodicKeyframes, defaultPeriodicKeyframes, ',');</span>
+<span class="lineNum">     358 </span><span class="lineCov">        106 :         return periodicKeyframes;</span>
+<span class="lineNum">     359 </span>            : }
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span>            : // bool CCspVideoComposeKey::IsValidVideoComposeKey(const Json::Value&amp; inJsonValue)
+<span class="lineNum">     362 </span>            : // {
+<span class="lineNum">     363 </span>            : //      if (!JSON_IS_A_VALID_STRING(inJsonValue[JSON_KEY_VIDEO_LAYOUT]))
+<span class="lineNum">     364 </span>            : //              return false;
+<span class="lineNum">     365 </span>            : //      if (!JSON_IS_A_VALID_STRING(inJsonValue[JSON_KEY_CONTENT_LAYOUT]))
+<span class="lineNum">     366 </span>            : //              return false;
+<span class="lineNum">     367 </span>            : //      if (!JSON_IS_A_VALID_UINT(inJsonValue[JSON_KEY_RESOLUTION]))
+<span class="lineNum">     368 </span>            : //              return false;
+<span class="lineNum">     369 </span>            : //      if (!JSON_IS_A_VALID_BOOL(inJsonValue[JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION]))
+<span class="lineNum">     370 </span>            : //              return false;
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span>            : //      return true;
+<a name="373"><span class="lineNum">     373 </span>            : // }</a>
+<span class="lineNum">     374 </span>            : 
+<span class="lineNum">     375 </span><span class="lineCov">          5 : uint32_t CCspVideoComposeKey::GetMaxFrameSize(uint32_t inResolution)</span>
+<span class="lineNum">     376 </span>            : {
+<span class="lineNum">     377 </span>            :         /* maxFrameSize = ((height + 15) &gt;&gt; 4) * ((width + 15) &gt;&gt; 4) */
+<span class="lineNum">     378 </span><span class="lineCov">         40 :         return ((GetHeight(inResolution) + 15) &gt;&gt; 4) * ((GetWidth(inResolution) + 15) &gt;&gt; 4);</span>
+<a name="379"><span class="lineNum">     379 </span>            : }</a>
+<span class="lineNum">     380 </span>            : 
+<a name="381"><span class="lineNum">     381 </span><span class="lineCov">          3 : int CCspVideoComposeKey::GetHeight(uint32_t inResolution)</span></a>
+<span class="lineNum">     382 </span>            : {
+<span class="lineNum">     383 </span><span class="lineCov">         25 :         return inResolution;</span>
+<span class="lineNum">     384 </span>            : }
+<span class="lineNum">     385 </span>            : 
+<span class="lineNum">     386 </span><span class="lineCov">          2 : int CCspVideoComposeKey::GetWidth(uint32_t inResolution)</span>
+<span class="lineNum">     387 </span>            : {
+<span class="lineNum">     388 </span><span class="lineCov">         22 :         return GetHeight(inResolution) * 16 / 9;</span>
+<a name="389"><span class="lineNum">     389 </span>            : }</a>
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span><span class="lineCov">         12 : CCspVideoDimension CCspVideoComposeKey::ConvertPixels2VideoDimension(uint32_t inNumPixels)</span>
+<span class="lineNum">     392 </span>            : {
+<span class="lineNum">     393 </span><span class="lineCov">         12 :         switch (inNumPixels)</span>
+<span class="lineNum">     394 </span>            :         {
+<span class="lineNum">     395 </span><span class="lineCov">          1 :                 case 2073600: return CCspVideoDimension(1920, 1080, 8160);</span>
+<span class="lineNum">     396 </span><span class="lineCov">          6 :                 case 2304000: return CCspVideoDimension(1920, 1200, 9000);</span>
+<span class="lineNum">     397 </span><span class="lineCov">          1 :                 case 4665600: return CCspVideoDimension(2880, 1620, 18360);</span>
+<span class="lineNum">     398 </span><span class="lineCov">          1 :                 case 8294400: return CCspVideoDimension(3840, 2160, 32400);</span>
+<span class="lineNum">     399 </span><span class="lineCov">          1 :                 case 33177600: return CCspVideoDimension(7680, 4320, 129600);</span>
+<span class="lineNum">     400 </span>            :                 default: 
+<span class="lineNum">     401 </span>            :                 {
+<span class="lineNum">     402 </span><span class="lineCov">          2 :                         double sqrt = std::sqrt(((double)inNumPixels) / (16.0 * 9.0));</span>
+<span class="lineNum">     403 </span><span class="lineCov">          2 :                         uint32_t width = (uint32_t)std::ceil(sqrt * 16.0);</span>
+<span class="lineNum">     404 </span><span class="lineCov">          2 :                         uint32_t height = (uint32_t)std::ceil(sqrt * 9.0);</span>
+<span class="lineNum">     405 </span><span class="lineCov">          2 :                         uint32_t frameSize = (uint32_t)(std::ceil(sqrt) * std::ceil(sqrt * 9.0 / 16.0));</span>
+<span class="lineNum">     406 </span><span class="lineCov">          2 :                         return CCspVideoDimension(width, height, frameSize);</span>
+<span class="lineNum">     407 </span>            :                 }
+<span class="lineNum">     408 </span>            :         }
+<span class="lineNum">     409 </span>            : }
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span><span class="lineCov">         42 : bool operator &lt; (const CCspVideoComposeKey&amp; inLhs, const CCspVideoComposeKey&amp; inRhs) </span>
+<span class="lineNum">     412 </span>            : {
+<span class="lineNum">     413 </span><span class="lineCov">         42 :         return inLhs.GetVideoLayout() &lt; inRhs.GetVideoLayout() </span>
+<span class="lineNum">     414 </span><span class="lineCov">         58 :         || (inLhs.GetVideoLayout() == inRhs.GetVideoLayout() &amp;&amp; inLhs.GetContentLayout() &lt; inRhs.GetContentLayout())</span>
+<span class="lineNum">     415 </span><span class="lineCov">         58 :         || (inLhs.GetVideoLayout() == inRhs.GetVideoLayout() &amp;&amp; inLhs.GetContentLayout() == inRhs.GetContentLayout() &amp;&amp; inLhs.GetResolution() &lt; inRhs.GetResolution())</span>
+<span class="lineNum">     416 </span><span class="lineCov">         90 :         || (inLhs.GetVideoLayout() == inRhs.GetVideoLayout() &amp;&amp; inLhs.GetContentLayout() == inRhs.GetContentLayout() &amp;&amp; inLhs.GetResolution() == inRhs.GetResolution() &amp;&amp; inLhs.RetainOriginalContentResolution() &lt; inRhs.RetainOriginalContentResolution())</span>
+<span class="lineNum">     417 </span><span class="lineCov">        122 :         || (inLhs.GetVideoLayout() == inRhs.GetVideoLayout() &amp;&amp; inLhs.GetContentLayout() == inRhs.GetContentLayout() &amp;&amp; inLhs.GetResolution() == inRhs.GetResolution() &amp;&amp; inLhs.RetainOriginalContentResolution() == inRhs.RetainOriginalContentResolution() &amp;&amp; inLhs.GetPeriodicKeyframes() &lt; inRhs.GetPeriodicKeyframes())</span>
+<span class="lineNum">     418 </span><span class="lineCov">        180 :         || (inLhs.GetVideoLayout() == inRhs.GetVideoLayout() &amp;&amp; inLhs.GetContentLayout() == inRhs.GetContentLayout() &amp;&amp; inLhs.GetResolution() == inRhs.GetResolution() &amp;&amp; inLhs.RetainOriginalContentResolution() == inRhs.RetainOriginalContentResolution() &amp;&amp; inLhs.GetPeriodicKeyframes() == inRhs.GetPeriodicKeyframes() &amp;&amp; inLhs.GetLogoUrl() &lt; inRhs.GetLogoUrl());</span>
+<a name="419"><span class="lineNum">     419 </span>            : }</a>
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span><span class="lineCov">         45 : std::ostream&amp; operator &lt;&lt; (std::ostream&amp; inOs, const CCspVideoComposeKey&amp; inVideoComposeKey)</span>
+<a name="422"><span class="lineNum">     422 </span>            : {</a>
+<span class="lineNum">     423 </span><span class="lineCov">        135 :         return inOs &lt;&lt; inVideoComposeKey.ToString();      </span>
+<span class="lineNum">     424 </span><span class="lineCov">         39 : }</span>
+<span class="lineNum">     425 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

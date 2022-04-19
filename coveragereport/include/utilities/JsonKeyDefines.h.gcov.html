@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/JsonKeyDefines.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - JsonKeyDefines.h<span style="font-size: 80%;"> (source / <a href="JsonKeyDefines.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">242</td>
+            <td class="headerCovTableEntry">242</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    JSON key definitions.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Jun-06-2018  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef JSON_KEY_DEFINES
+<span class="lineNum">      14 </span>            : #define JSON_KEY_DEFINES
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">        546 : const std::string JSON_KEY_ACCESS_TOKEN = &quot;accessToken&quot;;</span>
+<span class="lineNum">      17 </span><span class="lineCov">        546 : const std::string JSON_KEY_ACTION = &quot;action&quot;;</span>
+<span class="lineNum">      18 </span><span class="lineCov">        546 : const std::string JSON_KEY_ACTIVE_VIDEO_CSI = &quot;activeVideoCsi&quot;;</span>
+<span class="lineNum">      19 </span><span class="lineCov">        546 : const std::string JSON_KEY_ACTIVE_VIDEO_HEIGHT = &quot;activeVideoHeight&quot;;</span>
+<span class="lineNum">      20 </span><span class="lineCov">        546 : const std::string JSON_KEY_ACTIVE_VIDEO_WIDTH = &quot;activeVideoWidth&quot;;</span>
+<span class="lineNum">      21 </span><span class="lineCov">        546 : const std::string JSON_KEY_ADD = &quot;add&quot;;</span>
+<span class="lineNum">      22 </span><span class="lineCov">        546 : const std::string JSON_KEY_ANSWER_SDP = &quot;answerSdp&quot;;</span>
+<span class="lineNum">      23 </span><span class="lineCov">        546 : const std::string JSON_KEY_APPLIED_COMPONENTS = &quot;appliedComponents&quot;;</span>
+<span class="lineNum">      24 </span><span class="lineCov">        546 : const std::string JSON_KEY_AUDIO_LOCAL_PORT = &quot;audioLocalPort&quot;;</span>
+<span class="lineNum">      25 </span><span class="lineCov">        546 : const std::string JSON_KEY_AUDIO_NALS = &quot;audioNals&quot;;</span>
+<span class="lineNum">      26 </span><span class="lineCov">        546 : const std::string JSON_KEY_AUDIO_SRTP_KEY = &quot;audioSrtpKey&quot;;</span>
+<span class="lineNum">      27 </span><span class="lineCov">        546 : const std::string JSON_KEY_AUTHORIZATION_SERVER = &quot;authorizationServer&quot;;</span>
+<span class="lineNum">      28 </span><span class="lineCov">        546 : const std::string JSON_KEY_BACKUP = &quot;backup&quot;;</span>
+<span class="lineNum">      29 </span><span class="lineCov">        546 : const std::string JSON_KEY_CALLBACK_URL = &quot;callbackUrl&quot;;</span>
+<span class="lineNum">      30 </span><span class="lineCov">        546 : const std::string JSON_KEY_CB_ADDR = &quot;cbAddr&quot;;</span>
+<span class="lineNum">      31 </span><span class="lineCov">        546 : const std::string JSON_KEY_CHILD_PROCESSES = &quot;childProcesses&quot;;</span>
+<span class="lineNum">      32 </span><span class="lineCov">        546 : const std::string JSON_KEY_CI_BASE_URL_LIST = &quot;ciBaseUrlList&quot;;</span>
+<span class="lineNum">      33 </span><span class="lineCov">        546 : const std::string JSON_KEY_CLIENT_ID = &quot;clientId&quot;;</span>
+<span class="lineNum">      34 </span><span class="lineCov">        546 : const std::string JSON_KEY_CLIENT_SCOPE = &quot;clientScope&quot;;</span>
+<span class="lineNum">      35 </span><span class="lineCov">        546 : const std::string JSON_KEY_CLIENT_SECRET = &quot;clientSecret&quot;;</span>
+<span class="lineNum">      36 </span><span class="lineCov">        546 : const std::string JSON_KEY_CMEGROUP_ID =   &quot;cmeGroupId&quot;;</span>
+<span class="lineNum">      37 </span><span class="lineCov">        546 : const std::string JSON_KEY_CMEGROUP_LIST = &quot;cmeGroupList&quot;;</span>
+<span class="lineNum">      38 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_INFO = &quot;cmeInfo&quot;;</span>
+<span class="lineNum">      39 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_MEDIA_SERVICE_ID = &quot;cmeMediaServiceId&quot;;</span>
+<span class="lineNum">      40 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_NODE_PROVIDER = &quot;cmeNodeProvider&quot;;</span>
+<span class="lineNum">      41 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_NODE_URL = &quot;cmeNodeUrl&quot;;</span>
+<span class="lineNum">      42 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_SESSION_ID = &quot;cmeSessionId&quot;;</span>
+<span class="lineNum">      43 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_SESSIONS = &quot;cmeSessions&quot;;</span>
+<span class="lineNum">      44 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_SERVICE_MANAGER = &quot;cmeServiceManager&quot;;</span>
+<span class="lineNum">      45 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_SERVICE_PROPERTIES = &quot;cmeServiceProperties&quot;;</span>
+<span class="lineNum">      46 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_SERVICES = &quot;cmeServices&quot;;</span>
+<span class="lineNum">      47 </span><span class="lineCov">        546 : const std::string JSON_KEY_CME_WSS_CLIENT_MANAGER = &quot;cmeWssClientManager&quot;;</span>
+<span class="lineNum">      48 </span><span class="lineCov">        546 : const std::string JSON_KEY_COMPOSED_VIDEO_HEIGHT = &quot;composedVideoHeight&quot;;</span>
+<span class="lineNum">      49 </span><span class="lineCov">        546 : const std::string JSON_KEY_COMPOSED_VIDEO_WIDTH = &quot;composedVideoWidth&quot;;</span>
+<span class="lineNum">      50 </span><span class="lineCov">        546 : const std::string JSON_KEY_COMPOSER = &quot;composer&quot;;</span>
+<span class="lineNum">      51 </span><span class="lineCov">        546 : const std::string JSON_KEY_COMPOSITING_ENGINE_LIST = &quot;compositingEngineList&quot;;</span>
+<span class="lineNum">      52 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONFERENCE_ID = &quot;conferenceId&quot;;</span>
+<span class="lineNum">      53 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONFIG = &quot;config&quot;;</span>
+<span class="lineNum">      54 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTENT_LAYOUT = &quot;contentLayout&quot;;</span>
+<span class="lineNum">      55 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTENT_LOCAL_PORT = &quot;contentLocalPort&quot;;</span>
+<span class="lineNum">      56 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTENT_RESOLUTION = &quot;contentResolution&quot;;</span>
+<span class="lineNum">      57 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTENT_SHARING_CONTEXT = &quot;contentSharingContext&quot;;</span>
+<span class="lineNum">      58 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTENT_SRTP_KEY = &quot;contentSrtpKey&quot;;</span>
+<span class="lineNum">      59 </span><span class="lineCov">        546 : const std::string JSON_KEY_CONTEXT = &quot;context&quot;;</span>
+<span class="lineNum">      60 </span><span class="lineCov">        546 : const std::string JSON_KEY_CPU_USAGE = &quot;cpuUsage&quot;;</span>
+<span class="lineNum">      61 </span><span class="lineCov">        546 : const std::string JSON_KEY_CSI = &quot;csi&quot;;</span>
+<span class="lineNum">      62 </span><span class="lineCov">        546 : const std::string JSON_KEY_CSP_SESSION_IDS = &quot;cspSessionIds&quot;;</span>
+<span class="lineNum">      63 </span><span class="lineCov">        546 : const std::string JSON_KEY_DATA = &quot;data&quot;;</span>
+<span class="lineNum">      64 </span><span class="lineCov">        546 : const std::string JSON_KEY_DELETE = &quot;delete&quot;;</span>
+<span class="lineNum">      65 </span><span class="lineCov">        546 : const std::string JSON_KEY_DETAILS = &quot;details&quot;;</span>
+<span class="lineNum">      66 </span><span class="lineCov">        546 : const std::string JSON_KEY_DEVICE_ID = &quot;deviceId&quot;;</span>
+<span class="lineNum">      67 </span><span class="lineCov">        546 : const std::string JSON_KEY_DEVICE_TYPE = &quot;deviceType&quot;;</span>
+<span class="lineNum">      68 </span><span class="lineCov">        546 : const std::string JSON_KEY_ENABLE_FOLLOW_SYNCED_LAYOUT = &quot;enableFollowSyncedLayout&quot;;</span>
+<span class="lineNum">      69 </span><span class="lineCov">        546 : const std::string JSON_KEY_ENABLE_RECORDING = &quot;enableRecording&quot;;</span>
+<span class="lineNum">      70 </span><span class="lineCov">        546 : const std::string JSON_KEY_ENABLE_RECORD_SPEAKER_ATTRIBUTE = &quot;enableRecordSpeakerAttribute&quot;;</span>
+<span class="lineNum">      71 </span><span class="lineCov">        546 : const std::string JSON_KEY_ERROR_CODE = &quot;errorCode&quot;;</span>
+<span class="lineNum">      72 </span><span class="lineCov">        546 : const std::string JSON_KEY_EUREKA_INFO = &quot;eurekaInfo&quot;;</span>
+<span class="lineNum">      73 </span><span class="lineCov">        546 : const std::string JSON_KEY_EVENT = &quot;event&quot;;</span>
+<span class="lineNum">      74 </span><span class="lineCov">        546 : const std::string JSON_KEY_EXPLICIT_BACKUP_CMEGROUP_IDS = &quot;explicitBackupCmeGroupIds&quot;;</span>
+<span class="lineNum">      75 </span><span class="lineCov">        546 : const std::string JSON_KEY_EXTEND_INFO = &quot;extendInfo&quot;;</span>
+<span class="lineNum">      76 </span><span class="lineCov">        546 : const std::string JSON_KEY_FEATURE_TOGGLES = &quot;featureToggles&quot;;</span>
+<span class="lineNum">      77 </span><span class="lineCov">        546 : const std::string JSON_KEY_CSP_INFO = &quot;cspInfo&quot;;</span>
+<span class="lineNum">      78 </span><span class="lineCov">        546 : const std::string JSON_KEY_CSP_STREAM_INFO = &quot;cspStreamInfo&quot;;</span>
+<span class="lineNum">      79 </span><span class="lineCov">        546 : const std::string JSON_KEY_FEEDERS = &quot;feeders&quot;;</span>
+<span class="lineNum">      80 </span><span class="lineCov">        546 : const std::string JSON_KEY_FEEDER_TYPE = &quot;feederType&quot;;</span>
+<span class="lineNum">      81 </span><span class="lineCov">        546 : const std::string JSON_KEY_FOR_ALL_CME_SENDONLY_SESSIONS = &quot;forAllCmeSendonlySessions&quot;;</span>
+<span class="lineNum">      82 </span><span class="lineCov">        546 : const std::string JSON_KEY_FROM = &quot;from&quot;;</span>
+<span class="lineNum">      83 </span><span class="lineCov">        546 : const std::string JSON_KEY_GROUP_ID = &quot;groupId&quot;;</span>
+<span class="lineNum">      84 </span><span class="lineCov">        546 : const std::string JSON_KEY_HEARTBEAT_TIME = &quot;heartbeatTime&quot;;</span>
+<span class="lineNum">      85 </span><span class="lineCov">        546 : const std::string JSON_KEY_HEIGHT = &quot;height&quot;;</span>
+<span class="lineNum">      86 </span><span class="lineCov">        546 : const std::string JSON_KEY_HIPPOS = &quot;hippos&quot;;</span>
+<span class="lineNum">      87 </span><span class="lineCov">        546 : const std::string JSON_KEY_HIPPO_BASE_URL = &quot;hippoBaseUrl&quot;;</span>
+<span class="lineNum">      88 </span><span class="lineCov">        546 : const std::string JSON_KEY_HIPPO_VERSION = &quot;hippoVersion&quot;;</span>
+<span class="lineNum">      89 </span><span class="lineCov">        546 : const std::string JSON_KEY_INITIAL_RTP_TIMESTAMP = &quot;initialRtpTimestamp&quot;;</span>
+<span class="lineNum">      90 </span><span class="lineCov">        546 : const std::string JSON_KEY_INPUT_DEVICES = &quot;inputDevices&quot;;</span>
+<span class="lineNum">      91 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_AUDIO_PARTICIPANT = &quot;isAudioParticipant&quot;;</span>
+<span class="lineNum">      92 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_ACTIVE_VIDEO = &quot;isActiveVideo&quot;;</span>
+<span class="lineNum">      93 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_CONTENT_SHARING_STARTED = &quot;isContentSharingStarted&quot;;</span>
+<span class="lineNum">      94 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_END_OF_VIDEO_FRAME = &quot;isEndOfVideoFrame&quot;;</span>
+<span class="lineNum">      95 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_HANDSHAKE_SUCCESSFUL = &quot;isHandshakeSuccessful&quot;;</span>
+<span class="lineNum">      96 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_HFPS_SHARE = &quot;isHfpsShare&quot;;</span>
+<span class="lineNum">      97 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_IDR = &quot;isIdr&quot;;</span>
+<span class="lineNum">      98 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_OPEN = &quot;isOpen&quot;;</span>
+<span class="lineNum">      99 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_RESTORER = &quot;isRestorer&quot;;</span>
+<span class="lineNum">     100 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_SENDING = &quot;isSending&quot;;</span>
+<span class="lineNum">     101 </span><span class="lineCov">        546 : const std::string JSON_KEY_IS_STARTED_SUCCESSFULLY = &quot;isStartedSuccessfully&quot;;</span>
+<span class="lineNum">     102 </span><span class="lineCov">        546 : const std::string JSON_KEY_ITEM = &quot;item&quot;;</span>
+<span class="lineNum">     103 </span><span class="lineCov">        546 : const std::string JSON_KEY_JITTER_BUFFER = &quot;jitterBuffer&quot;;</span>
+<span class="lineNum">     104 </span><span class="lineCov">        546 : const std::string JSON_KEY_JITTER_BUFFER_MAX_SIZE = &quot;jitterBufferMaxSize&quot;;</span>
+<span class="lineNum">     105 </span><span class="lineCov">        546 : const std::string JSON_KEY_LABEL = &quot;label&quot;;</span>
+<span class="lineNum">     106 </span><span class="lineCov">        546 : const std::string JSON_KEY_LATEST_TIMESTAMP = &quot;latestTimestamp&quot;;</span>
+<span class="lineNum">     107 </span><span class="lineCov">        546 : const std::string JSON_KEY_LAYOUT = &quot;layout&quot;;</span>
+<span class="lineNum">     108 </span><span class="lineCov">        546 : const std::string JSON_KEY_LEFT_CONFERENCE_ABNORMALLY = &quot;leftConferenceAbnormally&quot;;</span>
+<span class="lineNum">     109 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOAD = &quot;load&quot;;</span>
+<span class="lineNum">     110 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCAL_PORT = &quot;localPort&quot;;</span>
+<span class="lineNum">     111 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCAL_SERVICE = &quot;localService&quot;;</span>
+<span class="lineNum">     112 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCATION      = &quot;location&quot;;</span>
+<span class="lineNum">     113 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCATION_ID   = &quot;locationId&quot;;</span>
+<span class="lineNum">     114 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOGO_URL = &quot;logoUrl&quot;;</span>
+<span class="lineNum">     115 </span><span class="lineCov">        546 : const std::string JSON_KEY_TAHOE_LOCATION_ID   = &quot;tahoeLocationId&quot;;</span>
+<span class="lineNum">     116 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCATION_MAP  = &quot;locationMap&quot;;</span>
+<span class="lineNum">     117 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCATION_NAME = &quot;locationName&quot;;</span>
+<span class="lineNum">     118 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCUS_ID = &quot;locusId&quot;;</span>
+<span class="lineNum">     119 </span><span class="lineCov">        546 : const std::string JSON_KEY_LOCUS_SESSION_ID = &quot;locusSessionId&quot;;</span>
+<span class="lineNum">     120 </span><span class="lineCov">        546 : const std::string JSON_KEY_MACHINE_ACCOUNT_PASSWORD = &quot;machineAccountPassword&quot;;</span>
+<span class="lineNum">     121 </span><span class="lineCov">        546 : const std::string JSON_KEY_MACHINE_ACCOUNT_USERNAME = &quot;machineAccountUsername&quot;;</span>
+<span class="lineNum">     122 </span><span class="lineCov">        546 : const std::string JSON_KEY_MAX_LOAD = &quot;maxLoad&quot;;</span>
+<span class="lineNum">     123 </span><span class="lineCov">        546 : const std::string JSON_KEY_MAX_UDP_PORT = &quot;maxUdpPort&quot;;</span>
+<span class="lineNum">     124 </span><span class="lineCov">        546 : const std::string JSON_KEY_MEETING_ID = &quot;meetingId&quot;;</span>
+<span class="lineNum">     125 </span><span class="lineCov">        546 : const std::string JSON_KEY_MEDIA_SERVICE = &quot;mediaService&quot;;</span>
+<span class="lineNum">     126 </span><span class="lineCov">        546 : const std::string JSON_KEY_MEDIA_SERVICE_ID = &quot;mediaServiceId&quot;;</span>
+<span class="lineNum">     127 </span><span class="lineCov">        546 : const std::string JSON_KEY_MEDIA_SESSION_BITMAP = &quot;mediaSessionBitmap&quot;;</span>
+<span class="lineNum">     128 </span><span class="lineCov">        546 : const std::string JSON_KEY_MEDIA_TYPE = &quot;mediaType&quot;;</span>
+<span class="lineNum">     129 </span><span class="lineCov">        546 : const std::string JSON_KEY_MESSAGE = &quot;message&quot;;</span>
+<span class="lineNum">     130 </span><span class="lineCov">        546 : const std::string JSON_KEY_METADATA = &quot;metadata&quot;;</span>
+<span class="lineNum">     131 </span><span class="lineCov">        546 : const std::string JSON_KEY_MIN_UDP_PORT = &quot;minUdpPort&quot;;</span>
+<span class="lineNum">     132 </span><span class="lineCov">        546 : const std::string JSON_KEY_MMP_INFO = &quot;mmpInfo&quot;;</span>
+<span class="lineNum">     133 </span><span class="lineCov">        546 : const std::string JSON_KEY_NAL_SIZE = &quot;nalSize&quot;;</span>
+<span class="lineNum">     134 </span><span class="lineCov">        546 : const std::string JSON_KEY_NAME = &quot;name&quot;;</span>
+<span class="lineNum">     135 </span><span class="lineCov">        546 : const std::string JSON_KEY_NEXT_SEQ_ID = &quot;nextSeqId&quot;;</span>
+<span class="lineNum">     136 </span><span class="lineCov">        546 : const std::string JSON_KEY_NIGHTINGALE_AGENT = &quot;nightingaleAgent&quot;;</span>
+<span class="lineNum">     137 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_AUDIO_NALS = &quot;numOfAudioNals&quot;;</span>
+<span class="lineNum">     138 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_CHILD_PROCESSES = &quot;numOfChildProcesses&quot;;</span>
+<span class="lineNum">     139 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_CME_SESSIONS = &quot;numOfCmeSessions&quot;;</span>
+<span class="lineNum">     140 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_FEEDERS = &quot;numOfFeeders&quot;;</span>
+<span class="lineNum">     141 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_HIPPOS = &quot;numOfHippos&quot;;</span>
+<span class="lineNum">     142 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_OTTERS = &quot;numOfOtters&quot;;</span>
+<span class="lineNum">     143 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_RTP_CHANNELS = &quot;numOfRtpChannels&quot;;</span>
+<span class="lineNum">     144 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_SESSIONS = &quot;numOfSessions&quot;;</span>
+<span class="lineNum">     145 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_SUBSCRIBERS = &quot;numOfSubscribers&quot;;</span>
+<span class="lineNum">     146 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_VENUES = &quot;numOfVenues&quot;;</span>
+<span class="lineNum">     147 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_VIDEO_COMPOSE_ENGINES = &quot;numOfVideoComposeEngines&quot;;</span>
+<span class="lineNum">     148 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_VIDEO_NALS = &quot;numOfVideoNals&quot;;</span>
+<span class="lineNum">     149 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_VIDEO_SOURCES = &quot;numOfVideoSources&quot;;</span>
+<span class="lineNum">     150 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_VIDEO_SOURCES_HAVING_INPUT_VIDEO_FRAME = &quot;numOfVideoSourcesHavingInputVideoFrame&quot;;</span>
+<span class="lineNum">     151 </span><span class="lineCov">        546 : const std::string JSON_KEY_NUMBER_OF_WSS_CLIENTS = &quot;numOfWssClients&quot;;</span>
+<span class="lineNum">     152 </span><span class="lineCov">        546 : const std::string JSON_KEY_OFFER_SDP = &quot;offerSdp&quot;;</span>
+<span class="lineNum">     153 </span><span class="lineCov">        546 : const std::string JSON_KEY_OMP_INFO = &quot;ompInfo&quot;;</span>
+<span class="lineNum">     154 </span><span class="lineCov">        546 : const std::string JSON_KEY_ORG_ID = &quot;orgId&quot;;</span>
+<span class="lineNum">     155 </span><span class="lineCov">        546 : const std::string JSON_KEY_ORGLIST = &quot;orgList&quot;;</span>
+<span class="lineNum">     156 </span><span class="lineCov">        546 : const std::string JSON_KEY_ORPHEUS_BASE_URL = &quot;orpheusBaseUrl&quot;;</span>
+<span class="lineNum">     157 </span><span class="lineCov">        546 : const std::string JSON_KEY_ORPHEUS_BASE_URL_LIST = &quot;orpheusBaseUrlList&quot;;</span>
+<span class="lineNum">     158 </span><span class="lineCov">        546 : const std::string JSON_KEY_OTTERS = &quot;otters&quot;;</span>
+<span class="lineNum">     159 </span><span class="lineCov">        546 : const std::string JSON_KEY_OTTER_IP = &quot;otterIp&quot;;</span>
+<span class="lineNum">     160 </span><span class="lineCov">        546 : const std::string JSON_KEY_OTTER_VERSION = &quot;otterVersion&quot;;</span>
+<span class="lineNum">     161 </span><span class="lineCov">        546 : const std::string JSON_KEY_OUTPUT_DEVICES = &quot;outputDevices&quot;;</span>
+<span class="lineNum">     162 </span><span class="lineCov">        546 : const std::string JSON_KEY_OUTPUT_LAYOUT = &quot;outputLayout&quot;;</span>
+<span class="lineNum">     163 </span><span class="lineCov">        546 : const std::string JSON_KEY_OUTPUT_RESOLUTION = &quot;outputResolution&quot;;</span>
+<span class="lineNum">     164 </span><span class="lineCov">        546 : const std::string JSON_KEY_OUTPUT_STREAM_URL = &quot;outputStreamUrl&quot;;</span>
+<span class="lineNum">     165 </span><span class="lineCov">        546 : const std::string JSON_KEY_OUTPUT_URL = &quot;outputUrl&quot;;</span>
+<span class="lineNum">     166 </span><span class="lineCov">        546 : const std::string JSON_KEY_PACKET_QUEUE_SIZE = &quot;packetQueueSize&quot;;</span>
+<span class="lineNum">     167 </span><span class="lineCov">        546 : const std::string JSON_KEY_PARENT_OTTER_IP = &quot;parentOtterIp&quot;;</span>
+<span class="lineNum">     168 </span><span class="lineCov">        546 : const std::string JSON_KEY_PASSWORD = &quot;password&quot;;</span>
+<span class="lineNum">     169 </span><span class="lineCov">        546 : const std::string JSON_KEY_PENDING_CME_SESSIONS = &quot;pendingCmeSessions&quot;;</span>
+<span class="lineNum">     170 </span><span class="lineCov">        546 : const std::string JSON_KEY_PERIODIC_KEYFRAMES = &quot;periodicKeyframes&quot;;</span>
+<span class="lineNum">     171 </span><span class="lineCov">        546 : const std::string JSON_KEY_PID = &quot;pid&quot;;</span>
+<span class="lineNum">     172 </span><span class="lineCov">        546 : const std::string JSON_KEY_PRESENTER_NAME = &quot;presenterName&quot;;</span>
+<span class="lineNum">     173 </span><span class="lineCov">        546 : const std::string JSON_KEY_PRIMARY = &quot;primary&quot;;</span>
+<span class="lineNum">     174 </span><span class="lineCov">        546 : const std::string JSON_KEY_PROCESS_POOL = &quot;processPool&quot;;</span>
+<span class="lineNum">     175 </span><span class="lineCov">        546 : const std::string JSON_KEY_REASON = &quot;reason&quot;;</span>
+<span class="lineNum">     176 </span><span class="lineCov">        546 : const std::string JSON_KEY_RECOVER_SEQUENCE = &quot;recoverSequence&quot;;</span>
+<span class="lineNum">     177 </span><span class="lineCov">        546 : const std::string JSON_KEY_RECVONLY_AUDIO_SESSION = &quot;recvonlyAudioSession&quot;;</span>
+<span class="lineNum">     178 </span><span class="lineCov">        546 : const std::string JSON_KEY_RECVONLY_VIDEO_SESSIONS = &quot;recvonlyVideoSessions&quot;;</span>
+<span class="lineNum">     179 </span><span class="lineCov">        546 : const std::string JSON_KEY_REGION_LIST = &quot;regionList&quot;;</span>
+<span class="lineNum">     180 </span><span class="lineCov">        546 : const std::string JSON_KEY_REGION_NAME = &quot;regionName&quot;;</span>
+<span class="lineNum">     181 </span><span class="lineCov">        546 : const std::string JSON_KEY_REMOTE_IP = &quot;remoteIp&quot;;</span>
+<span class="lineNum">     182 </span><span class="lineCov">        546 : const std::string JSON_KEY_REMOTE_PORT = &quot;remotePort&quot;;</span>
+<span class="lineNum">     183 </span><span class="lineCov">        546 : const std::string JSON_KEY_RESOLUTION = &quot;resolution&quot;;</span>
+<span class="lineNum">     184 </span><span class="lineCov">        546 : const std::string JSON_KEY_RESOURCE_ID = &quot;resourceId&quot;;</span>
+<span class="lineNum">     185 </span><span class="lineCov">        546 : const std::string JSON_KEY_RESULT = &quot;result&quot;;</span>
+<span class="lineNum">     186 </span><span class="lineCov">        546 : const std::string JSON_KEY_RETAIN_ORIGINAL_CONTENT_RESOLUTION = &quot;retainOriginalContentResolution&quot;;</span>
+<span class="lineNum">     187 </span><span class="lineCov">        546 : const std::string JSON_KEY_RETRIES_ON_PRIMARY_CME_NODE = &quot;retriesOnPrimaryCmeNode&quot;;</span>
+<span class="lineNum">     188 </span><span class="lineCov">        546 : const std::string JSON_KEY_ROAP_SEQ = &quot;roapSeq&quot;;</span>
+<span class="lineNum">     189 </span><span class="lineCov">        546 : const std::string JSON_KEY_RTMPS_STREAM_URL = &quot;rtmpsStreamUrl&quot;;</span>
+<span class="lineNum">     190 </span><span class="lineCov">        546 : const std::string JSON_KEY_RTMP_STREAM_URL = &quot;rtmpStreamUrl&quot;;</span>
+<span class="lineNum">     191 </span><span class="lineCov">        546 : const std::string JSON_KEY_RTP_PACKET_COUNT = &quot;rtpPacketCount&quot;;</span>
+<span class="lineNum">     192 </span><span class="lineCov">        546 : const std::string JSON_KEY_RTP_SESSION = &quot;rtpSession&quot;;</span>
+<span class="lineNum">     193 </span><span class="lineCov">        546 : const std::string JSON_KEY_SAMPLE_TIMESTAMP = &quot;sampleTimestamp&quot;;</span>
+<span class="lineNum">     194 </span><span class="lineCov">        546 : const std::string JSON_KEY_SDK_DEVICE = &quot;sdkDevice&quot;;</span>
+<span class="lineNum">     195 </span><span class="lineCov">        546 : const std::string JSON_KEY_SDP = &quot;sdp&quot;;</span>
+<span class="lineNum">     196 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEND_AUDIO = &quot;sendAudio&quot;;</span>
+<span class="lineNum">     197 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEND_BUFFER_SIZE = &quot;sendBufferSize&quot;;</span>
+<span class="lineNum">     198 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEND_CONTENT = &quot;sendContent&quot;;</span>
+<span class="lineNum">     199 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEND_MEETING_SIGNALLINGS = &quot;sendMeetingSignallings&quot;;</span>
+<span class="lineNum">     200 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEND_VIDEO = &quot;sendVideo&quot;;</span>
+<span class="lineNum">     201 </span><span class="lineCov">        546 : const std::string JSON_KEY_SENDONLY = &quot;sendonly&quot;;</span>
+<span class="lineNum">     202 </span><span class="lineCov">        546 : const std::string JSON_KEY_SENDONLY_SESSION = &quot;sendonlySession&quot;;</span>
+<span class="lineNum">     203 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEQUENCE = &quot;sequence&quot;;</span>
+<span class="lineNum">     204 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEQUENCE_FOR_DB = &quot;sequenceForDb&quot;;</span>
+<span class="lineNum">     205 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEQUENCE_FROM_CB = &quot;sequenceFromCb&quot;;</span>
+<span class="lineNum">     206 </span><span class="lineCov">        546 : const std::string JSON_KEY_SEQ_ID = &quot;seqId&quot;;</span>
+<span class="lineNum">     207 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVERS = &quot;servers&quot;;</span>
+<span class="lineNum">     208 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_CONFIG = &quot;serverConfig&quot;;</span>
+<span class="lineNum">     209 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_ID = &quot;serverId&quot;;</span>
+<span class="lineNum">     210 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_IP = &quot;serverIp&quot;;</span>
+<span class="lineNum">     211 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_LIST = &quot;serverList&quot;;</span>
+<span class="lineNum">     212 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_STATUS = &quot;serverStatus&quot;;</span>
+<span class="lineNum">     213 </span><span class="lineCov">        546 : const std::string JSON_KEY_SERVER_TYPE = &quot;serverType&quot;;</span>
+<span class="lineNum">     214 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSION = &quot;session&quot;;</span>
+<span class="lineNum">     215 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSIONS = &quot;sessions&quot;;</span>
+<span class="lineNum">     216 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSION_ID = &quot;sessionId&quot;;</span>
+<span class="lineNum">     217 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSION_ID_CAPITAL = &quot;sessionID&quot;;</span>
+<span class="lineNum">     218 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSION_STATE = &quot;sessionState&quot;;</span>
+<span class="lineNum">     219 </span><span class="lineCov">        546 : const std::string JSON_KEY_SESSION_TYPE = &quot;sessionType&quot;;</span>
+<span class="lineNum">     220 </span><span class="lineCov">        546 : const std::string JSON_KEY_SIP_URI  = &quot;sip_uri&quot;;</span>
+<span class="lineNum">     221 </span><span class="lineCov">        546 : const std::string JSON_KEY_SIP_URIS = &quot;sip_uris&quot;;</span>
+<span class="lineNum">     222 </span><span class="lineCov">        546 : const std::string JSON_KEY_SITE_URL = &quot;siteUrl&quot;;</span>
+<span class="lineNum">     223 </span><span class="lineCov">        546 : const std::string JSON_KEY_SPEAKER_VIDEO_CSI = &quot;speakerVideoCsi&quot;;</span>
+<span class="lineNum">     224 </span><span class="lineCov">        546 : const std::string JSON_KEY_SRTP_KEY = &quot;srtpKey&quot;;</span>
+<span class="lineNum">     225 </span><span class="lineCov">        546 : const std::string JSON_KEY_SSRC = &quot;ssrc&quot;;</span>
+<span class="lineNum">     226 </span><span class="lineCov">        546 : const std::string JSON_KEY_STATE = &quot;state&quot;;</span>
+<span class="lineNum">     227 </span><span class="lineCov">        546 : const std::string JSON_KEY_STATUS = &quot;status&quot;;</span>
+<span class="lineNum">     228 </span><span class="lineCov">        546 : const std::string JSON_KEY_SUBSCRIBERS = &quot;subscribers&quot;;</span>
+<span class="lineNum">     229 </span><span class="lineCov">        546 : const std::string JSON_KEY_SUBSCRIBER_TYPE = &quot;subscriberType&quot;;</span>
+<span class="lineNum">     230 </span><span class="lineCov">        546 : const std::string JSON_KEY_TAHOE_INFO = &quot;tahoeInfo&quot;;</span>
+<span class="lineNum">     231 </span><span class="lineCov">        546 : const std::string JSON_KEY_TAHOE_MACC_ADDR = &quot;tahoeMaccAddr&quot;;</span>
+<span class="lineNum">     232 </span><span class="lineCov">        546 : const std::string JSON_KEY_THUMBNAIL_HEIGHT = &quot;thumbnailHeight&quot;;</span>
+<span class="lineNum">     233 </span><span class="lineCov">        546 : const std::string JSON_KEY_THUMBNAIL_RATIO = &quot;thumbnailRatio&quot;;</span>
+<span class="lineNum">     234 </span><span class="lineCov">        546 : const std::string JSON_KEY_THUMBNAIL_WIDTH = &quot;thumbnailWidth&quot;;</span>
+<span class="lineNum">     235 </span><span class="lineCov">        546 : const std::string JSON_KEY_TIMESTAMP = &quot;timestamp&quot;;</span>
+<span class="lineNum">     236 </span><span class="lineCov">        546 : const std::string JSON_KEY_UPDATE = &quot;update&quot;;</span>
+<span class="lineNum">     237 </span><span class="lineCov">        546 : const std::string JSON_KEY_USER_NAME = &quot;userName&quot;;</span>
+<span class="lineNum">     238 </span><span class="lineCov">        546 : const std::string JSON_KEY_VENUES = &quot;venues&quot;;</span>
+<span class="lineNum">     239 </span><span class="lineCov">        546 : const std::string JSON_KEY_VENUE_ID = &quot;venueId&quot;;</span>
+<span class="lineNum">     240 </span><span class="lineCov">        546 : const std::string JSON_KEY_VENUE_MANAGER = &quot;venueManager&quot;;</span>
+<span class="lineNum">     241 </span><span class="lineCov">        546 : const std::string JSON_KEY_VERSION = &quot;version&quot;;</span>
+<span class="lineNum">     242 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_COMPOSE_ENGINES = &quot;videoComposeEngines&quot;;</span>
+<span class="lineNum">     243 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_COMPOSE_KEY = &quot;videoComposeKey&quot;;</span>
+<span class="lineNum">     244 </span><span class="lineCov">        546 : const std::string JSON_KEY_OLD_VIDEO_COMPOSE_KEY = &quot;oldVideoComposeKey&quot;;</span>
+<span class="lineNum">     245 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_COMPOSE_KEY_LIST = &quot;videoComposeKeyList&quot;;</span>
+<span class="lineNum">     246 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_CSI = &quot;videoCsi&quot;;</span>
+<span class="lineNum">     247 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_FILTER_CONTEXT = &quot;videoFilterContext&quot;;</span>
+<span class="lineNum">     248 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_LAYOUT = &quot;videoLayout&quot;;</span>
+<span class="lineNum">     249 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_LAYOUT_SPEC = &quot;videoLayoutSpec&quot;;</span>
+<span class="lineNum">     250 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_LOCAL_PORT = &quot;videoLocalPort&quot;;</span>
+<span class="lineNum">     251 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_NALS = &quot;videoNals&quot;;</span>
+<span class="lineNum">     252 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_SOURCES = &quot;videoSources&quot;;</span>
+<span class="lineNum">     253 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_SOURCES_CONTEXT = &quot;videoSourcesContext&quot;;</span>
+<span class="lineNum">     254 </span><span class="lineCov">        546 : const std::string JSON_KEY_VIDEO_SRTP_KEY = &quot;videoSrtpKey&quot;;</span>
+<span class="lineNum">     255 </span><span class="lineCov">        546 : const std::string JSON_KEY_WIDTH = &quot;width&quot;;</span>
+<span class="lineNum">     256 </span><span class="lineCov">        546 : const std::string JSON_KEY_WSS_CLIENTS = &quot;wssClients&quot;;</span>
+<span class="lineNum">     257 </span><span class="lineCov">        546 : const std::string JSON_KEY_WSS_URL = &quot;wssUrl&quot;;</span>
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            : #endif /* JSON_KEY_DEFINES */
+<span class="lineNum">     260 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

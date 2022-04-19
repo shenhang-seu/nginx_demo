@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/cme/CmeService.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/cme</a> - CmeService.h<span style="font-size: 80%;"> (source / <a href="CmeService.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    CME Service.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Jul-23-2019  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef OTT_CME_SERVICE_H
+<span class="lineNum">      14 </span>            : #define OTT_CME_SERVICE_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;thread&gt;
+<span class="lineNum">      17 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;IoServiceWrapper.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;CspVideoComposeKey.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;CmeServiceProperties.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : class CCmeService: public std::enable_shared_from_this&lt;CCmeService&gt;
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span>            : public:
+<span class="lineNum">      25 </span>            :     CCmeService(const CmeServiceManagerSharedPtr&amp; inManager, const CCmeServiceProperties&amp; inCmeServiceProperties);
+<span class="lineNum">      26 </span>            :     virtual ~CCmeService();
+<span class="lineNum">      27 </span>            :     void Release();
+<span class="lineNum">      28 </span>            :     void SubscribeStream(
+<span class="lineNum">      29 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">      30 </span>            :         const CCspVideoComposeKey&amp; inVideoComposeKey, 
+<span class="lineNum">      31 </span>            :         const ReceiveStreamCallback&amp; inAudioCallback,
+<span class="lineNum">      32 </span>            :         const ReceiveStreamCallback&amp; inVideoCallback,
+<span class="lineNum">      33 </span>            :         const ResultCallback&amp; inSubscribeResultCallback,
+<span class="lineNum">      34 </span>            :         const std::string&amp; inCspSessionType);
+<span class="lineNum">      35 </span>            :     void UnsubscribeStream(const CspSessionIdType&amp; inCspSessionId, const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">      36 </span>            :         void UpdateSessionLayout(const CspSessionIdType&amp; inCspSessionId, const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">      37 </span>            :     void AttachCspSession(const CspSessionIdType&amp; inCspSessionId, const JsonValue&amp; inMetadata = JsonValue());
+<span class="lineNum">      38 </span>            :     bool DetachCspSession(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">      39 </span>            :     void TriggerPli(const CspSessionIdType&amp; inCspSessionId, const CspVideoComposeKeyList&amp; inVideoComposeKeyList);
+<span class="lineNum">      40 </span>            :     void UpdateRosterList(const JsonValue&amp; inMessage);
+<span class="lineNum">      41 </span>            :     void ContentSharingStart(const std::string&amp; inPresenterName, uint32_t inResolution);
+<span class="lineNum">      42 </span>            :     void ContentSharingStop();
+<span class="lineNum">      43 </span>            :     void ReopenSendonlySession2CmeNodes(SafariResult inReason);
+<span class="lineNum">      44 </span>            :     void ReleaseRecvonlyAudioSession();
+<span class="lineNum">      45 </span>            :     void ReleaseRecvonlyVideoSession(const CspSessionIdType&amp; inCspSessionId, const CCspVideoComposeKey&amp; inVideoComposeKey);
+<span class="lineNum">      46 </span>            :     OttVenueSharedPtr&amp; GetVenue();
+<span class="lineNum">      47 </span>            :     const OttVenueSharedPtr&amp; GetVenue() const;
+<span class="lineNum">      48 </span>            :     void HandleCmeWssError(const WssUrlType&amp; inCmeNodeUrl, SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">      49 </span>            :     void SendonlySessionFailover(SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">      50 </span>            :     void RecvonlyAudioSessionFailover(SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">      51 </span>            :     void RecvonlyVideoSessionFailover(CmeSessionSharedPtr inCmeSession, SafariResult inErrorCode, const std::string&amp; inMessage);
+<span class="lineNum">      52 </span>            :     boost::asio::io_service&amp; GetMainThreadIoService();
+<span class="lineNum">      53 </span>            :     boost::asio::io_service&amp; GetStreamThreadIoService();
+<span class="lineNum">      54 </span>            :     JsonValue ToJson() const;
+<span class="lineNum">      55 </span>            :     void HandleStatisticsTimer(bool inIsOneMinute);
+<span class="lineNum">      56 </span>            :     uint32_t GetInitialSubscriberTimestamp(uint32_t inRtpTimestamp);
+<span class="lineNum">      57 </span><span class="lineCov">          5 :     void ResetRetriesOnPrimaryCmeNode() { m_retriesOnPrimaryCmeNode = 0; }</span>
+<span class="lineNum">      58 </span>            :     const CCmeServiceProperties&amp; GetCmeServiceProperties() const { return m_cmeServiceProperties; }
+<span class="lineNum">      59 </span>            :     const JsonValue&amp; GetMetadata() const { return m_metadata; }
+<span class="lineNum">      60 </span>            :     bool IsContentSharingStarted() const;
+<span class="lineNum">      61 </span>            :     const std::string&amp; GetPresenterName() const;
+<span class="lineNum">      62 </span>            :     uint32_t GetContentResolution() const;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : private:
+<span class="lineNum">      65 </span>            :     SafariResult OpenSendonlySession();
+<span class="lineNum">      66 </span>            :     void OpenSendonlySessionOnUrl(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">      67 </span>            :     void OpenRecvonlyAudioSession(
+<span class="lineNum">      68 </span>            :         const WssUrlType&amp; inCmeNodeUrl, 
+<span class="lineNum">      69 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">      70 </span>            :         const ReceiveStreamCallback&amp; inCallback, 
+<span class="lineNum">      71 </span>            :         const ResultCallback&amp; inSubscribeResultCallback);
+<span class="lineNum">      72 </span>            :     void OpenRecvonlyVideoSession(
+<span class="lineNum">      73 </span>            :         const WssUrlType&amp; inCmeNodeUrl, 
+<span class="lineNum">      74 </span>            :         const CspSessionIdType&amp; inCspSessionId, 
+<span class="lineNum">      75 </span>            :         const CCspVideoComposeKey&amp; inVideoComposeKey, 
+<span class="lineNum">      76 </span>            :         const ReceiveStreamCallback&amp; inCallback,
+<span class="lineNum">      77 </span>            :         const std::string&amp; inCspSessionType);
+<span class="lineNum">      78 </span>            :     WssUrlType PickCmeNodeOnFailover();
+<span class="lineNum">      79 </span>            :     void AllCmeSessionsFailover(SafariResult inErrorCode, const std::string&amp; inMessage, const ECmeSessionType* inFrom = nullptr);
+<span class="lineNum">      80 </span>            :     CmeRecvonlyVideoSessionSharedPtr GetRecvonlyVideoSession(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">      81 </span>            :     void ReleaseRecvonlyVideoSession(const CspSessionIdType&amp; inCspSessionId);
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : private:
+<span class="lineNum">      84 </span>            :     bool m_released;
+<span class="lineNum">      85 </span>            :     CmeServiceManagerSharedPtr m_manager;
+<span class="lineNum">      86 </span>            :     CCmeServiceProperties m_cmeServiceProperties;
+<span class="lineNum">      87 </span>            :     CspSessionIdTypeSet m_cspSessionIdList;
+<span class="lineNum">      88 </span>            :     WssUrlType m_cmeNodeUrl;
+<span class="lineNum">      89 </span>            :     CmeSendonlySessionSharedPtr m_cmeSendonlySession;
+<span class="lineNum">      90 </span>            :     CmeRecvonlyAudioSessionSharedPtr m_cmeRecvonlyAudioSession;
+<span class="lineNum">      91 </span>            :     CmeRecvonlyVideoSessionMap m_cmeRecvonlyVideoSessionMap;
+<span class="lineNum">      92 </span>            :     uint32_t m_retriesOnPrimaryCmeNode; /* The idea is to retry up to 5 times on primary CME nodes, if failed then retry once on backup 
+<span class="lineNum">      93 </span>            :                                            CME node. If failed again, then continue to retry up to 5 times on primary CME nodes, and so on. */
+<span class="lineNum">      94 </span>            :     uint32_t m_initialRtpTimestamp; /* used for AV sync and accessed only in the stream thread */
+<span class="lineNum">      95 </span>            :     JsonValue m_metadata; /* metadata for OMP bots. */
+<span class="lineNum">      96 </span>            : };
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

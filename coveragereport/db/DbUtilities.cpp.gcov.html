@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - db/DbUtilities.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">db</a> - DbUtilities.cpp<span style="font-size: 80%;"> (source / <a href="DbUtilities.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;DbUtilities.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #define WBXHIPPOSERVER_COLUMN_NAME_LIST &quot;WBXHIPPOSERVER.HIPPOID, WBXHIPPOSERVER.HIPPOIP, WBXHIPPOSERVER.ISRESTORER, WBXHIPPOSERVER.HEARTBEATTIME, WBXHIPPOSERVER.STATE, WBXHIPPOSERVER.CREATETIME, WBXHIPPOSERVER.LASTMODIFIEDTIME, WBXHIPPOSERVER.POOLNAME,WBXHIPPOSERVER.EXTENDINFO&quot;
+<span class="lineNum">       4 </span>            : #define WBXOTTERSERVER_COLUMN_NAME_LIST &quot;WBXOTTERSERVER.OTTERID, WBXOTTERSERVER.LOCATION, WBXOTTERSERVER.OTTERIP, WBXOTTERSERVER.RTPURLS, WBXOTTERSERVER.LOAD, WBXOTTERSERVER.HEARTBEATTIME, WBXOTTERSERVER.STATE, WBXOTTERSERVER.SEQUENCE, WBXOTTERSERVER.CREATETIME, WBXOTTERSERVER.LASTMODIFIEDTIME, WBXOTTERSERVER.MAXLOAD, WBXOTTERSERVER.POOLNAME, WBXOTTERSERVER.VERSION,WBXOTTERSERVER.EXTENDINFO&quot;
+<span class="lineNum">       5 </span>            : #define WBXSESSIONINFO_COLUMN_NAME_LIST &quot;WBXSESSIONINFO.SESSIONID, WBXSESSIONINFO.SESSIONTYPE, WBXSESSIONINFO.LOCATION, WBXSESSIONINFO.CONFERENCEID, WBXSESSIONINFO.CALLBACKURL, WBXSESSIONINFO.EXTENDINFO, WBXSESSIONINFO.STOPREASON, WBXSESSIONINFO.STARTTIME, WBXSESSIONINFO.STOPTIME, WBXSESSIONINFO.STATE, WBXSESSIONINFO.SEQUENCE, WBXSESSIONINFO.CREATETIME, WBXSESSIONINFO.LASTMODIFIEDTIME,WBXSESSIONINFO.POOLNAME&quot;
+<span class="lineNum">       6 </span>            : #define WBXSESSIONSERVERMAP_COLUMN_NAME_LIST &quot;WBXSESSIONSERVERMAP.SESSIONID, WBXSESSIONSERVERMAP.PARENTOTTERID, WBXSESSIONSERVERMAP.OTTERID, WBXSESSIONSERVERMAP.ISDELETE, WBXSESSIONSERVERMAP.CREATETIME, WBXSESSIONSERVERMAP.LASTMODIFIEDTIME, WBXSESSIONSERVERMAP.POOLNAME&quot;
+<span class="lineNum">       7 </span>            : 
+<a name="8"><span class="lineNum">       8 </span>            : #define SESSIONMAP_JOIN_CONDITION  &quot;left outer join WBXOTTERSERVER on WBXSESSIONSERVERMAP.OTTERID=WBXOTTERSERVER.OTTERID left outer join WBXSESSIONINFO on WBXSESSIONSERVERMAP.SESSIONID=WBXSESSIONINFO.SESSIONID  &quot;</a>
+<span class="lineNum">       9 </span>            : #define OTTER_JOIN_CONDITION       &quot;left outer join WBXSESSIONSERVERMAP on WBXOTTERSERVER.OTTERID=WBXSESSIONSERVERMAP.OTTERID left outer join WBXSESSIONINFO on WBXSESSIONSERVERMAP.SESSIONID=WBXSESSIONINFO.SESSIONID &quot;
+<span class="lineNum">      10 </span><span class="lineCov">         19 : std::string GetColumnNameList(EDbTableName inTableName)</span>
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">         19 :         switch (inTableName) </span>
+<span class="lineNum">      13 </span>            :         {
+<span class="lineNum">      14 </span><span class="lineCov">         10 :                 case HIPPOS: return WBXHIPPOSERVER_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      15 </span><span class="lineCov">          3 :                 case OTTERS: return WBXOTTERSERVER_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      16 </span><span class="lineCov">          1 :                 case SESSIONS: return WBXSESSIONINFO_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      17 </span><span class="lineCov">          1 :                 case SESSION_SERVER_PAIRS: return WBXSESSIONSERVERMAP_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      18 </span><span class="lineCov">          3 :                 case SESSION_SERVER_PAIRS_JOINED: return WBXSESSIONSERVERMAP_COLUMN_NAME_LIST &quot;, &quot; WBXOTTERSERVER_COLUMN_NAME_LIST &quot;, &quot; WBXSESSIONINFO_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :                 case OTTER_JOIN_SESSION: return WBXOTTERSERVER_COLUMN_NAME_LIST &quot;, &quot; WBXSESSIONSERVERMAP_COLUMN_NAME_LIST &quot;, &quot; WBXSESSIONINFO_COLUMN_NAME_LIST;</span>
+<span class="lineNum">      20 </span>            :                 default: return std::string();
+<span class="lineNum">      21 </span>            :         }
+<a name="22"><span class="lineNum">      22 </span>            : }</a>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : std::string GetJoinConditions(EDbTableName inTableName)</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :         switch (inTableName)</span>
+<span class="lineNum">      27 </span>            :         {
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 case SESSION_SERVER_PAIRS_JOINED:return SESSIONMAP_JOIN_CONDITION;</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                 case OTTER_JOIN_SESSION: return OTTER_JOIN_CONDITION;</span>
+<span class="lineNum">      30 </span>            :                 default: return std::string();
+<span class="lineNum">      31 </span>            :         }
+<span class="lineNum">      32 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

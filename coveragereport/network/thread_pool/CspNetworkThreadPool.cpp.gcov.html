@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/thread_pool/CspNetworkThreadPool.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/thread_pool</a> - CspNetworkThreadPool.cpp<span style="font-size: 80%;"> (source / <a href="CspNetworkThreadPool.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntryLo">72.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;CspNetworkThreadPool.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;LoggerApi.h&quot;
+<span class="lineNum">       3 </span>            : 
+<a name="4"><span class="lineNum">       4 </span>            : #define NETWORK_THREAD_POOL_SIZE 50</a>
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span><span class="lineCov">         23 : std::shared_ptr&lt;CCspNetworkThreadPool&gt;&amp; CCspNetworkThreadPool::Instance()</span>
+<span class="lineNum">       7 </span>            : {
+<span class="lineNum">       8 </span><span class="lineCov">         25 :     static std::shared_ptr&lt;CCspNetworkThreadPool&gt; networkThreadPool(new CCspNetworkThreadPool());</span>
+<span class="lineNum">       9 </span><span class="lineCov">         23 :     return networkThreadPool;</span>
+<a name="10"><span class="lineNum">      10 </span>            : }</a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          2 : CCspNetworkThreadPool::CCspNetworkThreadPool()</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span>            : 
+<a name="15"><span class="lineNum">      15 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">          2 : CCspNetworkThreadPool::~CCspNetworkThreadPool()</span>
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span>            : 
+<a name="20"><span class="lineNum">      20 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">         20 : void CCspNetworkThreadPool::Post(const Task&amp; inTask)</span>
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span><span class="lineCov">         20 :         EnsureNonNullThreadPool();</span>
+<span class="lineNum">      25 </span><span class="lineCov">         20 :         m_threadPool-&gt;Post(inTask);</span>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">         20 : }</span></a>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineCov">          3 : void CCspNetworkThreadPool::Stop()</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span><span class="lineCov">         45 :         LOG_INFO(&quot;NETWORK_THREAD_POOL&quot;, &quot;&quot;, &quot;CCspNetworkThreadPool::Stop, m_threadPool:&quot; &lt;&lt; m_threadPool);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          6 :         if (m_threadPool)</span>
+<span class="lineNum">      32 </span>            :         {
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                 m_threadPool-&gt;Stop();</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                 m_threadPool = nullptr;</span>
+<span class="lineNum">      35 </span>            :         }
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 : boost::asio::io_service&amp; CCspNetworkThreadPool::GetIoService()</span>
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         EnsureNonNullThreadPool();</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         return m_threadPool-&gt;GetIoService();</span>
+<a name="42"><span class="lineNum">      42 </span>            : }</a>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineCov">         20 : void CCspNetworkThreadPool::EnsureNonNullThreadPool()</span>
+<span class="lineNum">      45 </span>            : {
+<span class="lineNum">      46 </span><span class="lineCov">         40 :         if (m_threadPool == nullptr)</span>
+<span class="lineNum">      47 </span>            :         {
+<span class="lineNum">      48 </span><span class="lineCov">          3 :                 m_threadPool = std::make_shared&lt;CThreadPool&gt;(THREAD_NAME_NETWORK, NETWORK_THREAD_POOL_SIZE);</span>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">         14 :                 LOG_INFO(&quot;NETWORK_THREAD_POOL&quot;, &quot;&quot;, &quot;CCspNetworkThreadPool::EnsureNonNullThreadPool, create a new thread pool:&quot; &lt;&lt; m_threadPool);</span></a>
+<span class="lineNum">      50 </span>            :         }
+<span class="lineNum">      51 </span><span class="lineCov">         74 : }</span>
+<span class="lineNum">      52 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

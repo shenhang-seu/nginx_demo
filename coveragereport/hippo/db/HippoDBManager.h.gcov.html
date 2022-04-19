@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/db/HippoDBManager.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/db</a> - HippoDBManager.h<span style="font-size: 80%;"> (source / <a href="HippoDBManager.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef HIPPO_DB_MANAGER_H</a>
+<span class="lineNum">       2 </span>            : #define HIPPO_DB_MANAGER_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;HippoDB.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;DbDefines.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;DbConfig.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DbTable.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;DbUtilities.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DbHipposRecord.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DbOttersRecord.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DbFlamingosRecord.h&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DbSessionsRecord.h&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DbSessSvrPairsRecord.h&quot;
+<span class="lineNum">      14 </span>            : #include &quot;HippoDefine.h&quot;
+<span class="lineNum">      15 </span>            : #include &quot;HippoDBTask.h&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #define DB_TABLE_NAME_HIPPO                 &quot;wbxhipposerver&quot;
+<span class="lineNum">      18 </span>            : #define DB_TABLE_NAME_OTTER                 &quot;wbxotterserver&quot;
+<span class="lineNum">      19 </span>            : #define DB_TABLE_NAME_SESSION               &quot;wbxsessioninfo&quot;
+<span class="lineNum">      20 </span>            : #define DB_TABLE_NAME_SESSION_MAP           &quot;wbxsessionservermap&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #define DB_TABLE_ITEM_HIPPOIP               &quot;HIPPOIP&quot;
+<span class="lineNum">      23 </span>            : #define DB_TABLE_ITEM_OTTERIP               &quot;OTTERIP&quot;
+<span class="lineNum">      24 </span>            : #define DB_TABLE_ITEM_HEARTBEAT_TIME        &quot;HEARTBEATTIME&quot;
+<span class="lineNum">      25 </span>            : #define DB_TABLE_ITEM_MODIFY_TIME           &quot;LASTMODIFIEDTIME&quot;
+<span class="lineNum">      26 </span>            : #define DB_TABLE_ITEM_STATE                 &quot;STATE&quot;
+<span class="lineNum">      27 </span>            : #define DB_TABLE_ITEM_LOAD                  &quot;LOAD&quot;
+<span class="lineNum">      28 </span>            : #define DB_TABLE_ITEM_MAXLOAD               &quot;MAXLOAD&quot;
+<span class="lineNum">      29 </span>            : #define DB_TABLE_ITEM_IS_RESTORER           &quot;ISRESTORER&quot;
+<span class="lineNum">      30 </span>            : #define DB_TABLE_ITEM_SEQUENCE              &quot;SEQUENCE&quot;
+<span class="lineNum">      31 </span>            : #define DB_TABLE_ITEM_LOCATION              &quot;LOCATION&quot;
+<span class="lineNum">      32 </span>            : #define DB_TABLE_ITEM_OTTERID               &quot;OTTERID&quot;
+<span class="lineNum">      33 </span>            : #define DB_TABLE_ITEM_PARENTOTTERID         &quot;PARENTOTTERID&quot;
+<span class="lineNum">      34 </span>            : #define DB_TABLE_ITEM_STOPREASON            &quot;STOPREASON&quot;
+<span class="lineNum">      35 </span>            : #define DB_TABLE_ITEM_STARTTIME             &quot;STARTTIME&quot;
+<span class="lineNum">      36 </span>            : #define DB_TABLE_ITEM_STOPTIME              &quot;STOPTIME&quot;
+<span class="lineNum">      37 </span>            : #define DB_TABLE_ITEM_ISDELETE              &quot;ISDELETE&quot;
+<span class="lineNum">      38 </span>            : #define DB_TABLE_ITEM_ISRESTORER            &quot;ISRESTORER&quot;
+<span class="lineNum">      39 </span>            : #define DB_TABLE_ITEM_CREATETIME            &quot;CREATETIME&quot;
+<span class="lineNum">      40 </span>            : #define DB_TABLE_ITEM_LASTMODIFIEDTIME      &quot;LASTMODIFIEDTIME&quot;
+<span class="lineNum">      41 </span>            : #define DB_TABLE_ITEM_RTPURLS               &quot;RTPURLS&quot;
+<span class="lineNum">      42 </span>            : #define DB_TABLE_ITEM_POOLNAME              &quot;POOLNAME&quot;
+<span class="lineNum">      43 </span>            : #define DB_TABLE_ITEM_VERSION               &quot;VERSION&quot;
+<span class="lineNum">      44 </span>            : #define DB_TABLE_ITEM_EXTEND_INFO           &quot;EXTENDINFO&quot;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : #define DB_PARTITION_TIME_HOURS                   7*24
+<span class="lineNum">      47 </span>            : extern std::string GetColumnNameList(EDbTableName);
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : class CHippoDBManager
+<span class="lineNum">      50 </span>            : {
+<span class="lineNum">      51 </span>            : public:
+<span class="lineNum">      52 </span>            :     static bool InitializeDbConfig(boost::asio::io_service&amp; inAppIoService, uint32_t inDbThreadNum, const std::string&amp; inUserName, const std::string&amp; inPassword, const std::string&amp; inDataSource, DBThreadBlockCallback inCallback=NULL);
+<span class="lineNum">      53 </span>            :     static void ReleaseDbConfig();
+<span class="lineNum">      54 </span>            : public:
+<span class="lineNum">      55 </span>            :     CHippoDBManager() = delete;
+<span class="lineNum">      56 </span>            :     ~CHippoDBManager() = default;
+<span class="lineNum">      57 </span>            :     CHippoDBManager(const CHippoDBManager&amp;) = delete;
+<span class="lineNum">      58 </span>            :     CHippoDBManager &amp; operator=(const CHippoDBManager&amp;) = delete;
+<span class="lineNum">      59 </span>            :     static std::string GetQuerySqlStatement(EDBTable inTable);
+<span class="lineNum">      60 </span>            :     static std::string GetDBPartitionConditionSqlSessionMap();
+<span class="lineNum">      61 </span>            :     static std::string GetDBPartitionConditionSqlSessionInfo();
+<span class="lineNum">      62 </span>            :     static std::string GeneratorJoinTableByOtterIdSql();
+<span class="lineNum">      63 </span>            :     static DbPlaceholderKeyManagerSharedPtr CreateQueryJoinTablePlaceholderKeys(const std::string&amp; inOtterId);
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :     static  boost::posix_time::ptime GetDBPartitionTime();
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : private:
+<span class="lineNum">      68 </span>            :     static void InitColumeList(); 
+<span class="lineNum">      69 </span>            :     static void InitSqlStatement();
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : public:
+<span class="lineNum">      72 </span>            :     static std::vector&lt;std::string&gt; s_registerColumeList;
+<span class="lineNum">      73 </span>            :     static std::vector&lt;std::string&gt; s_registerHippoColumeList;
+<span class="lineNum">      74 </span>            :     static std::vector&lt;std::string&gt; s_errorColumeList;
+<span class="lineNum">      75 </span>            :     static std::vector&lt;std::string&gt; s_loadStateColumeList;
+<span class="lineNum">      76 </span>            :     static std::vector&lt;std::string&gt; s_timestampColumeList;
+<span class="lineNum">      77 </span>            :     static std::vector&lt;std::string&gt; s_serverStateColumeList;
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :     static std::string s_dbSqlSelectHippo;
+<span class="lineNum">      80 </span>            :     static std::string s_dbSqlSelectOtter;
+<span class="lineNum">      81 </span>            :     static std::string s_dbSqlSelectSessionInfo;
+<span class="lineNum">      82 </span>            :     static std::string s_dbSqlSelectSessionMap;
+<span class="lineNum">      83 </span>            :     static std::string s_dbSqlSelectSessionMapJoined;
+<span class="lineNum">      84 </span>            :     static std::string s_dbSqlSelectOtterJoined;
+<span class="lineNum">      85 </span>            :     static std::string s_dbSqlSelectSessionMapJoinedWithoutJoin;
+<span class="lineNum">      86 </span>            : };
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : class CHippoDBAccess
+<span class="lineNum">      89 </span>            : {
+<span class="lineNum">      90 </span>            : public:
+<span class="lineNum">      91 </span>            :     CHippoDBAccess();
+<span class="lineNum">      92 </span>            :     ~CHippoDBAccess();
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :     SafariResult InsertRecord(EDBTable inType, DbRecordSharedPtr inRecord,bool bAsync = false,DBResultCallback inHandler = NULL);
+<span class="lineNum">      95 </span>            :     SafariResult UpdateRecord(EDBTable inType, DbRecordSharedPtr inRecord, std::vector&lt;std::string&gt;&amp; inUpdateItem , bool bAsync = false,DBResultCallback inHandler = NULL);
+<span class="lineNum">      96 </span>            :     SafariResult UpdateRecord(EDBTable inType, std::shared_ptr&lt;IDbKey&gt; inKey, DbRecordSharedPtr inRecord, std::vector&lt;std::string&gt;&amp; inUpdateItem , bool bAsync = false,DBResultCallback inHandler = NULL);
+<span class="lineNum">      97 </span>            :     SafariResult AsyncUpdateRecord(EDBTable inTableType, const std::string&amp; inSql, DBResultCallback inHandler); /* Added by Webber Zheng, Dec 15 2017. */
+<span class="lineNum">      98 </span>            :     SafariResult DeleteRecord(EDBTable inType, std::shared_ptr&lt;IDbKey&gt; inKey,bool bAsync = false,DBResultCallback inHandler = NULL);
+<span class="lineNum">      99 </span>            :     SafariResult AsyncQueryRecord(EDBTable inType,  std::shared_ptr&lt;IDbKey&gt; inKey,DBResultCallback inHandler);
+<span class="lineNum">     100 </span>            :     SafariResult AsyncQueryRecord(EDBTable inType,  const std::string&amp; inSql,DBResultCallback inHandler);
+<span class="lineNum">     101 </span>            :     SafariResult AsyncQueryRecord(EDBTable inType,const std::string&amp; inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,DBResultCallback inHandler);
+<span class="lineNum">     102 </span>            :     DbRecordListSharedPtr QueryRecord(EDBTable inType,std::shared_ptr&lt;IDbKey&gt; inKey);
+<span class="lineNum">     103 </span>            :     DbRecordListSharedPtr QueryRecord(EDBTable inType,const std::string&amp; inSql);
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :     //for query  otter/flamingo/session/sessionservermap
+<span class="lineNum">     107 </span>            :     SafariResult AsyncQuerySessionServerJoinedRecord(std::shared_ptr&lt;IDbKey&gt; inKey, DBResultCallback inHandler);
+<span class="lineNum">     108 </span>            :     SafariResult AsyncQuerySessionServerJoinedRecord(std::vector&lt;IDbKey*&gt;&amp; inKeyList, DBResultCallback inHandler);
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :     SafariResult AsyncQueryRecord(EDBTable inType,DBTaskSharedPtr inDBTask,DBResultCallback inHandler);
+<span class="lineNum">     111 </span>            :     SafariResult AsyncUpdateRecord(EDBTable inTableType,DBTaskSharedPtr inDBTask, DBResultCallback inHandler);
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :     static DbRecordSharedPtr CreateHippoRecord(const std::string&amp; inHostIP, bool inRestorer = false,const std::string&amp; inState =&quot;REGISTERED&quot;,const std::string&amp; inExtendInfo = &quot;&quot;);
+<span class="lineNum">     114 </span>            :     static DbRecordSharedPtr CreateOtterRecord(const std::string&amp; inHostIP,  const std::string&amp; inLocation =&quot;_&quot;,const std::string&amp; inRtpUrls = &quot;&quot;,const std::string&amp; inState = &quot;REGISTERED&quot;,
+<span class="lineNum">     115 </span>            :             int inLoad = 0,int inMaxLoad = 0, const std::string&amp; inVersion = &quot;&quot;, int inSequence = 0,const std::string&amp; inExtendInfo = &quot;&quot;);
+<span class="lineNum">     116 </span>            :     static DbRecordSharedPtr CreateFlamingoRecord(const std::string&amp; inHostIP, const std::string&amp; inLocation = &quot;_&quot;,const std::string&amp; inState = &quot;REGISTERED&quot;,int inLoad = 0,
+<span class="lineNum">     117 </span>            :             int inMaxLoad = 0, const std::string&amp; inVersion = &quot;&quot;, int inSequence = 0);
+<span class="lineNum">     118 </span>            :     static DbRecordSharedPtr CreateSessionRecord(const std::string&amp; inConfId, const std::string&amp; inType,const std::string&amp; inState= &quot;START&quot;,
+<span class="lineNum">     119 </span>            :             const std::string&amp; inLocation = &quot;_&quot;,int inStopReason = 0, const std::string&amp; inSessId = &quot;_&quot;,const std::string&amp; inCallbackUrl = &quot;&quot;,const std::string&amp; inExtendInfo = &quot;&quot;, int inSequence = 0);
+<span class="lineNum">     120 </span>            :     
+<span class="lineNum">     121 </span>            :     static DbRecordSharedPtr CreateSessServerPairRecord(const std::string&amp; inSessionId, const std::string&amp; inParentOtterId, const std::string&amp; inOtterId, bool inIsDeleted = false);
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">         10 :     static std::string GetHippoBaseUrl(){return s_hippoBaseUrl;}</span>
+<span class="lineNum">     124 </span>            :     static void SetHippoBaseUrl(const std::string &amp;inBaseUrl){s_hippoBaseUrl = inBaseUrl;}
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :     //only use in application initialize
+<span class="lineNum">     127 </span>            :     static void SetPoolName(const std::string &amp;inPoolName){ s_poolName = inPoolName;};
+<span class="lineNum">     128 </span><span class="lineCov">        168 :     static std::string GetPoolName(){return s_poolName;};</span>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            : private:
+<span class="lineNum">     131 </span>            :     std::shared_ptr&lt;CDbTable&gt; GetDbTablePtr(EDBTable inType);
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            : private:
+<span class="lineNum">     134 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_hippo;
+<span class="lineNum">     135 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_otter;
+<span class="lineNum">     136 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_flamingo;
+<span class="lineNum">     137 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_session;
+<span class="lineNum">     138 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_session_server_pair;
+<span class="lineNum">     139 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_session_server_joined;
+<span class="lineNum">     140 </span>            :     std::shared_ptr&lt;CDbTable&gt; m_otter_join_session;
+<span class="lineNum">     141 </span>            :     static std::string s_poolName;
+<span class="lineNum">     142 </span>            :     static std::string s_hippoBaseUrl;
+<span class="lineNum">     143 </span>            : };
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : #endif //HIPPO_DB_MANAGER_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

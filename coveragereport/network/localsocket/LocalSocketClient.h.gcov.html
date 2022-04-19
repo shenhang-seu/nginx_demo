@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - network/localsocket/LocalSocketClient.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">network/localsocket</a> - LocalSocketClient.h<span style="font-size: 80%;"> (source / <a href="LocalSocketClient.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">101</td>
+            <td class="headerCovTableEntry">122</td>
+            <td class="headerCovTableEntryMed">82.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryMed">84.2 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * UNIX DOMAIN SOCKET API(local socket)
+<span class="lineNum">       3 </span>            :  * provide both client/server version, use for local JSON and Media APIs
+<span class="lineNum">       4 </span>            :  *
+<span class="lineNum">       5 </span>            :  * Author: Rossl@cisco.com
+<span class="lineNum">       6 </span>            :  * Date: 20170904, initial version
+<span class="lineNum">       7 </span>            :  */
+<span class="lineNum">       8 </span>            : #ifndef _SAFARI_LOCAL_SOCKET_CLIENT_
+<span class="lineNum">       9 </span>            : #define _SAFARI_LOCAL_SOCKET_CLIENT_
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">      12 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">      13 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/array.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/bind.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/enable_shared_from_this.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/shared_ptr.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/asio.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;LoggerApi.h&gt;
+<span class="lineNum">      20 </span>            : #include &quot;LocalSocket.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;LocalSocketBase.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #if defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : namespace LOCALSOCKET
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span>            : using boost::asio::local::stream_protocol;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : class CLocalSocketClient
+<span class="lineNum">      32 </span>            : : public ILocalSocketHandler
+<span class="lineNum">      33 </span>            : , public boost::enable_shared_from_this&lt;CLocalSocketClient&gt;
+<span class="lineNum">      34 </span>            : , public CLocalSocketClientBase
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span>            : public:
+<span class="lineNum">      37 </span><span class="lineCov">         36 :         CLocalSocketClient(boost::asio::io_service&amp; inIoService,</span>
+<span class="lineNum">      38 </span>            :                         const std::string&amp; inFile,
+<span class="lineNum">      39 </span>            :                         int inBufferSize)
+<span class="lineNum">      40 </span>            :     : m_ioService(inIoService),
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :       m_socket( new stream_protocol::socket(inIoService) ),</span>
+<span class="lineNum">      42 </span>            :       m_endpoint(inFile.c_str()),
+<span class="lineNum">      43 </span>            :       m_isReady(false),
+<span class="lineNum">      44 </span>            :       m_isOpen(false),
+<span class="lineNum">      45 </span><span class="lineCov">        288 :       m_isWriteReady(false)</span>
+<span class="lineNum">      46 </span>            :         {
+<span class="lineNum">      47 </span><span class="lineCov">        648 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::CLocalSocketClient file:&quot; &lt;&lt; inFile &lt;&lt; &quot; bufferSize:&quot; &lt;&lt;inBufferSize);</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">         36 :                 m_dataSize = inBufferSize;</span>
+<span class="lineNum">      50 </span><span class="lineCov">         36 :                 if ( inBufferSize &gt; 0)</span>
+<span class="lineNum">      51 </span><span class="lineCov">         12 :                         m_data.reset(new char[m_dataSize]);</span>
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">         36 :         }</span></a>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">         46 :         virtual ~CLocalSocketClient()</span>
+<span class="lineNum">      55 </span><span class="lineCov">        238 :         {</span>
+<span class="lineNum">      56 </span>            :                 Close();
+<span class="lineNum">      57 </span><span class="lineCov">        510 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::~CLocalSocketClient&quot;);</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">         12 :         }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :         virtual void UpdateDataHandler(const DataHandler&amp; inHandler)</span>
+<span class="lineNum">      61 </span>            :         {
+<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 SetDataHandler(inHandler);</span></a>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         virtual void UpdateErrorHandler(const ErrorHandler&amp; inHandler)</span>
+<span class="lineNum">      65 </span>            :         {
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :                 SetErrorHandler(inHandler);</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineCov">         22 :         virtual bool Connect()</span>
+<span class="lineNum">      70 </span>            :         {
+<span class="lineNum">      71 </span><span class="lineCov">        330 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::Connect&quot;);</span>
+<span class="lineNum">      72 </span><span class="lineCov">         22 :                 Close();</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">         22 :                 m_socket-&gt;async_connect(m_endpoint,</span>
+<span class="lineNum">      75 </span>            :         boost::bind(&amp;CLocalSocketClient::HandleConnect,
+<span class="lineNum">      76 </span>            :                         shared_from_this(),
+<span class="lineNum">      77 </span><span class="lineCov">         88 :                 boost::asio::placeholders::error));</span>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineCov">         22 :                 m_isOpen = true;</span>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">         22 :                 m_isWriteReady = true;</span>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">         22 :                 return true;</span>
+<a name="84"><span class="lineNum">      84 </span>            :         }</a>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :         virtual void Send(const char* inBuffer, std::size_t inSize)</span>
+<span class="lineNum">      87 </span>            :         {
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 Send(std::string(inBuffer,inSize));</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">          8 :         virtual void Send(const std::string&amp; inBuffer)</span>
+<span class="lineNum">      92 </span>            :         {
+<span class="lineNum">      93 </span><span class="lineCov">          8 :                 if (!m_isReady)</span>
+<span class="lineNum">      94 </span>            :                         return ;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">         24 :                 if( !m_socket-&gt;is_open())</span>
+<span class="lineNum">      97 </span>            :                         return;
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         15 :                 if ( !m_isWriteReady || m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     100 </span>            :                 {
+<span class="lineNum">     101 </span>            :                         //need to wait until all send is fine, not handle in SendNow function
+<span class="lineNum">     102 </span><span class="lineCov">          2 :                         m_sendDataList.push_back(boost::shared_ptr&lt;std::string&gt;(new std::string(inBuffer)));</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineCov">          2 :                         if ( m_sendDataList.size() &lt; 1000)</span>
+<span class="lineNum">     105 </span>            :                         {
+<span class="lineNum">     106 </span><span class="lineCov">         23 :                                 LSOCK_INFO_THIS(&quot;CLocalSocketClient::Send(String), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     107 </span>            :                                                 &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     108 </span>            :                                                 &lt;&lt; &quot; data:&quot; &lt;&lt; inBuffer
+<span class="lineNum">     109 </span>            :                                                 &lt;&lt; &quot; size:&quot; &lt;&lt; m_sendDataList.size());
+<span class="lineNum">     110 </span>            :                         }
+<span class="lineNum">     111 </span>            :                         else
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                                 LSOCK_INFO_THIS(&quot;CLocalSocketClient::Send(String), socket not completer, save to buffer&quot;</span>
+<span class="lineNum">     113 </span>            :                                                 &lt;&lt; &quot; currentSendBufferSize:&quot; &lt;&lt; m_sendDataList.size()
+<span class="lineNum">     114 </span>            :                                                 &lt;&lt; &quot; size:&quot; &lt;&lt; m_sendDataList.size());
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :                         return;
+<span class="lineNum">     117 </span>            :                 }
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">        126 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::Send&quot;</span>
+<span class="lineNum">     120 </span>            :                                                                 &lt;&lt; &quot; size:&quot; &lt;&lt; m_sendDataList.size());
+<span class="lineNum">     121 </span><span class="lineCov">          7 :                 SendNow( inBuffer );</span>
+<span class="lineNum">     122 </span>            :         }
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span><span class="lineCov">          7 :         virtual void SendNow(const std::string&amp; inBuffer)</span>
+<span class="lineNum">     126 </span>            :         {
+<span class="lineNum">     127 </span><span class="lineCov">          7 :                 if (!m_isReady)</span>
+<span class="lineNum">     128 </span>            :                         return ;
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineCov">         28 :                 if( !m_socket-&gt;is_open())</span>
+<span class="lineNum">     131 </span>            :                         return;
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineCov">         14 :                 if ( !m_isWriteReady || m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     134 </span>            :                 {
+<span class="lineNum">     135 </span>            :                         //need to wait until all send is fine, not handle in SendNow function
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                         LSOCK_INFO_THIS(&quot;CLocalSocketClient::SendNow, not ready error, size:&quot; &lt;&lt; inBuffer.size() );</span>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :                         return;
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :                 }
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">          7 :                 m_isWriteReady = false;</span>
+<span class="lineNum">     143 </span><span class="lineCov">         14 :                 m_currentSendData.reset(new std::string(inBuffer) );</span>
+<span class="lineNum">     144 </span><span class="lineCov">         14 :                 boost::asio::async_write(*m_socket.get(),</span>
+<span class="lineNum">     145 </span><span class="lineCov">         21 :                   boost::asio::buffer(m_currentSendData-&gt;c_str(), m_currentSendData-&gt;size() ),</span>
+<span class="lineNum">     146 </span>            :                   boost::asio::transfer_at_least(m_currentSendData-&gt;size()),
+<span class="lineNum">     147 </span>            :                   boost::bind(&amp;CLocalSocketClient::HandleWrite,
+<span class="lineNum">     148 </span>            :                   shared_from_this(),
+<span class="lineNum">     149 </span>            :                   boost::asio::placeholders::error,
+<span class="lineNum">     150 </span><span class="lineCov">         63 :                   0));</span>
+<a name="151"><span class="lineNum">     151 </span>            :         }</a>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineCov">         22 :         virtual void Disconnect()</span>
+<span class="lineNum">     154 </span>            :         {
+<span class="lineNum">     155 </span><span class="lineCov">        330 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::Disconnect&quot;);</span>
+<span class="lineNum">     156 </span><span class="lineCov">         22 :                 m_isOpen = false;</span>
+<span class="lineNum">     157 </span><span class="lineCov">         22 :                 m_isWriteReady = false;</span>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span><span class="lineCov">         22 :                 Close();</span>
+<a name="160"><span class="lineNum">     160 </span><span class="lineCov">         22 :         }</span></a>
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span><span class="lineCov">         16 :         virtual void Close()</span>
+<span class="lineNum">     163 </span>            :         {
+<span class="lineNum">     164 </span><span class="lineCov">         50 :                 Stop();</span>
+<span class="lineNum">     165 </span><span class="lineCov">         16 :         }</span>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineCov">         12 :         virtual void Start()</span>
+<span class="lineNum">     169 </span>            :         {
+<span class="lineNum">     170 </span><span class="lineCov">         12 :                 if (!m_isReady)</span>
+<span class="lineNum">     171 </span>            :                         return ;
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">         40 :                 if( !m_socket-&gt;is_open())</span>
+<span class="lineNum">     174 </span>            :                         return;
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineCov">         10 :             m_socket-&gt;async_read_some(boost::asio::buffer(m_data.get(), m_dataSize),</span>
+<span class="lineNum">     177 </span>            :                  boost::bind(&amp;CLocalSocketClient::HandleRead,
+<span class="lineNum">     178 </span>            :                   shared_from_this(),
+<span class="lineNum">     179 </span>            :                   boost::asio::placeholders::error,
+<span class="lineNum">     180 </span><span class="lineCov">         70 :                   boost::asio::placeholders::bytes_transferred));</span>
+<span class="lineNum">     181 </span>            :         }
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">        101 :         virtual void Stop()</span>
+<span class="lineNum">     184 </span>            :         {
+<span class="lineNum">     185 </span><span class="lineCov">       1515 :                 LSOCK_DEBUG_THIS(&quot;CLocalSocketClient::Stop close socket&quot;);</span>
+<span class="lineNum">     186 </span><span class="lineCov">        101 :                 m_isReady = false;</span>
+<span class="lineNum">     187 </span>            :         boost::system::error_code ec;
+<span class="lineNum">     188 </span><span class="lineCov">        202 :         m_socket-&gt;close(ec);</span>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov">        101 :         }</span></a>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">         44 :         virtual void HandleConnect( const boost::system::error_code&amp; inError)</span>
+<span class="lineNum">     192 </span>            :     {
+<span class="lineNum">     193 </span><span class="lineCov">         22 :                 if (!m_isOpen)</span>
+<span class="lineNum">     194 </span><span class="lineCov">         22 :                         return ;</span>
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineCov">         22 :                 if (!inError)</span>
+<span class="lineNum">     197 </span>            :                 {
+<span class="lineNum">     198 </span><span class="lineCov">         22 :                         m_isReady = true;</span>
+<span class="lineNum">     199 </span><span class="lineCov">         22 :                         NotifyReady();</span>
+<span class="lineNum">     200 </span><span class="lineCov">         22 :                         Start();</span>
+<span class="lineNum">     201 </span>            :                 }
+<span class="lineNum">     202 </span>            :                 else
+<span class="lineNum">     203 </span>            :                 {
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                         LSOCK_WARNING_THIS(&quot;CLocalSocketClient::HandleConnect error:&quot; &lt;&lt; inError &lt;&lt; &quot; message:&quot; &lt;&lt; inError.message());</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                         Stop();</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                         NotifyError(inError);</span>
+<span class="lineNum">     207 </span>            :                 }
+<a name="208"><span class="lineNum">     208 </span>            :     }</a>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">          8 :         virtual void HandleRead( const boost::system::error_code&amp; inError,</span>
+<span class="lineNum">     211 </span>            :                         size_t inSize)
+<span class="lineNum">     212 </span>            :         {
+<span class="lineNum">     213 </span><span class="lineCov">          4 :                 if (!m_isOpen)</span>
+<span class="lineNum">     214 </span><span class="lineCov">          4 :                         return ;</span>
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span><span class="lineCov">          4 :                 if (!inError)</span>
+<span class="lineNum">     217 </span>            :                 {
+<span class="lineNum">     218 </span>            :                     //data callback
+<span class="lineNum">     219 </span><span class="lineCov">          4 :                         NotifyData((unsigned char*)m_data.get(), inSize);</span>
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineCov">          4 :                         Start();</span>
+<span class="lineNum">     222 </span>            :                 }
+<span class="lineNum">     223 </span>            :                 else
+<span class="lineNum">     224 </span>            :                 {
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                         LSOCK_WARNING_THIS(&quot;CLocalSocketClient::HandleRead error:&quot; &lt;&lt; inError &lt;&lt; &quot; message:&quot; &lt;&lt; inError.message());</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                         Stop();</span>
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                 NotifyError(inError);</span>
+<span class="lineNum">     228 </span>            :                 }
+<span class="lineNum">     229 </span>            :         }
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span><span class="lineCov">         14 :         virtual void HandleWrite(const boost::system::error_code&amp; inError, int inConsumeSendBufferSize)</span>
+<span class="lineNum">     232 </span>            :          {
+<span class="lineNum">     233 </span><span class="lineCov">          8 :                 if (!m_isOpen)</span>
+<span class="lineNum">     234 </span><span class="lineCov">          8 :                         return ;</span>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineCov">          6 :             if (!inError)</span>
+<span class="lineNum">     237 </span>            :             {
+<span class="lineNum">     238 </span><span class="lineCov">         90 :                 LSOCK_INFO_THIS(&quot;CLocalSocketClient::HandleWrite Done&quot;);</span>
+<span class="lineNum">     239 </span><span class="lineCov">          6 :                 m_isWriteReady = true;</span>
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineCov">          6 :                 m_currentSendData.reset();</span>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span>            :                 // try to send data in send buffer
+<span class="lineNum">     244 </span><span class="lineCov">          1 :                 for (int i = 0; i &lt;  inConsumeSendBufferSize; i++)</span>
+<span class="lineNum">     245 </span><span class="lineCov">          1 :                         m_sendDataList.pop_front();</span>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineCov">         12 :                 if ( m_sendDataList.size() &gt; 0 )</span>
+<span class="lineNum">     248 </span>            :                 {
+<span class="lineNum">     249 </span>            :                         //send data in buffer
+<span class="lineNum">     250 </span><span class="lineCov">          1 :                         m_isWriteReady = false;</span>
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineCov">          1 :                         int sendPackCount = 0;</span>
+<span class="lineNum">     253 </span><span class="lineCov">          1 :                         int sendDataSize = 0;</span>
+<span class="lineNum">     254 </span>            :                         std::vector&lt;boost::asio::const_buffer&gt; buffers;
+<span class="lineNum">     255 </span><span class="lineCov">          7 :                                 for ( auto it = m_sendDataList.begin(); it !=  m_sendDataList.end() &amp;&amp; sendPackCount &lt; 1;  it ++)</span>
+<span class="lineNum">     256 </span>            :                                 {
+<span class="lineNum">     257 </span>            :                                         //write data
+<span class="lineNum">     258 </span><span class="lineCov">          6 :                                         buffers.push_back(boost::asio::buffer((*it)-&gt;c_str(), (*it)-&gt;length()));</span>
+<span class="lineNum">     259 </span><span class="lineCov">          1 :                                         sendPackCount++;</span>
+<span class="lineNum">     260 </span><span class="lineCov">          3 :                                         sendDataSize += (*it)-&gt;length();</span>
+<span class="lineNum">     261 </span>            :                                 }
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">         16 :                                 LSOCK_INFO_THIS(&quot;CLocalSocketClient::HandleWrite sendPackCount:&quot; &lt;&lt; sendPackCount);</span>
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span><span class="lineCov">          1 :                     boost::asio::async_write(*m_socket.get(),</span>
+<span class="lineNum">     266 </span>            :                           buffers,
+<span class="lineNum">     267 </span>            :                           boost::asio::transfer_at_least(sendDataSize),
+<span class="lineNum">     268 </span>            :                           boost::bind(&amp;CLocalSocketClient::HandleWrite,
+<span class="lineNum">     269 </span>            :                           shared_from_this(),
+<span class="lineNum">     270 </span>            :                           boost::asio::placeholders::error,
+<span class="lineNum">     271 </span><span class="lineCov">          4 :                           sendPackCount));</span>
+<span class="lineNum">     272 </span>            :                 }
+<span class="lineNum">     273 </span>            :             }
+<span class="lineNum">     274 </span>            :             else
+<span class="lineNum">     275 </span>            :             {
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :                 LSOCK_INFO_THIS(&quot;CLocalSocketClient::HandleWrite inError:&quot; &lt;&lt; inError</span>
+<span class="lineNum">     277 </span>            :                                                                                 &lt;&lt; &quot; info:&quot; &lt;&lt; inError.message());
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :                 Stop();</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                 NotifyError(inError);</span>
+<span class="lineNum">     281 </span>            :             }
+<span class="lineNum">     282 </span>            :          }
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">         22 :         void NotifyReady()</span>
+<span class="lineNum">     285 </span>            :         {
+<span class="lineNum">     286 </span><span class="lineCov">         44 :         if (m_readyHandler &amp;&amp; m_isOpen)</span>
+<span class="lineNum">     287 </span>            :         {
+<span class="lineNum">     288 </span><span class="lineCov">         88 :                 m_readyHandler( shared_from_this() );</span>
+<span class="lineNum">     289 </span>            :         }
+<span class="lineNum">     290 </span><span class="lineCov">         22 :         }</span>
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span><span class="lineCov">          1 :         void NotifyError(const boost::system::error_code&amp; inError)</span>
+<span class="lineNum">     293 </span>            :         {
+<span class="lineNum">     294 </span><span class="lineCov">          2 :         if (m_errorHandler  &amp;&amp; m_isOpen )</span>
+<span class="lineNum">     295 </span>            :         {
+<span class="lineNum">     296 </span><span class="lineCov">          4 :                 m_errorHandler(inError, shared_from_this() );</span>
+<span class="lineNum">     297 </span>            :         }
+<span class="lineNum">     298 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span><span class="lineCov">          8 :         void NotifyData(unsigned char*data, size_t inSize)</span>
+<span class="lineNum">     301 </span>            :         {
+<span class="lineNum">     302 </span><span class="lineCov">         16 :         if (m_dataHandler  &amp;&amp; m_isOpen )</span>
+<span class="lineNum">     303 </span>            :         {
+<span class="lineNum">     304 </span><span class="lineCov">         32 :                 m_dataHandler((char*)data, inSize, shared_from_this() );</span>
+<span class="lineNum">     305 </span>            :          }
+<span class="lineNum">     306 </span><span class="lineCov">          8 :         }</span>
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            : protected:
+<span class="lineNum">     310 </span>            :         boost::asio::io_service&amp; m_ioService;
+<span class="lineNum">     311 </span>            :         boost::shared_ptr&lt;stream_protocol::socket&gt; m_socket;
+<span class="lineNum">     312 </span>            :         boost::shared_ptr&lt;char[]&gt; m_data;
+<span class="lineNum">     313 </span>            :         int m_dataSize;
+<span class="lineNum">     314 </span>            :         stream_protocol::endpoint m_endpoint;
+<span class="lineNum">     315 </span>            :         bool m_isReady;
+<span class="lineNum">     316 </span>            :         bool m_isOpen;
+<span class="lineNum">     317 </span>            :         bool m_isWriteReady;
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :         std::list&lt;boost::shared_ptr&lt;std::string&gt; &gt; m_sendDataList;
+<span class="lineNum">     320 </span>            :         boost::shared_ptr&lt;std::string&gt; m_currentSendData;
+<span class="lineNum">     321 </span>            : };
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            : };//namespace LOCALSOCKET
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span>            : #else // defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">     326 </span>            : # error Local sockets not available on this platform.
+<span class="lineNum">     327 </span>            : #endif // defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            : #endif //_SAFARI_LOCAL_SOCKET_CLIENT_
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

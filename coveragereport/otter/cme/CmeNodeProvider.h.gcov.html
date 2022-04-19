@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/cme/CmeNodeProvider.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/cme</a> - CmeNodeProvider.h<span style="font-size: 80%;"> (source / <a href="CmeNodeProvider.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    CME Node Provider: maintains two list (primary &amp; backup) of CME nodes and pick one for an CME session.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Dec-28-2018  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef OTT_CME_NODE_PROVIDER_H
+<span class="lineNum">      14 </span>            : #define OTT_CME_NODE_PROVIDER_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;random&gt;
+<span class="lineNum">      17 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      18 </span>            : #include &lt;map&gt;
+<span class="lineNum">      19 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      20 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : typedef std::vector&lt;WssUrlType&gt; WssUrlVector;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : class CCmeNodeProvider
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span>            : private:
+<span class="lineNum">      27 </span><span class="lineCov">         36 :     class CCmeNodeList</span>
+<span class="lineNum">      28 </span>            :     {
+<span class="lineNum">      29 </span>            :     public:
+<span class="lineNum">      30 </span>            :         WssUrlVector m_primaryList;
+<span class="lineNum">      31 </span>            :         WssUrlVector m_backupList;
+<span class="lineNum">      32 </span>            :     };
+<span class="lineNum">      33 </span>            :     typedef std::map&lt;CmeMediaServiceIdType, CCmeNodeList&gt; CmeNodeListMap; // map CmeMediaServiceId to CCmeNodeList
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : public:
+<span class="lineNum">      36 </span><span class="lineCov">          6 :     class CPickCmeNodeResult</span>
+<span class="lineNum">      37 </span>            :     {
+<span class="lineNum">      38 </span>            :     public:
+<span class="lineNum">      39 </span>            :         CPickCmeNodeResult(const WssUrlType&amp; inCmeNodeUrl, bool inIsPrimary)
+<span class="lineNum">      40 </span>            :         : m_cmeNodeUrl(inCmeNodeUrl)
+<span class="lineNum">      41 </span><span class="lineCov">          8 :         , m_isPrimary(inIsPrimary)</span>
+<span class="lineNum">      42 </span>            :         {}
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :     public:
+<span class="lineNum">      45 </span>            :         WssUrlType m_cmeNodeUrl;
+<span class="lineNum">      46 </span>            :         bool m_isPrimary;
+<span class="lineNum">      47 </span>            :     };
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :     static CCmeNodeProvider&amp; Instance();
+<span class="lineNum">      50 </span>            :     ~CCmeNodeProvider();
+<span class="lineNum">      51 </span>            :     bool SetCmeNodeList(const CmeMediaServiceIdType&amp; inCmeMediaServiceId, const JsonValue&amp; inJsonCmeNodeList);
+<span class="lineNum">      52 </span>            :     void Release();
+<span class="lineNum">      53 </span>            :     CPickCmeNodeResult PickCmeNode(const CmeMediaServiceIdType&amp; inCmeMediaServiceId);
+<span class="lineNum">      54 </span>            :     WssUrlType PickPrimaryCmeNode(const CmeMediaServiceIdType&amp; inCmeMediaServiceId);
+<span class="lineNum">      55 </span>            :     WssUrlType PickBackupCmeNode(const CmeMediaServiceIdType&amp; inCmeMediaServiceId);
+<span class="lineNum">      56 </span>            :     void RemoveCmeNode(const CmeMediaServiceIdType&amp; inCmeMediaServiceId, const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">      57 </span>            :     void RemoveCmeNode(const WssUrlType&amp; inCmeNodeUrl);
+<span class="lineNum">      58 </span>            :     JsonValue ToJson() const;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : private:
+<span class="lineNum">      61 </span>            :     CCmeNodeProvider();
+<span class="lineNum">      62 </span>            :     WssUrlType PickCmeNodeFromList(const WssUrlVector&amp; inCmeNodes);
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : private:
+<span class="lineNum">      65 </span>            :     std::random_device m_rd;
+<span class="lineNum">      66 </span>            :     std::mt19937 m_gen;
+<span class="lineNum">      67 </span>            :     CmeNodeListMap m_cmeNodeListMap;
+<span class="lineNum">      68 </span>            : };
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

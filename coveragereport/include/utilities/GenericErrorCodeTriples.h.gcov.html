@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/GenericErrorCodeTriples.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - GenericErrorCodeTriples.h<span style="font-size: 80%;"> (source / <a href="GenericErrorCodeTriples.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">75</td>
+            <td class="headerCovTableEntryLo">5.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Generic error code triples: &lt;std::errc::generic_errno or boost::system::errc::generic_errno, linux errno, SAFARI errno&gt;
+<span class="lineNum">       6 </span>            : ///    std::errc::generic_errnos are defined in &lt;/usr/include/c++/4.8.5/x86_64-redhat-linux/bits/error_constants.h&gt;
+<span class="lineNum">       7 </span>            : ///    boost::system::errc::generic_errnos are defined in &lt;boost/system/error_code.hpp&gt;
+<span class="lineNum">       8 </span>            : ///
+<span class="lineNum">       9 </span>            : /// Author:
+<span class="lineNum">      10 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">      11 </span>            : ///
+<span class="lineNum">      12 </span>            : /// History:
+<span class="lineNum">      13 </span>            : ///    Nov-02-2017  Initial version
+<span class="lineNum">      14 </span>            : /******************************************************************************/
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : GENERIC_ERROR_CODE_TRIPLE(address_family_not_supported,                         EAFNOSUPPORT,           SAFARI_ERROR_ADDRESS_FAMILY_NOT_SUPPORTED)
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(address_in_use,                                                       EADDRINUSE,             SAFARI_ERROR_ADDRESS_IN_USE)</span>
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(address_not_available,                                        EADDRNOTAVAIL,          SAFARI_ERROR_ADDRESS_NOT_AVAILABLE)</span>
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(already_connected,                                            EISCONN,                SAFARI_ERROR_ALREADY_CONNECTED)</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(argument_list_too_long,                                       E2BIG,                  SAFARI_ERROR_ARGUMENT_LIST_TOO_LONG)</span>
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(argument_out_of_domain,                                       EDOM,                   SAFARI_ERROR_ARGUMENT_OUT_OF_DOMAIN)</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(bad_address,                                                          EFAULT,                 SAFARI_ERROR_BAD_ADDRESS)</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(bad_file_descriptor,                                          EBADF,                  SAFARI_ERROR_BAD_FILE_DESCRIPTOR)</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(bad_message,                                                          EBADMSG,                SAFARI_ERROR_BAD_MESSAGE)</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(broken_pipe,                                                          EPIPE,                  SAFARI_ERROR_BROKEN_PIPE)</span>
+<span class="lineNum">      26 </span><span class="lineCov">          5 : GENERIC_ERROR_CODE_TRIPLE(connection_aborted,                                           ECONNABORTED,           SAFARI_ERROR_CONNECTION_ABORTED)</span>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(connection_already_in_progress,                       EALREADY,               SAFARI_ERROR_CONNECTION_ALREADY_IN_PROGRESS)</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(connection_refused,                                           ECONNREFUSED,           SAFARI_ERROR_CONNECTION_REFUSED)</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(connection_reset,                                                     ECONNRESET,             SAFARI_ERROR_CONNECTION_RESET)</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(cross_device_link,                                            EXDEV,                  SAFARI_ERROR_CROSS_DEVICE_LINK)</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(destination_address_required,                         EDESTADDRREQ,           SAFARI_ERROR_DESTINATION_ADDRESS_REQUIRED)</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(device_or_resource_busy,                                      EBUSY,                  SAFARI_ERROR_DEVICE_OR_RESOURCE_BUSY)</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(directory_not_empty,                                          ENOTEMPTY,              SAFARI_ERROR_DIRECTORY_NOT_EMPTY)</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(executable_format_error,                                      ENOEXEC,                SAFARI_ERROR_EXECUTABLE_FORMAT_ERROR)</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(file_exists,                                                          EEXIST,                 SAFARI_ERROR_FILE_EXISTS)</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(file_too_large,                                                       EFBIG,                  SAFARI_ERROR_FILE_TOO_LARGE)</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(filename_too_long,                                            ENAMETOOLONG,           SAFARI_ERROR_FILENAME_TOO_LONG)</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(function_not_supported,                                       ENOSYS,                 SAFARI_ERROR_FUNCTION_NOT_SUPPORTED)</span>
+<span class="lineNum">      39 </span><span class="lineCov">          1 : GENERIC_ERROR_CODE_TRIPLE(host_unreachable,                                                     EHOSTUNREACH,           SAFARI_ERROR_HOST_UNREACHABLE)</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(identifier_removed,                                           EIDRM,                  SAFARI_ERROR_IDENTIFIER_REMOVED)</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(illegal_byte_sequence,                                        EILSEQ,                 SAFARI_ERROR_ILLEGAL_BYTE_SEQUENCE)</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(inappropriate_io_control_operation,           ENOTTY,                 SAFARI_ERROR_INAPPROPRIATE_IO_CONTROL_OPERATION)</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(interrupted,                                                          EINTR,                  SAFARI_ERROR_INTERRUPTED)</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(invalid_argument,                                                     EINVAL,                 SAFARI_ERROR_INVALID_ARGUMENT)</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(invalid_seek,                                                         ESPIPE,                 SAFARI_ERROR_INVALID_SEEK)</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(io_error,                                                                     EIO,                    SAFARI_ERROR_IO_ERROR)</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(is_a_directory,                                                       EISDIR,                 SAFARI_ERROR_IS_A_DIRECTORY)</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(message_size,                                                         EMSGSIZE,               SAFARI_ERROR_MESSAGE_SIZE)</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(network_down,                                                         ENETDOWN,               SAFARI_ERROR_NETWORK_DOWN)</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(network_reset,                                                        ENETRESET,              SAFARI_ERROR_NETWORK_RESET)</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(network_unreachable,                                          ENETUNREACH,            SAFARI_ERROR_NETWORK_UNREACHABLE)</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_buffer_space,                                                      ENOBUFS,                SAFARI_ERROR_NO_BUFFER_SPACE)</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_child_process,                                                     ECHILD,                 SAFARI_ERROR_NO_CHILD_PROCESS)</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_link,                                                                      ENOLINK,                SAFARI_ERROR_NO_LINK)</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_lock_available,                                            ENOLCK,                 SAFARI_ERROR_NO_LOCK_AVAILABLE)</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_message_available,                                         ENODATA,                SAFARI_ERROR_NO_MESSAGE_AVAILABLE)</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_message,                                                           ENOMSG,                 SAFARI_ERROR_NO_MESSAGE)</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_protocol_option,                                           ENOPROTOOPT,            SAFARI_ERROR_NO_PROTOCOL_OPTION)</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_space_on_device,                                           ENOSPC,                 SAFARI_ERROR_NO_SPACE_ON_DEVICE)</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_stream_resources,                                          ENOSR,                  SAFARI_ERROR_NO_STREAM_RESOURCES)</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_such_device_or_address,                            ENXIO,                  SAFARI_ERROR_NO_SUCH_DEVICE_OR_ADDRESS)</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_such_device,                                                       ENODEV,                 SAFARI_ERROR_NO_SUCH_DEVICE)</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_such_file_or_directory,                            ENOENT,                 SAFARI_ERROR_NO_SUCH_FILE_OR_DIRECTORY)</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(no_such_process,                                                      ESRCH,                  SAFARI_ERROR_NO_SUCH_PROCESS)</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(not_a_directory,                                                      ENOTDIR,                SAFARI_ERROR_NOT_A_DIRECTORY)</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(not_a_socket,                                                         ENOTSOCK,               SAFARI_ERROR_NOT_A_SOCKET)</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(not_a_stream,                                                         ENOSTR,                 SAFARI_ERROR_NOT_A_STREAM)</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(not_connected,                                                        ENOTCONN,               SAFARI_ERROR_NOT_CONNECTED)</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(not_enough_memory,                                            ENOMEM,                 SAFARI_ERROR_NOT_ENOUGH_MEMORY)</span>
+<span class="lineNum">      70 </span>            : //GENERIC_ERROR_CODE_TRIPLE(not_supported,                                                      ENOTSUP,                SAFARI_ERROR_NOT_SUPPORTED)
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(operation_canceled,                                           ECANCELED,              SAFARI_ERROR_OPERATION_CANCELED)</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(operation_in_progress,                                        EINPROGRESS,            SAFARI_ERROR_OPERATION_IN_PROCESS)</span>
+<span class="lineNum">      73 </span><span class="lineCov">          1 : GENERIC_ERROR_CODE_TRIPLE(operation_not_permitted,                                      EPERM,                  SAFARI_ERROR_OPERATION_NOT_PERMITTED)</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(operation_not_supported,                                      EOPNOTSUPP,             SAFARI_ERROR_OPERATION_NOT_SUPPORTED)</span>
+<span class="lineNum">      75 </span>            : //GENERIC_ERROR_CODE_TRIPLE(operation_would_block,                                      EWOULDBLOCK,            SAFARI_ERROR_OPERATION_WOULD_BLOCK)
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(owner_dead,                                                           EOWNERDEAD,             SAFARI_ERROR_OWNER_DEAD)</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(permission_denied,                                            EACCES,                 SAFARI_ERROR_PERMISSION_DENIED)</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(protocol_error,                                                       EPROTO,                 SAFARI_ERROR_PROTOCOL_ERROR)</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(protocol_not_supported,                                       EPROTONOSUPPORT,        SAFARI_ERROR_PROTOCOL_NOT_SUPPORTED)</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(read_only_file_system,                                        EROFS,                  SAFARI_ERROR_READ_ONLY_FILE_SYSTEM)</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(resource_deadlock_would_occur,                        EDEADLK,                SAFARI_ERROR_RESOURCE_DEADLOCK_WOULD_OCCUR)</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(resource_unavailable_try_again,                       EAGAIN,                 SAFARI_ERROR_TRY_AGAIN)</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(result_out_of_range,                                          ERANGE,                 SAFARI_ERROR_RESULT_OUT_OF_RANGE)</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(state_not_recoverable,                                        ENOTRECOVERABLE,        SAFARI_ERROR_STATE_NOT_RECOVERABLE)</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(stream_timeout,                                                       ETIME,                  SAFARI_ERROR_STREAM_TIMEOUT)</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(text_file_busy,                                                       ETXTBSY,                SAFARI_ERROR_TEXT_FILE_BUSY)</span>
+<span class="lineNum">      87 </span><span class="lineCov">          1 : GENERIC_ERROR_CODE_TRIPLE(timed_out,                                                            ETIMEDOUT,              SAFARI_ERROR_TIMEOUT)</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(too_many_files_open_in_system,                        ENFILE,                 SAFARI_ERROR_TOO_MANY_FILES_OPEN_IN_SYSTEM)</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(too_many_files_open,                                          EMFILE,                 SAFARI_ERROR_TOO_MANY_FILES_OPEN)</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(too_many_links,                                                       EMLINK,                 SAFARI_ERROR_TOO_MANY_LINKS)</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(too_many_symbolic_link_levels,                        ELOOP,                  SAFARI_ERROR_TOO_MANY_SYMBOLIC_LINK_LEVELS)</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(value_too_large,                                                      EOVERFLOW,              SAFARI_ERROR_VALUE_TOO_LARGE)</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 : GENERIC_ERROR_CODE_TRIPLE(wrong_protocol_type,                                          EPROTOTYPE,             SAFARI_ERROR_WRONG_PROTOCOL_TYPE)</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

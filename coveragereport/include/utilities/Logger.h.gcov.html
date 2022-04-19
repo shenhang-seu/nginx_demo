@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/Logger.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - Logger.h<span style="font-size: 80%;"> (source / <a href="Logger.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef __LOGGER_H__</a>
+<span class="lineNum">       2 </span>            : #define __LOGGER_H__
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;string&gt;
+<span class="lineNum">       5 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       6 </span>            : #include &lt;boost/log/core.hpp&gt;
+<span class="lineNum">       7 </span>            : #include &lt;boost/log/trivial.hpp&gt;
+<span class="lineNum">       8 </span>            : #include &lt;boost/log/expressions.hpp&gt;
+<span class="lineNum">       9 </span>            : #include &lt;boost/log/sinks/sync_frontend.hpp&gt;
+<span class="lineNum">      10 </span>            : #include &lt;boost/log/sinks/text_ostream_backend.hpp&gt;
+<span class="lineNum">      11 </span>            : #include &lt;boost/log/sinks/text_file_backend.hpp&gt;
+<span class="lineNum">      12 </span>            : #include &lt;boost/log/sources/severity_logger.hpp&gt;
+<span class="lineNum">      13 </span>            : #include &lt;boost/log/sources/logger.hpp&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/log/common.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/log/attributes.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/log/sinks.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/log/sources/basic_logger.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/log/expressions/formatters/date_time.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/log/support/date_time.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/log/detail/thread_id.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/make_shared.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/mem_fn.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/core/null_deleter.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/ref.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/bind.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/smart_ptr/shared_ptr.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/date_time/posix_time/posix_time.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/thread/thread.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/thread/barrier.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/log/detail/config.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/log/detail/process_id.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/log/utility/setup/common_attributes.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/smart_ptr/make_shared_object.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/phoenix/bind.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/log/sources/severity_channel_logger.hpp&gt;
+<span class="lineNum">      36 </span>            : #include &lt;boost/log/sources/record_ostream.hpp&gt;
+<span class="lineNum">      37 </span>            : #include &lt;boost/log/attributes/scoped_attribute.hpp&gt;
+<span class="lineNum">      38 </span>            : #include &lt;boost/log/utility/value_ref.hpp&gt;
+<span class="lineNum">      39 </span>            : #include &lt;boost/phoenix.hpp&gt;
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : namespace log_expr = boost::log::expressions;
+<span class="lineNum">      42 </span>            : namespace log_srcs = boost::log::sources;
+<span class="lineNum">      43 </span>            : namespace log_attrs = boost::log::attributes;
+<span class="lineNum">      44 </span>            : namespace log_trivial = boost::log::trivial;
+<span class="lineNum">      45 </span>            : namespace log_keywords = boost::log::keywords;
+<span class="lineNum">      46 </span>            : namespace log_sinks = boost::log::sinks;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : #define DEFAULT_LOG_FILE_MAXSIZE 1024*1024*100 //byte
+<span class="lineNum">      49 </span>            : #define DEFAULT_LOG_FILE_MAXCOUNT 100 //file Count
+<span class="lineNum">      50 </span>            : #define DEFAULT_MATRIX_FILE_MAXSIZE 1024*1024*100 //byte
+<span class="lineNum">      51 </span>            : #define DEFAULT_MATRIX_FILE_MAXCOUNT 100 //file Count
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : //define our own severity levels
+<span class="lineNum">      54 </span>            : enum class ESeverityLevel
+<span class="lineNum">      55 </span>            : {
+<span class="lineNum">      56 </span>            :         METRICS,
+<span class="lineNum">      57 </span>            :         DEBUG,
+<span class="lineNum">      58 </span>            :         INFO,
+<span class="lineNum">      59 </span>            :         WARNING,
+<span class="lineNum">      60 </span>            :         ERROR
+<span class="lineNum">      61 </span>            : };
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : // The operator puts a human-friendly representation of the severity level to the stream
+<span class="lineNum">      64 </span>            : std::ostream&amp; operator&lt;&lt; (std::ostream&amp; inStream, ESeverityLevel inLevel);
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : BOOST_LOG_ATTRIBUTE_KEYWORD(severity, &quot;Severity&quot;, ESeverityLevel)
+<span class="lineNum">      67 </span>            : BOOST_LOG_ATTRIBUTE_KEYWORD(track_attr, &quot;Track&quot;, std::string)
+<span class="lineNum">      68 </span>            : BOOST_LOG_ATTRIBUTE_KEYWORD(module_attr, &quot;Module&quot;, std::string)
+<span class="lineNum">      69 </span>            : BOOST_LOG_ATTRIBUTE_KEYWORD(process_id, &quot;ProcessID&quot;, log_attrs::current_process_id::value_type )
+<span class="lineNum">      70 </span>            : BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, &quot;ThreadID&quot;, log_attrs::current_thread_id::value_type )
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : // Get Process native ID
+<span class="lineNum">      73 </span>            : log_attrs::current_process_id::value_type::native_type get_native_process_id(boost::log::value_ref&lt;log_attrs::current_process_id::value_type, tag::process_id&gt; const&amp; pid);
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : // Get Thread native ID
+<span class="lineNum">      76 </span>            : std::string get_native_thread_id(boost::log::value_ref&lt;log_attrs::current_thread_id::value_type, tag::thread_id&gt; const&amp; tid);
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : #define FORMATE_WITH_PROCESSID  \
+<span class="lineNum">      79 </span>            :         log_expr::format(&quot;[%1% pid=%2% tid=%3%] &lt;%4%&gt; %5%&quot;) \
+<span class="lineNum">      80 </span>            :         % log_expr::format_date_time&lt; boost::posix_time::ptime &gt;(&quot;Timestamp&quot;, &quot;%Y-%m-%d %H:%M:%S.%f%Q&quot;) \
+<span class="lineNum">      81 </span>            :         % log_expr::attr&lt;log_attrs::current_process_id::value_type &gt;(&quot;ProcessID&quot;) \
+<span class="lineNum">      82 </span>            :         % log_expr::attr&lt;log_attrs::current_thread_id::value_type &gt;(&quot;ThreadID&quot;) \
+<span class="lineNum">      83 </span>            :         % log_expr::attr&lt;boost::log::trivial::ESeverityLevel&gt;(&quot;Severity&quot;) \
+<span class="lineNum">      84 </span>            :         % log_expr::smessage
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : #define FORMATE_NORMAL  \
+<span class="lineNum">      87 </span>            :         log_expr::format(&quot;[%1% pid=%2% tid=%3%] %4%: [%5%] %6%&quot;) \
+<span class="lineNum">      88 </span>            :         % log_expr::max_size_decor&lt;char&gt;(23)[log_expr::stream &lt;&lt; log_expr::format_date_time&lt;boost::posix_time::ptime&gt;(&quot;Timestamp&quot;, &quot;%m/%d/%Y %H:%M:%S.%f&quot;)] \
+<span class="lineNum">      89 </span>            :         % boost::phoenix::bind(&amp;get_native_process_id, process_id.or_none()) \
+<span class="lineNum">      90 </span>            :         % boost::phoenix::bind(&amp;get_native_thread_id, thread_id.or_none()) \
+<span class="lineNum">      91 </span>            :         % severity \
+<span class="lineNum">      92 </span>            :         % module_attr \
+<span class="lineNum">      93 </span>            :         % log_expr::smessage
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : #define MATRIX_FORMATE_NORMAL   \
+<span class="lineNum">      96 </span>            :         log_expr::format(&quot;%1%&quot;) \
+<span class="lineNum">      97 </span>            :         % log_expr::smessage
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : namespace SAFARI
+<span class="lineNum">     100 </span>            : {
+<span class="lineNum">     101 </span>            :         typedef log_sinks::synchronous_sink&lt; log_sinks::text_file_backend &gt; file_sink;
+<span class="lineNum">     102 </span><span class="lineCov">        427 :         static boost::shared_ptr&lt; file_sink &gt; s_fileSink;</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :         typedef log_sinks::synchronous_sink&lt;log_sinks::text_ostream_backend&gt; os_sink;
+<span class="lineNum">     105 </span><span class="lineCov">        427 :         static boost::shared_ptr&lt; os_sink &gt; s_osSink;</span>
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :         /**
+<span class="lineNum">     108 </span>            :          * Logger globe function, always use it's static function, don't need to new instanse
+<span class="lineNum">     109 </span>            :          */
+<span class="lineNum">     110 </span>            :         class CLogger
+<span class="lineNum">     111 </span>            :         {
+<span class="lineNum">     112 </span>            :         public:
+<span class="lineNum">     113 </span>            :                 CLogger() {};
+<span class="lineNum">     114 </span>            :                 ~CLogger() {};
+<span class="lineNum">     115 </span>            :         public:
+<span class="lineNum">     116 </span>            :                 static void InitPrint(ESeverityLevel inSeverityLevel = ESeverityLevel::INFO);
+<span class="lineNum">     117 </span>            :                 static void Init(const std::string&amp; inPathName = &quot;&quot;, const std::string&amp; inModuleName = &quot;&quot;, unsigned int inLogFileByteSize = DEFAULT_LOG_FILE_MAXSIZE, ESeverityLevel inSeverityLevel = ESeverityLevel::INFO);
+<span class="lineNum">     118 </span>            :                 static void InitMetrics(const std::string&amp; inPathName = &quot;&quot;, const std::string&amp; inModuleName = &quot;&quot;, unsigned int inLogFileByteSize = DEFAULT_LOG_FILE_MAXSIZE);
+<span class="lineNum">     119 </span>            :                 static void Stop();
+<span class="lineNum">     120 </span>            :                 //Enable_Debug_Log should call after init
+<span class="lineNum">     121 </span>            :                 static void EnableDebugLog();
+<span class="lineNum">     122 </span>            :                 static void DisableDebugLog();
+<span class="lineNum">     123 </span><span class="lineCov">      10828 :                 static bool IsStop() { return !s_isStart;}</span>
+<span class="lineNum">     124 </span><span class="lineCov">      10748 :                 static bool IsInitial() { return s_isInit || s_isInitPrint; }</span>
+<span class="lineNum">     125 </span>            :                 static std::string GetAppName();
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :         private:
+<span class="lineNum">     128 </span>            :                 static void InitCoutLog();
+<span class="lineNum">     129 </span>            :                 static void InitFileLog(const std::string&amp; inPathName, const std::string&amp; inModuleName, unsigned int inLogFileByteSize);
+<span class="lineNum">     130 </span>            :                 template &lt;typename SINKTYPE&gt; static void Update_logger_sink(SINKTYPE inSink);
+<span class="lineNum">     131 </span>            :                 template &lt;typename SINKTYPE&gt; static void Update_matrix_sink(SINKTYPE sink);
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :                 static void SetLogFilter(ESeverityLevel inLevel);
+<span class="lineNum">     134 </span>            :                 template &lt;typename SINKTYPE&gt; static void Stop(SINKTYPE inSink);
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :         private:
+<span class="lineNum">     137 </span>            :                 static bool s_isInit;
+<span class="lineNum">     138 </span>            :                 static bool s_isInitPrint;
+<span class="lineNum">     139 </span>            :                 static bool s_isStart;
+<span class="lineNum">     140 </span>            :                 static ESeverityLevel s_level;
+<span class="lineNum">     141 </span>            :         }; //class CLogger
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<span class="lineNum">     143 </span>            :         template &lt;typename SINKTYPE&gt;
+<span class="lineNum">     144 </span><span class="lineCov">         86 :         void CLogger::Update_logger_sink(SINKTYPE sink)</span>
+<span class="lineNum">     145 </span>            :         {
+<span class="lineNum">     146 </span>            :             // set formatting
+<span class="lineNum">     147 </span><span class="lineCov">        688 :             sink-&gt;set_formatter(FORMATE_NORMAL);</span>
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :             // globally add common logging attributes like time
+<span class="lineNum">     150 </span><span class="lineCov">         43 :             boost::log::add_common_attributes();</span>
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :             // finally hook the sink into the core
+<span class="lineNum">     153 </span><span class="lineCov">         43 :                 boost::shared_ptr&lt; boost::log::core &gt; core = boost::log::core::get();</span>
+<span class="lineNum">     154 </span><span class="lineCov">        172 :                 core-&gt;add_global_attribute(&quot;Timestamp&quot;, log_attrs::local_clock());</span>
+<span class="lineNum">     155 </span><span class="lineCov">        172 :                 core-&gt;add_global_attribute(&quot;ThreadID&quot;, log_attrs::current_thread_id());</span>
+<span class="lineNum">     156 </span><span class="lineCov">        129 :                 core-&gt;add_global_attribute(&quot;ProcessID&quot;, log_attrs::current_process_id());</span>
+<span class="lineNum">     157 </span><span class="lineCov">        129 :                 core-&gt;add_sink(sink);</span>
+<span class="lineNum">     158 </span><span class="lineCov">         43 :         }; //CLogger::Update_logger_sink</span>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :         template &lt;typename SINKTYPE&gt;
+<span class="lineNum">     161 </span>            :         void CLogger::Stop(SINKTYPE sink)
+<span class="lineNum">     162 </span>            :         {
+<span class="lineNum">     163 </span>            :             boost::shared_ptr&lt; boost::log::core &gt; core = boost::log::core::get();
+<span class="lineNum">     164 </span>            :             core-&gt;remove_sink(sink);
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :             // Break the feeding loop
+<span class="lineNum">     167 </span>            :             sink-&gt;stop();
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :             // Flush all log records that may have left buffered
+<span class="lineNum">     170 </span>            :             sink-&gt;flush();
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :             sink.reset();
+<span class="lineNum">     173 </span>            :         };
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<span class="lineNum">     175 </span>            :         template &lt;typename SINKTYPE&gt;
+<span class="lineNum">     176 </span><span class="lineCov">          2 :         void CLogger::Update_matrix_sink(SINKTYPE sink)</span>
+<span class="lineNum">     177 </span>            :         {
+<span class="lineNum">     178 </span>            :             // set formatting
+<span class="lineNum">     179 </span><span class="lineCov">          5 :             sink-&gt;set_formatter(MATRIX_FORMATE_NORMAL);</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :             // globally add common logging attributes like time
+<span class="lineNum">     182 </span><span class="lineCov">          1 :             boost::log::add_common_attributes();</span>
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span><span class="lineCov">          1 :             boost::shared_ptr&lt; boost::log::core &gt; core = boost::log::core::get();</span>
+<span class="lineNum">     185 </span><span class="lineCov">          3 :                 core-&gt;add_sink(sink);</span>
+<span class="lineNum">     186 </span><span class="lineCov">          1 :         }; //CMetricsLogger::Update_logger_sink</span>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            : }; //namespace SAFARI
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : #endif //__LOGGER_H__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

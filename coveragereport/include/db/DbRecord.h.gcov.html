@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/db/DbRecord.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/db</a> - DbRecord.h<span style="font-size: 80%;"> (source / <a href="DbRecord.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntryLo">44.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">16.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * DbRecord.h
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  *  Created on: 2017/8/7
+<span class="lineNum">       5 </span>            :  *      Author: xinxzhu
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #ifndef SRC_DB_DBRECORD_H_
+<span class="lineNum">       9 </span>            : #define SRC_DB_DBRECORD_H_
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &lt;string&gt;
+<span class="lineNum">      12 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      13 </span>            : #include &quot;DbRow.h&quot;
+<span class="lineNum">      14 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      15 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : enum EDbValueType
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span>            :     INT,
+<span class="lineNum">      20 </span>            :     DOUBLE,
+<span class="lineNum">      21 </span>            :     DATE,
+<span class="lineNum">      22 </span>            :     TIMESTAMP,
+<span class="lineNum">      23 </span>            :     STRING,
+<span class="lineNum">      24 </span>            :     BOOL
+<span class="lineNum">      25 </span>            : };
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineCov">         77 : class CDbColumnMetadata</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span>            : public:
+<span class="lineNum">      31 </span>            :     CDbColumnMetadata(std::string inColName, EDbValueType inValType, void* inVal, bool inIsPrimaryKey = false, bool inDefaultOnNull=false)
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :     :m_columnName(inColName), m_valueType(inValType), m_isPrimaryKey(inIsPrimaryKey), m_isNull(false)</span>
+<span class="lineNum">      33 </span>            :     {
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :         SetValue(inVal);</span>
+<span class="lineNum">      35 </span>            :     };
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :     std::string m_columnName;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :     EDbValueType m_valueType;
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :     union{
+<span class="lineNum">      42 </span>            :         int* m_intValue;
+<span class="lineNum">      43 </span>            :         double* m_doubleValue;
+<span class="lineNum">      44 </span>            :         boost::posix_time::ptime* m_timeValue;
+<span class="lineNum">      45 </span>            :         std::string* m_strValue;
+<span class="lineNum">      46 </span>            :         bool* m_boolValue;
+<span class="lineNum">      47 </span>            :     };
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :     bool IsPartOfPrimaryKey() {
+<span class="lineNum">      50 </span>            :         return m_isPrimaryKey;
+<span class="lineNum">      51 </span>            :     };
+<span class="lineNum">      52 </span>            : 
+<a name="53"><span class="lineNum">      53 </span>            :     bool IsNull() { return m_isNull; };</a>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineCov">        183 :     std::string ConvertValToSql(){</span>
+<span class="lineNum">      56 </span><span class="lineCov">        183 :         if (IsNull())</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :             return &quot;&quot;;</span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">        183 :         std::stringstream ss;</span>
+<span class="lineNum">      60 </span><span class="lineCov">        183 :         switch (m_valueType){</span>
+<span class="lineNum">      61 </span>            :         case EDbValueType::INT:
+<span class="lineNum">      62 </span><span class="lineCov">         16 :             ss&lt;&lt;*m_intValue;</span>
+<span class="lineNum">      63 </span>            :             break;
+<span class="lineNum">      64 </span>            :         case EDbValueType::DOUBLE:
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :             ss&lt;&lt;*m_doubleValue;</span>
+<span class="lineNum">      66 </span>            :             break;
+<span class="lineNum">      67 </span>            :         case EDbValueType::STRING:
+<span class="lineNum">      68 </span><span class="lineCov">        302 :             ss&lt;&lt; &quot;'&quot;&lt;&lt;*m_strValue&lt;&lt;&quot;'&quot;;</span>
+<span class="lineNum">      69 </span>            :             break;
+<span class="lineNum">      70 </span>            :         case EDbValueType::DATE:
+<span class="lineNum">      71 </span><span class="lineCov">          2 :             ss&lt;&lt;&quot;TO_DATE('&quot;&lt;&lt;*m_timeValue&lt;&lt;&quot;','yyyy-mon-dd hh24:mi:ss')&quot;;</span>
+<span class="lineNum">      72 </span>            :             break;
+<span class="lineNum">      73 </span>            :         case EDbValueType::TIMESTAMP:
+<span class="lineNum">      74 </span><span class="lineCov">          8 :             ss&lt;&lt;&quot;TO_TIMESTAMP('&quot;&lt;&lt;*m_timeValue&lt;&lt;&quot;','yyyy-mon-dd hh24:mi:ss.ff')&quot;;</span>
+<span class="lineNum">      75 </span>            :             break;
+<span class="lineNum">      76 </span>            :         case EDbValueType::BOOL:
+<span class="lineNum">      77 </span>            : //            ss&lt;&lt; (*m_boolValue ? &quot;'Y'&quot;: &quot;'N'&quot;);
+<span class="lineNum">      78 </span><span class="lineCov">          6 :             ss&lt;&lt; (*m_boolValue ? 1 : 0);</span>
+<span class="lineNum">      79 </span>            :             break;
+<span class="lineNum">      80 </span>            :         }
+<span class="lineNum">      81 </span><span class="lineCov">        183 :         return ss.str();</span>
+<a name="82"><span class="lineNum">      82 </span>            :     }</a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :     void SetValue(void* inVal){</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         m_isNull = (inVal == NULL ? true:false);</span>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :         switch(m_valueType){</span>
+<span class="lineNum">      88 </span>            :         case EDbValueType::INT:
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :             m_intValue = (int*)inVal;</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">      91 </span>            :         case EDbValueType::DOUBLE:
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :             m_doubleValue = (double*)inVal;</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">      94 </span>            :         case EDbValueType::DATE:
+<span class="lineNum">      95 </span>            :         case EDbValueType::TIMESTAMP:
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :             m_timeValue = (boost::posix_time::ptime*)inVal;</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">      98 </span>            :         case EDbValueType::STRING:
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :             m_strValue = (std::string*)inVal;</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :             if (m_strValue-&gt;empty()){</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                 m_isNull = true;</span>
+<span class="lineNum">     102 </span>            :             }
+<span class="lineNum">     103 </span>            :             break;
+<span class="lineNum">     104 </span>            :         case EDbValueType::BOOL:
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :             m_boolValue = (bool*)inVal;</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">     107 </span>            :         default:
+<span class="lineNum">     108 </span>            :             break;
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :     }</span>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : private:
+<span class="lineNum">     113 </span>            :     bool m_isPrimaryKey;
+<span class="lineNum">     114 </span>            :     bool m_isNull;
+<span class="lineNum">     115 </span>            : };
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : typedef std::vector&lt;CDbColumnMetadata&gt; DbRowMetadata;
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">         48 : class IDbKey</span>
+<a name="120"><span class="lineNum">     120 </span>            : {</a>
+<span class="lineNum">     121 </span>            : public:
+<span class="lineNum">     122 </span><span class="lineCov">         12 :     virtual ~IDbKey() {};</span>
+<span class="lineNum">     123 </span>            :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const= 0;
+<span class="lineNum">     124 </span>            : };
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span><span class="lineCov">         35 : class IDbRecord</span>
+<a name="127"><span class="lineNum">     127 </span>            : {</a>
+<span class="lineNum">     128 </span>            : public:
+<span class="lineNum">     129 </span><span class="lineCov">          6 :     virtual ~IDbRecord() {};</span>
+<span class="lineNum">     130 </span>            :     virtual const IDbKey&amp; GetPrimaryKey() const = 0;
+<span class="lineNum">     131 </span>            :     virtual void MapRowToRecord(IDbRow* inRow, int inStartIndex=1) = 0;
+<span class="lineNum">     132 </span>            :     virtual DbRowMetadata&amp; GetMetadata(DbRowMetadata&amp; outMetadata) const= 0;
+<span class="lineNum">     133 </span>            : };
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : typedef std::shared_ptr&lt;IDbRecord&gt; DbRecordSharedPtr;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : #endif /* SRC_DB_DBRECORD_H_ */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

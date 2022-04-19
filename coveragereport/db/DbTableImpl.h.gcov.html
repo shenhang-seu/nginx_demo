@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - db/DbTableImpl.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">db</a> - DbTableImpl.h<span style="font-size: 80%;"> (source / <a href="DbTableImpl.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * DataTableImpl.h
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  *  Created on: 2017/8/4
+<span class="lineNum">       5 </span>            :  *      Author: xinxzhu
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #ifndef SRC_DB_DBTABLEIMPL_H_
+<span class="lineNum">       9 </span>            : #define SRC_DB_DBTABLEIMPL_H_
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;occi.h&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DbDefines.h&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DbRecord.h&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DbPlaceholderKey.h&quot;
+<span class="lineNum">      15 </span>            : #include &lt;string&gt;
+<span class="lineNum">      16 </span>            : #include &lt;map&gt;
+<span class="lineNum">      17 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : enum EDbType
+<span class="lineNum">      20 </span>            : {
+<span class="lineNum">      21 </span>            :     ORACLE  //Only support oracle
+<span class="lineNum">      22 </span>            : };
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : class CDbTableImpl;
+<span class="lineNum">      25 </span>            : class CDbTableImplFactory
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            : public:
+<span class="lineNum">      28 </span>            :     static std::shared_ptr&lt;CDbTableImpl&gt; Create(EDbType inType, EDbTableName inTableName);
+<span class="lineNum">      29 </span>            : };
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : typedef std::vector&lt;std::pair&lt;std::string, std::string&gt;&gt; JoinConditionList;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : class CDbTableImpl : public std::enable_shared_from_this&lt;CDbTableImpl&gt;
+<a name="34"><span class="lineNum">      34 </span>            : {</a>
+<a name="35"><span class="lineNum">      35 </span>            : public:</a>
+<span class="lineNum">      36 </span><span class="lineCov">         90 :     CDbTableImpl(EDbTableName inTableType):m_tableName(GetTableName(inTableType)), m_tableType(inTableType){};</span>
+<span class="lineNum">      37 </span><span class="lineCov">         68 :     virtual ~CDbTableImpl(){};</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :     DbRecordListSharedPtr Get(const IDbKey&amp; inKey);
+<span class="lineNum">      40 </span>            :     DbRecordListSharedPtr Get(std::vector&lt;IDbKey*&gt;&amp; inKey);
+<span class="lineNum">      41 </span>            :     DbRecordListSharedPtr GetAll();
+<span class="lineNum">      42 </span>            :     SafariResult Insert(const IDbRecord&amp; inRecord);
+<span class="lineNum">      43 </span>            :     SafariResult Update(const IDbKey&amp; inKey, const IDbRecord&amp; inRecord, const std::vector&lt;std::string&gt;* inColumnsToUpdate=NULL);
+<span class="lineNum">      44 </span>            :     SafariResult Update(std::vector&lt;IDbKey*&gt;&amp; inKey, const IDbRecord&amp; inRecord, const std::vector&lt;std::string&gt;* inColumnsToUpdate=NULL);
+<span class="lineNum">      45 </span>            :     SafariResult Delete(const IDbKey&amp; inKey);
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :     void AsyncGet(const IDbKey&amp; inKey, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      48 </span>            :     void AsyncGet(std::vector&lt;IDbKey*&gt;&amp; inKey, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      49 </span>            :     void AsyncGetAll(const DBResultCallback&amp; inCallback);
+<span class="lineNum">      50 </span>            :     void AsyncInsert(const IDbRecord&amp; inRecord, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      51 </span>            :     void AsyncUpdate(const IDbKey&amp; inKey, const IDbRecord&amp; inRecord, const DBResultCallback&amp; inCallback,
+<span class="lineNum">      52 </span>            :                      const std::vector&lt;std::string&gt;* inColumnsToUpdate=NULL);
+<span class="lineNum">      53 </span>            :     void AsyncUpdate(std::vector&lt;IDbKey*&gt;&amp; inKey, const IDbRecord&amp; inRecord, const DBResultCallback&amp; inCallback,
+<span class="lineNum">      54 </span>            :                      const std::vector&lt;std::string&gt;* inColumnsToUpdate=NULL);
+<span class="lineNum">      55 </span>            :     void AsyncDelete(const IDbKey&amp; inKey, const DBResultCallback&amp; inCallback);
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :     virtual DbRecordListSharedPtr ExecuteQuery(const std::string&amp; inSql) = 0;
+<span class="lineNum">      58 </span>            :     virtual SafariResult ExecuteUpdate(const std::string&amp; inSql) = 0;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :     virtual void AsyncExecuteQuery(const std::string&amp; inSql, const DBResultCallback&amp; inCallback) = 0;
+<span class="lineNum">      61 </span>            :     virtual void AsyncExecuteUpdate(const std::string&amp; inSql, const DBResultCallback&amp; inCallback) = 0;
+<span class="lineNum">      62 </span>            :     virtual void AsyncExcutePlaceholderQuery(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback) = 0;
+<a name="63"><span class="lineNum">      63 </span>            :     virtual void AsyncExcutePlaceholderUpdate(const std::string &amp;inSql,DbPlaceholderKeyManagerSharedPtr inDbPlaceholderKeys,const DBResultCallback&amp; inCallback) = 0;</a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">          4 :     virtual void JoinTable(const std::string&amp; inRightTableName, std::vector&lt;std::pair&lt;std::string, std::string&gt;&gt;&amp; inJoinCondition){</span>
+<span class="lineNum">      66 </span><span class="lineCov">          8 :         m_joinedInfo.push_back({inRightTableName, inJoinCondition});</span>
+<span class="lineNum">      67 </span><span class="lineCov">          4 :     }</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :     SafariResult AddFilter(const IDbKey&amp; inKey);
+<span class="lineNum">      70 </span>            :     SafariResult AddFilter(EDbTableName inTableName, const IDbKey&amp; inKey);
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : protected:
+<span class="lineNum">      74 </span>            :     virtual std::string GenerateSQLStatement(EDbAction inAction, const IDbKey* inKey, const IDbRecord* inRecord,
+<span class="lineNum">      75 </span>            :                                              const std::vector&lt;std::string&gt;* inColumnsToUpdate = NULL);
+<span class="lineNum">      76 </span>            :     virtual std::string GenerateConditionFromMetadata(DbRowMetadata&amp; inMetadata, const std::string* inTableName=NULL);
+<span class="lineNum">      77 </span>            :     virtual std::string GenColValueStatmentFromMetadata(DbRowMetadata&amp; inMetadata);
+<span class="lineNum">      78 </span>            :     virtual std::string GenSetStatementFromMetadata(DbRowMetadata&amp; inMetadata);
+<span class="lineNum">      79 </span>            :     virtual std::string GenerateJoinConditions();
+<span class="lineNum">      80 </span>            :     virtual std::string GenerateInClause();
+<span class="lineNum">      81 </span>            :     virtual std::string GenerateCondtionFromFilter();
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">          4 :     void UseMultipleKey(std::vector&lt;IDbKey*&gt; keyList) {m_multipleKey = keyList;}</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">         65 :     bool IsJoinedTable(){return !m_joinedInfo.empty();};</span>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :     std::string m_tableName;
+<span class="lineNum">      88 </span>            :     EDbTableName m_tableType;
+<span class="lineNum">      89 </span>            :     std::vector&lt;std::pair&lt;std::string, JoinConditionList&gt;&gt; m_joinedInfo;
+<span class="lineNum">      90 </span>            :     std::vector&lt;IDbKey*&gt; m_multipleKey;
+<span class="lineNum">      91 </span>            :     std::vector&lt;std::pair&lt;std::string, IDbKey*&gt;&gt; m_filters;
+<span class="lineNum">      92 </span>            : };
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : #endif /* SRC_DB_DBTABLEIMPL_H_ */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

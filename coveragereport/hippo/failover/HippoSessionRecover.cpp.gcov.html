@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/failover/HippoSessionRecover.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/failover</a> - HippoSessionRecover.cpp<span style="font-size: 80%;"> (source / <a href="HippoSessionRecover.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">157</td>
+            <td class="headerCovTableEntry">181</td>
+            <td class="headerCovTableEntryMed">86.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryHi">92.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoSessionRecover.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;HippoCmeManager.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;HippoDBTaskFactory.h&quot;
+<span class="lineNum">       4 </span><span class="lineCov">         15 : CHippoSessionRecover::CHippoSessionRecover(boost::asio::io_service&amp; inIoService)</span>
+<span class="lineNum">       5 </span><span class="lineCov">        105 : : m_ioService(inIoService)</span>
+<span class="lineNum">       6 </span>            : {
+<span class="lineNum">       7 </span><span class="lineCov">        225 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::CHippoSessionRecover&quot;);</span>
+<span class="lineNum">       8 </span><span class="lineCov">         15 : }</span>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">          8 : void CHippoSessionRecover::AddRecord(std::shared_ptr&lt;CDbSessSvrPairsJoinedRecord&gt; inRecord)</span>
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">          8 :         m_sessionServerJoinedRecord = inRecord;</span>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          4 : std::string CHippoSessionRecover::GetSessionType() const </span>
+<span class="lineNum">      16 </span>            : {
+<span class="lineNum">      17 </span><span class="lineCov">          4 :         HIPPO_ASSERTE_RETURN(nullptr != m_sessionServerJoinedRecord.get(),std::string());</span>
+<a name="18"><span class="lineNum">      18 </span><span class="lineCov">          8 :         return m_sessionServerJoinedRecord-&gt;SessionType();</span></a>
+<span class="lineNum">      19 </span>            : }
+<span class="lineNum">      20 </span><span class="lineCov">          6 : void CHippoSessionRecover::SetNewOtter(const std::string&amp; inServerID,const std::string&amp; inServerIP)</span>
+<span class="lineNum">      21 </span>            : {
+<span class="lineNum">      22 </span><span class="lineCov">          6 :         m_newOtterId = inServerID;</span>
+<span class="lineNum">      23 </span><span class="lineCov">          6 :         m_newOtterIp = inServerIP;</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">          5 : void CHippoSessionRecover::SetMediaServiceList(const JsonValue&amp; inMediaServiceList)</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span><span class="lineCov">          5 :         m_mediaServiceList = inMediaServiceList;</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          4 : void CHippoSessionRecover::SetOtterLocationId(const std::string&amp; inOtterLocationId)</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineCov">          4 :         m_newOtterLocationId = inOtterLocationId;</span>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">          8 : bool CHippoSessionRecover::CheckMediaServiceBody(const JsonValue&amp; inMediaServiceList)</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineCov">          8 :         if(!inMediaServiceList.isObject())</span>
+<span class="lineNum">      39 </span>            :                 return false;
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">          3 :         return inMediaServiceList[JSON_KEY_PRIMARY].isArray() || inMediaServiceList[JSON_KEY_BACKUP].isArray();</span></a>
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span><span class="lineCov">          8 : void CHippoSessionRecover::TryToFailover(SessionRecoverFinishHandler inFinishHandler)</span>
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span><span class="lineCov">         34 :         HIPPO_ASSERTE_RETURN_VOID(nullptr != m_sessionServerJoinedRecord.get());</span>
+<span class="lineNum">      45 </span><span class="lineCov">          7 :         HIPPO_ASSERTE_RETURN_VOID(nullptr != inFinishHandler);</span>
+<span class="lineNum">      46 </span><span class="lineCov">          7 :         m_sessionRecoverFinishHandler = inFinishHandler;</span>
+<span class="lineNum">      47 </span><span class="lineCov">         21 :         m_sessionID = m_sessionServerJoinedRecord-&gt;SessionID();</span>
+<span class="lineNum">      48 </span><span class="lineCov">        112 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::TryToFailover sessionid=&quot;&lt;&lt;m_sessionID);</span>
+<span class="lineNum">      49 </span><span class="lineCov">         20 :         if(m_newOtterId.empty() || m_newOtterIp.empty())</span>
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span><span class="lineCov">          1 :                 m_sessionRecoverFinishHandler(m_sessionID,SAFARI_ERROR_NO_AVAILABLE_OTTER);</span>
+<span class="lineNum">      52 </span><span class="lineCov">          1 :                 return;</span>
+<span class="lineNum">      53 </span>            :         }
+<span class="lineNum">      54 </span><span class="lineCov">          6 :         if(CheckMediaServiceBody(m_mediaServiceList) == false)</span>
+<span class="lineNum">      55 </span>            :         {
+<span class="lineNum">      56 </span><span class="lineCov">          5 :                 m_sessionRecoverFinishHandler(m_sessionID,SAFARI_ERROR_HIPPO_NO_AVAILABLE_MEDIA_SERVICE);</span>
+<span class="lineNum">      57 </span><span class="lineCov">          5 :                 return;</span>
+<span class="lineNum">      58 </span>            :         }
+<span class="lineNum">      59 </span><span class="lineCov">          1 :         UpdateSessionServerPairTable(m_newOtterId, m_newOtterId);</span>
+<span class="lineNum">      60 </span>            : }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">          2 : SafariResult CHippoSessionRecover::UpdateSessionServerPairTable(const std::string &amp;inTopOtterId, const std::string &amp;inOtterId)</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineCov">         23 :         HIPPO_ASSERTE_RETURN(m_sessionServerJoinedRecord.get() != nullptr, SAFARI_ERROR_NULL_POINTER);</span>
+<span class="lineNum">      65 </span><span class="lineCov">         27 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::UpdateSessionServerPairTable, inSessionId=&quot;&lt;&lt;m_sessionID&lt;&lt;&quot;, inTopOtterId=&quot;&lt;&lt;inTopOtterId&lt;&lt;&quot;, inOtterId=&quot;&lt;&lt;inOtterId&lt;&lt;&quot;, origin otterid:&quot;&lt;&lt;m_sessionServerJoinedRecord-&gt;OtterID()&lt;&lt;&quot;, origin topotterid:&quot;&lt;&lt;m_sessionServerJoinedRecord-&gt;ParentOtterID());</span>
+<span class="lineNum">      66 </span>            :         /*
+<span class="lineNum">      67 </span>            :         std::string sql = &quot;UPDATE wbxsessionservermap set  OTTERID='&quot;+inOtterId+&quot;' , PARENTOTTERID='&quot;+inTopOtterId+&quot;' &quot;+
+<span class="lineNum">      68 </span>            :         &quot;where wbxsessionservermap.sessionid='&quot;+m_sessionID+&quot;' and wbxsessionservermap.OTTERID='&quot;+m_sessionServerJoinedRecord-&gt;OtterID()+&quot;' and wbxsessionservermap.PARENTOTTERID='&quot;+m_sessionServerJoinedRecord-&gt;ParentOtterID()+&quot;' and &quot;+CHippoDBManager::GetDBPartitionConditionSqlSessionMap();
+<span class="lineNum">      69 </span>            :         */
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineCov">          4 :         auto dbTask = CDBTaskFactory::CreateDBTaskUpdateSessionMapFailover(m_sessionID,inOtterId,inTopOtterId,m_sessionServerJoinedRecord-&gt;OtterID(),m_sessionServerJoinedRecord-&gt;ParentOtterID(),CHippoDBManager::GetDBPartitionTime());</span>
+<span class="lineNum">      72 </span><span class="lineCov">          1 :         auto handler = std::bind(&amp;CHippoSessionRecover::UpdateSessionServerPairTableHandler, this, std::placeholders::_1, std::placeholders::_2);</span>
+<span class="lineNum">      73 </span><span class="lineCov">          4 :         return m_hippoDBAccess.AsyncUpdateRecord(TABLE_SESSION_SERVER_PAIR, dbTask, handler);</span>
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineCov">          1 : void CHippoSessionRecover::UpdateSessionServerPairTableHandler(DbRecordListSharedPtr inDbRecordListSharedPtr, SafariResult inSafariResult)</span>
+<span class="lineNum">      77 </span>            : {
+<span class="lineNum">      78 </span><span class="lineCov">         18 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::UpdateSessionServerPairTableHandler, session id&quot;&lt;&lt;m_sessionID&lt;&lt;&quot; result = &quot;&lt;&lt;inSafariResult);</span>
+<span class="lineNum">      79 </span><span class="lineCov">          1 :         if(inSafariResult != SAFARI_OK)</span>
+<span class="lineNum">      80 </span>            :         {
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :                 StopSession(inSafariResult,m_sessionServerJoinedRecord);</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 m_sessionRecoverFinishHandler(m_sessionID,inSafariResult);</span>
+<span class="lineNum">      83 </span><span class="lineCov">          1 :                 return;</span>
+<span class="lineNum">      84 </span>            :         }
+<span class="lineNum">      85 </span>            :         else
+<span class="lineNum">      86 </span>            :         {
+<span class="lineNum">      87 </span><span class="lineCov">          1 :                 TopOtterFailover();</span>
+<span class="lineNum">      88 </span>            :         }
+<a name="89"><span class="lineNum">      89 </span>            : }</a>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">          2 : void CHippoSessionRecover::TopOtterFailover()</span>
+<span class="lineNum">      92 </span>            : {
+<span class="lineNum">      93 </span><span class="lineCov">         32 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::TopOtterFailover sessionid : &quot;&lt;&lt;m_sessionID);</span>
+<span class="lineNum">      94 </span><span class="lineCov">          6 :         RestartSessionToOtter(m_newOtterIp, std::bind(&amp;CHippoSessionRecover::OtterSessionRecoverResponse, this, std::placeholders::_1));</span>
+<span class="lineNum">      95 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineCov">          4 : void CHippoSessionRecover::RestartSessionToOtter(const std::string &amp;inOtterIp, const RestNetwork::ResponseCallback&amp; inCallback)</span>
+<span class="lineNum">      98 </span>            : {
+<span class="lineNum">      99 </span><span class="lineCov">         72 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::RestartSessionToOtter, sessionid = &quot;&lt;&lt;m_sessionID&lt;&lt;&quot;, newOtterIp=&quot;&lt;&lt;inOtterIp);</span>
+<span class="lineNum">     100 </span><span class="lineCov">         24 :         HIPPO_ASSERTE_RETURN_VOID(NULL != m_sessionServerJoinedRecord.get());</span>
+<span class="lineNum">     101 </span><span class="lineCov">          3 :         JsonValue sessionInfo = GetSessionInfoFromRecord();</span>
+<span class="lineNum">     102 </span>            :         //do not change because of compatibility
+<span class="lineNum">     103 </span><span class="lineCov">          3 :         sessionInfo[JSON_KEY_COMPOSITING_ENGINE_LIST] = m_mediaServiceList;</span>
+<span class="lineNum">     104 </span><span class="lineCov">          6 :         if(!m_newOtterLocationId.empty())</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                 sessionInfo[JSON_KEY_EXTEND_INFO][JSON_KEY_MMP_INFO][JSON_KEY_LOCATION_ID] = m_newOtterLocationId;</span>
+<span class="lineNum">     106 </span><span class="lineCov">          3 :         std::string otterPort = CHippoConfig::GetOtterHttpPort();</span>
+<span class="lineNum">     107 </span><span class="lineCov">          9 :         std::string url = ((otterPort == HTTPS_PORT) ? HTTPS_PROTOCOL : HTTP_PROTOCOL) + inOtterIp+&quot;:&quot;+otterPort;</span>
+<span class="lineNum">     108 </span><span class="lineCov">          6 :         InitiatorSharedPtr initiator =std::make_shared&lt;CHippoCommonInitiator&gt;(m_ioService, url, HIPPO_TO_OTTER_SESSION_CONTROL_SERVICE);</span>
+<span class="lineNum">     109 </span><span class="lineCov">          3 :         initiator-&gt;SetBody(sessionInfo);</span>
+<span class="lineNum">     110 </span><span class="lineCov">          3 :         initiator-&gt;Post(inCallback);</span>
+<span class="lineNum">     111 </span><span class="lineCov">          6 :         m_httpInitiatorList.push_back(initiator);</span>
+<span class="lineNum">     112 </span>            : }
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineCov">          3 : void CHippoSessionRecover::OtterSessionRecoverResponse(const RestResponseSharedPtr&amp; inResponse)</span>
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span><span class="lineCov">         54 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::OtterSessionRecoverResponse,sessionid = &quot;&lt;&lt;m_sessionID&lt;&lt;&quot; otter server failover newOtterIp: &quot;&lt;&lt;m_newOtterIp);</span>
+<span class="lineNum">     117 </span><span class="lineCov">          3 :         SafariResult ret = CheckHttpResponse(inResponse);</span>
+<span class="lineNum">     118 </span><span class="lineCov">          3 :         if(ret == SAFARI_OK)</span>
+<span class="lineNum">     119 </span>            :         {
+<span class="lineNum">     120 </span><span class="lineCov">          2 :                 UpdateSessionResourceId2CB(m_sessionID, m_newOtterIp,m_sessionServerJoinedRecord-&gt;SessionCallbackUrl());</span>
+<span class="lineNum">     121 </span><span class="lineCov">          1 :                 m_sessionRecoverFinishHandler(m_sessionID,ret);</span>
+<span class="lineNum">     122 </span>            :                 // to post to cascade otter 
+<span class="lineNum">     123 </span>            :         }
+<span class="lineNum">     124 </span>            :         else
+<span class="lineNum">     125 </span>            :         {
+<span class="lineNum">     126 </span><span class="lineCov">          6 :                 StopSession(ret,m_sessionServerJoinedRecord);</span>
+<span class="lineNum">     127 </span><span class="lineCov">          2 :                 m_sessionRecoverFinishHandler(m_sessionID, ret);</span>
+<span class="lineNum">     128 </span><span class="lineCov">          2 :                 return ;</span>
+<span class="lineNum">     129 </span>            :         }
+<span class="lineNum">     130 </span>            : }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : 
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<span class="lineNum">     134 </span>            : ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     135 </span><span class="lineCov">          5 : JsonValue CHippoSessionRecover::GetSessionInfoFromRecord()</span>
+<span class="lineNum">     136 </span>            : {
+<span class="lineNum">     137 </span><span class="lineCov">         56 :         HIPPO_ASSERTE_RETURN(NULL != m_sessionServerJoinedRecord.get(), JsonValue());</span>
+<span class="lineNum">     138 </span>            :         
+<span class="lineNum">     139 </span><span class="lineCov">          4 :         JsonValue sessionInfo;</span>
+<span class="lineNum">     140 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_SESSION_TYPE]  = m_sessionServerJoinedRecord-&gt;SessionType();</span>
+<span class="lineNum">     141 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_SESSION_ID]    = m_sessionServerJoinedRecord-&gt;SessionID();</span>
+<span class="lineNum">     142 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_CONFERENCE_ID] = m_sessionServerJoinedRecord-&gt;ConfID();</span>
+<span class="lineNum">     143 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_CALLBACK_URL]  = m_sessionServerJoinedRecord-&gt;SessionCallbackUrl();</span>
+<span class="lineNum">     144 </span><span class="lineCov">          8 :         sessionInfo[JSON_KEY_HIPPO_BASE_URL] = CHippoDBAccess::GetHippoBaseUrl();</span>
+<span class="lineNum">     145 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_SESSION_STATE] = m_sessionServerJoinedRecord-&gt;SessionState();</span>
+<span class="lineNum">     146 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_SEQUENCE]     = m_sessionServerJoinedRecord-&gt;SessionSequence();</span>
+<span class="lineNum">     147 </span>            :         //sessionInfo[&quot;extendInfo&quot;] = m_sessionServerJoinedRecord-&gt;SessionExtendInfo();
+<span class="lineNum">     148 </span><span class="lineCov">          8 :         JsonReader reader;</span>
+<span class="lineNum">     149 </span><span class="lineCov">          8 :         JsonValue body;</span>
+<span class="lineNum">     150 </span><span class="lineCov">         12 :         if(!reader.parse(m_sessionServerJoinedRecord-&gt;SessionExtendInfo(),body, false))</span>
+<span class="lineNum">     151 </span>            :         {
+<span class="lineNum">     152 </span><span class="lineCov">         60 :                 HIPPO_ERROR_THIS(&quot;CHippoSessionRecover::GetSessionInfoFromRecord get extendinfo error&quot;);</span>
+<span class="lineNum">     153 </span>            :         }
+<span class="lineNum">     154 </span>            :         else
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 sessionInfo[JSON_KEY_EXTEND_INFO] = body;</span>
+<span class="lineNum">     156 </span><span class="lineCov">         12 :         sessionInfo[JSON_KEY_LOCATION] = m_sessionServerJoinedRecord-&gt;SessionLocation();</span>
+<span class="lineNum">     157 </span><span class="lineCov">          8 :         return sessionInfo;</span>
+<a name="158"><span class="lineNum">     158 </span>            : }</a>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineCov">          7 : SafariResult CHippoSessionRecover::CheckHttpResponse(const RestResponseSharedPtr&amp; inResponse)</span>
+<span class="lineNum">     161 </span>            : {
+<span class="lineNum">     162 </span><span class="lineCov">         53 :         HIPPO_ASSERTE_RETURN((nullptr != inResponse.get()), SAFARI_ERROR_NULL_POINTER);</span>
+<span class="lineNum">     163 </span><span class="lineCov">          5 :         SafariResult errorcode = inResponse-&gt;GetErrorCode();</span>
+<span class="lineNum">     164 </span><span class="lineCov">          5 :         if(errorcode != SAFARI_OK)</span>
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                 return (errorcode == SAFARI_ERROR_TIMEOUT) ? SAFARI_ERROR_OTTER_TIMEOUT : errorcode;</span>
+<span class="lineNum">     166 </span><span class="lineCov">         10 :         if (inResponse-&gt;GetStatus() != HTTP_STATUS_OK )</span>
+<span class="lineNum">     167 </span>            :                 return SAFARI_ERROR_HTTP_ILLEGAL_RESPONSE;
+<span class="lineNum">     168 </span><span class="lineCov">          6 :         JsonValue body = inResponse-&gt;GetBody();</span>
+<span class="lineNum">     169 </span><span class="lineCov">          3 :         if(body[&quot;result&quot;].isInt() == false)</span>
+<span class="lineNum">     170 </span>            :                 return SAFARI_ERROR_HTTP_ILLEGAL_RESPONSE;
+<span class="lineNum">     171 </span><span class="lineCov">          2 :         if(body[&quot;result&quot;].asInt() == 0)</span>
+<span class="lineNum">     172 </span>            :                 return SAFARI_OK;
+<span class="lineNum">     173 </span>            :         else
+<span class="lineNum">     174 </span>            :         {
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 std::string message = (body[&quot;message&quot;].isString()) ? body[&quot;message&quot;].asString() : &quot;&quot;;</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                 HIPPO_INFO_THIS(&quot;CHippoSessionRecover::CheckHttpResponse, handler server fail reason : &quot;&lt;&lt;message);</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 return body[&quot;result&quot;].asInt();</span>
+<span class="lineNum">     178 </span><span class="lineCov">          3 :         }</span>
+<a name="179"><span class="lineNum">     179 </span>            : }</a>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">          4 : void CHippoSessionRecover::StopSession(int inStopReason,std::shared_ptr&lt;CDbSessSvrPairsJoinedRecord&gt; inRecord)</span>
+<span class="lineNum">     182 </span>            : {
+<span class="lineNum">     183 </span><span class="lineCov">         70 :         HIPPO_ASSERTE_RETURN_VOID(inRecord.get()!=nullptr);</span>
+<span class="lineNum">     184 </span><span class="lineCov">         23 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::StopSession inStopReason = &quot;&lt;&lt;inStopReason&lt;&lt;&quot; inSessionId = &quot;&lt;&lt;inRecord-&gt;SessionID()&lt;&lt;&quot;inServerIp= &quot;&lt;&lt;inRecord-&gt;OtterIP());</span>
+<span class="lineNum">     185 </span>            :         CHippoCommonStop mstop(
+<span class="lineNum">     186 </span>            :                 m_ioService,
+<span class="lineNum">     187 </span><span class="lineCov">          2 :                 inRecord-&gt;SessionID(),</span>
+<span class="lineNum">     188 </span><span class="lineCov">          2 :                 inRecord-&gt;ConfID(),</span>
+<span class="lineNum">     189 </span><span class="lineCov">          3 :                 inRecord-&gt;SessionType(),</span>
+<span class="lineNum">     190 </span><span class="lineCov">          2 :                 inRecord-&gt;SessionStartTime(),</span>
+<span class="lineNum">     191 </span><span class="lineCov">          1 :                 inRecord-&gt;SessionStopTime(),</span>
+<span class="lineNum">     192 </span><span class="lineCov">          2 :                 inRecord-&gt;OtterIP(),</span>
+<span class="lineNum">     193 </span><span class="lineCov">          3 :                 inRecord-&gt;SessionExtendInfo(),</span>
+<span class="lineNum">     194 </span><span class="lineCov">          3 :                 inStopReason);</span>
+<span class="lineNum">     195 </span><span class="lineCov">          3 :         mstop.NotificationToCB(inRecord-&gt;SessionCallbackUrl());</span>
+<span class="lineNum">     196 </span><span class="lineCov">          4 :         mstop.StopOtter(inRecord-&gt;OtterIP(),CHippoConfig::GetOtterHttpPort());</span>
+<span class="lineNum">     197 </span><span class="lineCov">          1 :         mstop.UpdateTableSessions();</span>
+<span class="lineNum">     198 </span><span class="lineCov">          1 :         mstop.UpdateSessionServerMap();</span>
+<span class="lineNum">     199 </span>            : }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span><span class="lineCov">          2 : void CHippoSessionRecover::UpdateSessionResourceId2CB(const std::string&amp; inSessionId,const std::string&amp; inNewResourceId,const std::string&amp; inCallbackUrl)</span>
+<span class="lineNum">     202 </span>            : {
+<span class="lineNum">     203 </span><span class="lineCov">          2 :         HIPPO_ASSERTE_RETURN_VOID(inCallbackUrl.empty()!=true);</span>
+<span class="lineNum">     204 </span><span class="lineCov">         36 :         HIPPO_INFO_THIS(&quot;CHippoSessionRecover::UpdateSessionResourceId2CB sessionid=&quot;&lt;&lt;inSessionId&lt;&lt;&quot;, newresourceid=&quot;&lt;&lt;inNewResourceId);</span>
+<span class="lineNum">     205 </span><span class="lineCov">          2 :         JsonValue body;</span>
+<span class="lineNum">     206 </span><span class="lineCov">          2 :         body[JSON_KEY_ACTION] = &quot;UPDATE_RESOURCE_ID&quot;;</span>
+<span class="lineNum">     207 </span><span class="lineCov">          2 :         body[JSON_KEY_RESOURCE_ID] = inNewResourceId;</span>
+<span class="lineNum">     208 </span><span class="lineCov">          4 :         CHttpUrlParser parser(inCallbackUrl);</span>
+<span class="lineNum">     209 </span>            :         std::string url = parser.GetFullDomain();
+<span class="lineNum">     210 </span><span class="lineCov">          4 :         std::string path = parser.GetFullPath()+ '/'+ inSessionId;</span>
+<span class="lineNum">     211 </span><span class="lineCov">          4 :         InitiatorSharedPtr initator = std::make_shared&lt;CHippoCommonInitiator&gt;(m_ioService,url,path);</span>
+<span class="lineNum">     212 </span><span class="lineCov">          2 :         initator-&gt;SetBody(body);</span>
+<span class="lineNum">     213 </span><span class="lineCov">          2 :         initator-&gt;Patch(</span>
+<span class="lineNum">     214 </span><span class="lineCov">         20 :         [initator,inSessionId,inNewResourceId](const RestResponseSharedPtr&amp; inResponse) mutable </span>
+<span class="lineNum">     215 </span>            :         {
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                 HIPPO_INFO(&quot;CHippoSessionRecover::UpdateSessionResourceId2CB, sessionid=&quot;&lt;&lt;inSessionId&lt;&lt;&quot;, newresourceid=&quot;&lt;&lt;inNewResourceId&lt;&lt;&quot;, reslut=&quot; &lt;&lt; REST_RESPONSE_SUCCEEDED(inResponse) &lt;&lt; &quot; status=&quot; &lt;&lt; inResponse-&gt;GetStatus());</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                 initator.reset();</span>
+<span class="lineNum">     218 </span><span class="lineCov">          8 :         });</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : }
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            : /////////////////////////CHippoFailoverConference
+<span class="lineNum">     223 </span><span class="lineCov">         14 : CHippoFailoverConference::CHippoFailoverConference(const std::string &amp;inConfId,const std::string &amp;inLocation)</span>
+<span class="lineNum">     224 </span>            : :m_conferenceId(inConfId)
+<span class="lineNum">     225 </span>            : ,m_sessionLocation(inLocation)
+<span class="lineNum">     226 </span>            : ,m_otterIsEnableNBR(false)
+<span class="lineNum">     227 </span><span class="lineCov">         98 : ,m_load(0)</span>
+<span class="lineNum">     228 </span>            : {
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">         14 : }</span></a>
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span><span class="lineCov">         10 : bool CHippoFailoverConference::SetOtterServer(const std::string &amp;inOtterIp,const std::string &amp;inOtterId,const std::string&amp; inNewOtterLocation,bool inIsOtterEnableNBR)</span>
+<span class="lineNum">     232 </span>            : {
+<span class="lineNum">     233 </span><span class="lineCov">         10 :         m_newOtterIP = inOtterIp;</span>
+<span class="lineNum">     234 </span><span class="lineCov">         10 :         m_newOtterId = inOtterId;</span>
+<span class="lineNum">     235 </span><span class="lineCov">         10 :         m_newOtterLocation = inNewOtterLocation;</span>
+<span class="lineNum">     236 </span><span class="lineCov">         20 :         m_newOtterLocationId = CHippoCmeManager::Instance().GetLocationId(m_newOtterLocation);</span>
+<span class="lineNum">     237 </span><span class="lineCov">         10 :         m_otterIsEnableNBR = inIsOtterEnableNBR;</span>
+<span class="lineNum">     238 </span><span class="lineCov">         10 :         return true;</span>
+<span class="lineNum">     239 </span>            : }
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineCov">         15 : bool CHippoFailoverConference::AddSession(const std::string&amp; inSessionId,std::shared_ptr&lt;CDbSessSvrPairsJoinedRecord&gt; inRecord)</span>
+<span class="lineNum">     242 </span>            : {
+<span class="lineNum">     243 </span><span class="lineCov">         49 :         HIPPO_ASSERTE_RETURN(inRecord != nullptr, false);</span>
+<span class="lineNum">     244 </span><span class="lineCov">         28 :         if(inRecord-&gt;SessionType() == SESSION_TYPE_WEBEX_NBR)</span>
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span><span class="lineCov">          2 :                 if( m_nbrSessionRecord == nullptr)</span>
+<span class="lineNum">     247 </span>            :                 {
+<span class="lineNum">     248 </span><span class="lineCov">          1 :                         m_nbrSessionRecord = inRecord;</span>
+<span class="lineNum">     249 </span><span class="lineCov">          1 :                         m_load += HIPPO_COMMON_SESSION_LOAD;</span>
+<span class="lineNum">     250 </span><span class="lineCov">          1 :                         return true;</span>
+<span class="lineNum">     251 </span>            :                 }
+<span class="lineNum">     252 </span>            :         }
+<span class="lineNum">     253 </span>            :         else
+<span class="lineNum">     254 </span>            :         {
+<span class="lineNum">     255 </span><span class="lineCov">         26 :                 auto result =  m_sessionMap.insert(std::make_pair(inSessionId, inRecord));</span>
+<span class="lineNum">     256 </span><span class="lineCov">         13 :                 if(result.second)</span>
+<span class="lineNum">     257 </span><span class="lineCov">         10 :                         m_load += HIPPO_COMMON_SESSION_LOAD;</span>
+<span class="lineNum">     258 </span>            :                 return result.second;
+<span class="lineNum">     259 </span>            :         }
+<span class="lineNum">     260 </span>            :         return false;
+<a name="261"><span class="lineNum">     261 </span>            : }</a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">          4 : bool CHippoFailoverConference::GetMediaServicesFromCmeManager(const std::string&amp; inMediaServiceId)</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span><span class="lineCov">          4 :         std::vector&lt;std::string&gt; priList,backupList;</span>
+<span class="lineNum">     266 </span><span class="lineCov">          4 :         if(CHippoCmeManager::Instance().GetMediaService(inMediaServiceId,m_newOtterLocation,priList, backupList) != SAFARI_OK)</span>
+<span class="lineNum">     267 </span>            :         {
+<span class="lineNum">     268 </span><span class="lineCov">         64 :                 HIPPO_ERROR_THIS(&quot;CHippoFailoverConference::GetMediaService error,conferenceid : &quot;&lt;&lt;m_conferenceId);</span>
+<span class="lineNum">     269 </span>            :                 return false;
+<span class="lineNum">     270 </span>            :         }
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :         JsonValue mediaServiceBody;</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         for(const std::string&amp; url : priList)</span>
+<span class="lineNum">     273 </span>            :         {
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :                 JsonValue body;</span>
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :                 body[JSON_KEY_WSS_URL] = url;</span>
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :                 mediaServiceBody[JSON_KEY_PRIMARY].append(std::move(body));</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :         for(const std::string&amp; url : backupList)</span>
+<span class="lineNum">     279 </span>            :         {
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                 JsonValue body;</span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :                 body[JSON_KEY_WSS_URL] = url;</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                 mediaServiceBody[JSON_KEY_BACKUP].append(std::move(body));</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :         m_mediaServices[inMediaServiceId] = mediaServiceBody;</span>
+<span class="lineNum">     285 </span><span class="lineCov">          4 :         return true;</span>
+<span class="lineNum">     286 </span>            : 
+<a name="287"><span class="lineNum">     287 </span>            : }</a>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineCov">          4 : JsonValue CHippoFailoverConference::GetMediaServices(const std::string&amp; inMediaServiceId)</span>
+<span class="lineNum">     290 </span>            : {
+<span class="lineNum">     291 </span><span class="lineCov">          8 :         auto iter = m_mediaServices.find(inMediaServiceId);</span>
+<span class="lineNum">     292 </span><span class="lineCov">          8 :         if(iter == m_mediaServices.end())</span>
+<span class="lineNum">     293 </span>            :         {
+<span class="lineNum">     294 </span><span class="lineCov">          4 :                 bool ret = GetMediaServicesFromCmeManager(inMediaServiceId);</span>
+<span class="lineNum">     295 </span><span class="lineCov">          4 :                 if(ret)</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :                         return m_mediaServices[inMediaServiceId];</span>
+<span class="lineNum">     297 </span>            :                 else
+<span class="lineNum">     298 </span><span class="lineCov">          4 :                         return JsonValue();</span>
+<span class="lineNum">     299 </span>            :         }
+<a name="300"><span class="lineNum">     300 </span>            :         else</a>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :                 return iter-&gt;second;</span>
+<span class="lineNum">     302 </span><span class="lineCov">         15 : }</span>
+<span class="lineNum">     303 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

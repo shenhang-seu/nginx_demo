@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/participants/MeetingVideoSubscriber.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/participants</a> - MeetingVideoSubscriber.h<span style="font-size: 80%;"> (source / <a href="MeetingVideoSubscriber.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">14.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef VIDEO_NORMAL_SUBSCRIBER_H_</a>
+<span class="lineNum">       2 </span>            : #define VIDEO_NORMAL_SUBSCRIBER_H_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;MeetingVideoSubscriberInterface.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;NightingaleDefine.h&quot;
+<span class="lineNum">       6 </span>            : #include &lt;map&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : struct MeetingVideoActiveUser
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span>            :     unsigned int cbNodeId;
+<span class="lineNum">      11 </span>            :         unsigned int mmpNodeId;
+<span class="lineNum">      12 </span>            :         MeetingVideoActiveUser()
+<span class="lineNum">      13 </span>            :                 : cbNodeId(-1)
+<span class="lineNum">      14 </span><span class="lineNoCov">          0 :                 , mmpNodeId(-1)</span>
+<span class="lineNum">      15 </span>            :         {}
+<span class="lineNum">      16 </span>            :         unsigned int GetCBNodeId(){ return cbNodeId;}
+<span class="lineNum">      17 </span>            :         unsigned int GetMMPNodeId(){ return mmpNodeId;}
+<span class="lineNum">      18 </span>            :         void SetCBNodeId(unsigned int inNodeId){ cbNodeId=inNodeId;}
+<span class="lineNum">      19 </span>            :         void SetMMPNodeId(unsigned int inNodeId){ mmpNodeId=inNodeId;}
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :         void SetNodeId(unsigned int inCBNodeId, unsigned int inMMPNodeId){ cbNodeId=inCBNodeId; mmpNodeId=inMMPNodeId;}</span>
+<span class="lineNum">      21 </span>            :         bool IsSameCBNodeId(unsigned int inCBNodeId){ return (inCBNodeId == cbNodeId);}
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :         bool IsSameActiveSpeaker(unsigned int inCBNodeId, unsigned int inMMPNodeId){ return (inCBNodeId == cbNodeId) &amp;&amp; (inMMPNodeId == mmpNodeId);}</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :         void Reset(){ cbNodeId=-1; mmpNodeId=-1;}</span>
+<span class="lineNum">      24 </span>            : };
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 : struct MeetingVideoSubscriber</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span>            :         NtgVideoSourceSharedPtr videoSource;
+<span class="lineNum">      29 </span>            :         MeetingVideoSubscriber()
+<span class="lineNum">      30 </span>            :         {}
+<span class="lineNum">      31 </span>            :         MeetingVideoSubscriber(const NtgVideoSourceSharedPtr&amp; inVideoSource)
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                 : videoSource(inVideoSource)</span>
+<span class="lineNum">      33 </span>            :         {}
+<span class="lineNum">      34 </span>            :         NtgVideoSourceSharedPtr&amp; GetVideoSource(){ return videoSource;}
+<span class="lineNum">      35 </span>            : };
+<span class="lineNum">      36 </span>            : typedef std::shared_ptr&lt;MeetingVideoSubscriber&gt; NtgVideoSubscriberSharedPtr;
+<span class="lineNum">      37 </span>            : typedef std::map&lt;NodeIdType, NtgVideoSubscriberSharedPtr&gt; NtgVideoSubscriberMap;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : class CMeetingVideoSubscriber
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span>            : public:
+<span class="lineNum">      42 </span>            :         CMeetingVideoSubscriber(IVideoSubscriberSink* inSink);
+<span class="lineNum">      43 </span>            :         virtual ~CMeetingVideoSubscriber();
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         void UpdateSubscriberList(NodeIdType inActiveSpeakerNodeId, 
+<span class="lineNum">      46 </span>            :                 const NtgVideoSourceSet&amp; inRemovedVideoSources, 
+<span class="lineNum">      47 </span>            :                 const NtgVideoSourceSet&amp; inAddedVideoSources,
+<span class="lineNum">      48 </span>            :             const WBXScrRequestMap&amp; inScrRequests);
+<span class="lineNum">      49 </span>            :         void ForceUpdateActiveSpeaker();
+<span class="lineNum">      50 </span>            :         unsigned int GetVideoSourceCount(){ return m_sourceCount;}
+<span class="lineNum">      51 </span><span class="lineCov">          2 :         unsigned int GetMaxVideoSourceCount(){ return ((m_maxVideoSourceCount &gt; 0) ? (m_maxVideoSourceCount-1) : 0);}</span>
+<span class="lineNum">      52 </span>            :         //webex-114367, when meeting failover, should reset active speaker
+<span class="lineNum">      53 </span>            :         void Reset();
+<span class="lineNum">      54 </span>            :         
+<span class="lineNum">      55 </span>            : private:
+<span class="lineNum">      56 </span>            :         //rebuild subscriber list
+<span class="lineNum">      57 </span>            :         void RebuildSubscirberList(const NtgVideoSourceSet&amp; inAddedVideoSources, NtgVideoSourceSet&amp; outAddedVideoSources);
+<span class="lineNum">      58 </span>            :         void RebuildUnSubscirberList(const NtgVideoSourceSet&amp; inVideoSources, NtgVideoSourceSet&amp; outRemovedVideoSources);
+<span class="lineNum">      59 </span>            :     //update active video
+<span class="lineNum">      60 </span>            :     void UpdateActiveSpeaker(NodeIdType inActiveSpeakerNodeId);
+<span class="lineNum">      61 </span>            :     //sub/unsub video
+<span class="lineNum">      62 </span>            :         void SubscribeVideo(const NtgVideoSourceSet&amp; inAddedVideoSources);
+<span class="lineNum">      63 </span>            :         void UnSubscribeVideo(const NtgVideoSourceSet&amp; inRemovedVideoSources);
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         void SubscribeVideo(EMediaUserType inType, unsigned int inNodeID, unsigned int inCsi, EMediaVideoSize inVideoSize, const WMERtpExtend&amp; inExtend);
+<span class="lineNum">      66 </span>            :         void SelectChiefSender(EMediaUserType inType, unsigned int inNodeID, unsigned int inCbNodeId);
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :     //Subscriber map
+<span class="lineNum">      69 </span>            :     void UpdateVideoSources(const NtgVideoSourceSet&amp; inRemovedSubscriber, const NtgVideoSourceSet&amp; inAddedVideoSources);
+<span class="lineNum">      70 </span>            :         void AddVideoSource(const NtgVideoSourceSharedPtr&amp; inVideoSource);
+<span class="lineNum">      71 </span>            :         void RemoveVideoSource(NodeIdType inNodeId);
+<span class="lineNum">      72 </span>            :         const NtgVideoSourceSharedPtr GetVideoSource(NodeIdType inNodeId);
+<span class="lineNum">      73 </span>            :         const NtgMmpInfoSharedPtr GetVideoSourceMmpInfo(NodeIdType inNodeId);
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :         //report sca
+<span class="lineNum">      76 </span>            :         void ReportInvalidSource(const WBXScrRequestMap&amp; inScrRequests);
+<span class="lineNum">      77 </span>            :         void UpdateSourceCount(unsigned int inCount);
+<span class="lineNum">      78 </span>            :         WMERtpExtend ConvertVid(const VidVector&amp; inVidVector, std::string&amp; outVidLog);
+<span class="lineNum">      79 </span>            :     bool IsValidCSI(unsigned int inCsi){ return ((inCsi != 0) &amp;&amp; (inCsi != (unsigned int)-1));}
+<span class="lineNum">      80 </span>            :         bool IsValidNodeId(unsigned int inNodeId){ return (inNodeId != (unsigned int)-1);}
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : private:
+<span class="lineNum">      83 </span>            :         unsigned int m_sourceCount = 0;
+<span class="lineNum">      84 </span>            :         IVideoSubscriberSink* m_sink = nullptr;
+<span class="lineNum">      85 </span>            :         MeetingVideoActiveUser m_activeSpeaker;
+<span class="lineNum">      86 </span>            :         NtgVideoSubscriberMap m_subscriberMap;
+<span class="lineNum">      87 </span>            :         //concurrent video source count
+<span class="lineNum">      88 </span>            :         unsigned int m_maxVideoSourceCount = 0;
+<span class="lineNum">      89 </span>            : };
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

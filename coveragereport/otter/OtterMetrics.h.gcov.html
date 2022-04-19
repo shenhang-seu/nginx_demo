@@ -1,0 +1,375 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/OtterMetrics.h</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">otter</a> - OtterMetrics.h<span style="font-size: 80%;"> (source / <a href="OtterMetrics.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef OTTER_METRICS_H</a>
+<span class="lineNum">       2 </span>            : #define OTTER_METRICS_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Metrics.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #define OTTER_METRICS_VALUES_RTT                                        &quot;rtt&quot;
+<span class="lineNum">       8 </span>            : #define OTTER_METRICS_VALUES_RESOLUTION                         &quot;resolution&quot;
+<span class="lineNum">       9 </span>            : #define OTTER_METRICS_VALUES_SESSION_TYPE                       &quot;sessionType&quot;
+<span class="lineNum">      10 </span>            : #define OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID       &quot;cmeMediaServiceId&quot;
+<span class="lineNum">      11 </span>            : 
+<a name="12"><span class="lineNum">      12 </span>            : </a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">         46 : class COtterMetrics : public Metrics::MetricsWrapper</span>
+<a name="15"><span class="lineNum">      15 </span>            : {</a>
+<span class="lineNum">      16 </span>            : public:
+<span class="lineNum">      17 </span><span class="lineCov">         46 :         COtterMetrics(const std::string&amp; metricsName, const std::string&amp; featureName)</span>
+<span class="lineNum">      18 </span><span class="lineCov">         46 :         : Metrics::MetricsWrapper(metricsName, featureName)</span>
+<span class="lineNum">      19 </span>            :         {
+<span class="lineNum">      20 </span><span class="lineCov">         46 :                 std::vector&lt;std::string&gt; versionInfo = GetComponentVersionInfo();</span>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">        138 :                 head().insert(METRICS_HEAD_COMPONENTTYPE, std::string(&quot;Otter&quot;));</span>
+<span class="lineNum">      23 </span><span class="lineCov">         92 :                 head().insert(METRICS_HEAD_COMPONENTVER, versionInfo[0]);</span>
+<span class="lineNum">      24 </span><span class="lineCov">         46 :         }</span>
+<span class="lineNum">      25 </span>            : };
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #define WSS_ESTABLISHMENT_METRICS_LOG(MetricsName, FeatureName, remoteIp, result, time) \
+<span class="lineNum">      29 </span>            :         do{ \
+<span class="lineNum">      30 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">      31 </span>            :                 metrics.values() \
+<span class="lineNum">      32 </span>            :                     .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">      33 </span>            :                         .insert(METRICS_VALUES_RESULT, result) \
+<span class="lineNum">      34 </span>            :                         .insert(METRICS_VALUES_TIME, time) \
+<span class="lineNum">      35 </span>            :                         ; \
+<span class="lineNum">      36 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">      37 </span>            :         }while(0)
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : #define WSS_HANDSHAKE_METRICS_LOG(MetricsName, FeatureName, remoteIp, rtt) \
+<span class="lineNum">      40 </span>            :         do{ \
+<span class="lineNum">      41 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">      42 </span>            :                 metrics.values() \
+<span class="lineNum">      43 </span>            :                     .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">      44 </span>            :                         .insert(OTTER_METRICS_VALUES_RTT, rtt) \
+<span class="lineNum">      45 </span>            :                         ; \
+<span class="lineNum">      46 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">      47 </span>            :         }while(0)
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : #define CME_SESSION_OPEN_RTT_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, result, rtt) \
+<span class="lineNum">      50 </span>            :         do{ \
+<span class="lineNum">      51 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">      52 </span>            :                 metrics.head() \
+<span class="lineNum">      53 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">      54 </span>            :                         .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">      55 </span>            :                 metrics.values() \
+<span class="lineNum">      56 </span>            :                         .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">      57 </span>            :                         .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">      58 </span>            :                         .insert(METRICS_VALUES_RESULT, result) \
+<span class="lineNum">      59 </span>            :                         .insert(OTTER_METRICS_VALUES_RTT, rtt) \
+<span class="lineNum">      60 </span>            :                         ; \
+<span class="lineNum">      61 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">      62 </span>            :         }while(0)
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : #define CME_RECV_BIT_RATE_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, mediaType, minValue, avgValue, maxValue) \
+<span class="lineNum">      65 </span>            :         do{ \
+<span class="lineNum">      66 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">      67 </span>            :                 metrics.head() \
+<span class="lineNum">      68 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">      69 </span>            :                         .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">      70 </span>            :                 metrics.values() \
+<span class="lineNum">      71 </span>            :                         .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">      72 </span>            :                         .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">      73 </span>            :                         .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">      74 </span>            :                         .insert(METRICS_VALUES_MIN, minValue) \
+<span class="lineNum">      75 </span>            :                         .insert(METRICS_VALUES_AVG, avgValue) \
+<span class="lineNum">      76 </span>            :                         .insert(METRICS_VALUES_MAX, maxValue) \
+<span class="lineNum">      77 </span>            :                         ; \
+<span class="lineNum">      78 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">      79 </span>            :         }while(0)
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : #define FEEDER_BIT_RATE_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, SessionType, remoteIp, minValue, avgValue, maxValue) \
+<span class="lineNum">      82 </span>            :         do{ \
+<span class="lineNum">      83 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">      84 </span>            :                 metrics.head() \
+<span class="lineNum">      85 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">      86 </span>            :                         .insert(METRICS_HEAD_SESSION_ID, SessionId) \
+<span class="lineNum">      87 </span>            :                         .insert(METRICS_HEAD_SESSION_TYPE, SessionType); \
+<span class="lineNum">      88 </span>            :                 metrics.values() \
+<span class="lineNum">      89 </span>            :                     .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">      90 </span>            :                         .insert(METRICS_VALUES_MIN, minValue) \
+<span class="lineNum">      91 </span>            :                         .insert(METRICS_VALUES_AVG, avgValue) \
+<span class="lineNum">      92 </span>            :                         .insert(METRICS_VALUES_MAX, maxValue) \
+<span class="lineNum">      93 </span>            :                         ; \
+<span class="lineNum">      94 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">      95 </span>            :         }while(0)
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : #define CME_RECV_LOSS_RATE_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, mediaType, recvNum, lossNum,  minValue, avgValue, maxValue) \
+<span class="lineNum">      98 </span>            :         do{ \
+<span class="lineNum">      99 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     100 </span>            :                 metrics.head() \
+<span class="lineNum">     101 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     102 </span>            :                         .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">     103 </span>            :                 metrics.values() \
+<span class="lineNum">     104 </span>            :                         .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">     105 </span>            :                         .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     106 </span>            :                         .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">     107 </span>            :                         .insert(METRICS_VALUES_RECV_NUM, recvNum) \
+<span class="lineNum">     108 </span>            :                         .insert(METRICS_VALUES_LOSS_NUM, lossNum) \
+<span class="lineNum">     109 </span>            :                         .insert(METRICS_VALUES_MIN, minValue) \
+<span class="lineNum">     110 </span>            :                         .insert(METRICS_VALUES_AVG, avgValue) \
+<span class="lineNum">     111 </span>            :                         .insert(METRICS_VALUES_MAX, maxValue) \
+<span class="lineNum">     112 </span>            :                         ; \
+<span class="lineNum">     113 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">     114 </span>            :         }while(0)
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : #define SHARE_RESOLUTION_METRICS_LOG(MetricsName, FeatureName, ConfId, Resolution, SessionType) \
+<span class="lineNum">     117 </span>            :         do{ \
+<span class="lineNum">     118 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     119 </span>            :                 metrics.head() \
+<span class="lineNum">     120 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId); \
+<span class="lineNum">     121 </span>            :                 metrics.values() \
+<span class="lineNum">     122 </span>            :                         .insert(OTTER_METRICS_VALUES_RESOLUTION, Resolution) \
+<span class="lineNum">     123 </span>            :                         .insert(OTTER_METRICS_VALUES_SESSION_TYPE, SessionType) \
+<span class="lineNum">     124 </span>            :                         ; \
+<span class="lineNum">     125 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">     126 </span>            :         }while(0)
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            : #define SHARE_SUMMARY_METRICS_LOG(MetricsName, FeatureName, ConfId, StartTime, EndTime, isHfpsShare, Resolution) \
+<span class="lineNum">     129 </span>            :         do{ \
+<span class="lineNum">     130 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     131 </span>            :                 metrics.head() \
+<span class="lineNum">     132 </span>            :                         .insert(METRICS_HEAD_CONFID, ConfId); \
+<span class="lineNum">     133 </span>            :                 metrics.values() \
+<span class="lineNum">     134 </span>            :                         .insert(METRICS_VALUES_START_TIME, StartTime) \
+<span class="lineNum">     135 </span>            :                         .insert(METRICS_VALUES_END_TIME, EndTime) \
+<span class="lineNum">     136 </span>            :                         .insert(METRICS_VALUES_SHARE_TYPE, isHfpsShare?&quot;HFPS&quot;:&quot;LEGACY&quot;) \
+<span class="lineNum">     137 </span>            :                         .insert(OTTER_METRICS_VALUES_RESOLUTION, Resolution) \
+<span class="lineNum">     138 </span>            :                         ; \
+<span class="lineNum">     139 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">     140 </span>            :         }while(0)
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            : #define CME_SEND_PLI_METRICS(MetricsName, FeatureName, ConfID, SessionID, cmeMediaServiceId, remoteIp, pliNum, idrNum) \
+<span class="lineNum">     143 </span>            :                 do{ \
+<span class="lineNum">     144 </span>            :                         COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     145 </span>            :                         metrics.head() \
+<span class="lineNum">     146 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfID) \
+<span class="lineNum">     147 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionID); \
+<span class="lineNum">     148 </span>            :                         metrics.values() \
+<span class="lineNum">     149 </span>            :                                 .insert(METRICS_VALUES_CME_MEDIA_SERVICE_ID, cmeMediaServiceId) \
+<span class="lineNum">     150 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     151 </span>            :                                 .insert(METRICS_VALUES_PLI_NUMBER, pliNum) \
+<span class="lineNum">     152 </span>            :                                 .insert(METRICS_VALUES_IDR_NUMBER, idrNum) \
+<span class="lineNum">     153 </span>            :                                 ; \
+<span class="lineNum">     154 </span>            :                         metrics.writeMetrics(); \
+<span class="lineNum">     155 </span>            :                 }while(0)
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : #define CME_RECV_FRAME_RATE_METRICS(MetricsName, FeatureName, ConfID, SessionID, cmeMediaServiceId, remoteIp, mediaType, frameNum, minValue, avgValue, maxValue) \
+<span class="lineNum">     158 </span>            :                 do{ \
+<span class="lineNum">     159 </span>            :                         COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     160 </span>            :                         metrics.head() \
+<span class="lineNum">     161 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfID) \
+<span class="lineNum">     162 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionID); \
+<span class="lineNum">     163 </span>            :                         metrics.values() \
+<span class="lineNum">     164 </span>            :                                 .insert(METRICS_VALUES_CME_MEDIA_SERVICE_ID, cmeMediaServiceId) \
+<span class="lineNum">     165 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     166 </span>            :                                 .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">     167 </span>            :                                 .insert(METRICS_VALUES_FRAME_NUMBER, frameNum) \
+<span class="lineNum">     168 </span>            :                                 .insert(METRICS_VALUES_MIN, minValue) \
+<span class="lineNum">     169 </span>            :                                 .insert(METRICS_VALUES_AVG, avgValue) \
+<span class="lineNum">     170 </span>            :                                 .insert(METRICS_VALUES_MAX, maxValue) \
+<span class="lineNum">     171 </span>            :                                 ; \
+<span class="lineNum">     172 </span>            :                         metrics.writeMetrics(); \
+<span class="lineNum">     173 </span>            :                 }while(0)
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : #define CME_RECV_JITTER_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, mediaType, minValue, avgValue, maxValue) \
+<span class="lineNum">     176 </span>            :                 do{ \
+<span class="lineNum">     177 </span>            :                         COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     178 </span>            :                         metrics.head() \
+<span class="lineNum">     179 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     180 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">     181 </span>            :                         metrics.values() \
+<span class="lineNum">     182 </span>            :                                 .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">     183 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     184 </span>            :                                 .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">     185 </span>            :                                 .insert(METRICS_VALUES_MIN, minValue) \
+<span class="lineNum">     186 </span>            :                                 .insert(METRICS_VALUES_AVG, avgValue) \
+<span class="lineNum">     187 </span>            :                                 .insert(METRICS_VALUES_MAX, maxValue) \
+<span class="lineNum">     188 </span>            :                                 ; \
+<span class="lineNum">     189 </span>            :                         metrics.writeMetrics(); \
+<span class="lineNum">     190 </span>            :                 }while(0)
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : #define FEEDER_DROP_VIDEO_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, SessionType, remoteIp, status) \
+<span class="lineNum">     193 </span>            :                 do{ \
+<span class="lineNum">     194 </span>            :                         COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     195 </span>            :                         metrics.head() \
+<span class="lineNum">     196 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     197 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionId) \
+<span class="lineNum">     198 </span>            :                                 .insert(METRICS_HEAD_SESSION_TYPE, SessionType); \
+<span class="lineNum">     199 </span>            :                         metrics.values() \
+<span class="lineNum">     200 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     201 </span>            :                                 .insert(&quot;mode&quot;, status) \
+<span class="lineNum">     202 </span>            :                                 ; \
+<span class="lineNum">     203 </span>            :                         metrics.writeMetrics(); \
+<span class="lineNum">     204 </span>            :                 }while(0)
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            : #define FEEDER_RTMP_STATUS_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, SessionType, remoteIp, status) \
+<span class="lineNum">     207 </span>            :                 do{ \
+<span class="lineNum">     208 </span>            :                         COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     209 </span>            :                         metrics.head() \
+<span class="lineNum">     210 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     211 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionId) \
+<span class="lineNum">     212 </span>            :                                 .insert(METRICS_HEAD_SESSION_TYPE, SessionType); \
+<span class="lineNum">     213 </span>            :                         metrics.values() \
+<span class="lineNum">     214 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     215 </span>            :                                 .insert(&quot;status&quot;, status) \
+<span class="lineNum">     216 </span>            :                                 ; \
+<span class="lineNum">     217 </span>            :                         metrics.writeMetrics(); \
+<span class="lineNum">     218 </span>            :                 }while(0)
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : #define CME_RECV_LOSS_RATE_CATEGORY_SUMMARY_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, mediaType, highCnt, highRatio, middleCnt, middleRatio, lowCnt, lowRatio) \
+<span class="lineNum">     221 </span>            :             do{ \
+<span class="lineNum">     222 </span>            :                 COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     223 </span>            :                 metrics.head() \
+<span class="lineNum">     224 </span>            :                     .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     225 </span>            :                     .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">     226 </span>            :                 metrics.values() \
+<span class="lineNum">     227 </span>            :                     .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">     228 </span>            :                     .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     229 </span>            :                     .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">     230 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_HIGH_CNT, highCnt) \
+<span class="lineNum">     231 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_HIGH_RATIO, highRatio) \
+<span class="lineNum">     232 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_MIDDLE_CNT, middleCnt) \
+<span class="lineNum">     233 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_MIDDLE_RATIO, middleRatio) \
+<span class="lineNum">     234 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_LOW_CNT, lowCnt) \
+<span class="lineNum">     235 </span>            :                     .insert(METRICS_VALUES_LOSS_RATE_LOW_RATIO, lowRatio) \
+<span class="lineNum">     236 </span>            :                     ; \
+<span class="lineNum">     237 </span>            :                 metrics.writeMetrics(); \
+<span class="lineNum">     238 </span>            :             }while(0)
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            : #define CME_RECV_LOSS_RATE_POOR_CNT_PER_MINUTE_METRICS_LOG(MetricsName, FeatureName, ConfId, SessionId, CmeMediaServiceId, remoteIp, mediaType, highMinuteCnt, middleMinuteCnt, lowMinuteCnt) \
+<span class="lineNum">     241 </span>            :                         do{ \
+<span class="lineNum">     242 </span>            :                             COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     243 </span>            :                             metrics.head() \
+<span class="lineNum">     244 </span>            :                                 .insert(METRICS_HEAD_CONFID, ConfId) \
+<span class="lineNum">     245 </span>            :                                 .insert(METRICS_HEAD_SESSION_ID, SessionId); \
+<span class="lineNum">     246 </span>            :                             metrics.values() \
+<span class="lineNum">     247 </span>            :                                 .insert(OTTER_METRICS_VALUES_CME_MEDIA_SERVICE_ID, CmeMediaServiceId) \
+<span class="lineNum">     248 </span>            :                                 .insert(METRICS_VALUES_REMOTE_IP, remoteIp) \
+<span class="lineNum">     249 </span>            :                                 .insert(METRICS_VALUES_MEDIA_TYPE, mediaType) \
+<span class="lineNum">     250 </span>            :                                 .insert(METRICS_VALUES_LOSS_RATE_HIGH_CNT_PER_MINUTE, highMinuteCnt) \
+<span class="lineNum">     251 </span>            :                                 .insert(METRICS_VALUES_LOSS_RATE_MIDDLE_CNT_PER_MINUTE, middleMinuteCnt) \
+<span class="lineNum">     252 </span>            :                                 .insert(METRICS_VALUES_LOSS_RATE_LOW_CNT_PER_MINUTE, lowMinuteCnt) \
+<span class="lineNum">     253 </span>            :                                 ; \
+<span class="lineNum">     254 </span>            :                             metrics.writeMetrics(); \
+<span class="lineNum">     255 </span>            :                         }while(0)
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            : #define OTTER_LOCAL_SOCKET_MESSAGE_METRICS_LOG(metricsName, featureName, from, to, message) \
+<span class="lineNum">     258 </span>            :                         do{ \
+<span class="lineNum">     259 </span>            :                             COtterMetrics metrics(metricsName, featureName); \
+<span class="lineNum">     260 </span>            :                             metrics.values() \
+<span class="lineNum">     261 </span>            :                                                             .insert(METRICS_VALUES_FROM, from) \
+<span class="lineNum">     262 </span>            :                                                                 .insert(METRICS_VALUES_TO, to) \
+<span class="lineNum">     263 </span>            :                                 .insert(METRICS_VALUES_MESSAGE, message) \
+<span class="lineNum">     264 </span>            :                                 ; \
+<span class="lineNum">     265 </span>            :                             metrics.writeMetrics(); \
+<span class="lineNum">     266 </span>            :                         }while(0)
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : #define OTTER_HTTP_REQUEST_METRICS_LOG(metricsName, featureName, trackingId, httpMethod, httpPath, httpRequestBody) \
+<span class="lineNum">     269 </span>            :                         do{ \
+<span class="lineNum">     270 </span>            :                             COtterMetrics metrics(metricsName, featureName); \
+<span class="lineNum">     271 </span>            :                             metrics.values() \
+<span class="lineNum">     272 </span>            :                                 .insert(METRICS_VALUES_TRACKING_ID, trackingId) \
+<span class="lineNum">     273 </span>            :                                 .insert(METRICS_VALUES_HTTP_METHOD, httpMethod) \
+<span class="lineNum">     274 </span>            :                                 .insert(METRICS_VALUES_HTTP_PATH, httpPath) \
+<span class="lineNum">     275 </span>            :                                 .insert(METRICS_VALUES_HTTP_REQUEST_BODY, httpRequestBody) \
+<span class="lineNum">     276 </span>            :                                 ; \
+<span class="lineNum">     277 </span>            :                             metrics.writeMetrics(); \
+<span class="lineNum">     278 </span>            :                         }while(0)
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            : #define OTTER_HTTP_RESPONSE_METRICS_LOG(metricsName, featureName, trackingId, httpStatus, errorCode, httpResponseBody) \
+<span class="lineNum">     281 </span>            :                         do{ \
+<span class="lineNum">     282 </span>            :                             COtterMetrics metrics(metricsName, featureName); \
+<span class="lineNum">     283 </span>            :                             metrics.values() \
+<span class="lineNum">     284 </span>            :                                 .insert(METRICS_VALUES_TRACKING_ID, trackingId) \
+<span class="lineNum">     285 </span>            :                                 .insert(METRICS_VALUES_HTTP_STATUS, httpStatus) \
+<span class="lineNum">     286 </span>            :                                                                 .insert(METRICS_VALUES_HTTP_ERROR_CODE, errorCode) \
+<span class="lineNum">     287 </span>            :                                 .insert(METRICS_VALUES_HTTP_RESPONSE_BODY, httpResponseBody) \
+<span class="lineNum">     288 </span>            :                                 ; \
+<span class="lineNum">     289 </span>            :                             metrics.writeMetrics(); \
+<span class="lineNum">     290 </span>            :                         }while(0)
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : #define OTTER_REPORT_FAIL_SPEAKER_LIST_SIZE_METRICS_LOG(MetricsName, FeatureName, reportFailSpeakerListSize) \
+<span class="lineNum">     293 </span>            :                         do{ \
+<span class="lineNum">     294 </span>            :                             COtterMetrics metrics(MetricsName, FeatureName); \
+<span class="lineNum">     295 </span>            :                             metrics.values() \
+<span class="lineNum">     296 </span>            :                                 .insert(METRICS_VALUES_REPORT_FAIL_SPEAKER_LIST_SIZE, reportFailSpeakerListSize); \
+<span class="lineNum">     297 </span>            :                             metrics.writeMetrics(); \
+<span class="lineNum">     298 </span>            :                         }while(0)
+<span class="lineNum">     299 </span>            : #endif //OTTER_METRICS_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

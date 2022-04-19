@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/handler/MonitorInfoHandler.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/handler</a> - MonitorInfoHandler.h<span style="font-size: 80%;"> (source / <a href="MonitorInfoHandler.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryMed">83.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">60.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef HANDLER_MONITOR_INFO_H</a>
+<span class="lineNum">       2 </span>            : #define HANDLER_MONITOR_INFO_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;RequestHandler.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;OtterDefines.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;TssWrapper.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : class CMonitorInfoHandler :public IRequestHandler{
+<a name="9"><span class="lineNum">       9 </span>            : public:</a>
+<span class="lineNum">      10 </span>            :     CMonitorInfoHandler(boost::asio::io_service&amp; inIoService, const RestNetwork::RestRequestSharedPtr&amp; inRequest, const NotifyFunction&amp; inComplete);
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :     virtual ~CMonitorInfoHandler() {}</span>
+<span class="lineNum">      12 </span>            :     virtual void Start();
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : private:
+<span class="lineNum">      15 </span>            :     SafariResult ParseRequest();
+<span class="lineNum">      16 </span>            :     Json::Value GetServerStatusInfo();
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : private:
+<span class="lineNum">      19 </span>            :         std::string m_item;
+<span class="lineNum">      20 </span>            : };
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #define VERBOSE std::string(&quot;verbose&quot;)
+<a name="23"><span class="lineNum">      23 </span>            : #define MORE_VERBOSE std::string(&quot;more-verbose&quot;)</a>
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">         11 : class CTssMonitorLevel: public CTssWrapper&lt;CTssMonitorLevel&gt;, public std::string</span>
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            : public:
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          3 :         CTssMonitorLevel() {}</span></a>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          2 :         CTssMonitorLevel(const std::string&amp; inMonitorLevel): std::string(inMonitorLevel) {}</span></a>
+<span class="lineNum">      30 </span><span class="lineCov">          6 :         bool IsVerbose() const { return this-&gt;find(VERBOSE) != this-&gt;npos; }</span>
+<span class="lineNum">      31 </span><span class="lineCov">         12 :         bool IsMoreVerbose() const { return *this == MORE_VERBOSE; }</span>
+<span class="lineNum">      32 </span>            : };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : #endif
+<span class="lineNum">      35 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

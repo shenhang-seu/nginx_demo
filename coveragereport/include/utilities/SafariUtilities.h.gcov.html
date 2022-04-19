@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - include/utilities/SafariUtilities.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">include/utilities</a> - SafariUtilities.h<span style="font-size: 80%;"> (source / <a href="SafariUtilities.h.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /******************************************************************************/</a>
+<span class="lineNum">       2 </span>            : /// Copyright (C) Cisco Systems Inc. All rights reserved.
+<span class="lineNum">       3 </span>            : ///
+<span class="lineNum">       4 </span>            : /// Description:
+<span class="lineNum">       5 </span>            : ///    Safari utility tools.
+<span class="lineNum">       6 </span>            : ///
+<span class="lineNum">       7 </span>            : /// Author:
+<span class="lineNum">       8 </span>            : ///    Webber Zheng (wenbzhen@cisco.com) 
+<span class="lineNum">       9 </span>            : ///
+<span class="lineNum">      10 </span>            : /// History:
+<span class="lineNum">      11 </span>            : ///    Aug-21-2017  Initial version
+<span class="lineNum">      12 </span>            : /******************************************************************************/
+<span class="lineNum">      13 </span>            : #ifndef SAFARI_UTILITIES_H
+<span class="lineNum">      14 </span>            : #define SAFARI_UTILITIES_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;system_error&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/system/error_code.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;SafariVersion.h&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : bool IsMct(const ConfIdType&amp; inConfId);
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : template&lt;typename T&gt;
+<span class="lineNum">      24 </span>            : std::string Integer2String(T in) { return std::to_string(in); }
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : /**
+<span class="lineNum">      27 </span>            :  * Description:
+<span class="lineNum">      28 </span>            :  *              Get the path specified by the env variable &quot;WEBEX_SAFARI_HOME&quot;;
+<span class="lineNum">      29 </span>            :  * Parameters:
+<span class="lineNum">      30 </span>            :  *              N/A
+<span class="lineNum">      31 </span>            :  * Return:
+<span class="lineNum">      32 </span>            :  *              The path string, eg.: &quot;/opt/webex/safari&quot; 
+<span class="lineNum">      33 </span>            :  */
+<span class="lineNum">      34 </span>            : std::string GetSafariHomePath();
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : /**
+<span class="lineNum">      37 </span>            :  * Description:
+<span class="lineNum">      38 </span>            :  *              Get process name of a specified process path;
+<span class="lineNum">      39 </span>            :  * Parameters:
+<span class="lineNum">      40 </span>            :  *              inPath - the path of specified process, eg.: &quot;/opt/webex/safari/bin/wbxhippo&quot;;
+<span class="lineNum">      41 </span>            :  * Return:
+<span class="lineNum">      42 </span>            :  *              Process name string, eg.: &quot;wbxhippo&quot; 
+<span class="lineNum">      43 </span>            :  */
+<span class="lineNum">      44 </span>            : std::string GetProcessName(const std::string&amp; inPath);
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : /**
+<span class="lineNum">      47 </span>            :  * Description:
+<span class="lineNum">      48 </span>            :  *              Get current process name;
+<span class="lineNum">      49 </span>            :  * Parameters:
+<span class="lineNum">      50 </span>            :  *              N/A
+<span class="lineNum">      51 </span>            :  * Return:
+<span class="lineNum">      52 </span>            :  *              The path string, eg.: &quot;wbxhippo&quot; 
+<span class="lineNum">      53 </span>            :  */
+<span class="lineNum">      54 </span>            : std::string GetCurrentProcessName();
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : /**
+<span class="lineNum">      57 </span>            :  * Description:
+<span class="lineNum">      58 </span>            :  *              Get the path of current process, including process name;
+<span class="lineNum">      59 </span>            :  * Parameters:
+<span class="lineNum">      60 </span>            :  *              N/A
+<span class="lineNum">      61 </span>            :  * Return:
+<span class="lineNum">      62 </span>            :  *              The path string, eg.: &quot;/opt/webex/safari/bin/wbxhippo&quot; 
+<span class="lineNum">      63 </span>            :  */
+<span class="lineNum">      64 </span>            : std::string GetCurrentProcessPath();
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : /**
+<span class="lineNum">      67 </span>            :  * Description:
+<span class="lineNum">      68 </span>            :  *              Get the directory of current process, excluding process name;
+<span class="lineNum">      69 </span>            :  * Parameters:
+<span class="lineNum">      70 </span>            :  *              N/A
+<span class="lineNum">      71 </span>            :  * Return:
+<span class="lineNum">      72 </span>            :  *              The directory string, eg.: &quot;/opt/webex/safari/bin/&quot; 
+<span class="lineNum">      73 </span>            :  */
+<span class="lineNum">      74 </span>            : std::string GetCurrentProcessDirectory();
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : /**
+<span class="lineNum">      77 </span>            :  * Description:
+<span class="lineNum">      78 </span>            :  *              Get command line of current process, including command arguments;
+<span class="lineNum">      79 </span>            :  * Parameters:
+<span class="lineNum">      80 </span>            :  *              N/A
+<span class="lineNum">      81 </span>            :  * Return:
+<span class="lineNum">      82 </span>            :  *              The command line string, eg.: &quot;/opt/webex/safari/bin/wbxhippo -c hippo.cfg&quot; 
+<span class="lineNum">      83 </span>            :  */
+<span class="lineNum">      84 </span>            : std::string GetCurrentProcessCommandLine();
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : /**
+<span class="lineNum">      87 </span>            :  * Description:
+<span class="lineNum">      88 </span>            :  *              Convert error code from std::error_code to SafariResult;
+<span class="lineNum">      89 </span>            :  * Parameters:
+<span class="lineNum">      90 </span>            :  *              inStdErrorCode - error code of std::error_code type;
+<span class="lineNum">      91 </span>            :  * Return:
+<span class="lineNum">      92 </span>            :  *              error code of SafariResult type;
+<span class="lineNum">      93 </span>            :  */
+<span class="lineNum">      94 </span>            : SafariResult ConvertStdErrorCode2SafariErrorCode(const std::error_code&amp; inStdErrorCode);
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : /**
+<span class="lineNum">      97 </span>            :  * Description:
+<span class="lineNum">      98 </span>            :  *              Convert error code from boost::system::error_code to SafariResult;
+<span class="lineNum">      99 </span>            :  * Parameters:
+<span class="lineNum">     100 </span>            :  *              inBoostErrorCode - error code of boost::system::error_code type;
+<span class="lineNum">     101 </span>            :  * Return:
+<span class="lineNum">     102 </span>            :  *              error code of SafariResult type;
+<span class="lineNum">     103 </span>            :  */
+<span class="lineNum">     104 </span>            : SafariResult ConvertBoostErrorCode2SafariErrorCode(const boost::system::error_code&amp; inBoostErrorCode);
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            : std::string&amp; ReplaceSubStr(std::string&amp; ioStr, const std::string&amp; inOldValue, const std::string&amp; inNewValue);
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : std::vector&lt;std::string&gt; GetComponentVersionInfo();
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : std::vector&lt;std::string&gt; SafariSplit(const std::string&amp; inInput, std::string inDelimiter);
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : void Utf8ToWstr(std::wstring&amp; outDest, const std::string&amp; inSrc);
+<span class="lineNum">     113 </span>            : void WstrToUtf8(std::string&amp; outDest, const std::wstring&amp; inSrc);
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : /**
+<span class="lineNum">     116 </span>            :  * Description:
+<span class="lineNum">     117 </span>            :  *              Get host domain of a url string;
+<span class="lineNum">     118 </span>            :  *              eg. &quot;http://host.domain.com:1270/path&quot; =&gt; &quot;host.domain.com&quot;
+<span class="lineNum">     119 </span>            :  * Parameters:
+<span class="lineNum">     120 </span>            :  *              inUrl - input url string;
+<span class="lineNum">     121 </span>            :  * Return:
+<span class="lineNum">     122 </span>            :  *              The host domain;
+<span class="lineNum">     123 </span>            :  */
+<span class="lineNum">     124 </span>            : std::string GetHostOfUrl(const std::string&amp; inUrl);
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : /**
+<span class="lineNum">     127 </span>            :  * Description:
+<span class="lineNum">     128 </span>            :  *              Get a copy of the input message and remove all sensitive information, such as URL, token, username, password, etc.;
+<span class="lineNum">     129 </span>            :  * Parameters:
+<span class="lineNum">     130 </span>            :  *              inMessage - message to be desensitized;
+<span class="lineNum">     131 </span>            :  * Return:
+<span class="lineNum">     132 </span>            :  *              Output desensitized message;
+<span class="lineNum">     133 </span>            :  */
+<span class="lineNum">     134 </span>            : std::string Desensitize(const std::string&amp; inMessage);
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : /**
+<span class="lineNum">     137 </span>            :  * Description:
+<span class="lineNum">     138 </span>            :  *              Get a copy of the input message and replace all URLs in the copy message with &quot;*&quot;;
+<span class="lineNum">     139 </span>            :  *              eg. &quot;http://host.domain.com:1270/path &amp; rtmps://a.b.c/stream_path&quot; =&gt; &quot;http://\* &amp; rtmps://\*&quot;
+<span class="lineNum">     140 </span>            :  * Parameters:
+<span class="lineNum">     141 </span>            :  *              inMessage - message to be processed;
+<span class="lineNum">     142 </span>            :  * Return:
+<span class="lineNum">     143 </span>            :  *              Output message;
+<span class="lineNum">     144 </span>            :  */
+<span class="lineNum">     145 </span>            : std::string HideUrl(const std::string&amp; inMessage);
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : /**
+<span class="lineNum">     148 </span>            :  * Description:
+<span class="lineNum">     149 </span>            :  *              Get a copy of input message and replace the CI token in the copy message with &quot;*&quot;;
+<span class="lineNum">     150 </span>            :  *              eg. &quot;{&quot;access_token&quot;:&quot;asdfasdfasdfd&quot;}&quot;&quot; =&gt; &quot;{&quot;access_token&quot;:&quot;*&quot;}&quot;
+<span class="lineNum">     151 </span>            :  * Parameters:
+<span class="lineNum">     152 </span>            :  *              inMessage - message to be processed;
+<span class="lineNum">     153 </span>            :  * Return:
+<span class="lineNum">     154 </span>            :  *              Output message;
+<span class="lineNum">     155 </span>            :  */
+<span class="lineNum">     156 </span>            : std::string HideCiToken(const std::string&amp; inMessage);
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            : /**
+<span class="lineNum">     159 </span>            :  * Description:
+<span class="lineNum">     160 </span>            :  *              Encode or decode a string by base64;
+<span class="lineNum">     161 </span>            :  * Parameters:
+<span class="lineNum">     162 </span>            :  *              inStr : source string,outStr : output string;
+<span class="lineNum">     163 </span>            :  * Return:
+<span class="lineNum">     164 </span>            :  *              bool true means succeed,false means fail;
+<span class="lineNum">     165 </span>            :  */
+<span class="lineNum">     166 </span>            : bool Base64Encode( const std::string&amp; inStr, std::string&amp; outStr);
+<span class="lineNum">     167 </span>            : bool Base64Decode( const std::string&amp; inStr, std::string&amp; outStr);
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            : std::string CreateRandomString(uint32_t inLength);
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : std::string BitString2HexString(const std::string&amp; inBitString);
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : std::string JsonToNoLineFeedString(const JsonValue&amp; inValue);
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : std::vector&lt;std::string&gt; GetLocalAddressList(bool inNumeric);
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            : std::string GetCurrentTimestamp(); // format: &quot;2018-02-07 00:20:08.123&quot;
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : template&lt;typename UintT&gt;
+<span class="lineNum">     180 </span>            : bool UintLess(UintT inLhs, UintT inRhs)
+<span class="lineNum">     181 </span>            : {
+<span class="lineNum">     182 </span><span class="lineCov">        348 :         UintT max = (UintT)-1;</span>
+<span class="lineNum">     183 </span><span class="lineCov">        348 :         UintT halfMax = max / (UintT)2;</span>
+<span class="lineNum">     184 </span><span class="lineCov">        348 :         if (inLhs &lt; inRhs)</span>
+<span class="lineNum">     185 </span><span class="lineCov">         75 :                 return (inRhs - inLhs) &lt;= halfMax;</span>
+<span class="lineNum">     186 </span><span class="lineCov">        273 :         return (inLhs - inRhs) &gt; halfMax;</span>
+<span class="lineNum">     187 </span>            : }
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            : template&lt;typename UintT&gt;
+<span class="lineNum">     190 </span>            : bool UintLessOrEqual(UintT inLhs, UintT inRhs)
+<span class="lineNum">     191 </span>            : {
+<span class="lineNum">     192 </span><span class="lineCov">         44 :         return UintLess(inLhs, inRhs) || (inLhs == inRhs);</span>
+<span class="lineNum">     193 </span>            : }
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : /**
+<span class="lineNum">     196 </span>            :  * Description:
+<span class="lineNum">     197 </span>            :  *              Return the value of a feature toggle from a list of feature toggles by a specified key;
+<span class="lineNum">     198 </span>            :  * Parameters:
+<span class="lineNum">     199 </span>            :  *              inFeatureToggles - an JSON array that contains a list of feature toggles;
+<span class="lineNum">     200 </span>            :  *                      e.g. [{&quot;key&quot;:&quot;CSP_SHARING_MAX_RESOLUTION&quot;,&quot;val&quot;:2304000},{&quot;key&quot;:&quot;CSP_VIDEO_ENABLE_CHP&quot;,&quot;val&quot;:true}]
+<span class="lineNum">     201 </span>            :  *              inKey - feature toggle key;
+<span class="lineNum">     202 </span>            :  * Return:
+<span class="lineNum">     203 </span>            :  *              JSON value of the specified feature toggle;
+<span class="lineNum">     204 </span>            :  */
+<span class="lineNum">     205 </span>            : JsonValue GetFeatureToggleValue(const JsonValue&amp; inFeatureToggles, const std::string&amp; inKey);
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            : #endif //SAFARI_UTILITIES_H
+<span class="lineNum">     208 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

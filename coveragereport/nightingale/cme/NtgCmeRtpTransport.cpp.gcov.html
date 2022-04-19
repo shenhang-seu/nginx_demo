@@ -1,0 +1,453 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - nightingale/cme/NtgCmeRtpTransport.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">nightingale/cme</a> - NtgCmeRtpTransport.cpp<span style="font-size: 80%;"> (source / <a href="NtgCmeRtpTransport.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">166</td>
+            <td class="headerCovTableEntry">194</td>
+            <td class="headerCovTableEntryMed">85.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntryMed">80.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;time.h&gt;</a>
+<span class="lineNum">       2 </span>            : #include &quot;NtgCmeRtpTransport.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;NtgCmeMediaRelayer.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;NtgMetrics.h&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : 
+<a name="7"><span class="lineNum">       7 </span>            : </a>
+<span class="lineNum">       8 </span>            : ///////////////////////////////////////////////////////////////////////////////////////////////
+<span class="lineNum">       9 </span><span class="lineCov">         38 : CNtgRtpVidStatistics::CNtgRtpVidStatistics()</span>
+<span class="lineNum">      10 </span><span class="lineCov">        152 : : m_rtpStatistics(UINT8_MAX + 1)</span>
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">        722 :     NIGHTINGALE_INFO_THIS(&quot;CNtgRtpVidStatistics::CNtgRtpVidStatistics: size:&quot; &lt;&lt; m_rtpStatistics.size());</span>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">         38 : }</span></a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          1 : void CNtgRtpVidStatistics::InputRtp(EMediaSessionType inMediaType, const std::string&amp; inRtp)</span>
+<span class="lineNum">      16 </span>            : {
+<span class="lineNum">      17 </span><span class="lineCov">          1 :     if (inRtp.length() &lt; 25)</span>
+<span class="lineNum">      18 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :     const char* rtpData = (char*)inRtp.c_str();   </span>
+<span class="lineNum">      20 </span><span class="lineCov">          1 :     uint16_t sequenceId = *(uint16_t*)(rtpData+2);</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :     sequenceId = ntohs(sequenceId);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          1 :     uint32_t ssrc = *(uint32_t*)(rtpData+8);</span>
+<span class="lineNum">      23 </span><span class="lineCov">          1 :     ssrc = ntohl(ssrc);</span>
+<span class="lineNum">      24 </span><span class="lineCov">          1 :     uint32_t csi = *(uint32_t*)(rtpData+12);</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :     csi = ntohl(csi);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          1 :     uint8_t vid = 0;</span>
+<span class="lineNum">      27 </span><span class="lineCov">          1 :     uint8_t activeVid = 0;</span>
+<span class="lineNum">      28 </span><span class="lineCov">          1 :     if (MEDIA_VIDEO_SESSION == inMediaType)</span>
+<span class="lineNum">      29 </span>            :     {
+<span class="lineNum">      30 </span><span class="lineCov">          1 :         vid = *(uint8_t*)(rtpData+21);</span>
+<span class="lineNum">      31 </span>            :         /*rfc 8285
+<span class="lineNum">      32 </span>            :                the value zero (0) in this field indicates that one byte of data
+<span class="lineNum">      33 </span>            :                follows, and a value of 15 (the maximum) indicates element data of
+<span class="lineNum">      34 </span>            :                16 bytes*/
+<span class="lineNum">      35 </span>            :         /*0: SD video vid, 1: HD video vid*/
+<span class="lineNum">      36 </span><span class="lineCov">          1 :         if (1 == ((*(uint8_t*)(rtpData+20)) &amp; 0x0f))</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :             activeVid = *(uint8_t*)(rtpData+22);</span>
+<span class="lineNum">      38 </span>            :     } 
+<span class="lineNum">      39 </span><span class="lineCov">          3 :     if (m_rtpStatistics[vid].empty())</span>
+<span class="lineNum">      40 </span>            :     {
+<span class="lineNum">      41 </span><span class="lineCov">          1 :         AddSsrc(vid, csi, ssrc, sequenceId, activeVid);</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :         UpdateMaxVid(vid);</span>
+<span class="lineNum">      43 </span>            :     }
+<span class="lineNum">      44 </span>            :     else
+<span class="lineNum">      45 </span>            :     {
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         unsigned int index = m_rtpStatistics[vid].size()-1;   </span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         if ( (ssrc != m_rtpStatistics[vid][index].ssrc) || (csi != m_rtpStatistics[vid][index].csi))</span>
+<span class="lineNum">      48 </span>            :         {
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :             AddSsrc(vid, csi, ssrc, sequenceId, activeVid);</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :             UpdateMaxVid(vid);</span>
+<span class="lineNum">      51 </span>            :         }
+<span class="lineNum">      52 </span>            :         else
+<span class="lineNum">      53 </span>            :         {
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :             if (0 != activeVid)</span>
+<span class="lineNum">      55 </span>            :             {
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                 m_rtpStatistics[vid][index].activeVid = activeVid;</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 m_rtpStatistics[vid][index].activeRtpCount++;</span>
+<span class="lineNum">      58 </span>            :             }
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :             m_rtpStatistics[vid][index].lastSequenceId = sequenceId;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :             m_rtpStatistics[vid][index].rtpCount++;</span>
+<span class="lineNum">      61 </span>            :         }
+<span class="lineNum">      62 </span>            :     }
+<a name="63"><span class="lineNum">      63 </span>            : }</a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">         39 : void CNtgRtpVidStatistics::PrintStatistics(EMediaSessionType inMediaType, void* inThis)</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span><span class="lineCov">        195 :     for (unsigned int i = 0; ( i &lt;= m_maxVid) &amp;&amp; (i &lt; m_rtpStatistics.size()); i++)</span>
+<span class="lineNum">      68 </span>            :     {
+<span class="lineNum">      69 </span><span class="lineCov">        121 :         for (unsigned int j = 0; j &lt; m_rtpStatistics[i].size(); j++)</span>
+<span class="lineNum">      70 </span>            :         {
+<span class="lineNum">      71 </span><span class="lineCov">        159 :             NIGHTINGALE_INFO_THIS(&quot;CNtgRtpVidStatistics::PrintStatistics: mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(inMediaType) </span>
+<span class="lineNum">      72 </span>            :                 &lt;&lt;&quot; vid:&quot; &lt;&lt; i &lt;&lt;&quot; activeVid:&quot; &lt;&lt; m_rtpStatistics[i][j].activeVid
+<span class="lineNum">      73 </span>            :                 &lt;&lt;&quot; csi:&quot; &lt;&lt; m_rtpStatistics[i][j].csi &lt;&lt; &quot; ssrc:&quot; &lt;&lt; m_rtpStatistics[i][j].ssrc
+<span class="lineNum">      74 </span>            :                 &lt;&lt;&quot; startTime:&quot;&lt;&lt;m_rtpStatistics[i][j].startTime &lt;&lt; &quot; endTime:&quot;&lt;&lt;m_rtpStatistics[i][j].endTime
+<span class="lineNum">      75 </span>            :                 &lt;&lt;&quot; startSequenceId:&quot;&lt;&lt;m_rtpStatistics[i][j].sequenceId &lt;&lt; &quot; endSequenceId:&quot;&lt;&lt;m_rtpStatistics[i][j].lastSequenceId
+<span class="lineNum">      76 </span>            :                 &lt;&lt;&quot; [rtpCount:&quot;&lt;&lt;m_rtpStatistics[i][j].rtpCount
+<span class="lineNum">      77 </span>            :                 &lt;&lt;&quot; activeRtpCount:&quot;&lt;&lt;m_rtpStatistics[i][j].activeRtpCount&lt;&lt;&quot;]&quot;
+<span class="lineNum">      78 </span>            :                 &lt;&lt;&quot; inThis:&quot; &lt;&lt; inThis);
+<span class="lineNum">      79 </span>            :         }
+<span class="lineNum">      80 </span>            :         m_rtpStatistics[i].clear();
+<span class="lineNum">      81 </span>            :     }
+<span class="lineNum">      82 </span>            :     //reset max vid
+<span class="lineNum">      83 </span><span class="lineCov">         39 :     m_maxVid = 0;</span>
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">         39 : }</span></a>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineCov">          1 : void CNtgRtpVidStatistics::AddSsrc(uint8_t inVid, uint32_t inCsi, uint32_t inSsrc, uint16_t inSequenceId, uint8_t inActiveVid)</span>
+<span class="lineNum">      87 </span>            : {
+<span class="lineNum">      88 </span>            :     NtgRtpStatistics rtpStatistics;
+<span class="lineNum">      89 </span><span class="lineCov">          1 :     rtpStatistics.csi = inCsi;</span>
+<span class="lineNum">      90 </span><span class="lineCov">          1 :     rtpStatistics.ssrc = inSsrc;</span>
+<span class="lineNum">      91 </span><span class="lineCov">          2 :     rtpStatistics.startTime = GetTime();</span>
+<span class="lineNum">      92 </span><span class="lineCov">          1 :     rtpStatistics.rtpCount = 1;</span>
+<span class="lineNum">      93 </span><span class="lineCov">          1 :     rtpStatistics.sequenceId = inSequenceId;</span>
+<span class="lineNum">      94 </span><span class="lineCov">          1 :     rtpStatistics.lastSequenceId = inSequenceId;</span>
+<span class="lineNum">      95 </span><span class="lineCov">          1 :     if (0 != inActiveVid)</span>
+<span class="lineNum">      96 </span>            :     {
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         rtpStatistics.activeVid = inActiveVid;</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         rtpStatistics.activeRtpCount = 1;</span>
+<span class="lineNum">      99 </span>            :     }
+<span class="lineNum">     100 </span><span class="lineCov">          4 :     if (!m_rtpStatistics[inVid].empty())</span>
+<span class="lineNum">     101 </span>            :     {
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :         unsigned int index = m_rtpStatistics[inVid].size()-1;</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         m_rtpStatistics[inVid][index].endTime = rtpStatistics.startTime;</span>
+<span class="lineNum">     104 </span>            :     }
+<span class="lineNum">     105 </span><span class="lineCov">          3 :     m_rtpStatistics[inVid].push_back(rtpStatistics);</span>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 : void CNtgRtpVidStatistics::UpdateMaxVid(uint8_t inVid)</span>
+<span class="lineNum">     109 </span>            : {
+<span class="lineNum">     110 </span><span class="lineCov">          1 :     if (inVid &gt; m_maxVid)</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :         m_maxVid = inVid;</span>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineCov">          1 : std::string CNtgRtpVidStatistics::GetTime()</span>
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span><span class="lineCov">          1 :     std::stringstream formatTime;</span>
+<span class="lineNum">     117 </span><span class="lineCov">          4 :     formatTime.imbue(std::locale(std::cout.getloc(), new boost::posix_time::time_facet(&quot;%Y-%m-%d %H:%M:%S&quot;)));</span>
+<span class="lineNum">     118 </span><span class="lineCov">          1 :     formatTime &lt;&lt; boost::posix_time::second_clock::universal_time();</span>
+<span class="lineNum">     119 </span><span class="lineCov">          1 :     return formatTime.str();</span>
+<span class="lineNum">     120 </span>            : }
+<a name="121"><span class="lineNum">     121 </span>            : </a>
+<span class="lineNum">     122 </span>            : ///////////////////////////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     123 </span><span class="lineCov">          1 : void CNtgRtpCsiStatistics::InputRtp(EMediaSessionType inMediaType, const std::string&amp; inRtp)</span>
+<span class="lineNum">     124 </span>            : {
+<span class="lineNum">     125 </span><span class="lineCov">          1 :     if (inRtp.length() &lt; 22)</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     127 </span><span class="lineCov">          1 :     char* rtpData = (char*)inRtp.c_str();   </span>
+<span class="lineNum">     128 </span><span class="lineCov">          1 :     uint16_t sequenceId = *(uint16_t*)(rtpData+2);</span>
+<span class="lineNum">     129 </span><span class="lineCov">          1 :     sequenceId = ntohs(sequenceId);</span>
+<span class="lineNum">     130 </span><span class="lineCov">          1 :     uint32_t ssrc = *(uint32_t*)(rtpData+8);</span>
+<span class="lineNum">     131 </span><span class="lineCov">          2 :     ssrc = ntohl(ssrc);</span>
+<span class="lineNum">     132 </span><span class="lineCov">          1 :     uint32_t csi = *(uint32_t*)(rtpData+12);</span>
+<span class="lineNum">     133 </span><span class="lineCov">          2 :     csi = ntohl(csi);</span>
+<span class="lineNum">     134 </span><span class="lineCov">          1 :     uint8_t vid = *(uint8_t*)(rtpData+21);</span>
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span><span class="lineCov">          2 :     NtgRtpCsiStatisticsMap::iterator iter = m_rtpStatistics.find(csi);</span>
+<span class="lineNum">     137 </span><span class="lineCov">          2 :     if (m_rtpStatistics.end() == iter)</span>
+<span class="lineNum">     138 </span>            :     {
+<span class="lineNum">     139 </span><span class="lineCov">          5 :         auto rv = m_rtpStatistics.insert(NtgRtpCsiStatisticsMap::value_type(csi, NtgRtpSsrcStatisticsMap()));</span>
+<span class="lineNum">     140 </span><span class="lineCov">          1 :         iter = rv.first;</span>
+<span class="lineNum">     141 </span>            :     }
+<span class="lineNum">     142 </span><span class="lineCov">          1 :     NtgRtpSsrcStatisticsMap&amp; ssrcMap = (iter-&gt;second);</span>
+<span class="lineNum">     143 </span><span class="lineCov">          1 :     NtgRtpSsrcStatisticsMap::iterator ssrcIter = ssrcMap.find(ssrc);</span>
+<span class="lineNum">     144 </span><span class="lineCov">          1 :     if (ssrcMap.end() == ssrcIter)</span>
+<span class="lineNum">     145 </span>            :     {
+<span class="lineNum">     146 </span>            :         NtgRtpSsrcStatistics ssrcStatis;
+<span class="lineNum">     147 </span><span class="lineCov">          1 :         ssrcStatis.sequenceId = sequenceId;</span>
+<span class="lineNum">     148 </span><span class="lineCov">          1 :         ssrcStatis.lastSequenceId = sequenceId;</span>
+<span class="lineNum">     149 </span><span class="lineCov">          1 :         ssrcStatis.rtpCount = 1;</span>
+<span class="lineNum">     150 </span><span class="lineCov">          1 :         ssrcStatis.vidArray[0] = '_';</span>
+<span class="lineNum">     151 </span><span class="lineCov">          1 :         ssrcStatis.vidArray[1] = '_';</span>
+<span class="lineNum">     152 </span><span class="lineCov">          1 :         ssrcStatis.vidArray[2] = '_';</span>
+<span class="lineNum">     153 </span><span class="lineCov">          1 :         ssrcStatis.vidArray[3] = '_';</span>
+<span class="lineNum">     154 </span><span class="lineCov">          1 :         if (vid &lt;= 4)</span>
+<span class="lineNum">     155 </span><span class="lineCov">          1 :             ssrcStatis.vidArray[vid] = '0' + vid;</span>
+<span class="lineNum">     156 </span><span class="lineCov">          1 :         ssrcMap[ssrc] = ssrcStatis;</span>
+<span class="lineNum">     157 </span>            :     }
+<span class="lineNum">     158 </span>            :     else
+<span class="lineNum">     159 </span>            :     {
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         if (vid &lt;= 4)</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :             ssrcIter-&gt;second.vidArray[vid] = '0' + vid;</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         ssrcIter-&gt;second.lastSequenceId = sequenceId;</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :         ssrcIter-&gt;second.rtpCount++;</span>
+<span class="lineNum">     164 </span>            :     }
+<a name="165"><span class="lineNum">     165 </span>            : }</a>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineCov">         20 : void CNtgRtpCsiStatistics::PrintStatistics(EMediaSessionType inMediaType, void* inThis)</span>
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span>            :     //audio rtp statistics
+<span class="lineNum">     170 </span><span class="lineCov">         40 :     NtgRtpCsiStatisticsMap::iterator iter = m_rtpStatistics.begin();</span>
+<span class="lineNum">     171 </span><span class="lineCov">         63 :     for (; iter != m_rtpStatistics.end(); iter++)</span>
+<span class="lineNum">     172 </span>            :     {
+<span class="lineNum">     173 </span><span class="lineCov">          2 :         NtgRtpSsrcStatisticsMap::iterator ssrcIter = iter-&gt;second.begin();</span>
+<span class="lineNum">     174 </span><span class="lineCov">          6 :         for (; ssrcIter != iter-&gt;second.end(); ssrcIter++)</span>
+<span class="lineNum">     175 </span>            :         {
+<span class="lineNum">     176 </span><span class="lineCov">         37 :             NIGHTINGALE_INFO_THIS(&quot;CNtgRtpCsiStatistics::PrintStatistics: mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(inMediaType) </span>
+<span class="lineNum">     177 </span>            :                 &lt;&lt;&quot; csi:&quot; &lt;&lt; iter-&gt;first &lt;&lt; &quot; ssrc:&quot; &lt;&lt; ssrcIter-&gt;first &lt;&lt; &quot; vids:&quot;&lt;&lt;ssrcIter-&gt;second.vidArray
+<span class="lineNum">     178 </span>            :                 &lt;&lt;&quot; sequenceId:&quot;&lt;&lt;ssrcIter-&gt;second.sequenceId &lt;&lt; &quot; endSequenceId:&quot;&lt;&lt;ssrcIter-&gt;second.lastSequenceId
+<span class="lineNum">     179 </span>            :                 &lt;&lt;&quot; [rtpCount:&quot;&lt;&lt;ssrcIter-&gt;second.rtpCount&lt;&lt;&quot;]&quot;
+<span class="lineNum">     180 </span>            :                 &lt;&lt;&quot; inThis:&quot; &lt;&lt; inThis);
+<span class="lineNum">     181 </span>            :         }
+<span class="lineNum">     182 </span>            :     }
+<span class="lineNum">     183 </span><span class="lineCov">         20 :     m_rtpStatistics.clear();</span>
+<span class="lineNum">     184 </span><span class="lineCov">         20 : }</span>
+<a name="185"><span class="lineNum">     185 </span>            : </a>
+<span class="lineNum">     186 </span>            : ///////////////////////////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     187 </span><span class="lineCov">         57 : CNtgCmeRtpTransport::CNtgCmeRtpTransport(NtgCmeMediaRelayerSharedPtr inCmeMediaRelayer)</span>
+<span class="lineNum">     188 </span><span class="lineCov">        456 : : m_cmeMediaRelayer(inCmeMediaRelayer)</span>
+<span class="lineNum">     189 </span>            : {
+<span class="lineNum">     190 </span><span class="lineCov">       1311 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::CNtgCmeRtpTransport, confId:&quot; &lt;&lt; GetConferenceId() &lt;&lt; &quot; cmeSessionId:&quot; &lt;&lt; GetCmeSessionId() &lt;&lt; &quot; mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(GetMediaType()));</span>
+<span class="lineNum">     191 </span>            :     
+<span class="lineNum">     192 </span>            : #ifdef CSP_DUMP_RTCP_DATA
+<span class="lineNum">     193 </span>            :     m_rtcpFile = NULL;
+<span class="lineNum">     194 </span>            : #endif
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineCov">         57 :     if (MEDIA_AUDIO_SESSION == GetMediaType())</span>
+<span class="lineNum">     197 </span><span class="lineCov">         57 :         m_rtpStatistics = NtgRtpStatisticsSharedPtr(new CNtgRtpCsiStatistics());</span>
+<span class="lineNum">     198 </span>            :     else
+<span class="lineNum">     199 </span><span class="lineCov">        114 :         m_rtpStatistics = NtgRtpStatisticsSharedPtr(new CNtgRtpVidStatistics());</span>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">         57 : }</span></a>
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineCov">        513 : CNtgCmeRtpTransport::~CNtgCmeRtpTransport()</span>
+<span class="lineNum">     203 </span>            : {
+<span class="lineNum">     204 </span><span class="lineCov">        855 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::~CNtgCmeRtpTransport&quot;);</span>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">        114 : }</span></a>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         57 : bool CNtgCmeRtpTransport::Initialize(const CRtpEndpoint&amp; inLocal, const CRtpEndpoint&amp; inRemote, UdpDataCallback inRtcpCallback)</span>
+<span class="lineNum">     208 </span>            : {
+<span class="lineNum">     209 </span><span class="lineCov">       1254 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::Initialize, inLocalIp=&quot;&lt;&lt;inLocal.ip&lt;&lt;&quot; inLocalPort=&quot;&lt;&lt;inLocal.port&lt;&lt;&quot; inRemoteIp=&quot;&lt;&lt;inRemote.ip&lt;&lt;&quot; inRemotePort=&quot;&lt;&lt;inRemote.port);</span>
+<span class="lineNum">     210 </span>            :     
+<span class="lineNum">     211 </span><span class="lineCov">         57 :     InitStatisticsMgr();</span>
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :     try {
+<span class="lineNum">     214 </span><span class="lineCov">        174 :         m_localRtpEndpoint  = udp::endpoint(boost::asio::ip::address_v4::from_string(inLocal.ip), inLocal.port);//udp::endpoint(udp::v4(), inLocalPort);</span>
+<span class="lineNum">     215 </span><span class="lineCov">        174 :         m_localRtcpEndpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(inLocal.ip), inLocal.port + 1);</span>
+<span class="lineNum">     216 </span><span class="lineCov">        174 :         m_remoteRtpEndpoint  = udp::endpoint(boost::asio::ip::address_v4::from_string(inRemote.ip), inRemote.port);</span>
+<span class="lineNum">     217 </span><span class="lineCov">        174 :         m_remoteRtcpEndpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(inRemote.ip), inRemote.port + 1);</span>
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span><span class="lineCov">        168 :         m_rtpUdpSocket  = UDP::CUdpSocketFactory::CreateUdpSocket(GetCmeStreamThreadIoService(), m_localRtpEndpoint);</span>
+<span class="lineNum">     220 </span><span class="lineCov">        162 :         m_rtcpUdpSocket = UDP::CUdpSocketFactory::CreateUdpSocket(GetCmeStreamThreadIoService(), m_localRtcpEndpoint);</span>
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineCov">        108 :         if (m_rtpUdpSocket)</span>
+<span class="lineNum">     223 </span><span class="lineCov">        378 :             m_rtpUdpSocket-&gt;SetReadHandler(std::bind(&amp;CNtgCmeRtpTransport::OnReceiveRtpPacket, this-&gt;shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     224 </span><span class="lineCov">        108 :         if (m_rtcpUdpSocket)</span>
+<span class="lineNum">     225 </span><span class="lineCov">        378 :             m_rtcpUdpSocket-&gt;SetReadHandler(std::bind(&amp;CNtgCmeRtpTransport::OnReceiveRtcpPacket, this-&gt;shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<span class="lineNum">     226 </span>            :     }
+<span class="lineNum">     227 </span><span class="lineCov">          6 :     catch (std::exception&amp; e)</span>
+<span class="lineNum">     228 </span>            :     {
+<span class="lineNum">     229 </span><span class="lineCov">         48 :         NIGHTINGALE_ERROR_THIS(&quot;CNtgCmeRtpTransport::Initialize, catch udp bind port exception error=&quot;&lt;&lt;e.what());</span>
+<span class="lineNum">     230 </span><span class="lineCov">          6 :         m_rtpUdpSocket = NULL;</span>
+<span class="lineNum">     231 </span><span class="lineCov">          6 :         m_rtcpUdpSocket = NULL;</span>
+<span class="lineNum">     232 </span>            :         return false;
+<span class="lineNum">     233 </span>            :     }
+<span class="lineNum">     234 </span>            :     
+<span class="lineNum">     235 </span><span class="lineCov">         54 :     m_rtcpCallback = inRtcpCallback;</span>
+<span class="lineNum">     236 </span><span class="lineCov">         54 :     return true;</span>
+<a name="237"><span class="lineNum">     237 </span>            : }</a>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span><span class="lineCov">         57 : void CNtgCmeRtpTransport::Release()</span>
+<span class="lineNum">     240 </span>            : {
+<span class="lineNum">     241 </span><span class="lineCov">         57 :     if (m_released)</span>
+<span class="lineNum">     242 </span><span class="lineCov">         57 :         return;</span>
+<span class="lineNum">     243 </span>            :     
+<span class="lineNum">     244 </span><span class="lineCov">        855 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::Release&quot;);</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span><span class="lineCov">         57 :     ReleaseStatisticsMgr();</span>
+<span class="lineNum">     247 </span><span class="lineCov">         57 :     PrintStatistics();</span>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineCov">         57 :     m_released = true;</span>
+<span class="lineNum">     250 </span><span class="lineCov">         57 :     m_rtcpCallback = NULL;</span>
+<span class="lineNum">     251 </span><span class="lineCov">        114 :     m_rtpUdpSocket = NULL;</span>
+<span class="lineNum">     252 </span><span class="lineCov">        114 :     m_rtcpUdpSocket = NULL;</span>
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : #ifdef CSP_DUMP_RTCP_DATA
+<span class="lineNum">     255 </span>            :     if (NULL != m_rtcpFile)
+<span class="lineNum">     256 </span>            :         fclose(m_rtcpFile);
+<span class="lineNum">     257 </span>            :     m_rtcpFile = NULL;
+<span class="lineNum">     258 </span>            : #endif
+<a name="259"><span class="lineNum">     259 </span>            : }</a>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineCov">          2 : void CNtgCmeRtpTransport::SendRtp(const std::string&amp; inRtp)</span>
+<span class="lineNum">     262 </span>            : {
+<span class="lineNum">     263 </span><span class="lineCov">          2 :     m_inputCount++;</span>
+<span class="lineNum">     264 </span><span class="lineCov">          4 :     m_rtpStatistics-&gt;InputRtp(GetMediaType(), inRtp);</span>
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span><span class="lineCov">          4 :     if (m_rtpUdpSocket)</span>
+<span class="lineNum">     267 </span><span class="lineCov">         14 :         m_rtpUdpSocket-&gt;AsyncSendTo(inRtp, m_remoteRtpEndpoint, std::bind(&amp;CNtgCmeRtpTransport::SendRtpResult, this-&gt;shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));</span>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::SendRtcp(const std::string&amp; inRtcp)</span>
+<span class="lineNum">     271 </span>            : {
+<span class="lineNum">     272 </span><span class="lineCov">          2 :     if (m_rtcpUdpSocket)</span>
+<span class="lineNum">     273 </span><span class="lineCov">          7 :         m_rtcpUdpSocket-&gt;AsyncSendTo(inRtcp, m_remoteRtcpEndpoint, std::bind(&amp;CNtgCmeRtpTransport::SendRtcpResult, this-&gt;shared_from_this(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));;</span>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::SendRtpResult(UDP::UdpSocketSharedPtr inUdpSocket, const boost::system::error_code&amp; inErrorCode, std::size_t inBytesTransferred)</span>
+<span class="lineNum">     277 </span>            : {
+<span class="lineNum">     278 </span><span class="lineCov">          1 :     ++m_outputCount;</span>
+<a name="279"><span class="lineNum">     279 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::SendRtcpResult(UDP::UdpSocketSharedPtr inUdpSocket, const boost::system::error_code&amp; inErrorCode, std::size_t inBytesTransferred)</span>
+<span class="lineNum">     282 </span>            : {
+<a name="283"><span class="lineNum">     283 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::OnReceiveRtpPacket(UDP::UdpSocketSharedPtr inUdpSocket, const std::string&amp; inRtp, const udp::endpoint&amp; inRemoteEndpoint)</span>
+<span class="lineNum">     286 </span>            : {
+<span class="lineNum">     287 </span><span class="lineCov">         17 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::OnReceiveRtpPacket, size=&quot;&lt;&lt;inRtp.size());</span>
+<a name="288"><span class="lineNum">     288 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::OnReceiveRtcpPacket(UDP::UdpSocketSharedPtr inUdpSocket, const std::string&amp; inRtcp, const udp::endpoint&amp; inRemoteEndpoint)</span>
+<span class="lineNum">     291 </span>            : {
+<span class="lineNum">     292 </span><span class="lineCov">          2 :     NIGHTINGALE_ASSERTE_RETURN_VOID(!m_released);</span>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            : #ifdef CSP_DUMP_RTCP_DATA
+<span class="lineNum">     295 </span>            :     if (NULL == m_rtcpFile)
+<span class="lineNum">     296 </span>            :     {
+<span class="lineNum">     297 </span>            :         char file[1024]={0};
+<span class="lineNum">     298 </span>            :         sprintf(file, &quot;/opt/webex/csp/bin/svc_%ld.%d.%d,%d.rtcp&quot;, (unsigned long)this, (int)GetMediaType(), (int)m_localRtcpEndpoint.port(), (int)m_remoteRtcpEndpoint.port());
+<span class="lineNum">     299 </span>            :         m_rtcpFile = fopen(file, &quot;wb&quot;);
+<span class="lineNum">     300 </span>            :         NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::OnReceiveRtcpPacket, file=&quot;&lt;&lt;file);
+<span class="lineNum">     301 </span>            :         fwrite((void*)inRtcp.c_str(), 1, inRtcp.size(), m_rtcpFile);
+<span class="lineNum">     302 </span>            :     }
+<span class="lineNum">     303 </span>            : /*    if (inRtcp.size() &lt; 255)
+<span class="lineNum">     304 </span>            :     {
+<span class="lineNum">     305 </span>            :         unsigned char len = inRtcp.size();
+<span class="lineNum">     306 </span>            :         fwrite((void*)&amp;len, 1, 1, m_rtcpFile);
+<span class="lineNum">     307 </span>            :         fwrite((void*)inRtcp.c_str(), 1, inRtcp.size(), m_rtcpFile);
+<span class="lineNum">     308 </span>            :     }*/
+<span class="lineNum">     309 </span>            : #endif
+<span class="lineNum">     310 </span>            :     
+<span class="lineNum">     311 </span><span class="lineCov">          2 :     if (m_rtcpCallback)</span>
+<span class="lineNum">     312 </span><span class="lineCov">          1 :         m_rtcpCallback(GetMediaType(), inRtcp);</span>
+<a name="313"><span class="lineNum">     313 </span>            : }</a>
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span><span class="lineCov">          1 : void CNtgCmeRtpTransport::NotifyVideoPresentChanded()</span>
+<span class="lineNum">     316 </span>            : {
+<span class="lineNum">     317 </span>            :     //output statistics log
+<span class="lineNum">     318 </span><span class="lineCov">          1 :     PrintStatistics();</span>
+<a name="319"><span class="lineNum">     319 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 : const ConfIdType&amp; CNtgCmeRtpTransport::GetConferenceId() const</span>
+<span class="lineNum">     322 </span>            : {
+<span class="lineNum">     323 </span><span class="lineCov">         57 :     return m_cmeMediaRelayer-&gt;GetConferenceId();</span>
+<a name="324"><span class="lineNum">     324 </span>            : }</a>
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 : const std::string&amp; CNtgCmeRtpTransport::GetCmeSessionId() const</span>
+<span class="lineNum">     327 </span>            : {
+<span class="lineNum">     328 </span><span class="lineCov">         57 :     return m_cmeMediaRelayer-&gt;GetCmeSessionId();</span>
+<a name="329"><span class="lineNum">     329 </span>            : }</a>
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 : const std::string&amp; CNtgCmeRtpTransport::GetCmeMediaServiceId() const</span>
+<span class="lineNum">     332 </span>            : {
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :     return m_cmeMediaRelayer-&gt;GetCmeMediaServiceId();</span>
+<a name="334"><span class="lineNum">     334 </span>            : }</a>
+<span class="lineNum">     335 </span>            : 
+<a name="336"><span class="lineNum">     336 </span><span class="lineNoCov">          0 : boost::asio::io_service&amp; CNtgCmeRtpTransport::GetCmeStreamThreadIoService() </span></a>
+<span class="lineNum">     337 </span>            : { 
+<span class="lineNum">     338 </span><span class="lineCov">        168 :     return m_cmeMediaRelayer-&gt;GetCmeStreamThreadIoService(); </span>
+<a name="339"><span class="lineNum">     339 </span>            : }</a>
+<span class="lineNum">     340 </span>            : 
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 : EMediaSessionType CNtgCmeRtpTransport::GetMediaType() const</span></a>
+<span class="lineNum">     342 </span>            : {
+<span class="lineNum">     343 </span><span class="lineCov">        236 :     return m_cmeMediaRelayer-&gt;GetMediaType(); </span>
+<span class="lineNum">     344 </span>            : }
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span><span class="lineCov">         57 : void CNtgCmeRtpTransport::InitStatisticsMgr()</span>
+<span class="lineNum">     347 </span>            : {
+<span class="lineNum">     348 </span><span class="lineCov">        285 :     m_statisticsMgr = StatisticManagerSharedPtr(new CStatisticManager(GetCmeStreamThreadIoService(), std::bind(&amp;CNtgCmeRtpTransport::HandleStatisticsTimer, this, std::placeholders::_1)));</span>
+<span class="lineNum">     349 </span><span class="lineCov">         57 :     m_statisticsMgr-&gt;StartTimer();</span>
+<a name="350"><span class="lineNum">     350 </span><span class="lineCov">         57 : }</span></a>
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span><span class="lineCov">         57 : void CNtgCmeRtpTransport::ReleaseStatisticsMgr()</span>
+<span class="lineNum">     353 </span>            : {
+<span class="lineNum">     354 </span><span class="lineCov">         57 :     if (m_statisticsMgr)</span>
+<span class="lineNum">     355 </span>            :     {
+<span class="lineNum">     356 </span><span class="lineCov">         57 :         m_statisticsMgr-&gt;StopTimer();</span>
+<span class="lineNum">     357 </span><span class="lineCov">        114 :         m_statisticsMgr = nullptr;</span>
+<span class="lineNum">     358 </span>            :     }
+<span class="lineNum">     359 </span><span class="lineCov">         57 : }</span>
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span><span class="lineCov">          2 : void CNtgCmeRtpTransport::HandleStatisticsTimer(bool inIsOneMinute)</span>
+<span class="lineNum">     362 </span>            : {
+<span class="lineNum">     363 </span>            :     //audio/as
+<span class="lineNum">     364 </span><span class="lineCov">          3 :     if (inIsOneMinute &amp;&amp; (MEDIA_VIDEO_SESSION != GetMediaType()))</span>
+<span class="lineNum">     365 </span>            :     {
+<span class="lineNum">     366 </span><span class="lineCov">          1 :         PrintStatistics();</span>
+<span class="lineNum">     367 </span>            :     }
+<span class="lineNum">     368 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">     369 </span>            : 
+<span class="lineNum">     370 </span><span class="lineCov">         59 : void CNtgCmeRtpTransport::PrintStatistics()</span>
+<span class="lineNum">     371 </span>            : {
+<span class="lineNum">     372 </span><span class="lineCov">        118 :     NIGHTINGALE_ASSERTE_RETURN_VOID(!m_released);</span>
+<span class="lineNum">     373 </span>            :     
+<a name="374"><span class="lineNum">     374 </span><span class="lineCov">        118 :     m_rtpStatistics-&gt;PrintStatistics(GetMediaType(), this);</span></a>
+<span class="lineNum">     375 </span><span class="lineCov">       1239 :     NIGHTINGALE_INFO_THIS(&quot;CNtgCmeRtpTransport::PrintStatistics, mediaType:&quot; &lt;&lt; CCspRtpSession::GetMediaTypeString(GetMediaType()) &lt;&lt; &quot; input count=&quot;&lt;&lt;m_inputCount&lt;&lt;&quot; output count=&quot;&lt;&lt;m_outputCount);</span>
+<span class="lineNum">     376 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     377 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

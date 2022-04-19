@@ -1,0 +1,703 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - hippo/cme/HippoCmeManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">hippo/cme</a> - HippoCmeManager.cpp<span style="font-size: 80%;"> (source / <a href="HippoCmeManager.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">206</td>
+            <td class="headerCovTableEntry">251</td>
+            <td class="headerCovTableEntryMed">82.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntryMed">76.5 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;HippoCmeManager.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;TssWrapper.h&quot;
+<a name="3"><span class="lineNum">       3 </span>            : #include &quot;ServerApplication.h&quot;</a>
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span><span class="lineCov">          3 : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; inOs, EOrpheusStatus inOrpheusStatus)</span>
+<span class="lineNum">       6 </span>            : {
+<span class="lineNum">       7 </span><span class="lineCov">          3 :     switch(inOrpheusStatus)</span>
+<span class="lineNum">       8 </span>            :     {
+<span class="lineNum">       9 </span><span class="lineCov">          1 :         case EOrpheusStatus::NOT_WORK   : inOs &lt;&lt; &quot; NOT_WORK &quot;;    break;</span>
+<span class="lineNum">      10 </span><span class="lineCov">          1 :         case EOrpheusStatus::WORK: inOs &lt;&lt; &quot; WORK &quot;; break;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          1 :         default    : inOs &lt;&lt;GetDetailOrpheusStatus(inOrpheusStatus);</span>
+<span class="lineNum">      12 </span>            :     }
+<span class="lineNum">      13 </span><span class="lineCov">          3 :     return inOs;</span>
+<a name="14"><span class="lineNum">      14 </span>            : }</a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">          2 : EORPHEUS_STATUS_DATA_TYPE GetDetailOrpheusStatus(const EOrpheusStatus&amp; inOrpheusStatus)</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span><span class="lineCov">          2 :     return static_cast&lt;EORPHEUS_STATUS_DATA_TYPE&gt; (inOrpheusStatus);</span>
+<a name="19"><span class="lineNum">      19 </span>            : }</a>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineCov">        138 : CHippoCmeManager&amp; CHippoCmeManager::Instance()</span>
+<span class="lineNum">      22 </span>            : {
+<span class="lineNum">      23 </span><span class="lineCov">        138 :     static CHippoCmeManager hippoCmeManager;</span>
+<span class="lineNum">      24 </span><span class="lineCov">        138 :     return hippoCmeManager;</span>
+<span class="lineNum">      25 </span>            : }
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          8 : CHippoCmeManager::CHippoCmeManager() </span>
+<span class="lineNum">      28 </span><span class="lineCov">         56 : :m_hippoMediaServiceManager(std::make_shared&lt;CHippoMediaServiceManager&gt;())</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span><span class="lineCov">        120 :     HIPPO_INFO_THIS(&quot;CHippoCmeManager::CHippoCmeManager&quot;);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          8 : }</span>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">         96 : CHippoCmeManager::~CHippoCmeManager()</span>
+<span class="lineNum">      34 </span>            : {
+<span class="lineNum">      35 </span><span class="lineCov">         68 :     HIPPO_INFO_THIS(&quot;CHippoCmeManager::~CHippoCmeManager&quot;);</span>
+<span class="lineNum">      36 </span><span class="lineCov">          8 :     Release();</span>
+<span class="lineNum">      37 </span><span class="lineCov">          8 : }</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">         24 : void CHippoCmeManager::Release()</span>
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span><span class="lineCov">        308 :     HIPPO_INFO_THIS(&quot;CHippoCmeManager::Release&quot;);</span>
+<span class="lineNum">      42 </span><span class="lineCov">         24 :     if(m_updateCompositingEngineTimer.get() != nullptr)</span>
+<span class="lineNum">      43 </span><span class="lineCov">         20 :         m_updateCompositingEngineTimer-&gt;cancel();</span>
+<span class="lineNum">      44 </span><span class="lineCov">         24 :     if(m_orpheusMonitorTimer.get() != nullptr)</span>
+<span class="lineNum">      45 </span><span class="lineCov">         20 :         m_orpheusMonitorTimer-&gt;cancel();</span>
+<span class="lineNum">      46 </span><span class="lineCov">         24 :     m_orpheusStatusHandler = nullptr;</span>
+<span class="lineNum">      47 </span><span class="lineCov">         48 :     m_lastrequestGroup = nullptr;</span>
+<span class="lineNum">      48 </span><span class="lineCov">         24 :     m_cmeGroupMap.clear();</span>
+<span class="lineNum">      49 </span><span class="lineCov">         24 :     m_locationMappingTable.clear();</span>
+<span class="lineNum">      50 </span><span class="lineCov">         24 :     m_orpheusUrlList.clear();</span>
+<span class="lineNum">      51 </span><span class="lineCov">         24 :     m_regionMap.clear();</span>
+<span class="lineNum">      52 </span><span class="lineCov">         24 :     m_explicitBackupCmeGroupIdMap.clear();</span>
+<span class="lineNum">      53 </span><span class="lineCov">         24 :     if(m_hippoMediaServiceManager.get()!=nullptr)</span>
+<span class="lineNum">      54 </span>            :     {
+<span class="lineNum">      55 </span><span class="lineCov">         23 :         m_hippoMediaServiceManager-&gt;Release();</span>
+<span class="lineNum">      56 </span><span class="lineCov">         46 :         m_hippoMediaServiceManager = nullptr;</span>
+<span class="lineNum">      57 </span>            :     }
+<span class="lineNum">      58 </span><span class="lineCov">         24 : }</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">         32 : bool CHippoCmeManager::Initialize(boost::asio::io_service&amp; inIoService,const JsonValue&amp; inOrpheusUrlList,const JsonValue&amp; inCmeGroupList,const JsonValue&amp; inMappingTable,const JsonValue&amp; inRegionList,const JsonValue&amp; inMediaServiceIDs)</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineCov">         16 :     m_mainThreadIoService = &amp;inIoService;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         48 :     m_updateCompositingEngineTimer = std::make_shared&lt;boost::asio::steady_timer&gt;(GetMainThreadIoService());</span>
+<span class="lineNum">      64 </span><span class="lineCov">         48 :     m_orpheusMonitorTimer = std::make_shared&lt;boost::asio::steady_timer&gt;(GetMainThreadIoService());</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineCov">         16 :     if(InitializeMediaServiceIDList(inMediaServiceIDs) == false)</span>
+<span class="lineNum">      67 </span>            :     {
+<span class="lineNum">      68 </span><span class="lineCov">        105 :         HIPPO_ERROR_THIS(&quot;CHippoCmeManager::Initialize InitializeMediaServiceIDList fail&quot;);</span>
+<span class="lineNum">      69 </span>            :         return false;
+<span class="lineNum">      70 </span>            :     }
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">          9 :     if(InitializeOrpheusUrlList( inOrpheusUrlList) == false)</span>
+<span class="lineNum">      73 </span>            :     {
+<span class="lineNum">      74 </span><span class="lineCov">         15 :         HIPPO_ERROR_THIS(&quot;CHippoCmeManager::Initialize InitializeOrpheusUrlList fail&quot;);</span>
+<span class="lineNum">      75 </span>            :         return false;
+<span class="lineNum">      76 </span>            :     }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineCov">          8 :     if(InitializeCmeGroupList(inCmeGroupList) == false)</span>
+<span class="lineNum">      79 </span>            :     {
+<span class="lineNum">      80 </span><span class="lineCov">         15 :         HIPPO_ERROR_THIS(&quot;CHippoCmeManager::Initialize InitializeCmeGroupList fail&quot;);</span>
+<span class="lineNum">      81 </span>            :         return false;
+<span class="lineNum">      82 </span>            :     }
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineCov">          7 :     if(InitializeLocationMappingTable(inMappingTable) == false)</span>
+<span class="lineNum">      85 </span>            :     {
+<span class="lineNum">      86 </span><span class="lineCov">         15 :         HIPPO_ERROR_THIS(&quot;CHippoCmeManager::Initialize InitializeLocationMappingTable fail&quot;);</span>
+<span class="lineNum">      87 </span>            :         return false;
+<span class="lineNum">      88 </span>            :     }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineCov">          6 :     if(InitializeRegionList(inRegionList) == false)</span>
+<span class="lineNum">      91 </span>            :     {
+<span class="lineNum">      92 </span><span class="lineCov">         15 :         HIPPO_ERROR_THIS(&quot;CHippoCmeManager::Initialize InitializeRegionList fail&quot;);</span>
+<span class="lineNum">      93 </span>            :         return false;
+<span class="lineNum">      94 </span>            :     }
+<span class="lineNum">      95 </span><span class="lineCov">         15 :     m_lastrequestGroup = m_cmeGroupMap.begin()-&gt;second;</span>
+<span class="lineNum">      96 </span><span class="lineCov">          5 :     return true;</span>
+<a name="97"><span class="lineNum">      97 </span>            : }</a>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         12 : bool CHippoCmeManager::InitializeOrpheusUrlList(const JsonValue&amp; inOrpheusUrlList)</span>
+<span class="lineNum">     100 </span>            : {
+<span class="lineNum">     101 </span><span class="lineCov">         12 :     if(!inOrpheusUrlList.isArray())</span>
+<span class="lineNum">     102 </span>            :         return false;
+<span class="lineNum">     103 </span><span class="lineCov">         10 :     m_orpheusUrlList.clear();</span>
+<span class="lineNum">     104 </span><span class="lineCov">         20 :     for(Json::ArrayIndex i = 0; i &lt; inOrpheusUrlList.size();++i)</span>
+<span class="lineNum">     105 </span>            :     {
+<span class="lineNum">     106 </span><span class="lineCov">         10 :         if(inOrpheusUrlList[i].isObject())</span>
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span><span class="lineCov">          9 :             if(!inOrpheusUrlList[i][JSON_KEY_REGION_NAME].isString())</span>
+<span class="lineNum">     109 </span>            :                 continue;
+<span class="lineNum">     110 </span><span class="lineCov">          9 :             if(!inOrpheusUrlList[i][JSON_KEY_ORPHEUS_BASE_URL].isString())</span>
+<span class="lineNum">     111 </span>            :                 continue;
+<span class="lineNum">     112 </span><span class="lineCov">         45 :             m_orpheusUrlList.insert(std::make_pair(inOrpheusUrlList[i][JSON_KEY_REGION_NAME].asString(),inOrpheusUrlList[i][JSON_KEY_ORPHEUS_BASE_URL].asString()));</span>
+<span class="lineNum">     113 </span>            :         }
+<span class="lineNum">     114 </span>            :     }
+<span class="lineNum">     115 </span><span class="lineCov">         20 :     return ( !m_orpheusUrlList.empty() );</span>
+<span class="lineNum">     116 </span>            : }
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineCov">         37 : bool CHippoCmeManager::InitializeCmeGroupList(const JsonValue&amp; inCmeGroupList)</span>
+<span class="lineNum">     119 </span>            : {
+<span class="lineNum">     120 </span><span class="lineCov">         12 :     if(!inCmeGroupList.isArray())</span>
+<span class="lineNum">     121 </span>            :         return false;
+<span class="lineNum">     122 </span><span class="lineCov">         10 :     m_cmeGroupMap.clear();</span>
+<span class="lineNum">     123 </span><span class="lineCov">         35 :     for(Json::ArrayIndex i = 0; i &lt; inCmeGroupList.size();++i)</span>
+<span class="lineNum">     124 </span>            :     {
+<span class="lineNum">     125 </span><span class="lineCov">         25 :         if(inCmeGroupList[i].isObject())</span>
+<span class="lineNum">     126 </span>            :         {
+<span class="lineNum">     127 </span><span class="lineCov">         25 :             if(!inCmeGroupList[i][JSON_KEY_GROUP_ID].isString())</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                 continue;</span>
+<span class="lineNum">     129 </span><span class="lineCov">         25 :             if(!inCmeGroupList[i][JSON_KEY_ORGLIST].isArray())</span>
+<span class="lineNum">     130 </span>            :                 continue;
+<span class="lineNum">     131 </span><span class="lineCov">         25 :             CmeGroupIdType groupid = inCmeGroupList[i][JSON_KEY_GROUP_ID].asString();</span>
+<span class="lineNum">     132 </span><span class="lineCov">         50 :             JsonValue orgList = inCmeGroupList[i][JSON_KEY_ORGLIST];</span>
+<span class="lineNum">     133 </span><span class="lineCov">         25 :             auto groupSharedPtr = std::make_shared&lt;CHippoCmeGroup&gt;(GetMainThreadIoService(),groupid);</span>
+<span class="lineNum">     134 </span><span class="lineCov">         50 :             for(Json::ArrayIndex j = 0; j &lt; orgList.size();++j)</span>
+<span class="lineNum">     135 </span>            :             {
+<span class="lineNum">     136 </span><span class="lineCov">         25 :                 auto mediaServiceUpdateCallbak = std::bind(&amp;CHippoCmeManager::HandleMediaServiceUpdate,this,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,std::placeholders::_4);</span>
+<span class="lineNum">     137 </span><span class="lineCov">         25 :                 if(orgList[j].isString())</span>
+<span class="lineNum">     138 </span><span class="lineCov">        125 :                     groupSharedPtr-&gt;AddOrg(orgList[j].asString(),mediaServiceUpdateCallbak,m_mediaServiceIdList,std::bind(&amp;CHippoCmeManager::GetOrpheusUrl,this));</span>
+<span class="lineNum">     139 </span>            :             }
+<span class="lineNum">     140 </span><span class="lineCov">         50 :             m_cmeGroupMap.insert(std::make_pair(groupid,groupSharedPtr));</span>
+<span class="lineNum">     141 </span>            :         }
+<span class="lineNum">     142 </span>            :     }
+<span class="lineNum">     143 </span><span class="lineCov">         20 :     return (m_cmeGroupMap.empty() == false);</span>
+<a name="144"><span class="lineNum">     144 </span>            : }</a>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineCov">         28 : void CHippoCmeManager::InitializeExplicitBackupCmeGroupIdMap(const JsonValue &amp;inLocationItem)</span>
+<span class="lineNum">     147 </span>            : {
+<span class="lineNum">     148 </span><span class="lineCov">         28 :     if (!inLocationItem[JSON_KEY_EXPLICIT_BACKUP_CMEGROUP_IDS].isArray()) </span>
+<span class="lineNum">     149 </span><span class="lineCov">         16 :         return;</span>
+<span class="lineNum">     150 </span><span class="lineCov">         12 :     const auto&amp; locationName = inLocationItem[JSON_KEY_LOCATION_NAME].asString();</span>
+<span class="lineNum">     151 </span><span class="lineCov">         12 :     std::vector&lt;std::string&gt; cmeGroupIds;</span>
+<span class="lineNum">     152 </span><span class="lineCov">         48 :     for (const auto &amp;cmeGroupId : inLocationItem[JSON_KEY_EXPLICIT_BACKUP_CMEGROUP_IDS])</span>
+<span class="lineNum">     153 </span>            :     {
+<span class="lineNum">     154 </span><span class="lineCov">         12 :         if (!cmeGroupId.isString())</span>
+<span class="lineNum">     155 </span>            :             continue;
+<span class="lineNum">     156 </span><span class="lineCov">        228 :         HIPPO_INFO_THIS(&quot;CHippoCmeManager::InitializeExplicitBackupCmeGroupIdMap locationName: &quot;</span>
+<span class="lineNum">     157 </span>            :                         &lt;&lt; locationName &lt;&lt; &quot; has explicitly specified backup cme group ID: &quot; &lt;&lt; cmeGroupId.asString());
+<span class="lineNum">     158 </span><span class="lineCov">         24 :         cmeGroupIds.push_back(cmeGroupId.asString());</span>
+<span class="lineNum">     159 </span>            :     }
+<span class="lineNum">     160 </span><span class="lineCov">         12 :     m_explicitBackupCmeGroupIdMap[locationName] = std::move(cmeGroupIds);</span>
+<a name="161"><span class="lineNum">     161 </span>            : }</a>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineCov">         10 : bool CHippoCmeManager::InitializeLocationMappingTable(const JsonValue&amp; inLocationMappingTable)</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span><span class="lineCov">         10 :     if(!inLocationMappingTable.isArray())</span>
+<span class="lineNum">     166 </span>            :         return false;
+<span class="lineNum">     167 </span><span class="lineCov">          8 :     m_locationMappingTable.clear();</span>
+<span class="lineNum">     168 </span><span class="lineCov">         39 :     for(Json::ArrayIndex i = 0; i &lt; inLocationMappingTable.size();++i)</span>
+<span class="lineNum">     169 </span>            :     {
+<span class="lineNum">     170 </span><span class="lineCov">         31 :         if(inLocationMappingTable[i].isObject())</span>
+<span class="lineNum">     171 </span>            :         {
+<span class="lineNum">     172 </span><span class="lineCov">         31 :             if(!inLocationMappingTable[i][JSON_KEY_LOCATION_ID].isString())</span>
+<span class="lineNum">     173 </span><span class="lineCov">          3 :                 continue;</span>
+<span class="lineNum">     174 </span><span class="lineCov">         31 :             if(!inLocationMappingTable[i][JSON_KEY_LOCATION_NAME].isString())</span>
+<span class="lineNum">     175 </span>            :                 continue;
+<span class="lineNum">     176 </span><span class="lineCov">         31 :             if(!inLocationMappingTable[i][JSON_KEY_CMEGROUP_ID].isString())</span>
+<span class="lineNum">     177 </span>            :                 continue;
+<span class="lineNum">     178 </span><span class="lineCov">         31 :             LocationNameType locationName =inLocationMappingTable[i][JSON_KEY_LOCATION_NAME].asString();</span>
+<span class="lineNum">     179 </span><span class="lineCov">         31 :             LocationIdType locationID = inLocationMappingTable[i][JSON_KEY_LOCATION_ID].asString();</span>
+<span class="lineNum">     180 </span><span class="lineCov">         31 :             CmeGroupIdType groupID = inLocationMappingTable[i][JSON_KEY_CMEGROUP_ID].asString();</span>
+<span class="lineNum">     181 </span><span class="lineCov">         31 :             if(inLocationMappingTable[i][JSON_KEY_APPLIED_COMPONENTS].isArray())</span>
+<span class="lineNum">     182 </span>            :             {
+<span class="lineNum">     183 </span><span class="lineCov">         10 :                 auto&amp; appliedComponents = inLocationMappingTable[i][JSON_KEY_APPLIED_COMPONENTS];</span>
+<span class="lineNum">     184 </span>            :                 bool isDroped = true;
+<span class="lineNum">     185 </span><span class="lineCov">          3 :                 for(Json::ArrayIndex j = 0; j &lt; appliedComponents.size();++j)</span>
+<span class="lineNum">     186 </span>            :                 {
+<span class="lineNum">     187 </span><span class="lineCov">         30 :                     if(appliedComponents[j].isString() &amp;&amp; appliedComponents[j].asString() == std::string(&quot;CSP&quot;))</span>
+<span class="lineNum">     188 </span>            :                     {
+<span class="lineNum">     189 </span>            :                         isDroped = false;
+<span class="lineNum">     190 </span>            :                         break;
+<span class="lineNum">     191 </span>            :                     }
+<span class="lineNum">     192 </span>            :                 }
+<span class="lineNum">     193 </span><span class="lineCov">         10 :                 if(isDroped == true)</span>
+<span class="lineNum">     194 </span>            :                 {
+<span class="lineNum">     195 </span><span class="lineCov">         60 :                     HIPPO_INFO_THIS(&quot;CHippoCmeManager::InitializeLocationMappingTable drop one location mapping, locationid:&quot;&lt;&lt;locationID&lt;&lt;&quot;, locationName:&quot;&lt;&lt;locationName&lt;&lt;&quot;, groupId:&quot;&lt;&lt;groupID);</span>
+<span class="lineNum">     196 </span>            :                     continue;
+<span class="lineNum">     197 </span>            :                 }
+<span class="lineNum">     198 </span>            :             }
+<span class="lineNum">     199 </span><span class="lineCov">         28 :             InitializeExplicitBackupCmeGroupIdMap(inLocationMappingTable[i]);</span>
+<span class="lineNum">     200 </span><span class="lineCov">         56 :             m_locationMappingTable.emplace(locationName,std::make_tuple(locationID,locationName,groupID));</span>
+<span class="lineNum">     201 </span>            :         }
+<span class="lineNum">     202 </span>            :     }
+<span class="lineNum">     203 </span><span class="lineCov">         16 :     return (m_locationMappingTable.empty() == false);</span>
+<span class="lineNum">     204 </span>            : }
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineCov">         10 : bool CHippoCmeManager::InitializeRegionList(const JsonValue&amp; inRegionList)</span>
+<span class="lineNum">     207 </span>            : {
+<span class="lineNum">     208 </span><span class="lineCov">         10 :     if(!inRegionList.isArray())</span>
+<span class="lineNum">     209 </span>            :         return false;
+<span class="lineNum">     210 </span><span class="lineCov">          8 :     m_regionMap.clear();</span>
+<span class="lineNum">     211 </span><span class="lineCov">         24 :     for(Json::ArrayIndex i = 0; i &lt; inRegionList.size();++i)</span>
+<span class="lineNum">     212 </span>            :     {
+<span class="lineNum">     213 </span><span class="lineCov">         16 :         if(inRegionList[i].isObject())</span>
+<span class="lineNum">     214 </span>            :         {
+<span class="lineNum">     215 </span><span class="lineCov">         16 :             if(!inRegionList[i][JSON_KEY_REGION_NAME].isString())</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                 continue;</span>
+<span class="lineNum">     217 </span><span class="lineCov">         16 :             if(!inRegionList[i][JSON_KEY_CMEGROUP_LIST].isArray())</span>
+<span class="lineNum">     218 </span>            :                 continue;
+<span class="lineNum">     219 </span><span class="lineCov">         16 :             std::string regionName = inRegionList[i][JSON_KEY_REGION_NAME].asString();</span>
+<span class="lineNum">     220 </span><span class="lineCov">         32 :             auto groupListBody = inRegionList[i][JSON_KEY_CMEGROUP_LIST];</span>
+<span class="lineNum">     221 </span><span class="lineCov">         16 :             std::vector&lt;std::string&gt; groupidList;</span>
+<span class="lineNum">     222 </span><span class="lineCov">         48 :             for(Json::ArrayIndex j = 0; j &lt; groupListBody.size();++j)</span>
+<span class="lineNum">     223 </span>            :             {
+<span class="lineNum">     224 </span><span class="lineCov">         32 :                 if(!groupListBody[j].isString())</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                     continue;</span>
+<span class="lineNum">     226 </span><span class="lineCov">         32 :                 std::string groupid = groupListBody[j].asString();</span>
+<span class="lineNum">     227 </span><span class="lineCov">         32 :                 auto cmeGroup = GetCmeGroup(groupid);</span>
+<span class="lineNum">     228 </span><span class="lineCov">         64 :                 if(cmeGroup != nullptr)</span>
+<span class="lineNum">     229 </span>            :                 {
+<span class="lineNum">     230 </span><span class="lineCov">         24 :                     cmeGroup-&gt;SetRegionName(regionName);</span>
+<span class="lineNum">     231 </span><span class="lineCov">         24 :                     groupidList.emplace_back(groupid);</span>
+<span class="lineNum">     232 </span>            :                 }
+<span class="lineNum">     233 </span>            :             }
+<span class="lineNum">     234 </span><span class="lineCov">         48 :             m_regionMap.insert(std::make_pair(regionName,std::move(groupidList)));</span>
+<span class="lineNum">     235 </span>            :         }
+<span class="lineNum">     236 </span>            :     }
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span><span class="lineCov">         16 :     return !m_regionMap.empty();</span>
+<a name="239"><span class="lineNum">     239 </span>            : }</a>
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineCov">         19 : bool CHippoCmeManager::InitializeMediaServiceIDList(const JsonValue &amp; inMediaServicesIDs)</span>
+<span class="lineNum">     242 </span>            : {
+<span class="lineNum">     243 </span><span class="lineCov">         19 :     m_mediaServiceIdList.clear();</span>
+<span class="lineNum">     244 </span><span class="lineCov">         42 :     for(Json::ArrayIndex i = 0; i &lt; inMediaServicesIDs.size();++i)</span>
+<span class="lineNum">     245 </span>            :     {
+<span class="lineNum">     246 </span><span class="lineCov">         23 :         if(inMediaServicesIDs[i].isString())</span>
+<span class="lineNum">     247 </span><span class="lineCov">         46 :             m_mediaServiceIdList.insert(inMediaServicesIDs[i].asString());</span>
+<span class="lineNum">     248 </span>            :     }
+<span class="lineNum">     249 </span><span class="lineCov">         19 :     return m_hippoMediaServiceManager-&gt;Initialize(m_mediaServiceIdList);</span>
+<a name="250"><span class="lineNum">     250 </span>            : }</a>
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineCov">          2 : LocationNameType CHippoCmeManager::GetLocaionNameByGroupId(const CmeGroupIdType&amp; inGroupId) const</span>
+<span class="lineNum">     253 </span>            : {
+<span class="lineNum">     254 </span><span class="lineCov">          2 :     std::string locaionName(&quot;&quot;);</span>
+<span class="lineNum">     255 </span><span class="lineCov">          8 :     for(const auto&amp; location:m_locationMappingTable)</span>
+<span class="lineNum">     256 </span>            :     {
+<span class="lineNum">     257 </span><span class="lineCov">          2 :         if(std::get&lt;2&gt;(location.second) == inGroupId)</span>
+<span class="lineNum">     258 </span>            :         {
+<span class="lineNum">     259 </span><span class="lineCov">          1 :             locaionName =location.first;</span>
+<span class="lineNum">     260 </span>            :             break;
+<span class="lineNum">     261 </span>            :         }
+<span class="lineNum">     262 </span>            :     }
+<span class="lineNum">     263 </span><span class="lineCov">          2 :     return locaionName;</span>
+<a name="264"><span class="lineNum">     264 </span>            : }</a>
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span><span class="lineCov">         12 : LocationIdType CHippoCmeManager::GetLocationId(const LocationNameType&amp; inLocationName) const</span>
+<span class="lineNum">     267 </span>            : {
+<span class="lineNum">     268 </span><span class="lineCov">         24 :     auto iter = m_locationMappingTable.find(inLocationName);</span>
+<span class="lineNum">     269 </span><span class="lineCov">         24 :     if(iter != m_locationMappingTable.end())</span>
+<span class="lineNum">     270 </span><span class="lineCov">          2 :         return std::get&lt;0&gt;(iter-&gt;second);</span>
+<span class="lineNum">     271 </span><span class="lineCov">         11 :     return &quot;&quot;;</span>
+<a name="272"><span class="lineNum">     272 </span>            : }</a>
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span><span class="lineCov">          1 : void CHippoCmeManager::Start()</span>
+<span class="lineNum">     275 </span>            : {
+<span class="lineNum">     276 </span><span class="lineCov">         15 :     HIPPO_INFO_THIS(&quot;CHippoCmeManager::Start&quot;);</span>
+<span class="lineNum">     277 </span><span class="lineCov">          1 :     RequestMediaService();</span>
+<span class="lineNum">     278 </span><span class="lineCov">          1 :     CheckOrpheus();</span>
+<span class="lineNum">     279 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : /*
+<span class="lineNum">     282 </span>            : void CHippoCmeManager::UpdateCompositingEngineTimer()
+<span class="lineNum">     283 </span>            : {
+<span class="lineNum">     284 </span>            :     RequestCompositingEngine();
+<span class="lineNum">     285 </span>            :     m_updateCompositingEngineTimer-&gt;expires_from_now(std::chrono::seconds(60));
+<span class="lineNum">     286 </span>            :     m_updateCompositingEngineTimer-&gt;async_wait(std::bind(&amp;CHippoCmeManager::UpdateCompositingEngineTimerHandler,this, m_updateCompositingEngineTimer, std::placeholders::_1));
+<span class="lineNum">     287 </span>            : }
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : void CHippoCmeManager::UpdateCompositingEngineTimerHandler(std::shared_ptr&lt;boost::asio::steady_timer&gt; inTimer, const boost::system::error_code&amp; inErrorCode)
+<span class="lineNum">     290 </span>            : {
+<span class="lineNum">     291 </span>            :      HIPPO_INFO_THIS(&quot;CHippoCmeManager::UpdateCompositingEngineTimerHandler ,share ptr count : &quot;&lt;&lt;m_updateCompositingEngineTimer.use_count());
+<span class="lineNum">     292 </span>            :     if (inErrorCode == boost::asio::error::operation_aborted)
+<span class="lineNum">     293 </span>            :         return;
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            :     if (inTimer.get() == m_updateCompositingEngineTimer.get())
+<span class="lineNum">     296 </span>            :     {
+<span class="lineNum">     297 </span>            :         UpdateCompositingEngineTimer();
+<span class="lineNum">     298 </span>            :         return;
+<span class="lineNum">     299 </span>            :     }
+<a name="300"><span class="lineNum">     300 </span>            : }</a>
+<span class="lineNum">     301 </span>            : */
+<span class="lineNum">     302 </span><span class="lineCov">          2 : void CHippoCmeManager::RequestMediaService()</span>
+<span class="lineNum">     303 </span>            : {
+<span class="lineNum">     304 </span><span class="lineCov">         34 :     HIPPO_DEBUG_THIS(&quot;CHippoCmeManager::RequestMediaService cme group size : &quot;&lt;&lt;m_cmeGroupMap.size());</span>
+<span class="lineNum">     305 </span><span class="lineCov">          8 :     for(auto iter = m_cmeGroupMap.begin();iter!=m_cmeGroupMap.end();++iter)</span>
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :         iter-&gt;second-&gt;RequestMediaService();</span>
+<a name="307"><span class="lineNum">     307 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineCov">         27 : std::string CHippoCmeManager::GetMappingGroupId(const std::string&amp; inLocationName) const</span>
+<span class="lineNum">     310 </span>            : {
+<span class="lineNum">     311 </span><span class="lineCov">         54 :     auto iter = m_locationMappingTable.find(inLocationName);</span>
+<span class="lineNum">     312 </span><span class="lineCov">         54 :     if(iter != m_locationMappingTable.end())</span>
+<span class="lineNum">     313 </span><span class="lineCov">         20 :         return std::get&lt;2&gt;(iter-&gt;second);</span>
+<span class="lineNum">     314 </span>            :     else
+<span class="lineNum">     315 </span><span class="lineCov">         17 :         return &quot;&quot;;</span>
+<span class="lineNum">     316 </span>            : }
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span><span class="lineCov">          6 : std::string CHippoCmeManager::GetBackupGroupId(const std::string&amp; inGroupId) const </span>
+<span class="lineNum">     319 </span>            : {
+<span class="lineNum">     320 </span><span class="lineCov">          6 :     std::string backupId(&quot;&quot;);</span>
+<span class="lineNum">     321 </span><span class="lineCov">          6 :     auto cmeGroup = GetCmeGroup(inGroupId);</span>
+<span class="lineNum">     322 </span><span class="lineCov">         12 :     if(cmeGroup == nullptr)</span>
+<span class="lineNum">     323 </span>            :         return backupId;
+<span class="lineNum">     324 </span><span class="lineCov">          5 :     std::string regionName = cmeGroup-&gt;GetRegionName();</span>
+<span class="lineNum">     325 </span><span class="lineCov">         10 :     auto iter = m_regionMap.find(regionName);</span>
+<span class="lineNum">     326 </span><span class="lineCov">         10 :     if(iter != m_regionMap.end())</span>
+<span class="lineNum">     327 </span>            :     {
+<span class="lineNum">     328 </span><span class="lineCov">         10 :         const auto&amp; groupList = iter-&gt;second;</span>
+<span class="lineNum">     329 </span><span class="lineCov">         15 :         if(groupList.size() &lt; 2)</span>
+<span class="lineNum">     330 </span>            :             return backupId;
+<span class="lineNum">     331 </span><span class="lineCov">          1 :         for(std::size_t i = 0;i&lt;groupList.size();++i)</span>
+<span class="lineNum">     332 </span>            :         {
+<span class="lineNum">     333 </span><span class="lineCov">         10 :             if(groupList[i] == inGroupId)</span>
+<span class="lineNum">     334 </span>            :             {
+<span class="lineNum">     335 </span><span class="lineCov">          8 :                 backupId = groupList[(i+1)%groupList.size()];</span>
+<span class="lineNum">     336 </span>            :                 break;
+<span class="lineNum">     337 </span>            :             }
+<span class="lineNum">     338 </span>            :         }
+<span class="lineNum">     339 </span>            :     }
+<span class="lineNum">     340 </span>            :     return backupId;
+<span class="lineNum">     341 </span>            : }
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span><span class="lineCov">         48 : HippoCmeGroupSharedPtr CHippoCmeManager::GetCmeGroup(const std::string&amp; inGroupId) const</span>
+<span class="lineNum">     344 </span>            : {
+<span class="lineNum">     345 </span><span class="lineCov">         96 :     auto iter = m_cmeGroupMap.find(inGroupId);</span>
+<span class="lineNum">     346 </span><span class="lineCov">         96 :     if(iter != m_cmeGroupMap.end())</span>
+<span class="lineNum">     347 </span><span class="lineCov">         38 :         return iter-&gt;second;</span>
+<span class="lineNum">     348 </span><span class="lineCov">         10 :     return nullptr;</span>
+<a name="349"><span class="lineNum">     349 </span>            : }</a>
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineCov">         11 : bool CHippoCmeManager::GetMediaServiceByExplicitBackupCmeGroupId(const MediaServiceIdType &amp;inMediaServiceId, const std::string &amp;inLocationName, std::vector&lt;std::string&gt; &amp;outBackupList)</span>
+<span class="lineNum">     352 </span>            : {
+<span class="lineNum">     353 </span><span class="lineCov">         21 :     if (m_explicitBackupCmeGroupIdMap.find(inLocationName) == m_explicitBackupCmeGroupIdMap.end())</span>
+<span class="lineNum">     354 </span>            :         return false;
+<span class="lineNum">     355 </span>            : 
+<span class="lineNum">     356 </span><span class="lineCov">         13 :     for (const auto&amp; cmeGroupId : m_explicitBackupCmeGroupIdMap[inLocationName])</span>
+<span class="lineNum">     357 </span>            :     {
+<span class="lineNum">     358 </span><span class="lineCov">          3 :         m_hippoMediaServiceManager-&gt;GetMediaService(inMediaServiceId, cmeGroupId, outBackupList);</span>
+<span class="lineNum">     359 </span><span class="lineCov">          3 :         if (!outBackupList.empty())</span>
+<span class="lineNum">     360 </span>            :         {
+<span class="lineNum">     361 </span><span class="lineCov">         50 :             HIPPO_INFO_THIS(&quot;CHippoCmeManager::getMediaServiceByExplicitBackupCmeGroupId according to explicitly specified CME backup, location: &quot;</span>
+<span class="lineNum">     362 </span>            :                             &lt;&lt; inLocationName &lt;&lt; &quot;, MediaService: &quot;
+<span class="lineNum">     363 </span>            :                             &lt;&lt; inMediaServiceId &lt;&lt; &quot;, CME backup group ID: &quot;
+<span class="lineNum">     364 </span>            :                             &lt;&lt; cmeGroupId &lt;&lt; &quot;, node count: &quot; &lt;&lt; outBackupList.size());
+<span class="lineNum">     365 </span>            :             return true;
+<span class="lineNum">     366 </span>            :         }
+<span class="lineNum">     367 </span>            :     }
+<span class="lineNum">     368 </span>            :     return true;
+<a name="369"><span class="lineNum">     369 </span>            : }</a>
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 : SafariResult GetSafariResult(std::vector&lt;std::string&gt; &amp;outPriList,</span>
+<span class="lineNum">     372 </span>            :                              std::vector&lt;std::string&gt; &amp;outBackupList)
+<span class="lineNum">     373 </span>            : {
+<span class="lineNum">     374 </span><span class="lineCov">          7 :     if (outPriList.empty() &amp;&amp; outBackupList.empty())</span>
+<span class="lineNum">     375 </span>            :         return SAFARI_ERROR_HIPPO_NO_AVAILABLE_MEDIA_SERVICE;
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :     return SAFARI_OK;</span>
+<span class="lineNum">     377 </span>            : }
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span><span class="lineCov">         23 : SafariResult CHippoCmeManager::GetMediaService(const MediaServiceIdType &amp;inMediaServiceId,</span>
+<span class="lineNum">     380 </span>            :                                                const std::string &amp;inLocationName, 
+<span class="lineNum">     381 </span>            :                                                std::vector&lt;std::string&gt; &amp;outPriList, 
+<span class="lineNum">     382 </span>            :                                                std::vector&lt;std::string&gt; &amp;outBackupList)
+<span class="lineNum">     383 </span>            : {
+<span class="lineNum">     384 </span><span class="lineCov">         23 :     std::string groupId = GetMappingGroupId(inLocationName);</span>
+<span class="lineNum">     385 </span><span class="lineCov">         23 :     if(groupId.empty())</span>
+<span class="lineNum">     386 </span>            :         return SAFARI_ERROR_HIPPO_NO_MATCHED_CME_GROUPID;
+<span class="lineNum">     387 </span><span class="lineCov">         18 :     if(m_hippoMediaServiceManager-&gt;IsMediaServiceIDExited(inMediaServiceId) == false)</span>
+<span class="lineNum">     388 </span>            :         return SAFARI_ERROR_HIPPO_MEDIA_SERVICE_NOT_SUPPORT;
+<span class="lineNum">     389 </span><span class="lineCov">         14 :     m_hippoMediaServiceManager-&gt;GetMediaService(inMediaServiceId,groupId,outPriList);</span>
+<span class="lineNum">     390 </span><span class="lineCov">          7 :     auto cmeGroup = GetCmeGroup(groupId);</span>
+<span class="lineNum">     391 </span><span class="lineCov">         14 :     if(cmeGroup != nullptr)</span>
+<span class="lineNum">     392 </span>            :     {
+<span class="lineNum">     393 </span><span class="lineCov">          7 :         m_lastrequestGroup = cmeGroup;</span>
+<span class="lineNum">     394 </span>            :     }
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span><span class="lineCov">          7 :     if (GetMediaServiceByExplicitBackupCmeGroupId(inMediaServiceId, inLocationName, outBackupList))</span>
+<span class="lineNum">     397 </span>            :     {
+<span class="lineNum">     398 </span><span class="lineCov">          3 :         return GetSafariResult(outPriList, outBackupList);</span>
+<span class="lineNum">     399 </span>            :     }
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span><span class="lineCov">          8 :     auto iter = m_regionMap.find(cmeGroup-&gt;GetRegionName());</span>
+<span class="lineNum">     402 </span><span class="lineCov">          8 :     if(iter != m_regionMap.end())</span>
+<span class="lineNum">     403 </span>            :     {
+<span class="lineNum">     404 </span><span class="lineCov">          4 :         const auto&amp; groupList = iter-&gt;second;</span>
+<span class="lineNum">     405 </span><span class="lineCov">         22 :         for(const auto&amp; backGroupId : groupList)</span>
+<span class="lineNum">     406 </span>            :         {
+<span class="lineNum">     407 </span><span class="lineCov">          8 :             if(backGroupId == groupId)</span>
+<span class="lineNum">     408 </span>            :                 continue;
+<span class="lineNum">     409 </span><span class="lineCov">          8 :             m_hippoMediaServiceManager-&gt;GetMediaService(inMediaServiceId,backGroupId,outBackupList);</span>
+<span class="lineNum">     410 </span><span class="lineCov">          4 :             if(!outBackupList.empty())</span>
+<span class="lineNum">     411 </span>            :                 break;
+<span class="lineNum">     412 </span>            :         }
+<span class="lineNum">     413 </span>            :     }
+<span class="lineNum">     414 </span><span class="lineCov">          4 :     return GetSafariResult(outPriList, outBackupList);</span>
+<span class="lineNum">     415 </span>            : }
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 : void CHippoCmeManager:: CheckOrpheusTimer(uint32_t inDelayRequestTimeSecond)</span>
+<span class="lineNum">     418 </span>            : {
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :     m_orpheusMonitorTimer-&gt;expires_from_now(std::chrono::seconds(inDelayRequestTimeSecond));</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :     m_orpheusMonitorTimer-&gt;async_wait(std::bind(&amp;CHippoCmeManager::CheckOrpheusTimerHandler,this, m_orpheusMonitorTimer, std::placeholders::_1));</span>
+<a name="421"><span class="lineNum">     421 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 : void CHippoCmeManager::CheckOrpheusTimerHandler(std::shared_ptr&lt;boost::asio::steady_timer&gt; inTimer, const boost::system::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     424 </span>            : {
+<span class="lineNum">     425 </span>            :     //HIPPO_INFO_THIS(&quot;CHippoCmeManager::UpdateCompositingEngineTimerHandler ,share ptr count : &quot;&lt;&lt;m_updateCompositingEngineTimer.use_count());
+<span class="lineNum">     426 </span><span class="lineNoCov">          0 :     if (inErrorCode == boost::asio::error::operation_aborted)</span>
+<span class="lineNum">     427 </span>            :         return;
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :     if (inTimer.get() == m_orpheusMonitorTimer.get())</span>
+<span class="lineNum">     430 </span>            :     {
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :         CheckOrpheus();</span>
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     433 </span>            :     }
+<span class="lineNum">     434 </span>            : }
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span><span class="lineCov">          1 : void CHippoCmeManager::CheckOrpheus()</span>
+<span class="lineNum">     437 </span>            : {
+<span class="lineNum">     438 </span><span class="lineCov">         21 :     HIPPO_ASSERTE_RETURN_VOID(m_lastrequestGroup.get()!=nullptr);</span>
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :     std::string groupId = m_lastrequestGroup-&gt;GetGroupId();</span>
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :     auto orgList = m_lastrequestGroup-&gt;GetOrgList();</span>
+<span class="lineNum">     441 </span>            :     //get the first org from list
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :     std::string ordId = orgList.begin()-&gt;first;</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :     std::string strPath = &quot;/orgs/&quot; + ordId +&quot;/groups/&quot; + groupId + &quot;/agents?mediaServiceIDs=edonus&amp;inServiceOnly=true&amp;excludeInactive=true&quot;;</span>
+<span class="lineNum">     444 </span>            :     std::string strUrl = GetOrpheusUrl();
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 :     CTssTrackingId::Reset(ESafariServerType::HIPPO);</span>
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :     auto initator = std::make_shared&lt;CHippoCommonInitiator&gt;(GetMainThreadIoService(),strUrl,strPath);</span>
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 :     initator-&gt;SetHeader(HTTP_CONTENT_TYPE, &quot;application/json&quot;);</span>
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :     initator-&gt;SetHeader(HTTP_ACCEPT, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :     initator-&gt;SetHeader(HTTP_AUTHORIZATION, IServerApplication::Instance()-&gt;GetCiToken(CME_MEDIA_SERVICE_ID_EDONUS));</span>
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :     initator-&gt;Get([this,initator](const RestResponseSharedPtr&amp; inResponse) mutable</span>
+<span class="lineNum">     451 </span>            :     {
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :         EOrpheusStatus inStatus = VerifyOrpheusResponse(inResponse);</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :         if(m_orpheusStatusHandler)</span>
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :             m_orpheusStatusHandler(inStatus);</span>
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :         if(inStatus == EOrpheusStatus::WORK)</span>
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :             CheckOrpheusTimer(60*10);</span>
+<span class="lineNum">     457 </span>            :         else
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :             CheckOrpheusTimer(30);</span>
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :         initator.reset();</span>
+<a name="460"><span class="lineNum">     460 </span><span class="lineNoCov">          0 :     });</span></a>
+<span class="lineNum">     461 </span>            : }
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 : EOrpheusStatus CHippoCmeManager::VerifyOrpheusResponse(const RestResponseSharedPtr&amp; inResponse)</span>
+<span class="lineNum">     463 </span>            : {
+<span class="lineNum">     464 </span><span class="lineNoCov">          0 :     HIPPO_ASSERTE_RETURN(inResponse.get()!=nullptr, EOrpheusStatus::NOT_WORK);</span>
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :     if(inResponse-&gt;GetStatus() == HTTP_STATUS_OK)</span>
+<span class="lineNum">     466 </span>            :         return EOrpheusStatus::WORK;
+<span class="lineNum">     467 </span>            :     else
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :         return EOrpheusStatus::NOT_WORK;</span>
+<a name="469"><span class="lineNum">     469 </span>            : }</a>
+<span class="lineNum">     470 </span>            : 
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 : std::string CHippoCmeManager::GetOrpheusUrl() const</span>
+<span class="lineNum">     472 </span>            : {
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :     return m_orpheusUrlList.begin()-&gt;second;</span>
+<a name="474"><span class="lineNum">     474 </span>            : }</a>
+<span class="lineNum">     475 </span>            : 
+<span class="lineNum">     476 </span><span class="lineCov">         14 : void CHippoCmeManager::HandleMediaServiceUpdate(const CmeGroupIdType&amp; inGroupId,const CmeOrgIdType&amp; inOrgId,const MediaServiceIdType&amp; inMediaServiceId,const std::vector&lt;std::string&gt;&amp; inMediaServices)</span>
+<span class="lineNum">     477 </span>            : {
+<span class="lineNum">     478 </span><span class="lineCov">         28 :     HIPPO_ASSERTE_RETURN_VOID(m_hippoMediaServiceManager.get()!=nullptr);</span>
+<span class="lineNum">     479 </span><span class="lineCov">         14 :     m_hippoMediaServiceManager-&gt;UpdateMediaServices(inGroupId,inOrgId,inMediaServiceId,inMediaServices);</span>
+<a name="480"><span class="lineNum">     480 </span>            : }</a>
+<span class="lineNum">     481 </span>            : 
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 : JsonValue CHippoCmeManager::ToJson()</span>
+<span class="lineNum">     483 </span>            : {
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :     JsonValue body;</span>
+<span class="lineNum">     485 </span><span class="lineNoCov">          0 :     body[JSON_KEY_MEDIA_SERVICE] = MediaServiceToJson();</span>
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 :     return body;</span>
+<a name="487"><span class="lineNum">     487 </span>            : }</a>
+<span class="lineNum">     488 </span>            : 
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 : JsonValue CHippoCmeManager::MediaServiceToJson()</span>
+<a name="490"><span class="lineNum">     490 </span>            : {</a>
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :     return m_hippoMediaServiceManager-&gt;ToJson();</span>
+<span class="lineNum">     492 </span><span class="lineCov">         18 : }</span>
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span>            : /*
+<span class="lineNum">     495 </span>            : {
+<span class="lineNum">     496 </span>            :     &quot;wsjc2&quot;: [{
+<span class="lineNum">     497 </span>            :         &quot;statusCode&quot;: 0,
+<span class="lineNum">     498 </span>            :         &quot;errorCode&quot;: 0,
+<span class="lineNum">     499 </span>            :         &quot;url&quot;: &quot;https://calliope-intb.ciscospark.com/calliope/api/registrar/v1/orgs/wsjc2/groups/wsjc2/agents/a1791bc0-b7c1-11e8-bbbb-2d2297da9f92&quot;,
+<span class="lineNum">     500 </span>            :         &quot;mediaControlApiUrl&quot;: &quot;&quot;,
+<span class="lineNum">     501 </span>            :         &quot;mediaSetupWebsocketUrl&quot;: &quot;wss://10.252.125.125:33432/call&quot;,
+<span class="lineNum">     502 </span>            :         &quot;reregistrationIntervalSecs&quot;: 60,
+<span class="lineNum">     503 </span>            :         &quot;alias&quot;: &quot;cme-mygdonus-wsjc2-btsint-636-wsjc2&quot;,
+<span class="lineNum">     504 </span>            :         &quot;state&quot;: &quot;ACTIVE&quot;,
+<span class="lineNum">     505 </span>            :         &quot;fqname&quot;: &quot;wsjc2.wsjc2.cme-mygdonus-wsjc2-btsint-636-wsjc2&quot;,
+<span class="lineNum">     506 </span>            :         &quot;mediaServiceID&quot;: &quot;omp&quot;,
+<span class="lineNum">     507 </span>            :         &quot;reachability&quot;: &quot;PUBLIC&quot;,
+<span class="lineNum">     508 </span>            :         &quot;adminState&quot;: &quot;ONLINE&quot;,
+<span class="lineNum">     509 </span>            :         &quot;mediaServiceIDs&quot;: [&quot;transcoder&quot;, &quot;edonus&quot;, &quot;mygdon&quot;, &quot;omp&quot;]
+<span class="lineNum">     510 </span>            :     }, {
+<span class="lineNum">     511 </span>            :         &quot;statusCode&quot;: 0,
+<span class="lineNum">     512 </span>            :         &quot;errorCode&quot;: 0,
+<span class="lineNum">     513 </span>            :         &quot;url&quot;: &quot;https://calliope-intb.ciscospark.com/calliope/api/registrar/v1/orgs/wsjc2/groups/wsjc2/agents/96322540-b7c1-11e8-bbbb-2d2297da9f92&quot;,
+<span class="lineNum">     514 </span>            :         &quot;mediaControlApiUrl&quot;: &quot;&quot;,
+<span class="lineNum">     515 </span>            :         &quot;mediaSetupWebsocketUrl&quot;: &quot;wss://10.252.125.123:33432/call&quot;,
+<span class="lineNum">     516 </span>            :         &quot;reregistrationIntervalSecs&quot;: 60,
+<span class="lineNum">     517 </span>            :         &quot;alias&quot;: &quot;cme-mygdonus-wsjc2-btsint-791-wsjc2&quot;,
+<span class="lineNum">     518 </span>            :         &quot;state&quot;: &quot;ACTIVE&quot;,
+<span class="lineNum">     519 </span>            :         &quot;fqname&quot;: &quot;wsjc2.wsjc2.cme-mygdonus-wsjc2-btsint-791-wsjc2&quot;,
+<span class="lineNum">     520 </span>            :         &quot;mediaServiceID&quot;: &quot;omp&quot;,
+<span class="lineNum">     521 </span>            :         &quot;reachability&quot;: &quot;PUBLIC&quot;,
+<span class="lineNum">     522 </span>            :         &quot;adminState&quot;: &quot;ONLINE&quot;,
+<span class="lineNum">     523 </span>            :         &quot;mediaServiceIDs&quot;: [&quot;transcoder&quot;, &quot;edonus&quot;, &quot;mygdon&quot;, &quot;omp&quot;]
+<span class="lineNum">     524 </span>            :     }]
+<span class="lineNum">     525 </span>            : }
+<span class="lineNum">     526 </span>            : const vector&lt;string&gt; EDONUS_NAME = {
+<span class="lineNum">     527 </span>            :         &quot;statusCode&quot;,//0
+<span class="lineNum">     528 </span>            :         &quot;errorCode&quot;,//1
+<span class="lineNum">     529 </span>            :         &quot;url&quot;,//2
+<span class="lineNum">     530 </span>            :         &quot;mediaControlApiUrl&quot;,//3
+<span class="lineNum">     531 </span>            :         &quot;mediaSetupWebsocketUrl&quot;,//4
+<span class="lineNum">     532 </span>            :         &quot;reregistrationIntervalSecs&quot;,//5
+<span class="lineNum">     533 </span>            :         &quot;alias&quot;,//6
+<span class="lineNum">     534 </span>            :         &quot;state&quot;,//7
+<span class="lineNum">     535 </span>            :         &quot;fqname&quot;,//8
+<span class="lineNum">     536 </span>            :         &quot;mediaServiceID&quot;,//9
+<span class="lineNum">     537 </span>            :         &quot;reachability&quot;,//10
+<span class="lineNum">     538 </span>            :         &quot;adminState&quot;,//11
+<span class="lineNum">     539 </span>            :         &quot;mediaServiceIDs&quot;//12
+<span class="lineNum">     540 </span>            : };
+<span class="lineNum">     541 </span>            : 
+<span class="lineNum">     542 </span>            : struct CEdonus {
+<span class="lineNum">     543 </span>            :         int m_nStatus;
+<span class="lineNum">     544 </span>            :         int m_nError;
+<span class="lineNum">     545 </span>            :         string m_strUrl;
+<span class="lineNum">     546 </span>            :         string m_strControlUrl;
+<span class="lineNum">     547 </span>            :         string m_strSetupWSUrl;
+<span class="lineNum">     548 </span>            :         int m_nTimeout;
+<span class="lineNum">     549 </span>            :         string m_strAlias;
+<span class="lineNum">     550 </span>            :         string m_strState;
+<span class="lineNum">     551 </span>            :         string m_strfqName;
+<span class="lineNum">     552 </span>            :         string m_strServiceID;
+<span class="lineNum">     553 </span>            :         string m_strReachability;
+<span class="lineNum">     554 </span>            :         string m_strAdminState;
+<span class="lineNum">     555 </span>            :         vector&lt;string&gt; m_ServiceIDs;
+<span class="lineNum">     556 </span>            : };
+<span class="lineNum">     557 </span>            : 
+<span class="lineNum">     558 </span>            : int CHippoOrpheus::GetEdonusListFromResponse(const JsonValue&amp; inBody,const std::string&amp; inOrgID)
+<span class="lineNum">     559 </span>            : {
+<span class="lineNum">     560 </span>            :     std::vector&lt;CEdonus&gt; edonusList;
+<span class="lineNum">     561 </span>            :     Json::Value::Members member = inBody.getMemberNames();
+<span class="lineNum">     562 </span>            :     for(Json::Value::Members::iterator iter = member.begin(); iter != member.end(); ++iter)
+<span class="lineNum">     563 </span>            :     {
+<span class="lineNum">     564 </span>            :         if(*iter == inOrgID)
+<span class="lineNum">     565 </span>            :         {
+<span class="lineNum">     566 </span>            :             if(inBody[*iter].isArray())
+<span class="lineNum">     567 </span>            :             {
+<span class="lineNum">     568 </span>            :                 for(Json::ArrayIndex i = 0; i &lt; inBody[*iter].size();++i)
+<span class="lineNum">     569 </span>            :                 {
+<span class="lineNum">     570 </span>            :                     if(inBody[*iter][i].isObject())
+<span class="lineNum">     571 </span>            :                     {
+<span class="lineNum">     572 </span>            :                         ParseEdonus(inBody[*iter][i],);
+<span class="lineNum">     573 </span>            :                     }
+<span class="lineNum">     574 </span>            :                 }
+<span class="lineNum">     575 </span>            :             }
+<span class="lineNum">     576 </span>            :         }
+<span class="lineNum">     577 </span>            :     }
+<span class="lineNum">     578 </span>            : 
+<span class="lineNum">     579 </span>            : }
+<span class="lineNum">     580 </span>            : 
+<span class="lineNum">     581 </span>            : void CHippoOrpheus::ParseEdonus(const JsonValue&amp; inBody,CEdonus&amp; outEdonus)
+<span class="lineNum">     582 </span>            : {
+<span class="lineNum">     583 </span>            :     // &quot;statusCode&quot;
+<span class="lineNum">     584 </span>            :     if(inBody[EDONUS_NAME[0]].isInt())
+<span class="lineNum">     585 </span>            :         outEdonus.m_nStatus = inBody[EDONUS_NAME[0]].asInt();
+<span class="lineNum">     586 </span>            :     // &quot;errorCode&quot;
+<span class="lineNum">     587 </span>            :     if(inBody[EDONUS_NAME[1]].isInt())
+<span class="lineNum">     588 </span>            :         outEdonus.m_nError = inBody[EDONUS_NAME[1]].asInt();
+<span class="lineNum">     589 </span>            :     // &quot;url&quot;
+<span class="lineNum">     590 </span>            :     if(inBody[EDONUS_NAME[2]].isString())
+<span class="lineNum">     591 </span>            :         outEdonus.m_strUrl = inBody[EDONUS_NAME[2]].asString();
+<span class="lineNum">     592 </span>            :     // &quot;mediaControlApiUrl&quot;
+<span class="lineNum">     593 </span>            :     if(inBody[EDONUS_NAME[3]].isString())
+<span class="lineNum">     594 </span>            :         outEdonus.m_strControlUrl =  inBody[EDONUS_NAME[3]].asString();
+<span class="lineNum">     595 </span>            :     // &quot;mediaSetupWebsocketUrl&quot;
+<span class="lineNum">     596 </span>            :     if(inBody[EDONUS_NAME[4]].isString())
+<span class="lineNum">     597 </span>            :         outEdonus.m_strSetupWSUrl = inBody[EDONUS_NAME[4]].asString();
+<span class="lineNum">     598 </span>            :     // &quot;reregistrationIntervalSecs&quot;
+<span class="lineNum">     599 </span>            :     if(inBody[EDONUS_NAME[5]].isInt())
+<span class="lineNum">     600 </span>            :         outEdonus.m_nTimeout =  inBody[EDONUS_NAME[5]].asInt();
+<span class="lineNum">     601 </span>            :     // &quot;alias&quot;
+<span class="lineNum">     602 </span>            :     if(inBody[EDONUS_NAME[6]].isString())
+<span class="lineNum">     603 </span>            :         outEdonus.m_strAlias = inBody[EDONUS_NAME[6]].asString();
+<span class="lineNum">     604 </span>            :     // &quot;state&quot;
+<span class="lineNum">     605 </span>            :     if(inBody[EDONUS_NAME[7]].isString())
+<span class="lineNum">     606 </span>            :         outEdonus.m_strState = inBody[EDONUS_NAME[7]].asString();
+<span class="lineNum">     607 </span>            :     // &quot;fqname&quot;
+<span class="lineNum">     608 </span>            :     if(inBody[EDONUS_NAME[8]].isString())
+<span class="lineNum">     609 </span>            :         outEdonus.m_strfqName = inBody[EDONUS_NAME[8]].asString();
+<span class="lineNum">     610 </span>            :     // &quot;mediaServiceID&quot;
+<span class="lineNum">     611 </span>            :     if(inBody[EDONUS_NAME[9]].isString())
+<span class="lineNum">     612 </span>            :         outEdonus.m_strServiceID = inBody[EDONUS_NAME[9]].asString();
+<span class="lineNum">     613 </span>            :     // &quot;reachability&quot;
+<span class="lineNum">     614 </span>            :     if(inBody[EDONUS_NAME[10]].isString())
+<span class="lineNum">     615 </span>            :         outEdonus.m_strReachability = inBody[EDONUS_NAME[10]].asString();
+<span class="lineNum">     616 </span>            :     // &quot;adminState&quot;
+<span class="lineNum">     617 </span>            :     if(inBody[EDONUS_NAME[11]].isString())
+<span class="lineNum">     618 </span>            :         outEdonus.m_strAdminState = inBody[EDONUS_NAME[11]].asString();
+<span class="lineNum">     619 </span>            :     // &quot;mediaServiceIDs&quot;
+<span class="lineNum">     620 </span>            :     if(inBody[EDONUS_NAME[12]].isArray())
+<span class="lineNum">     621 </span>            :         for(Json::ArrayIndex i = 0; i &lt; inBody[EDONUS_NAME[12]].size();++i)
+<span class="lineNum">     622 </span>            :         {
+<span class="lineNum">     623 </span>            :             if(inBody[EDONUS_NAME[12]][i].isString())
+<span class="lineNum">     624 </span>            :                 outEdonus.m_ServiceIDs.push_back(inBody[EDONUS_NAME[12]][i].asString());
+<span class="lineNum">     625 </span>            :         }
+<span class="lineNum">     626 </span>            : }
+<span class="lineNum">     627 </span>            : */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - otter/nightingale/OttNightingaleAgent.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">otter/nightingale</a> - OttNightingaleAgent.cpp<span style="font-size: 80%;"> (source / <a href="OttNightingaleAgent.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">191</td>
+            <td class="headerCovTableEntry">269</td>
+            <td class="headerCovTableEntryLo">71.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntryLo">70.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;SafariUtilities.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;ThreadPool.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;LocalService.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;OttNightingaleAgent.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;OttVenueManager.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;OttVenue.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;CspAssert.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;MonitorInfoHandler.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;RtpPortAllocator.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;OtterMetrics.h&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          3 : COttNightingaleAgent::COttNightingaleAgent(boost::asio::io_service&amp; inIoService, OttVenueSharedPtr inVenue)</span>
+<span class="lineNum">      13 </span>            : : m_isReleased(false)
+<span class="lineNum">      14 </span>            : , m_ioService(inIoService)
+<span class="lineNum">      15 </span>            : , m_venue(inVenue)
+<span class="lineNum">      16 </span>            : , m_transportRecreateCount(0)
+<span class="lineNum">      17 </span>            : , m_joinConferenceTimer(inIoService)
+<span class="lineNum">      18 </span>            : , m_eurekaFailoverTimer(inIoService)
+<span class="lineNum">      19 </span>            : , m_reconnectTimer(inIoService)
+<span class="lineNum">      20 </span>            : , m_leftConferenceAbnormally(false)
+<span class="lineNum">      21 </span><span class="lineCov">         24 : , m_isJoiningConference(false)</span>
+<span class="lineNum">      22 </span>            : {
+<span class="lineNum">      23 </span><span class="lineCov">         45 :     OTTER_INFO_THIS(&quot;COttNightingaleAgent::COttNightingaleAgent, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId());</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">         30 : COttNightingaleAgent::~COttNightingaleAgent()</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span><span class="lineCov">         42 :     OTTER_INFO_THIS(&quot;COttNightingaleAgent::~COttNightingaleAgent&quot;);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          6 : }</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          1 : void COttNightingaleAgent::CreateLocalTransport()</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineCov">          1 :     if ( m_isReleased)</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">          1 :     auto client = COttVenueManager::Instance().GetLocalServiceClient();</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :     if (client)</span>
+<span class="lineNum">      38 </span>            :     {
+<span class="lineNum">      39 </span><span class="lineCov">          6 :         client-&gt;InitiateNewTransportRequest(std::bind(&amp;COttNightingaleAgent::OnLocalTransportCreated, shared_from_this(), std::placeholders::_1, std::placeholders::_2));</span>
+<span class="lineNum">      40 </span>            :     }
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">          1 : void COttNightingaleAgent::Release()</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">          1 :     if (m_isReleased)</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">         15 :     OTTER_INFO_THIS(&quot;COttNightingaleAgent::Release, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId());</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">          1 :     m_isReleased = true;</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :     m_joinConferenceTimer.cancel();</span>
+<span class="lineNum">      52 </span><span class="lineCov">          1 :     m_eurekaFailoverTimer.cancel();</span>
+<span class="lineNum">      53 </span><span class="lineCov">          1 :     m_reconnectTimer.cancel();</span>
+<span class="lineNum">      54 </span><span class="lineCov">          1 :     m_joinConferenceCallback = nullptr;</span>
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :     // Need to send a LEAVE_CONFERENCE message to Nightingale, then close the local transport. 
+<span class="lineNum">      57 </span><span class="lineCov">          1 :     LeaveConference();</span>
+<span class="lineNum">      58 </span><span class="lineCov">          1 :     auto self = shared_from_this();</span>
+<span class="lineNum">      59 </span><span class="lineCov">         13 :     CThreadPoster(m_ioService, [self, this]() {</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :         m_transport = nullptr;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          3 :     });</span>
+<a name="62"><span class="lineNum">      62 </span>            : }</a>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">          1 : Json::Value COttNightingaleAgent::ToJson() const</span>
+<span class="lineNum">      65 </span>            : {
+<span class="lineNum">      66 </span><span class="lineCov">          1 :     Json::Value info;</span>
+<span class="lineNum">      67 </span><span class="lineCov">          1 :     if (CTssMonitorLevel::Get().IsMoreVerbose())</span>
+<span class="lineNum">      68 </span>            :     {
+<span class="lineNum">      69 </span><span class="lineCov">          1 :         info[JSON_KEY_CONTEXT] = m_context;</span>
+<span class="lineNum">      70 </span>            :     }
+<span class="lineNum">      71 </span><span class="lineCov">          1 :     info[JSON_KEY_LEFT_CONFERENCE_ABNORMALLY] = m_leftConferenceAbnormally;</span>
+<span class="lineNum">      72 </span><span class="lineCov">          1 :     return info;</span>
+<a name="73"><span class="lineNum">      73 </span>            : }</a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">          2 : void COttNightingaleAgent::JoinConference(const Json::Value&amp; inContext, const ResultCallback&amp; inCallback)</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">          2 :     if (m_isReleased)</span>
+<span class="lineNum">      78 </span><span class="lineCov">          2 :         return;</span>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">         32 :     OTTER_INFO_THIS(&quot;COttNightingaleAgent::JoinConference, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId());</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineCov">          2 :     if (&amp;inContext != &amp;m_context)</span>
+<span class="lineNum">      83 </span>            :     {
+<span class="lineNum">      84 </span><span class="lineCov">          2 :         const Json::Value&amp; oldMaccAddr = m_context[JSON_KEY_EXTEND_INFO][JSON_KEY_TAHOE_INFO][JSON_KEY_TAHOE_MACC_ADDR];</span>
+<span class="lineNum">      85 </span><span class="lineCov">          2 :         const Json::Value&amp; newMaccAddr = inContext[JSON_KEY_EXTEND_INFO][JSON_KEY_TAHOE_INFO][JSON_KEY_TAHOE_MACC_ADDR];</span>
+<span class="lineNum">      86 </span><span class="lineCov">          4 :         if ( (newMaccAddr.isNull() || ( newMaccAddr.isString() &amp;&amp; newMaccAddr.asString().empty() ) )</span>
+<span class="lineNum">      87 </span><span class="lineCov">          8 :             &amp;&amp; oldMaccAddr.isString() &amp;&amp; !oldMaccAddr.asString().empty() )</span>
+<span class="lineNum">      88 </span>            :         {
+<span class="lineNum">      89 </span>            :             // Since new tahoe config is empty, reuse the old value. 
+<span class="lineNum">      90 </span><span class="lineCov">         28 :             OTTER_WARNING_THIS(&quot;COttNightingaleAgent::JoinConference, reuse tahoe info in CB failover case&quot;);</span>
+<span class="lineNum">      91 </span><span class="lineCov">          2 :             const_cast&lt;Json::Value&amp;&gt;(inContext)[JSON_KEY_EXTEND_INFO][JSON_KEY_TAHOE_INFO] = m_context[JSON_KEY_EXTEND_INFO][JSON_KEY_TAHOE_INFO];</span>
+<span class="lineNum">      92 </span>            :         }
+<span class="lineNum">      93 </span><span class="lineCov">          2 :         m_context = inContext;</span>
+<span class="lineNum">      94 </span><span class="lineCov">          2 :         m_context[JSON_KEY_ACTION] = CSP_ACTION_JOIN_CONFERENCE_REQUEST;</span>
+<span class="lineNum">      95 </span><span class="lineCov">          4 :         m_context[JSON_KEY_OTTER_IP] = OTTER_VIP;</span>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineCov">          2 :         auto minUdpPort = CRtpPortAllocator::Instance()-&gt;GetMaxPort() + 1;</span>
+<span class="lineNum">      98 </span><span class="lineCov">          2 :         if (minUdpPort % 2 != 0)</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :             minUdpPort += 1;</span>
+<span class="lineNum">     100 </span><span class="lineCov">          2 :         uint16_t maxUdpPort = minUdpPort + 9999;</span>
+<span class="lineNum">     101 </span><span class="lineCov">          2 :         m_context[JSON_KEY_MIN_UDP_PORT] = minUdpPort;</span>
+<span class="lineNum">     102 </span><span class="lineCov">          2 :         m_context[JSON_KEY_MAX_UDP_PORT] = maxUdpPort;</span>
+<span class="lineNum">     103 </span>            :     }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :     /* The mediaSessionBitmap probably has been changed when local transport failover occurs, so it has to be updated in all cases. */
+<span class="lineNum">     106 </span><span class="lineCov">          6 :     m_context[JSON_KEY_MEDIA_SESSION_BITMAP] = m_venue-&gt;GetMediaSessionBitmap();</span>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineCov">          2 :     m_joinConferenceCallback = inCallback;</span>
+<span class="lineNum">     109 </span><span class="lineCov">          4 :     SendSignalling(Json::FastWriter().write(m_context));</span>
+<span class="lineNum">     110 </span><span class="lineCov">          2 :     m_isJoiningConference = true;</span>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<span class="lineNum">     112 </span><span class="lineCov">          4 :     m_joinConferenceTimer.expires_from_now(std::chrono::seconds(30));</span>
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :     m_joinConferenceTimer.async_wait([this](const boost::system::error_code&amp; inError) {</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :         if (!inError) </span>
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :             if (m_joinConferenceCallback)</span>
+<span class="lineNum">     117 </span>            :             {
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                 m_joinConferenceCallback(SAFARI_ERROR_JOIN_MEETING_TIMEOUT, &quot;SAFARI_ERROR_JOIN_MEETING_TIMEOUT&quot;);</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     120 </span>            :             }
+<span class="lineNum">     121 </span>            :             
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :             OnConferenceError(SAFARI_ERROR_JOIN_MEETING_TIMEOUT, &quot;SAFARI_ERROR_JOIN_MEETING_TIMEOUT&quot;);</span>
+<span class="lineNum">     123 </span>            :         }
+<span class="lineNum">     124 </span><span class="lineCov">          4 :     });</span>
+<a name="125"><span class="lineNum">     125 </span>            : }</a>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineCov">          1 : void COttNightingaleAgent::JoinMediaSessions(uint16_t inMediaSessionBitmap)</span>
+<span class="lineNum">     128 </span>            : {
+<span class="lineNum">     129 </span>            :     // OTTER_INFO_THIS(&quot;COttNightingaleAgent::JoinMediaSessions, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; inMediaSessionBitmap:&quot; &lt;&lt; inMediaSessionBitmap);
+<span class="lineNum">     130 </span><span class="lineCov">          1 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     131 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_JOIN_MEDIA_SESSIONS;</span>
+<span class="lineNum">     132 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     133 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_MEDIA_SESSION_BITMAP] = inMediaSessionBitmap;</span>
+<span class="lineNum">     134 </span><span class="lineCov">          2 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">          1 : void COttNightingaleAgent::OpenCmeSendonlySession(const CmeSessionIdType&amp; inCmeSessionId, const CmeMediaServiceIdType&amp; inCmeMediaServiceId, const std::string&amp; inOfferSdp, const std::string&amp; inAnswerSdp)</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span>            :     // OTTER_INFO_THIS(&quot;COttNightingaleAgent::OpenCmeSendonlySession, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; cmeSessionId:&quot; &lt;&lt; inCmeSessionId &lt;&lt; &quot; cmeMediaServiceId:&quot; &lt;&lt; inCmeMediaServiceId);
+<span class="lineNum">     140 </span><span class="lineCov">          1 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     141 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_OPEN_CME_SENDONLY_SESSION;</span>
+<span class="lineNum">     142 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     143 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CME_SESSION_ID] = inCmeSessionId;</span>
+<span class="lineNum">     144 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CME_MEDIA_SERVICE_ID] = inCmeMediaServiceId;</span>
+<span class="lineNum">     145 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_OFFER_SDP] = inOfferSdp;</span>
+<span class="lineNum">     146 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_ANSWER_SDP] = inAnswerSdp;</span>
+<span class="lineNum">     147 </span><span class="lineCov">          2 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="148"><span class="lineNum">     148 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">          1 : void COttNightingaleAgent::CloseCmeSendonlySession(const CmeSessionIdType&amp; inCmeSessionId, const CmeMediaServiceIdType&amp; inCmeMediaServiceId, SafariResult inReason)</span>
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span>            :     // OTTER_INFO_THIS(&quot;COttNightingaleAgent::CloseCmeSendonlySession, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; cmeSessionId:&quot; &lt;&lt; inCmeSessionId &lt;&lt; &quot; cmeMediaServiceId:&quot; &lt;&lt; inCmeMediaServiceId &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason);
+<span class="lineNum">     153 </span><span class="lineCov">          1 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     154 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_CLOSE_CME_SENDONLY_SESSION;</span>
+<span class="lineNum">     155 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     156 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CME_SESSION_ID] = inCmeSessionId;</span>
+<span class="lineNum">     157 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CME_MEDIA_SERVICE_ID] = inCmeMediaServiceId;</span>
+<span class="lineNum">     158 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_REASON] = inReason;</span>
+<span class="lineNum">     159 </span><span class="lineCov">          2 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="160"><span class="lineNum">     160 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::IndicateContentSharingResponse()</span>
+<span class="lineNum">     163 </span>            : {
+<span class="lineNum">     164 </span>            :     // OTTER_INFO_THIS(&quot;COttNightingaleAgent::IndicateContentSharingResponse, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId());
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_CONTENT_SHARING_EVENT_RESPONSE;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::IndicateCmeRecvonlyVideoSessionOpenFirstTime(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     172 </span>            : {
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_OPEN_FIRST_TIME;</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_VIDEO_COMPOSE_KEY] = inVideoComposeKey.ToJson();</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_SESSION_TYPE] = inCspSessionType;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :     m_videoComposeKeyMap.insert({inCspSessionType, inVideoComposeKey});</span>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::IndicateCmeRecvonlyVideoSessionRelease(const CCspVideoComposeKey&amp; inVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     183 </span>            : {
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_RELEASE;</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_VIDEO_COMPOSE_KEY] = inVideoComposeKey.ToJson();</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_SESSION_TYPE] = inCspSessionType;</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :     m_videoComposeKeyMap.erase(inCspSessionType);</span>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::IndicateCmeRecvonlyVideoSessionUpdate(const CCspVideoComposeKey&amp; inOldVideoComposeKey, const CCspVideoComposeKey&amp; inNewVideoComposeKey, const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     194 </span>            : {
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :     if((m_videoComposeKeyMap.find(inCspSessionType) == m_videoComposeKeyMap.end())</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :         || (!(m_videoComposeKeyMap[inCspSessionType] == inOldVideoComposeKey)))</span>
+<span class="lineNum">     197 </span>            :     {
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :         OTTER_ERROR_THIS(&quot;COttNightingaleAgent::IndicateCmeRecvonlyVideoSessionUpdate, m_videoComposeKeyMap doesn't have the sessionType or  sessionType related video compose key mismatch. inCspSessionType&quot;</span>
+<span class="lineNum">     199 </span>            :             &lt;&lt; inCspSessionType &lt;&lt;&quot; inOldVideoComposeKey &quot; &lt;&lt; inOldVideoComposeKey &lt;&lt;&quot; venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() );
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :         return;</span>
+<span class="lineNum">     201 </span>            :     }
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_UPDATE;</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_OLD_VIDEO_COMPOSE_KEY] = inOldVideoComposeKey.ToJson();</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_VIDEO_COMPOSE_KEY] = inNewVideoComposeKey.ToJson();</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :     m_videoComposeKeyMap[inCspSessionType] = inNewVideoComposeKey;</span>
+<span class="lineNum">     210 </span>            : }
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineCov">          3 : void COttNightingaleAgent::OnLocalTransportCreated(SafariResult inResult, std::shared_ptr&lt;CLocalTransport&gt; inTransport)</span>
+<span class="lineNum">     213 </span>            : {
+<span class="lineNum">     214 </span><span class="lineCov">          3 :         if ( m_isReleased)</span>
+<span class="lineNum">     215 </span><span class="lineCov">          3 :                 return;</span>
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">          3 :     if (SAFARI_SUCCEEDED(inResult))</span>
+<span class="lineNum">     218 </span>            :     {
+<span class="lineNum">     219 </span><span class="lineCov">         19 :         OTTER_INFO_THIS(&quot;COttNightingaleAgent::OnLocalTransportCreated, Local Transport Created. venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; transport:&quot; &lt;&lt; inTransport.get() );</span>
+<span class="lineNum">     220 </span><span class="lineCov">          1 :         m_transport = inTransport;</span>
+<span class="lineNum">     221 </span><span class="lineCov">          7 :         m_transport-&gt;SetErrorHandler(std::bind(&amp;COttNightingaleAgent::OnTransportError, this, std::placeholders::_1));</span>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov">          4 :         m_transport-&gt;SetSignallingHandler(std::bind(&amp;COttNightingaleAgent::OnSignallingReceived, this, std::placeholders::_1));</span></a>
+<span class="lineNum">     223 </span><span class="lineCov">          4 :         m_transport-&gt;SetMediaDataHandler(std::bind(&amp;COttNightingaleAgent::OnMediaDataReceived, this, std::placeholders::_1));</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :         m_transport-&gt;SetOnSignallingSentHandler([](const std::string&amp; signal) {</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :             OTTER_LOCAL_SOCKET_MESSAGE_METRICS_LOG(LOCAL_SOCKET_METRICS_NAME, LOCAL_SOCKET_SEND, APPLICATION_OTTER, APPLICATION_NTG, signal);</span>
+<span class="lineNum">     226 </span><span class="lineCov">          3 :         });</span>
+<span class="lineNum">     227 </span><span class="lineCov">          5 :         for (const auto&amp; signalling : m_pendingSignallings) {</span>
+<span class="lineNum">     228 </span><span class="lineCov">         16 :             OTTER_DEBUG_THIS(&quot;COttNightingaleAgent::OnLocalTransportCreated, send pending message:&quot; &lt;&lt; ::Desensitize(signalling.m_signalling));</span>
+<span class="lineNum">     229 </span><span class="lineCov">          1 :             CTssTrackingId::Set(signalling.m_trackingId);</span>
+<span class="lineNum">     230 </span><span class="lineCov">          2 :             m_transport-&gt;SendSignalling(signalling.m_signalling);</span>
+<span class="lineNum">     231 </span>            :         }
+<span class="lineNum">     232 </span><span class="lineCov">          1 :         m_pendingSignallings.clear();</span>
+<span class="lineNum">     233 </span><span class="lineCov">          1 :         m_transportRecreateCount = 0;</span>
+<span class="lineNum">     234 </span>            :     }
+<span class="lineNum">     235 </span>            :     else
+<span class="lineNum">     236 </span>            :     {
+<span class="lineNum">     237 </span><span class="lineCov">         32 :         OTTER_WARNING_THIS(&quot;COttNightingaleAgent::OnLocalTransportCreated, fail to Created Local Transport! venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId());</span>
+<span class="lineNum">     238 </span><span class="lineCov">          2 :         OnTransportError(inResult);</span>
+<span class="lineNum">     239 </span>            :     }
+<a name="240"><span class="lineNum">     240 </span>            : }</a>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">          7 : void COttNightingaleAgent::OnSignallingReceived(const std::string&amp; inMessage)</span>
+<span class="lineNum">     243 </span>            : {
+<span class="lineNum">     244 </span><span class="lineCov">         42 :     OTTER_LOCAL_SOCKET_MESSAGE_METRICS_LOG(LOCAL_SOCKET_METRICS_NAME, LOCAL_SOCKET_RECV, APPLICATION_NTG, APPLICATION_OTTER, inMessage);</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :     // OTTER_INFO_THIS(&quot;COttNightingaleAgent::OnSignallingReceived, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; message:&quot; &lt;&lt; ::Desensitize(inMessage));
+<span class="lineNum">     247 </span><span class="lineCov">          7 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     248 </span><span class="lineCov">          7 :     JsonReader().parse(inMessage, jsonMessage);</span>
+<span class="lineNum">     249 </span><span class="lineCov">         21 :     if (JSON_IS_A_VALID_STRING(jsonMessage[JSON_KEY_ACTION])) </span>
+<span class="lineNum">     250 </span>            :     {
+<span class="lineNum">     251 </span><span class="lineCov">          7 :         std::string action = jsonMessage[JSON_KEY_ACTION].asString();</span>
+<span class="lineNum">     252 </span><span class="lineCov">          7 :         if (action == CSP_ACTION_JOIN_CONFERENCE_RESPONSE) </span>
+<span class="lineNum">     253 </span>            :         {
+<span class="lineNum">     254 </span><span class="lineCov">          2 :             HandleJoinConferenceResponse(jsonMessage);</span>
+<span class="lineNum">     255 </span>            :         }
+<span class="lineNum">     256 </span><span class="lineCov">          5 :         else if (action == CSP_ACTION_ERROR_REPORT) </span>
+<span class="lineNum">     257 </span>            :         {
+<span class="lineNum">     258 </span><span class="lineCov">          2 :             HandleErrorReport(jsonMessage);</span>
+<span class="lineNum">     259 </span>            :         }
+<span class="lineNum">     260 </span><span class="lineCov">          3 :         else if (action == CSP_ACTION_UPDATE_ROSTER_LIST) </span>
+<span class="lineNum">     261 </span>            :         {
+<span class="lineNum">     262 </span>            :             HandleUpdateRosterList(jsonMessage);
+<span class="lineNum">     263 </span>            :         }
+<span class="lineNum">     264 </span><span class="lineCov">          2 :         else if (action == CSP_ACTION_CONTENT_SHARING_EVENT) </span>
+<span class="lineNum">     265 </span>            :         {
+<span class="lineNum">     266 </span><span class="lineCov">          2 :             HandleContentSharingEvent(jsonMessage);</span>
+<span class="lineNum">     267 </span>            :         }
+<span class="lineNum">     268 </span><span class="lineCov">          7 :     }</span>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineCov">          1 : void COttNightingaleAgent::OnMediaDataReceived(const std::string&amp; inData)</span>
+<span class="lineNum">     272 </span>            : {
+<span class="lineNum">     273 </span><span class="lineCov">         17 :     CSP_ASSERT(!&quot;COttNightingaleAgent::OnMediaDataReceived, unexpected!&quot;);</span>
+<span class="lineNum">     274 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span><span class="lineCov">          2 : void COttNightingaleAgent::OnTransportError(SafariResult inResult)</span>
+<span class="lineNum">     277 </span>            : {
+<span class="lineNum">     278 </span><span class="lineCov">         38 :     OTTER_WARNING_THIS(&quot;COttNightingaleAgent::OnTransportError, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; errorCode:&quot; &lt;&lt; inResult &lt;&lt; &quot; retriedCount:&quot; &lt;&lt; m_transportRecreateCount);</span>
+<span class="lineNum">     279 </span><span class="lineCov">          4 :     m_transport = nullptr;</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineCov">          2 :     if (m_isReleased)</span>
+<span class="lineNum">     282 </span>            :         return;
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineCov">          2 :     if (m_transportRecreateCount++ &lt; MAX_RETRIES_CREATE_LOCAL_TRANSPORT) {</span>
+<span class="lineNum">     285 </span><span class="lineCov">          2 :         m_reconnectTimer.expires_from_now(std::chrono::seconds(2));</span>
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :         m_reconnectTimer.async_wait([this](const boost::system::error_code&amp; inError) {</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :             if (!inError) </span>
+<span class="lineNum">     288 </span>            :             {
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :                 CreateLocalTransport();</span>
+<span class="lineNum">     290 </span>            :             }
+<span class="lineNum">     291 </span><span class="lineCov">          2 :         });</span>
+<span class="lineNum">     292 </span><span class="lineCov">          1 :         if (!HavePendingJoinConferenceRequestMessage() &amp;&amp; !m_context.isNull())</span>
+<span class="lineNum">     293 </span>            :         {
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :             m_pendingSignallings.clear();</span>
+<span class="lineNum">     295 </span>            :             // Send JoinConference message again. 
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :             JoinConference(m_context, m_joinConferenceCallback);</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :             m_venue-&gt;ReopenSendonlySession2CmeNodes(inResult);</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :             ReIndicateRecvonlyVideoSessionLayouts();</span>
+<span class="lineNum">     299 </span>            :         }
+<span class="lineNum">     300 </span>            :         return;
+<span class="lineNum">     301 </span>            :     }
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineCov">          2 :     if (m_joinConferenceCallback)</span>
+<span class="lineNum">     304 </span>            :     {
+<span class="lineNum">     305 </span><span class="lineCov">          2 :         m_joinConferenceCallback(SAFARI_ERROR_LOCAL_SERVICE_ERROR, &quot;SAFARI_ERROR_LOCAL_SERVICE_ERROR&quot;);</span>
+<span class="lineNum">     306 </span><span class="lineCov">          1 :         return;</span>
+<span class="lineNum">     307 </span>            :     }
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :     OnConferenceError(SAFARI_ERROR_LOCAL_SERVICE_ERROR, &quot;SAFARI_ERROR_LOCAL_SERVICE_ERROR&quot;);</span>
+<a name="309"><span class="lineNum">     309 </span>            : }</a>
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span><span class="lineCov">          2 : void COttNightingaleAgent::HandleJoinConferenceResponse(const Json::Value&amp; inMessage)</span>
+<span class="lineNum">     312 </span>            : {
+<span class="lineNum">     313 </span><span class="lineCov">          2 :     m_isJoiningConference = false;</span>
+<span class="lineNum">     314 </span><span class="lineCov">          2 :     m_joinConferenceTimer.cancel();</span>
+<span class="lineNum">     315 </span><span class="lineCov">          2 :     SafariResult result = SAFARI_ERROR_UNEXPECTED;</span>
+<span class="lineNum">     316 </span>            :     std::string details;
+<span class="lineNum">     317 </span><span class="lineCov">          2 :     if (JSON_IS_A_VALID_INT(inMessage[JSON_KEY_RESULT]))</span>
+<span class="lineNum">     318 </span>            :     {
+<span class="lineNum">     319 </span><span class="lineCov">          2 :         result = inMessage[JSON_KEY_RESULT].asInt();</span>
+<span class="lineNum">     320 </span>            :     }
+<span class="lineNum">     321 </span><span class="lineCov">          2 :     if (JSON_IS_A_VALID_STRING(inMessage[JSON_KEY_DETAILS]))</span>
+<span class="lineNum">     322 </span>            :     {
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :         details = inMessage[JSON_KEY_DETAILS].asString();</span>
+<span class="lineNum">     324 </span>            :     }
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span><span class="lineCov">          2 :     if (m_leftConferenceAbnormally)</span>
+<span class="lineNum">     327 </span>            :     {
+<span class="lineNum">     328 </span><span class="lineCov">         18 :         OTTER_INFO_THIS(&quot;COttNightingaleAgent::HandleJoinConferenceResponse, rejoin conference venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; result:&quot; &lt;&lt; result);</span>
+<span class="lineNum">     329 </span><span class="lineCov">          1 :         m_leftConferenceAbnormally = false;</span>
+<span class="lineNum">     330 </span><span class="lineCov">          1 :         m_eurekaFailoverTimer.cancel();</span>
+<span class="lineNum">     331 </span><span class="lineCov">          1 :         if (SAFARI_SUCCEEDED(result))</span>
+<span class="lineNum">     332 </span><span class="lineCov">          2 :             m_venue-&gt;OnRejoinConferenceSuccessfully();</span>
+<span class="lineNum">     333 </span>            :     }
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span><span class="lineCov">          4 :     if (m_joinConferenceCallback)</span>
+<span class="lineNum">     336 </span>            :     {
+<span class="lineNum">     337 </span><span class="lineCov">          1 :         auto joinConferenceCallback = m_joinConferenceCallback;</span>
+<span class="lineNum">     338 </span><span class="lineCov">          1 :         m_joinConferenceCallback = nullptr;</span>
+<span class="lineNum">     339 </span><span class="lineCov">          1 :         joinConferenceCallback(result, details);</span>
+<span class="lineNum">     340 </span>            :         return;
+<span class="lineNum">     341 </span>            :     }
+<span class="lineNum">     342 </span>            :     
+<span class="lineNum">     343 </span><span class="lineCov">          1 :     if (SAFARI_FAILED(result))</span>
+<span class="lineNum">     344 </span>            :     {
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :         OnConferenceError(result, details);</span>
+<span class="lineNum">     346 </span>            :         return;
+<span class="lineNum">     347 </span>            :     }
+<a name="348"><span class="lineNum">     348 </span>            : }</a>
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span><span class="lineCov">          2 : void COttNightingaleAgent::HandleErrorReport(const Json::Value&amp; inMessage)</span>
+<span class="lineNum">     351 </span>            : {
+<span class="lineNum">     352 </span><span class="lineCov">          2 :     SafariResult errorCode = SAFARI_ERROR_UNEXPECTED;</span>
+<span class="lineNum">     353 </span><span class="lineCov">          2 :     if (JSON_IS_A_VALID_INT(inMessage[JSON_KEY_ERROR_CODE]))</span>
+<span class="lineNum">     354 </span>            :     {
+<span class="lineNum">     355 </span><span class="lineCov">          2 :         errorCode = inMessage[JSON_KEY_ERROR_CODE].asInt();</span>
+<span class="lineNum">     356 </span>            :     }
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span><span class="lineCov">          2 :     if (errorCode == SAFARI_ERROR_LEAVE_MEETING_ABNORMALLY)</span>
+<span class="lineNum">     359 </span>            :     {
+<span class="lineNum">     360 </span><span class="lineCov">          1 :         OnLeaveConferenceAbnormally();</span>
+<span class="lineNum">     361 </span><span class="lineCov">          3 :         return;</span>
+<span class="lineNum">     362 </span>            :     }
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            :     std::string details;
+<span class="lineNum">     365 </span><span class="lineCov">          3 :     if (JSON_IS_A_VALID_STRING(inMessage[JSON_KEY_DETAILS]))</span>
+<span class="lineNum">     366 </span>            :     {
+<span class="lineNum">     367 </span><span class="lineCov">          2 :         details = inMessage[JSON_KEY_DETAILS].asString();</span>
+<span class="lineNum">     368 </span>            :     }
+<span class="lineNum">     369 </span>            : 
+<span class="lineNum">     370 </span><span class="lineCov">          1 :     OnConferenceError(errorCode, details);</span>
+<a name="371"><span class="lineNum">     371 </span>            : }</a>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::HandleUpdateRosterList(const Json::Value&amp; inMessage)</span>
+<span class="lineNum">     374 </span>            : {
+<span class="lineNum">     375 </span><span class="lineCov">          1 :     m_venue-&gt;HandleUpdateRosterList(inMessage);</span>
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineCov">          2 : void COttNightingaleAgent::HandleContentSharingEvent(const Json::Value&amp; inMessage)</span>
+<span class="lineNum">     379 </span>            : {
+<span class="lineNum">     380 </span><span class="lineCov">          6 :     if (JSON_IS_A_VALID_STRING(inMessage[JSON_KEY_EVENT]))</span>
+<span class="lineNum">     381 </span>            :     {
+<span class="lineNum">     382 </span><span class="lineCov">          2 :         std::string event = inMessage[JSON_KEY_EVENT].asString();</span>
+<span class="lineNum">     383 </span><span class="lineCov">          2 :         if (event == &quot;START&quot;)</span>
+<span class="lineNum">     384 </span>            :         {
+<span class="lineNum">     385 </span><span class="lineCov">          2 :             m_venue-&gt;HandleContentSharingStart(inMessage);</span>
+<span class="lineNum">     386 </span>            :             return;
+<span class="lineNum">     387 </span>            :         }
+<span class="lineNum">     388 </span><span class="lineCov">          1 :         if (event == &quot;STOP&quot;)</span>
+<span class="lineNum">     389 </span>            :         {
+<span class="lineNum">     390 </span><span class="lineCov">          2 :             m_venue-&gt;HandleContentSharingStop();</span>
+<span class="lineNum">     391 </span>            :             return;
+<span class="lineNum">     392 </span>            :         }
+<span class="lineNum">     393 </span>            :     }
+<a name="394"><span class="lineNum">     394 </span>            : }</a>
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span><span class="lineCov">          6 : void COttNightingaleAgent::SendSignalling(const std::string&amp; inMessage)</span>
+<span class="lineNum">     397 </span>            : {
+<span class="lineNum">     398 </span><span class="lineCov">          6 :     if (m_transport)</span>
+<span class="lineNum">     399 </span>            :     {
+<span class="lineNum">     400 </span><span class="lineCov">          4 :         m_transport-&gt;SendSignalling(inMessage);</span>
+<span class="lineNum">     401 </span><span class="lineCov">         10 :         return;</span>
+<span class="lineNum">     402 </span>            :     }
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span><span class="lineCov">          8 :     m_pendingSignallings.push_back(CPendingNightingaleSignalling(inMessage, CTssTrackingId::Get()));</span>
+<span class="lineNum">     405 </span><span class="lineCov">         46 :     OTTER_INFO_THIS(&quot;COttNightingaleAgent::SendSignalling, add pending signalling message. venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; size:&quot; &lt;&lt; m_pendingSignallings.size() &lt;&lt; &quot; signalling:&quot; &lt;&lt; ::Desensitize(inMessage));</span>
+<span class="lineNum">     406 </span>            : }
+<a name="407"><span class="lineNum">     407 </span>            : </a>
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span><span class="lineCov">          1 : void COttNightingaleAgent::OnConferenceError(SafariResult inReason, const std::string&amp; inMessage)</span>
+<span class="lineNum">     410 </span>            : {
+<span class="lineNum">     411 </span><span class="lineCov">         20 :     OTTER_WARNING_THIS(&quot;COttNightingaleAgent::OnConferenceError, venueId:&quot; &lt;&lt; m_venue-&gt;GetVenueId() &lt;&lt; &quot; reason:&quot; &lt;&lt; inReason &lt;&lt; &quot; message:&quot; &lt;&lt; inMessage);</span>
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineCov">          2 :     m_venue-&gt;HandleNightingaleError(inReason, inMessage);</span>
+<a name="414"><span class="lineNum">     414 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span><span class="lineCov">          1 : void COttNightingaleAgent::OnLeaveConferenceAbnormally()</span>
+<span class="lineNum">     417 </span>            : {
+<a name="418"><span class="lineNum">     418 </span><span class="lineCov">          1 :     m_leftConferenceAbnormally = true;</span></a>
+<span class="lineNum">     419 </span><span class="lineCov">          2 :     m_eurekaFailoverTimer.expires_from_now(std::chrono::seconds(240)); // Wait for 4 minutes. </span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :     m_eurekaFailoverTimer.async_wait([this](const boost::system::error_code&amp; inError) {</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         if (!inError) </span>
+<span class="lineNum">     422 </span>            :         {
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :             OnConferenceError(SAFARI_ERROR_EUREKA_FAILOVER_TIMEOUT, &quot;SAFARI_ERROR_EUREKA_FAILOVER_TIMEOUT&quot;);</span>
+<span class="lineNum">     424 </span>            :         }
+<span class="lineNum">     425 </span><span class="lineCov">          2 :     });</span>
+<span class="lineNum">     426 </span><span class="lineCov">          1 :     m_venue-&gt;OnLeaveConferenceAbnormally();</span>
+<a name="427"><span class="lineNum">     427 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineCov">          2 : bool COttNightingaleAgent::HavePendingJoinConferenceRequestMessage() const</span>
+<span class="lineNum">     430 </span>            : {
+<span class="lineNum">     431 </span><span class="lineCov">          8 :     for (const auto&amp; signalling : m_pendingSignallings)</span>
+<span class="lineNum">     432 </span>            :     {
+<span class="lineNum">     433 </span><span class="lineCov">          4 :         if (signalling.m_signalling.find(CSP_ACTION_JOIN_CONFERENCE_REQUEST) != std::string::npos) </span>
+<span class="lineNum">     434 </span>            :             return true;
+<span class="lineNum">     435 </span>            :     }
+<span class="lineNum">     436 </span>            :     return false;
+<a name="437"><span class="lineNum">     437 </span>            : }</a>
+<span class="lineNum">     438 </span>            : 
+<span class="lineNum">     439 </span><span class="lineCov">          1 : void COttNightingaleAgent::LeaveConference()</span>
+<span class="lineNum">     440 </span>            : {
+<span class="lineNum">     441 </span><span class="lineCov">          1 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     442 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_LEAVE_CONFERENCE;</span>
+<span class="lineNum">     443 </span><span class="lineCov">          1 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     444 </span><span class="lineCov">          2 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="445"><span class="lineNum">     445 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::IndicatePauseSession(const std::string&amp; inCspSessionType)</span>
+<span class="lineNum">     448 </span>            : {
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :     Json::Value jsonMessage;</span>
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_INDICATE_PAUSE_SESSION;</span>
+<span class="lineNum">     451 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :     jsonMessage[JSON_KEY_SESSION_TYPE] = inCspSessionType;</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :     SendSignalling(Json::FastWriter().write(jsonMessage));</span>
+<a name="454"><span class="lineNum">     454 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 : void COttNightingaleAgent::ReIndicateRecvonlyVideoSessionLayouts()</span>
+<span class="lineNum">     457 </span>            : {
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :     for (const auto&amp; item : m_videoComposeKeyMap)</span>
+<span class="lineNum">     459 </span>            :     {
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :         Json::Value jsonMessage;</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :         jsonMessage[JSON_KEY_ACTION] = CSP_ACTION_INDICATE_CME_RECVONLY_VIDEO_SESSION_OPEN_FIRST_TIME;</span>
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :         jsonMessage[JSON_KEY_CONFERENCE_ID] = m_venue-&gt;GetVenueId().GetId();</span>
+<span class="lineNum">     463 </span><span class="lineNoCov">          0 :         jsonMessage[JSON_KEY_VIDEO_COMPOSE_KEY] = item.second.ToJson();</span>
+<span class="lineNum">     464 </span><span class="lineNoCov">          0 :         jsonMessage[JSON_KEY_SESSION_TYPE] = item.first;</span>
+<a name="465"><span class="lineNum">     465 </span><span class="lineNoCov">          0 :         SendSignalling(Json::FastWriter().write(jsonMessage));</span></a>
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :     }</span>
+<span class="lineNum">     467 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

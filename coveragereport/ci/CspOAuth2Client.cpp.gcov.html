@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - ci/CspOAuth2Client.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ci</a> - CspOAuth2Client.cpp<span style="font-size: 80%;"> (source / <a href="CspOAuth2Client.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">124</td>
+            <td class="headerCovTableEntry">137</td>
+            <td class="headerCovTableEntryHi">90.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntryMed">78.3 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;CspOAuth2Client.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;RequestInitiatorFactory.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;TssWrapper.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;LoggerApi.h&quot;
+<a name="6"><span class="lineNum">       6 </span>            : using namespace RestNetwork;</a>
+<span class="lineNum">       7 </span>            : ///////////// COAuth2ClientClient
+<span class="lineNum">       8 </span><span class="lineNoCov">          0 : COAuth2ClientInitiator::COAuth2ClientInitiator(boost::asio::io_service&amp; inIoService,const std::string&amp; inUrl,const std::string&amp; inPath,const std::string&amp; inUUID)</span>
+<span class="lineNum">       9 </span><span class="lineCov">         22 :     :IRequestInitiator(inIoService, inUrl,inPath,inUUID)</span>
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 : }</span>
+<a name="12"><span class="lineNum">      12 </span>            : </a>
+<span class="lineNum">      13 </span>            : ////////////CCCspOAuth2Client
+<span class="lineNum">      14 </span><span class="lineCov">         18 : bool CCspOAuth2Client::InitializeCIInfo(ESafariServerType inServerType,const JsonValue&amp; inCSPCiInfo,bool&amp; outNeedRerequest)</span>
+<span class="lineNum">      15 </span>            : {
+<span class="lineNum">      16 </span><span class="lineCov">         18 :     CCspOAuthCIInfo ciInfo;</span>
+<span class="lineNum">      17 </span><span class="lineCov">         18 :     if( ciInfo.Initialize(inCSPCiInfo) == false)</span>
+<span class="lineNum">      18 </span>            :         return false;
+<span class="lineNum">      19 </span><span class="lineCov">          8 :     if(m_ciInfo == ciInfo)</span>
+<span class="lineNum">      20 </span>            :     {
+<span class="lineNum">      21 </span><span class="lineCov">         30 :         CI_WARNING_THIS(&quot;CCspOAuth2Client::InitializeCIInfo the new ci account is equal to the origin info,doesn't need refresh the account info&quot;);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          2 :         outNeedRerequest = false;</span>
+<span class="lineNum">      23 </span><span class="lineCov">          2 :         return true;</span>
+<span class="lineNum">      24 </span>            :     }
+<span class="lineNum">      25 </span><span class="lineCov">          6 :     m_ciInfo = std::move(ciInfo);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          6 :     m_serverType = inServerType;</span>
+<span class="lineNum">      27 </span><span class="lineCov">          6 :     outNeedRerequest = true;</span>
+<span class="lineNum">      28 </span><span class="lineCov">          6 :     return true;</span>
+<a name="29"><span class="lineNum">      29 </span>            : }</a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          2 : bool CCspOAuth2Client::ReLoadCIInfo(const JsonValue &amp; inCSPAccount,bool&amp; outNeedRerequest)</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineCov">          2 :     return InitializeCIInfo(m_serverType,inCSPAccount,outNeedRerequest);</span>
+<a name="34"><span class="lineNum">      34 </span>            : }</a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : const std::string&amp; CCspOAuth2Client::GetCiBaseUrl()</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineCov">         22 :     return m_ciInfo.GetCiBaseUrl();</span>
+<a name="39"><span class="lineNum">      39 </span>            : }</a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">         10 : void CCspOAuth2Client::RequestToken(const RequestTokenCallBack&amp; inCallBack)</span>
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span><span class="lineCov">        160 :     CI_INFO_THIS(&quot;CCspOAuth2Client::RequestToken ,currentUrlCount:&quot;&lt;&lt;m_ciInfo.GetCurrentUrlCount());</span>
+<span class="lineNum">      44 </span><span class="lineCov">         10 :     CTssTrackingId::Reset(m_serverType);</span>
+<span class="lineNum">      45 </span><span class="lineCov">         10 :     m_ciInfo.RePickCIBaseUrl();</span>
+<span class="lineNum">      46 </span><span class="lineCov">         10 :     SafariResult ret = RequestBearerToken(inCallBack);</span>
+<span class="lineNum">      47 </span><span class="lineCov">         10 :     if(ret != SAFARI_OK)</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :         inCallBack(ret,std::string(&quot;&quot;),0,0);</span></a>
+<span class="lineNum">      49 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 : void CCspOAuth2Client::RefreshToken(const RequestTokenCallBack&amp; inCallBack)</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span><span class="lineCov">         30 :     CI_INFO_THIS(&quot;CCspOAuth2Client::RefreshToken&quot;);</span>
+<span class="lineNum">      53 </span><span class="lineCov">          2 :     CTssTrackingId::Reset(m_serverType);</span>
+<span class="lineNum">      54 </span><span class="lineCov">          2 :     SafariResult ret = RefreshAccessToken(m_refreshAccessToken, inCallBack);</span>
+<span class="lineNum">      55 </span><span class="lineCov">          2 :     if(ret != SAFARI_OK)</span>
+<span class="lineNum">      56 </span><span class="lineCov">          2 :         inCallBack(ret,std::string(&quot;&quot;),0,0);</span>
+<span class="lineNum">      57 </span><span class="lineCov">          2 : }</span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">         11 : SafariResult CCspOAuth2Client::RequestBearerToken(const RequestTokenCallBack&amp; inCallBack)</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">        165 :     CI_INFO_THIS(&quot;CCspOAuth2Client::RequestBearerToken&quot;);</span>
+<span class="lineNum">      62 </span><span class="lineCov">         33 :     InitiatorSharedPtr clientShaPtr = std::make_shared&lt;COAuth2ClientInitiator&gt;(m_ioService,GetCiBaseUrl(),m_ciInfo.GetRequestBearerTokenPath());</span>
+<span class="lineNum">      63 </span><span class="lineCov">         22 :     clientShaPtr-&gt;SetHeader(HTTP_CONTENT_TYPE, &quot;application/json&quot;);</span>
+<span class="lineNum">      64 </span><span class="lineCov">         22 :     clientShaPtr-&gt;SetHeader(HTTP_ACCEPT, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="lineNum">      65 </span><span class="lineCov">         11 :     clientShaPtr-&gt;SetBody(m_ciInfo.GetRequestBearerTokenBody());</span>
+<span class="lineNum">      66 </span><span class="lineCov">        107 :     return clientShaPtr-&gt;Post([this,clientShaPtr,inCallBack](const RestResponseSharedPtr&amp; inResponse) mutable</span>
+<span class="lineNum">      67 </span>            :     {
+<span class="lineNum">      68 </span><span class="lineCov">        144 :         CI_INFO_THIS(&quot;CCspOAuth2Client::RequestBearerToken response:status &quot;&lt;&lt;inResponse-&gt;GetStatus());</span>
+<span class="lineNum">      69 </span><span class="lineCov">         16 :         if(inResponse.get()!=nullptr &amp;&amp; inResponse-&gt;GetStatus() == HTTP_STATUS_OK)</span>
+<span class="lineNum">      70 </span>            :         {
+<span class="lineNum">      71 </span><span class="lineCov">         16 :             JsonValue body = inResponse-&gt;GetBody();</span>
+<span class="lineNum">      72 </span><span class="lineCov">          8 :             std::string bearerToken(&quot;&quot;);</span>
+<span class="lineNum">      73 </span><span class="lineCov">          8 :             if(body.isObject())</span>
+<span class="lineNum">      74 </span>            :             {
+<span class="lineNum">      75 </span><span class="lineCov">          8 :                 if(body[BEARER_TOKEN].isString())</span>
+<span class="lineNum">      76 </span>            :                 {
+<span class="lineNum">      77 </span><span class="lineCov">         16 :                     bearerToken = body[BEARER_TOKEN].asString();</span>
+<span class="lineNum">      78 </span>            :                     //CI_DEBUG_THIS(&quot;CCspOAuth2Client::RequestBearerToken response get bearer token &quot;&lt;&lt;bearerToken);
+<span class="lineNum">      79 </span>            :                 }
+<span class="lineNum">      80 </span>            :             }
+<span class="lineNum">      81 </span><span class="lineCov">          8 :             SafariResult ret = RequestAccessToken(bearerToken,inCallBack);</span>
+<span class="lineNum">      82 </span><span class="lineCov">          8 :             if( ret!= SAFARI_OK)</span>
+<span class="lineNum">      83 </span><span class="lineCov">          8 :                 inCallBack(ret,std::string(&quot;&quot;),0,0);</span>
+<span class="lineNum">      84 </span>            :         }
+<span class="lineNum">      85 </span>            :         else
+<span class="lineNum">      86 </span>            :         {
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :             CI_ERROR_THIS(&quot;CCspOAuth2Client::RequestBearerToken response ,get bearer token error code :&quot;&lt;&lt;inResponse-&gt;GetErrorCode());</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :             inCallBack(inResponse-&gt;GetErrorCode(),std::string(&quot;&quot;),0,0);</span>
+<span class="lineNum">      89 </span>            :         }
+<span class="lineNum">      90 </span><span class="lineCov">          8 :         clientShaPtr.reset();</span>
+<span class="lineNum">      91 </span><span class="lineCov">          8 :         return ;</span>
+<span class="lineNum">      92 </span><span class="lineCov">         44 :     });</span>
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">          9 : SafariResult CCspOAuth2Client::RequestAccessToken(const std::string&amp; inBearerToken,const RequestTokenCallBack&amp; inCallBack)</span>
+<span class="lineNum">      96 </span>            : {
+<span class="lineNum">      97 </span><span class="lineCov">        135 :     CI_INFO_THIS(&quot;CCspOAuth2Client::RequestAccessToken&quot;);</span>
+<span class="lineNum">      98 </span><span class="lineCov">          9 :     if (inBearerToken.empty()) {</span>
+<span class="lineNum">      99 </span>            :         return SAFARI_ERROR_FAILURE;
+<span class="lineNum">     100 </span>            :     }
+<span class="lineNum">     101 </span><span class="lineCov">         18 :     InitiatorSharedPtr clientShaPtr = std::make_shared&lt;COAuth2ClientInitiator&gt;(m_ioService,GetCiBaseUrl(),ACCESS_TOKEN_URI);</span>
+<span class="lineNum">     102 </span><span class="lineCov">          9 :     std::string strBody = &quot;grant_type=&quot; + SAML2_GRANT_TYPE;</span>
+<span class="lineNum">     103 </span><span class="lineCov">         18 :     strBody += &quot;&amp;scope=&quot; + m_ciInfo.GetClientScope();</span>
+<span class="lineNum">     104 </span><span class="lineCov">         18 :     strBody += &quot;&amp;client_id=&quot; + m_ciInfo.GetClientId();</span>
+<span class="lineNum">     105 </span><span class="lineCov">         18 :     strBody += &quot;&amp;client_secret=&quot; + m_ciInfo.GetClientSecret();</span>
+<span class="lineNum">     106 </span><span class="lineCov">         18 :     strBody += &quot;&amp;assertion=&quot; + inBearerToken;</span>
+<span class="lineNum">     107 </span>            :     strBody += &quot;&amp;self_contained_token=true&quot;;
+<span class="lineNum">     108 </span><span class="lineCov">          9 :     clientShaPtr-&gt;SetBody(strBody);</span>
+<span class="lineNum">     109 </span><span class="lineCov">         18 :     clientShaPtr-&gt;SetHeader(HTTP_CONTENT_TYPE, &quot;application/x-www-form-urlencoded&quot;);</span>
+<span class="lineNum">     110 </span><span class="lineCov">         18 :     clientShaPtr-&gt;SetHeader(HTTP_ACCEPT, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="lineNum">     111 </span><span class="lineCov">         90 :     return clientShaPtr-&gt;Post([this,clientShaPtr,inCallBack](const RestResponseSharedPtr&amp; inResponse) mutable</span>
+<span class="lineNum">     112 </span>            :     {
+<span class="lineNum">     113 </span><span class="lineCov">         18 :         if(inResponse.get()!=nullptr &amp;&amp; inResponse-&gt;GetStatus() == HTTP_STATUS_OK)</span>
+<span class="lineNum">     114 </span>            :         {
+<span class="lineNum">     115 </span><span class="lineCov">         18 :             JsonValue body = inResponse-&gt;GetBody();</span>
+<span class="lineNum">     116 </span><span class="lineCov">          9 :             std::string accessToken(&quot;&quot;);</span>
+<span class="lineNum">     117 </span><span class="lineCov">          9 :             uint64_t accessTokenExpiresIn = 0;</span>
+<span class="lineNum">     118 </span><span class="lineCov">          9 :             uint64_t refreshAccessTokenExpiresIn = 0;</span>
+<span class="lineNum">     119 </span><span class="lineCov">          9 :             SafariResult ret = SAFARI_ERROR_FAILURE;</span>
+<span class="lineNum">     120 </span><span class="lineCov">          9 :             if(body.isObject())</span>
+<span class="lineNum">     121 </span>            :             {
+<span class="lineNum">     122 </span><span class="lineCov">          9 :                 if(body[ACCESS_TOKEN].isString())</span>
+<span class="lineNum">     123 </span>            :                 {
+<span class="lineNum">     124 </span><span class="lineCov">         18 :                     accessToken = body[ACCESS_TOKEN].asString();</span>
+<span class="lineNum">     125 </span><span class="lineCov">          9 :                     m_accessToken = accessToken;</span>
+<span class="lineNum">     126 </span>            :                     ret = SAFARI_OK;
+<span class="lineNum">     127 </span>            :                 }
+<span class="lineNum">     128 </span>            :                 
+<span class="lineNum">     129 </span><span class="lineCov">          9 :                 if(body[REFRESH_TOKEN].isString())</span>
+<span class="lineNum">     130 </span>            :                 {
+<span class="lineNum">     131 </span><span class="lineCov">         18 :                     m_refreshAccessToken = body[REFRESH_TOKEN].asString();</span>
+<span class="lineNum">     132 </span>            :                 }
+<span class="lineNum">     133 </span>            :                 
+<span class="lineNum">     134 </span><span class="lineCov">          9 :                 if(body[ACCESS_TOKEN_TYPE].isString())</span>
+<span class="lineNum">     135 </span>            :                 {
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">          9 :                     if(!accessToken.empty())</span>
+<span class="lineNum">     138 </span><span class="lineCov">         36 :                         accessToken = body[ACCESS_TOKEN_TYPE].asString()+&quot; &quot;+accessToken;</span>
+<span class="lineNum">     139 </span>            :                 }
+<span class="lineNum">     140 </span><span class="lineCov">          9 :                 if(body[ACCESS_TOKEN_EXPIRES_IN].isUInt64())</span>
+<span class="lineNum">     141 </span><span class="lineCov">          9 :                     accessTokenExpiresIn = body[ACCESS_TOKEN_EXPIRES_IN].asUInt64();</span>
+<span class="lineNum">     142 </span><span class="lineCov">          9 :                 if(body[REFRESH_TOKEN_EXPIRES_IN].isUInt64())</span>
+<span class="lineNum">     143 </span><span class="lineCov">          9 :                     refreshAccessTokenExpiresIn = body[REFRESH_TOKEN_EXPIRES_IN].asUInt64();</span>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineCov">          9 :                 if(body[ACCOUNT_EXPIRATION].isUInt())</span>
+<span class="lineNum">     146 </span>            :                 {
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                     if(body[ACCOUNT_EXPIRATION].asUInt() &lt; 30)</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                         CI_WARNING_THIS(&quot;CCspOAuth2Client::RequestAccessToken response machine account will expires in &quot;&lt;&lt;body[ACCOUNT_EXPIRATION].asUInt()&lt;&lt;&quot; days&quot;);</span>
+<span class="lineNum">     149 </span>            :                 }
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineCov">        198 :                 CI_DEBUG_THIS(&quot;CCspOAuth2Client::RequestAccessToken response get accessToken &quot;&lt;&lt;accessToken&lt;&lt;&quot;,     refresh token : &quot;&lt;&lt;m_refreshAccessToken</span>
+<span class="lineNum">     152 </span>            :                 &lt;&lt;&quot;,     accessTokenExpiresIn : &quot;&lt;&lt;accessTokenExpiresIn&lt;&lt;&quot;, refreshAccessTokenExpiresIn : &quot;&lt;&lt;refreshAccessTokenExpiresIn);
+<span class="lineNum">     153 </span>            :             }
+<span class="lineNum">     154 </span><span class="lineCov">         18 :             inCallBack(ret,accessToken,accessTokenExpiresIn,refreshAccessTokenExpiresIn);</span>
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span>            :         else
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :             CI_ERROR_THIS(&quot;CCspOAuth2Client::RequestAccessToken response ,get access token error code :&quot;&lt;&lt;inResponse-&gt;GetErrorCode());</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :             inCallBack(inResponse-&gt;GetErrorCode(),std::string(&quot;&quot;),0,0);</span>
+<span class="lineNum">     160 </span>            :         }
+<span class="lineNum">     161 </span><span class="lineCov">          9 :         clientShaPtr.reset();</span>
+<span class="lineNum">     162 </span><span class="lineCov">          9 :         return ;</span>
+<span class="lineNum">     163 </span><span class="lineCov">         27 :     });</span>
+<span class="lineNum">     164 </span>            : }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineCov">          3 : SafariResult CCspOAuth2Client::RefreshAccessToken(const std::string&amp; inRefreshToken,const RequestTokenCallBack&amp; inCallBack)</span>
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span><span class="lineCov">         45 :     CI_INFO_THIS(&quot;CCspOAuth2Client::RefreshAccessToken&quot;);</span>
+<span class="lineNum">     170 </span><span class="lineCov">          3 :     if(inRefreshToken.empty())</span>
+<span class="lineNum">     171 </span>            :         return SAFARI_ERROR_FAILURE;
+<span class="lineNum">     172 </span><span class="lineCov">          4 :     InitiatorSharedPtr clientShaPtr = std::make_shared&lt;COAuth2ClientInitiator&gt;(m_ioService,GetCiBaseUrl(),ACCESS_TOKEN_URI);</span>
+<span class="lineNum">     173 </span><span class="lineCov">          2 :     std::string strBody = &quot;grant_type=refresh_token&quot;;</span>
+<span class="lineNum">     174 </span><span class="lineCov">          4 :     strBody += &quot;&amp;refresh_token=&quot;+inRefreshToken;</span>
+<span class="lineNum">     175 </span><span class="lineCov">          4 :     clientShaPtr-&gt;SetHeader(HTTP_ACCEPT, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="lineNum">     176 </span><span class="lineCov">          4 :     clientShaPtr-&gt;SetHeader(HTTP_CONTENT_TYPE, &quot;application/x-www-form-urlencoded&quot;);</span>
+<span class="lineNum">     177 </span><span class="lineCov">          2 :     clientShaPtr-&gt;SetHeader(HTTP_AUTHORIZATION,m_ciInfo.GetBase64ClientInfo());</span>
+<span class="lineNum">     178 </span><span class="lineCov">          2 :     clientShaPtr-&gt;SetBody(strBody);</span>
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span><span class="lineCov">         20 :     return clientShaPtr-&gt;Post([this,clientShaPtr,inCallBack](const RestResponseSharedPtr&amp; inResponse) mutable</span>
+<span class="lineNum">     181 </span>            :     {
+<span class="lineNum">     182 </span><span class="lineCov">          4 :         if(inResponse.get()!=nullptr &amp;&amp; inResponse-&gt;GetStatus() == HTTP_STATUS_OK)</span>
+<span class="lineNum">     183 </span>            :         {
+<span class="lineNum">     184 </span><span class="lineCov">          4 :             JsonValue body = inResponse-&gt;GetBody();</span>
+<span class="lineNum">     185 </span><span class="lineCov">          2 :             std::string accessToken(&quot;&quot;);</span>
+<span class="lineNum">     186 </span><span class="lineCov">          2 :             uint64_t accessTokenExpiresIn = 0;</span>
+<span class="lineNum">     187 </span><span class="lineCov">          2 :             uint64_t refreshAccessTokenExpiresIn = 0;</span>
+<span class="lineNum">     188 </span><span class="lineCov">          2 :             SafariResult ret = SAFARI_ERROR_FAILURE;</span>
+<span class="lineNum">     189 </span><span class="lineCov">          2 :             if(body.isObject())</span>
+<span class="lineNum">     190 </span>            :             {
+<span class="lineNum">     191 </span><span class="lineCov">          2 :                 if(body[ACCESS_TOKEN].isString())</span>
+<span class="lineNum">     192 </span>            :                 {
+<span class="lineNum">     193 </span><span class="lineCov">          4 :                     accessToken = body[ACCESS_TOKEN].asString();</span>
+<span class="lineNum">     194 </span><span class="lineCov">          2 :                     m_accessToken = accessToken;</span>
+<span class="lineNum">     195 </span>            :                     ret = SAFARI_OK;
+<span class="lineNum">     196 </span>            :                 }
+<span class="lineNum">     197 </span><span class="lineCov">          2 :                 if(body[REFRESH_TOKEN].isString())</span>
+<span class="lineNum">     198 </span>            :                 {
+<span class="lineNum">     199 </span><span class="lineCov">          4 :                     m_refreshAccessToken = body[REFRESH_TOKEN].asString();</span>
+<span class="lineNum">     200 </span>            :                 }
+<span class="lineNum">     201 </span><span class="lineCov">          2 :                 if(body[ACCESS_TOKEN_TYPE].isString())</span>
+<span class="lineNum">     202 </span>            :                 {
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineCov">          2 :                     if(!accessToken.empty())</span>
+<span class="lineNum">     205 </span><span class="lineCov">          8 :                         accessToken = body[ACCESS_TOKEN_TYPE].asString()+&quot; &quot;+accessToken;</span>
+<span class="lineNum">     206 </span>            :                 }
+<span class="lineNum">     207 </span><span class="lineCov">          2 :                 if(body[ACCESS_TOKEN_EXPIRES_IN].isUInt64())</span>
+<span class="lineNum">     208 </span><span class="lineCov">          2 :                     accessTokenExpiresIn = body[ACCESS_TOKEN_EXPIRES_IN].asUInt64();</span>
+<span class="lineNum">     209 </span><span class="lineCov">          2 :                 if(body[REFRESH_TOKEN_EXPIRES_IN].isUInt64())</span>
+<span class="lineNum">     210 </span><span class="lineCov">          2 :                     refreshAccessTokenExpiresIn = body[REFRESH_TOKEN_EXPIRES_IN].asUInt64();</span>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineCov">         44 :                 CI_DEBUG_THIS(&quot;CCspOAuth2Client::RefreshAccessToken response get accessToken &quot;&lt;&lt;accessToken&lt;&lt;&quot;,     refresh token : &quot;&lt;&lt;m_refreshAccessToken</span>
+<span class="lineNum">     213 </span>            :                 &lt;&lt;&quot;,     accessTokenExpiresIn : &quot;&lt;&lt;accessTokenExpiresIn&lt;&lt;&quot;, refreshAccessTokenExpiresIn : &quot;&lt;&lt;refreshAccessTokenExpiresIn);
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">          2 :                 if(body[ACCOUNT_EXPIRATION].isUInt())</span>
+<span class="lineNum">     216 </span>            :                 {
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                     if(body[ACCOUNT_EXPIRATION].asUInt() &lt; 30)</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                         CI_WARNING_THIS(&quot;CCspOAuth2Client::RefreshAccessToken response machine account will expires in &quot;&lt;&lt;body[ACCOUNT_EXPIRATION].asUInt()&lt;&lt;&quot; days&quot;);</span>
+<span class="lineNum">     219 </span>            :                 }
+<span class="lineNum">     220 </span>            :             }
+<span class="lineNum">     221 </span><span class="lineCov">          4 :             inCallBack(ret,accessToken,accessTokenExpiresIn,refreshAccessTokenExpiresIn);</span>
+<span class="lineNum">     222 </span>            :         }
+<span class="lineNum">     223 </span>            :         else
+<span class="lineNum">     224 </span>            :         {
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :             inCallBack(inResponse-&gt;GetErrorCode(),std::string(&quot;&quot;),0,0);</span>
+<span class="lineNum">     226 </span>            :         }
+<span class="lineNum">     227 </span><span class="lineCov">          2 :         clientShaPtr.reset();</span>
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">          2 :         return;</span></a>
+<span class="lineNum">     229 </span><span class="lineCov">          6 :     });</span>
+<span class="lineNum">     230 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     231 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

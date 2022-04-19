@@ -1,0 +1,786 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coveragereport.info.cleaned - utilities/SafariUtilities.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">utilities</a> - SafariUtilities.cpp<span style="font-size: 80%;"> (source / <a href="SafariUtilities.cpp.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coveragereport.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">298</td>
+            <td class="headerCovTableEntry">341</td>
+            <td class="headerCovTableEntryMed">87.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-03-28</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryHi">97.1 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;stdlib.h&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;unistd.h&gt;
+<span class="lineNum">       3 </span>            : #include &lt;sys/types.h&gt;
+<span class="lineNum">       4 </span>            : #include &lt;sys/stat.h&gt;
+<span class="lineNum">       5 </span>            : #include &lt;sys/time.h&gt;
+<span class="lineNum">       6 </span>            : #include &lt;limits.h&gt;
+<span class="lineNum">       7 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       8 </span>            : #include &lt;fstream&gt;
+<span class="lineNum">       9 </span>            : #include &lt;boost/asio/error.hpp&gt;
+<span class="lineNum">      10 </span>            : #include &lt;boost/algorithm/string/classification.hpp&gt;
+<span class="lineNum">      11 </span>            : #include &lt;boost/algorithm/string/split.hpp&gt;
+<span class="lineNum">      12 </span>            : #include &lt;boost/archive/iterators/base64_from_binary.hpp&gt;
+<span class="lineNum">      13 </span>            : #include &lt;boost/archive/iterators/binary_from_base64.hpp&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/archive/iterators/transform_width.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;openssl/rand.h&gt;
+<span class="lineNum">      16 </span>            : #include &quot;SafariUtilities.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;SafariDefines.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;SafariConfig.h&quot;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /* For GetLocalAddressList */
+<span class="lineNum">      21 </span>            : #include &lt;arpa/inet.h&gt;
+<span class="lineNum">      22 </span>            : #include &lt;sys/socket.h&gt;
+<span class="lineNum">      23 </span>            : #include &lt;netdb.h&gt;
+<span class="lineNum">      24 </span>            : #include &lt;ifaddrs.h&gt;
+<span class="lineNum">      25 </span>            : #include &lt;stdlib.h&gt;
+<span class="lineNum">      26 </span>            : #include &lt;unistd.h&gt;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : using namespace boost::archive::iterators;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">        162 : bool IsMct(const ConfIdType&amp; inConfId)</span>
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span>            :         try {
+<span class="lineNum">      33 </span><span class="lineCov">         52 :                 return std::stoull(inConfId) &lt; 1000000;</span>
+<span class="lineNum">      34 </span>            :         }
+<span class="lineNum">      35 </span><span class="lineCov">        110 :         catch (...) {</span>
+<span class="lineNum">      36 </span>            :                 return false;
+<span class="lineNum">      37 </span>            :         }
+<a name="38"><span class="lineNum">      38 </span>            : }</a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">         65 : std::string GetSafariHomePath()</span>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span><span class="lineCov">         65 :         char* safariHomePath = ::secure_getenv(ENV_SAFARI_HOME);</span>
+<span class="lineNum">      43 </span><span class="lineCov">         65 :         if (safariHomePath==nullptr)</span>
+<span class="lineNum">      44 </span>            :         {
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 return std::string(&quot;/tmp&quot;);</span>
+<span class="lineNum">      46 </span>            :         }
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">         65 :         return std::string(safariHomePath);</span>
+<span class="lineNum">      49 </span>            : }
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">         32 : std::string GetProcessName(const std::string&amp; inPath)</span>
+<span class="lineNum">      52 </span>            : {
+<span class="lineNum">      53 </span><span class="lineCov">         32 :         if (inPath.empty())</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                 return inPath;</span>
+<span class="lineNum">      55 </span>            :         
+<span class="lineNum">      56 </span><span class="lineCov">         32 :         std::size_t pos = inPath.find_last_of('/');</span>
+<span class="lineNum">      57 </span><span class="lineCov">         32 :         if (pos == std::string::npos)</span>
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span><span class="lineCov">          5 :                 return inPath;</span>
+<span class="lineNum">      60 </span>            :         }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">         27 :         return inPath.substr(pos+1);</span>
+<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">         23 : std::string GetCurrentProcessName()</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span><span class="lineCov">         46 :         return ::GetProcessName(::GetCurrentProcessPath());</span>
+<span class="lineNum">      68 </span>            : }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : // std::string GetCurrentProcessPath()
+<span class="lineNum">      71 </span>            : // {
+<span class="lineNum">      72 </span>            : //      const char* selfExePath = &quot;/proc/self/exe&quot;;
+<span class="lineNum">      73 </span>            : //      struct stat sb;
+<span class="lineNum">      74 </span>            : //      if (::lstat(selfExePath, &amp;sb) == -1)
+<span class="lineNum">      75 </span>            : //              return std::string();
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : //      char* processPath = new char[sb.st_size + 1];
+<span class="lineNum">      78 </span>            : //      ssize_t len = ::readlink(selfExePath, processPath, sb.st_size + 1);
+<span class="lineNum">      79 </span>            : //      if (len == -1 || len &gt; sb.st_size)
+<span class="lineNum">      80 </span>            : //      {
+<span class="lineNum">      81 </span>            : //              delete processPath;
+<span class="lineNum">      82 </span>            : //              return std::string();
+<span class="lineNum">      83 </span>            : //      }
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : //      std::string result(processPath, len); 
+<span class="lineNum">      86 </span>            : //      delete processPath;
+<span class="lineNum">      87 </span>            : //      return result;
+<span class="lineNum">      88 </span>            : // }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineCov">         26 : std::string GetCurrentProcessPath()</span>
+<span class="lineNum">      91 </span>            : {
+<span class="lineNum">      92 </span><span class="lineCov">         26 :         const char* selfExePath = &quot;/proc/self/exe&quot;;</span>
+<span class="lineNum">      93 </span><span class="lineCov">         26 :         char processPath[PATH_MAX] = &quot;&quot;;</span>
+<span class="lineNum">      94 </span><span class="lineCov">         26 :         ssize_t len = ::readlink(selfExePath, processPath, PATH_MAX);</span>
+<span class="lineNum">      95 </span><span class="lineCov">         26 :         if (len == -1 || len &gt;= PATH_MAX)</span>
+<span class="lineNum">      96 </span>            :         {
+<span class="lineNum">      97 </span>            :                 return std::string();
+<span class="lineNum">      98 </span>            :         }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">         26 :         return std::string(processPath, len); </span>
+<span class="lineNum">     101 </span>            : }
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">          3 : std::string GetCurrentProcessDirectory()</span>
+<span class="lineNum">     104 </span>            : {
+<span class="lineNum">     105 </span><span class="lineCov">          3 :         std::string path = ::GetCurrentProcessPath();</span>
+<span class="lineNum">     106 </span><span class="lineCov">          3 :         if (path.empty())</span>
+<span class="lineNum">     107 </span>            :                 return std::string();
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">          3 :         std::size_t pos = path.find_last_of('/');</span>
+<span class="lineNum">     110 </span><span class="lineCov">          3 :         if (pos == path.npos)</span>
+<span class="lineNum">     111 </span>            :         {
+<span class="lineNum">     112 </span>            :                 return std::string();
+<span class="lineNum">     113 </span>            :         }
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">          3 :         return path.substr(0, pos + 1); // Process directory contains the last slash</span>
+<span class="lineNum">     116 </span>            : }
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineCov">          1 : std::string GetCurrentProcessCommandLine()</span>
+<span class="lineNum">     119 </span>            : {
+<span class="lineNum">     120 </span><span class="lineCov">          1 :     std::string cmdlinePath = &quot;/proc/self/cmdline&quot;;</span>
+<span class="lineNum">     121 </span><span class="lineCov">          2 :     std::fstream fs(cmdlinePath.c_str(), std::fstream::in);</span>
+<span class="lineNum">     122 </span><span class="lineCov">          1 :     if (!fs.is_open())</span>
+<span class="lineNum">     123 </span>            :     {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         std::cout &lt;&lt; &quot;GetCurrentProcessCommandLine: File not found! file: &quot; &lt;&lt; cmdlinePath &lt;&lt; std::endl;</span>
+<span class="lineNum">     125 </span>            :         return std::string();
+<span class="lineNum">     126 </span>            :     }
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span><span class="lineCov">          1 :     std::string cmdline((std::istreambuf_iterator&lt;char&gt;(fs)), std::istreambuf_iterator&lt;char&gt;());</span>
+<span class="lineNum">     129 </span><span class="lineCov">          1 :     fs.close();</span>
+<span class="lineNum">     130 </span><span class="lineCov">          1 :     if (cmdline.empty())</span>
+<span class="lineNum">     131 </span>            :     {
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :         std::cout &lt;&lt; &quot;GetCurrentProcessCommandLine: Command line empty! &quot; &lt;&lt; std::endl;</span>
+<span class="lineNum">     133 </span>            :         return std::string();
+<span class="lineNum">     134 </span>            :     }
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span><span class="lineCov">          1 :     std::size_t len = cmdline.length();</span>
+<span class="lineNum">     137 </span><span class="lineCov">          2 :     if (cmdline[len-1] == '\0')</span>
+<span class="lineNum">     138 </span>            :     {
+<span class="lineNum">     139 </span>            :         // Remove the last '\0'.
+<span class="lineNum">     140 </span><span class="lineCov">          1 :         --len;</span>
+<span class="lineNum">     141 </span><span class="lineCov">          2 :         cmdline = cmdline.substr(0, len);</span>
+<span class="lineNum">     142 </span>            :     }
+<span class="lineNum">     143 </span><span class="lineCov">         91 :     for (std::size_t i = 0; i &lt; len; ++i)</span>
+<span class="lineNum">     144 </span>            :     {
+<span class="lineNum">     145 </span><span class="lineCov">         90 :         if (cmdline[i] == '\0')</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :             cmdline[i] = ' ';</span>
+<span class="lineNum">     147 </span>            :     }
+<span class="lineNum">     148 </span>            :     return cmdline;
+<a name="149"><span class="lineNum">     149 </span>            : }</a>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineCov">          6 : SafariResult ConvertStdErrorCode2SafariErrorCode(const std::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     152 </span>            : {
+<span class="lineNum">     153 </span><span class="lineCov">          3 :         if (inErrorCode.value() == 0)</span>
+<span class="lineNum">     154 </span>            :                 return SAFARI_OK;
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineCov">          6 :         if (inErrorCode.category() == std::generic_category())</span>
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span><span class="lineCov">          3 :                 switch (inErrorCode.value()) {</span>
+<span class="lineNum">     159 </span>            : #define GENERIC_ERROR_CODE_TRIPLE(generic_errno, linux_errno, safari_errno) case static_cast&lt;int&gt;(std::errc::generic_errno): return safari_errno;
+<span class="lineNum">     160 </span>            : #include &quot;GenericErrorCodeTriples.h&quot;
+<span class="lineNum">     161 </span>            : #undef GENERIC_ERROR_CODE_TRIPLE
+<span class="lineNum">     162 </span>            :                 }
+<span class="lineNum">     163 </span>            :         }
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         return SAFARI_ERROR_FAILURE;</span>
+<a name="165"><span class="lineNum">     165 </span>            : }</a>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineCov">         24 : SafariResult ConvertBoostErrorCode2SafariErrorCode(const boost::system::error_code&amp; inErrorCode)</span>
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span><span class="lineCov">          7 :         if (inErrorCode.value() == 0)</span>
+<span class="lineNum">     170 </span>            :                 return SAFARI_OK;
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span><span class="lineCov">         14 :         if (inErrorCode.category() == boost::system::generic_category())</span>
+<span class="lineNum">     173 </span>            :         {
+<span class="lineNum">     174 </span><span class="lineCov">          5 :                 switch (inErrorCode.value()) {</span>
+<span class="lineNum">     175 </span>            : #define GENERIC_ERROR_CODE_TRIPLE(generic_errno, linux_errno, safari_errno) case static_cast&lt;int&gt;(boost::system::errc::generic_errno): return safari_errno;
+<span class="lineNum">     176 </span>            : #include &quot;GenericErrorCodeTriples.h&quot;
+<span class="lineNum">     177 </span>            : #undef GENERIC_ERROR_CODE_TRIPLE
+<span class="lineNum">     178 </span>            :                 }
+<span class="lineNum">     179 </span>            :         }
+<span class="lineNum">     180 </span><span class="lineCov">          4 :         else if (inErrorCode.category() == boost::system::system_category())</span>
+<span class="lineNum">     181 </span>            :         {
+<span class="lineNum">     182 </span><span class="lineCov">          1 :                 switch (inErrorCode.value()) {</span>
+<span class="lineNum">     183 </span>            : #define ASIO_BASIC_ERROR_CODE_TRIPLE(asio_basic_errno, linux_errno, safari_errno) case static_cast&lt;int&gt;(boost::asio::error::asio_basic_errno): return safari_errno;
+<span class="lineNum">     184 </span>            : #include &quot;AsioBasicErrorCodeTriples.h&quot;
+<span class="lineNum">     185 </span>            : #undef ASIO_BASIC_ERROR_CODE_TRIPLE
+<span class="lineNum">     186 </span>            :                 }
+<span class="lineNum">     187 </span>            :         }
+<span class="lineNum">     188 </span><span class="lineCov">          2 :         else if (inErrorCode.category() == boost::asio::error::get_misc_category())</span>
+<span class="lineNum">     189 </span>            :         {
+<span class="lineNum">     190 </span><span class="lineCov">          1 :                 switch (inErrorCode.value()) {</span>
+<span class="lineNum">     191 </span>            :                         case static_cast&lt;int&gt;(boost::asio::error::already_open): return SAFARI_ERROR_ALREADY_OPEN;
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                         case static_cast&lt;int&gt;(boost::asio::error::eof): return SAFARI_ERROR_END_OF_FILE;</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         case static_cast&lt;int&gt;(boost::asio::error::not_found): return SAFARI_ERROR_NOT_FOUND;</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         case static_cast&lt;int&gt;(boost::asio::error::fd_set_failure): return SAFARI_ERROR_FD_SET_FAILURE;</span>
+<span class="lineNum">     195 </span>            :                 }
+<span class="lineNum">     196 </span>            :         }
+<span class="lineNum">     197 </span>            :         return SAFARI_ERROR_FAILURE;
+<span class="lineNum">     198 </span>            : }
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span><span class="lineCov">         76 : std::string&amp; ReplaceSubStr(std::string&amp; ioStr, const std::string&amp; inOldValue, const std::string&amp; inNewValue)</span>
+<span class="lineNum">     201 </span>            : {
+<span class="lineNum">     202 </span><span class="lineCov">         76 :         std::size_t pos = 0;</span>
+<span class="lineNum">     203 </span>            :     do {
+<span class="lineNum">     204 </span><span class="lineCov">        152 :         if((pos = ioStr.find(inOldValue, pos)) == std::string::npos)</span>
+<span class="lineNum">     205 </span>            :                         break;
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         76 :                 ioStr.replace(pos, inOldValue.length(), inNewValue);</span>
+<span class="lineNum">     208 </span><span class="lineCov">         76 :                 pos += inNewValue.length();</span>
+<span class="lineNum">     209 </span>            :     } while(true);
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineCov">         76 :     return ioStr;</span>
+<span class="lineNum">     212 </span>            : }
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineCov">        660 : std::vector&lt;std::string&gt; GetComponentVersionInfo()</span>
+<span class="lineNum">     215 </span>            : {
+<span class="lineNum">     216 </span><span class="lineCov">        165 :     std::string ver(SAFARI_VERSION);</span>
+<span class="lineNum">     217 </span>            :     std::vector&lt;std::string&gt; versionInfo;
+<span class="lineNum">     218 </span><span class="lineCov">        165 :     boost::split(versionInfo, ver, boost::is_any_of(&quot; ,&quot;), boost::token_compress_on);</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            :     // Remove feature branch name from the version string.
+<span class="lineNum">     221 </span>            :     // eg. &quot;2.0.0.edonus&quot; =&gt; &quot;2.0.0&quot;
+<span class="lineNum">     222 </span><span class="lineCov">        330 :     if (!versionInfo.empty() &amp;&amp; !versionInfo[0].empty())</span>
+<span class="lineNum">     223 </span>            :     {
+<span class="lineNum">     224 </span><span class="lineCov">        330 :             int pos = versionInfo[0].length() - 1;</span>
+<span class="lineNum">     225 </span><span class="lineCov">        990 :             while (pos &gt;=0 &amp;&amp; (versionInfo[0][pos] &lt; '0' || versionInfo[0][pos] &gt; '9'))</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                 --pos;</span>
+<span class="lineNum">     227 </span><span class="lineCov">        330 :             if (pos &lt; (int)(versionInfo[0].length() - 1))</span>
+<span class="lineNum">     228 </span>            :             {
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                     if (pos &lt; 0)</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                         versionInfo[0] = &quot;null&quot;;</span>
+<span class="lineNum">     231 </span>            :                     else
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                         versionInfo[0] = versionInfo[0].substr(0, pos + 1);</span>
+<span class="lineNum">     233 </span>            :             }
+<span class="lineNum">     234 </span>            :     }
+<span class="lineNum">     235 </span><span class="lineCov">        165 :     return versionInfo;</span>
+<span class="lineNum">     236 </span>            : }
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span><span class="lineCov">         12 : std::vector&lt;std::string&gt; SafariSplit(const std::string&amp; inInput, std::string inDelimiter)</span>
+<span class="lineNum">     239 </span>            : {
+<span class="lineNum">     240 </span>            :     std::vector&lt;std::string&gt; subList;
+<span class="lineNum">     241 </span><span class="lineCov">         12 :     boost::split(subList, inInput, boost::is_any_of(inDelimiter), boost::token_compress_on);</span>
+<span class="lineNum">     242 </span><span class="lineCov">         12 :     return subList;</span>
+<span class="lineNum">     243 </span>            : }
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">          1 : void Utf8ToWstr(std::wstring&amp; outDest, const std::string&amp; inSrc){</span>
+<span class="lineNum">     246 </span>            :         outDest.clear();
+<span class="lineNum">     247 </span><span class="lineCov">          1 :         wchar_t w = 0;</span>
+<span class="lineNum">     248 </span><span class="lineCov">          1 :         int bytes = 0;</span>
+<span class="lineNum">     249 </span><span class="lineCov">          1 :         wchar_t err = L'�';</span>
+<span class="lineNum">     250 </span><span class="lineCov">         16 :         for (size_t i = 0; i &lt; inSrc.size(); i++){</span>
+<span class="lineNum">     251 </span><span class="lineCov">          7 :                 unsigned char c = (unsigned char)inSrc[i];</span>
+<span class="lineNum">     252 </span><span class="lineCov">          7 :                 if (c &lt;= 0x7f){//first byte</span>
+<span class="lineNum">     253 </span><span class="lineCov">          2 :                         if (bytes){</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :                                 outDest.push_back(err);</span>
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                                 bytes = 0;</span>
+<span class="lineNum">     256 </span>            :                         }
+<span class="lineNum">     257 </span><span class="lineCov">          2 :                         outDest.push_back((wchar_t)c);</span>
+<span class="lineNum">     258 </span>            :                 }
+<span class="lineNum">     259 </span><span class="lineCov">          5 :                 else if (c &lt;= 0xbf){//second/third/etc byte</span>
+<span class="lineNum">     260 </span><span class="lineCov">          1 :                         if (bytes){</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :                                 w = ((w &lt;&lt; 6)|(c &amp; 0x3f));</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :                                 bytes--;</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :                                 if (bytes == 0)</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                                         outDest.push_back(w);</span>
+<span class="lineNum">     265 </span>            :                         }
+<span class="lineNum">     266 </span>            :                         else
+<span class="lineNum">     267 </span><span class="lineCov">          1 :                                 outDest.push_back(err);</span>
+<span class="lineNum">     268 </span>            :                 }
+<span class="lineNum">     269 </span><span class="lineCov">          4 :                 else if (c &lt;= 0xdf){//2byte sequence start</span>
+<span class="lineNum">     270 </span><span class="lineCov">          1 :                         bytes = 1;</span>
+<span class="lineNum">     271 </span><span class="lineCov">          1 :                         w = c &amp; 0x1f;</span>
+<span class="lineNum">     272 </span>            :                 }
+<span class="lineNum">     273 </span><span class="lineCov">          3 :                 else if (c &lt;= 0xef){//3byte sequence start</span>
+<span class="lineNum">     274 </span><span class="lineCov">          1 :                         bytes = 2;</span>
+<span class="lineNum">     275 </span><span class="lineCov">          1 :                         w = c &amp; 0x0f;</span>
+<span class="lineNum">     276 </span>            :                 }
+<span class="lineNum">     277 </span><span class="lineCov">          2 :                 else if (c &lt;= 0xf7){//3byte sequence start</span>
+<span class="lineNum">     278 </span><span class="lineCov">          1 :                         bytes = 3;</span>
+<span class="lineNum">     279 </span><span class="lineCov">          1 :                         w = c &amp; 0x07;</span>
+<span class="lineNum">     280 </span>            :                 }
+<span class="lineNum">     281 </span>            :                 else{
+<span class="lineNum">     282 </span><span class="lineCov">          1 :                         outDest.push_back(err);</span>
+<span class="lineNum">     283 </span><span class="lineCov">          1 :                         bytes = 0;</span>
+<span class="lineNum">     284 </span>            :                 }
+<span class="lineNum">     285 </span>            :         }
+<span class="lineNum">     286 </span><span class="lineCov">          1 :         if (bytes)</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                 outDest.push_back(err);</span>
+<span class="lineNum">     288 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span><span class="lineCov">          1 : void WstrToUtf8(std::string&amp; outDest, const std::wstring&amp; inSrc){</span>
+<span class="lineNum">     291 </span>            :         outDest.clear();
+<span class="lineNum">     292 </span><span class="lineCov">         10 :         for (size_t i = 0; i &lt; inSrc.size(); i++){</span>
+<span class="lineNum">     293 </span><span class="lineCov">          4 :                 wchar_t w = inSrc[i];</span>
+<span class="lineNum">     294 </span><span class="lineCov">          4 :                 if (w &lt;= 0x7f)</span>
+<span class="lineNum">     295 </span><span class="lineCov">          2 :                         outDest.push_back((char)w);</span>
+<span class="lineNum">     296 </span><span class="lineCov">          2 :                 else if (w &lt;= 0x7ff){</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :                         outDest.push_back(0xc0 | ((w &gt;&gt; 6)&amp; 0x1f));</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :                         outDest.push_back(0x80| (w &amp; 0x3f));</span>
+<span class="lineNum">     299 </span>            :                 }
+<span class="lineNum">     300 </span><span class="lineCov">          2 :                 else if (w &lt;= 0xffff){</span>
+<span class="lineNum">     301 </span><span class="lineCov">          2 :                         outDest.push_back(0xe0 | ((w &gt;&gt; 12)&amp; 0x0f));</span>
+<span class="lineNum">     302 </span><span class="lineCov">          2 :                         outDest.push_back(0x80| ((w &gt;&gt; 6) &amp; 0x3f));</span>
+<span class="lineNum">     303 </span><span class="lineCov">          2 :                         outDest.push_back(0x80| (w &amp; 0x3f));</span>
+<span class="lineNum">     304 </span>            :                 }
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                 else if (w &lt;= 0x10ffff){</span>
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :                         outDest.push_back(0xf0 | ((w &gt;&gt; 18)&amp; 0x07));</span>
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                         outDest.push_back(0x80| ((w &gt;&gt; 12) &amp; 0x3f));</span>
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :                         outDest.push_back(0x80| ((w &gt;&gt; 6) &amp; 0x3f));</span>
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                         outDest.push_back(0x80| (w &amp; 0x3f));</span>
+<span class="lineNum">     310 </span>            :                 }
+<span class="lineNum">     311 </span>            :                 else
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :                         outDest.push_back('?');</span>
+<span class="lineNum">     313 </span>            :         }
+<span class="lineNum">     314 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span><span class="lineCov">        301 : std::string GetHostOfUrl(const std::string&amp; inUrl)</span>
+<span class="lineNum">     317 </span>            : {
+<span class="lineNum">     318 </span><span class="lineCov">        301 :         std::size_t start = inUrl.find(&quot;://&quot;);</span>
+<span class="lineNum">     319 </span><span class="lineCov">        301 :         if (start == std::string::npos)</span>
+<span class="lineNum">     320 </span>            :                 start = 0;
+<span class="lineNum">     321 </span>            :         else
+<span class="lineNum">     322 </span><span class="lineCov">        288 :                 start += 3;</span>
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span><span class="lineCov">        301 :         std::size_t end = inUrl.find(':', start);</span>
+<span class="lineNum">     325 </span><span class="lineCov">        301 :         if (end == std::string::npos)</span>
+<span class="lineNum">     326 </span>            :         {
+<span class="lineNum">     327 </span><span class="lineCov">         17 :                 end = inUrl.find('/', start);</span>
+<span class="lineNum">     328 </span><span class="lineCov">         17 :                 if (end == std::string::npos)</span>
+<span class="lineNum">     329 </span><span class="lineCov">         16 :                         end = inUrl.length();</span>
+<span class="lineNum">     330 </span>            :         }
+<span class="lineNum">     331 </span>            : 
+<span class="lineNum">     332 </span><span class="lineCov">        301 :         return inUrl.substr(start, end - start);</span>
+<span class="lineNum">     333 </span>            : }
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span><span class="lineCov">        266 : bool LocateJsonObject(const std::string&amp; inMessage, const std::string&amp; inJsonObjectName, std::size_t&amp; outStart, std::size_t&amp; outEnd)</span>
+<span class="lineNum">     336 </span>            : {
+<span class="lineNum">     337 </span><span class="lineCov">       1064 :         auto pos = inMessage.find(&quot;\&quot;&quot; + inJsonObjectName + &quot;\&quot;&quot;);</span>
+<span class="lineNum">     338 </span><span class="lineCov">        266 :         if (pos == inMessage.npos)</span>
+<span class="lineNum">     339 </span>            :                 return false;
+<span class="lineNum">     340 </span><span class="lineCov">          2 :         pos += 2 + inJsonObjectName.length();</span>
+<span class="lineNum">     341 </span><span class="lineCov">          6 :         while (pos &lt; inMessage.length() &amp;&amp; inMessage[pos] == ' ')</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                 ++pos;</span>
+<span class="lineNum">     343 </span><span class="lineCov">          4 :         if (pos &gt;= inMessage.length() || inMessage[pos] != ':')</span>
+<span class="lineNum">     344 </span>            :                 return false;
+<span class="lineNum">     345 </span><span class="lineCov">          2 :         ++pos;</span>
+<span class="lineNum">     346 </span><span class="lineCov">          6 :         while (pos &lt; inMessage.length() &amp;&amp; inMessage[pos] == ' ')</span>
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :                 ++pos;</span>
+<span class="lineNum">     348 </span><span class="lineCov">          4 :         if (pos &gt;= inMessage.length() || inMessage[pos] != '{')</span>
+<span class="lineNum">     349 </span>            :                 return false;
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineCov">          2 :         outStart = pos;</span>
+<span class="lineNum">     352 </span><span class="lineCov">          2 :         int numLeftBrackets = 1;</span>
+<span class="lineNum">     353 </span><span class="lineCov">        256 :         while (++pos &lt; inMessage.length())</span>
+<span class="lineNum">     354 </span>            :         {
+<span class="lineNum">     355 </span><span class="lineCov">        127 :                 if (inMessage[pos] == '{')</span>
+<span class="lineNum">     356 </span>            :                 {
+<span class="lineNum">     357 </span><span class="lineCov">          4 :                         ++numLeftBrackets;</span>
+<span class="lineNum">     358 </span>            :                 }
+<span class="lineNum">     359 </span><span class="lineCov">        123 :                 else if (inMessage[pos] == '}')</span>
+<span class="lineNum">     360 </span>            :                 {
+<span class="lineNum">     361 </span><span class="lineCov">          6 :                         --numLeftBrackets;</span>
+<span class="lineNum">     362 </span><span class="lineCov">          6 :                         if (numLeftBrackets &lt;= 0)</span>
+<span class="lineNum">     363 </span>            :                         {
+<span class="lineNum">     364 </span><span class="lineCov">          2 :                                 outEnd = pos + 1;</span>
+<span class="lineNum">     365 </span><span class="lineCov">          2 :                                 return true;</span>
+<span class="lineNum">     366 </span>            :                         }
+<span class="lineNum">     367 </span>            :                 }
+<span class="lineNum">     368 </span>            :         }
+<span class="lineNum">     369 </span>            :         return false;
+<span class="lineNum">     370 </span>            : }
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span><span class="lineCov">          4 : bool SumUpWssUrlList(std::string&amp; ioMessage, std::size_t&amp; ioStart, std::size_t&amp; ioEnd)</span>
+<span class="lineNum">     373 </span>            : {
+<span class="lineNum">     374 </span><span class="lineCov">          4 :         std::size_t start = ioStart;</span>
+<span class="lineNum">     375 </span><span class="lineCov">          4 :         std::size_t end = 0;</span>
+<span class="lineNum">     376 </span><span class="lineCov">          4 :         start = ioMessage.find(&quot;[&quot;, start);</span>
+<span class="lineNum">     377 </span><span class="lineCov">          4 :         if (start != std::string::npos &amp;&amp; start &lt; ioEnd)</span>
+<span class="lineNum">     378 </span>            :         {
+<span class="lineNum">     379 </span><span class="lineCov">          3 :                 end = ioMessage.find(&quot;]&quot;, start + 1);</span>
+<span class="lineNum">     380 </span><span class="lineCov">          3 :                 if (end != std::string::npos &amp;&amp; end &lt; ioEnd)</span>
+<span class="lineNum">     381 </span>            :                 {
+<span class="lineNum">     382 </span>            :                         uint32_t wssUrlNum = 0;
+<span class="lineNum">     383 </span>            :                         std::size_t wssUrlPos = start + 1;
+<span class="lineNum">     384 </span>            :                         do {
+<span class="lineNum">     385 </span><span class="lineCov">          7 :                                 wssUrlPos = ioMessage.find(&quot;\&quot;wssUrl\&quot;&quot;, wssUrlPos);</span>
+<span class="lineNum">     386 </span><span class="lineCov">          7 :                                 if (wssUrlPos &gt; end)</span>
+<span class="lineNum">     387 </span>            :                                         break;
+<span class="lineNum">     388 </span><span class="lineCov">          4 :                                 ++wssUrlNum;</span>
+<span class="lineNum">     389 </span><span class="lineCov">          4 :                                 wssUrlPos += 8;</span>
+<span class="lineNum">     390 </span>            :                         } while(true);
+<span class="lineNum">     391 </span><span class="lineCov">          6 :                         std::string replaceStr = &quot;\&quot;&quot; + std::to_string(wssUrlNum) + &quot; wssUrls\&quot;&quot;;</span>
+<span class="lineNum">     392 </span><span class="lineCov">          3 :                         std::size_t originalLength = end - start + 1;</span>
+<span class="lineNum">     393 </span>            :                         ioMessage.replace(start, originalLength, replaceStr);
+<span class="lineNum">     394 </span><span class="lineCov">          3 :                         ioStart = start + replaceStr.length(); // Move the start position forward</span>
+<span class="lineNum">     395 </span><span class="lineCov">          6 :                         ioEnd = ioEnd + replaceStr.length() - originalLength; // Recalculate the end position</span>
+<span class="lineNum">     396 </span><span class="lineCov">          7 :                         return true;</span>
+<span class="lineNum">     397 </span>            :                 }
+<span class="lineNum">     398 </span>            :         }
+<span class="lineNum">     399 </span>            :         return false;
+<span class="lineNum">     400 </span>            : }
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            : /* 
+<span class="lineNum">     403 </span>            :  * Remove two annoying long lists of {&quot;wssUrl&quot;:&quot;wss://...&quot;} (primary &amp; backup) under the &quot;compositingEngineList&quot; JSON object. 
+<span class="lineNum">     404 </span>            :  * e.g.
+<span class="lineNum">     405 </span>            :  *      {...,&quot;compositingEngineList&quot;:{&quot;backup&quot;:[{&quot;wssUrl&quot;:&quot;wss://...&quot;},{&quot;wssUrl&quot;:&quot;wss://...&quot;}],&quot;primary&quot;:[]},...} ====&gt;
+<span class="lineNum">     406 </span>            :  *      ====&gt; {...,&quot;compositingEngineList&quot;:{&quot;backup&quot;:&quot;2 wssUrls&quot;,&quot;primary&quot;:&quot;0 wssUrls&quot;},...}
+<span class="lineNum">     407 </span>            :  */
+<span class="lineNum">     408 </span><span class="lineCov">        266 : void SumUpWssUrlsUnderCompositingEngineList(std::string&amp; ioMessage)</span>
+<span class="lineNum">     409 </span>            : {
+<span class="lineNum">     410 </span><span class="lineCov">        266 :         std::size_t start = 0;</span>
+<span class="lineNum">     411 </span><span class="lineCov">        266 :         std::size_t end = 0;</span>
+<span class="lineNum">     412 </span><span class="lineCov">        266 :         std::string compositingEngineList = &quot;compositingEngineList&quot;;</span>
+<span class="lineNum">     413 </span><span class="lineCov">        266 :         auto succ = LocateJsonObject(ioMessage, compositingEngineList, start, end);</span>
+<span class="lineNum">     414 </span><span class="lineCov">        266 :         if (succ)</span>
+<span class="lineNum">     415 </span>            :         {
+<span class="lineNum">     416 </span>            :                 /* Totally up to 2 wssUrl lists (primary &amp; backup) */
+<span class="lineNum">     417 </span><span class="lineCov">          2 :                 succ = SumUpWssUrlList(ioMessage, start, end);</span>
+<span class="lineNum">     418 </span><span class="lineCov">          2 :                 if (succ)</span>
+<span class="lineNum">     419 </span>            :                 {
+<span class="lineNum">     420 </span><span class="lineCov">          2 :                         SumUpWssUrlList(ioMessage, start, end);</span>
+<span class="lineNum">     421 </span>            :                 }
+<span class="lineNum">     422 </span>            :         }
+<span class="lineNum">     423 </span><span class="lineCov">        266 : }</span>
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span>            : /* 
+<span class="lineNum">     426 </span>            :  * Remove the annoying long list of CME nodes sent from Orpheus to Hippo. 
+<span class="lineNum">     427 </span>            :  * e.g.
+<span class="lineNum">     428 </span>            :  *      {&quot;dsjc&quot;:[{&quot;adminState&quot;:&quot;ONLINE&quot;,&quot;alias&quot;:&quot;cme-mygdonus-dsjc-22vcpu-inta-664-dsjc&quot;,&quot;errorCode&quot;:0,&quot;fqname&quot;:&quot;dsjc.dsjc.cme-mygdonus-dsjc-22vcpu-inta-664-dsjc&quot;,&quot;mediaControlApiUrl&quot;:&quot;&quot;,&quot;mediaServiceIDs&quot;:[&quot;transcoder&quot;,&quot;edonus&quot;,&quot;mygdon&quot;,&quot;omp&quot;],&quot;mediaSetupWebsocketUrl&quot;:&quot;wss://...&quot;,&quot;reachability&quot;:&quot;PUBLIC&quot;,&quot;reregistrationIntervalSecs&quot;:60,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;statusCode&quot;:0,&quot;url&quot;:&quot;https://...&quot;},{&quot;adminState&quot;:&quot;ONLINE&quot;,&quot;alias&quot;:&quot;cme-mygdonus-dsjc-34vcpu-inta-409-dsjc&quot;,&quot;errorCode&quot;:0,&quot;fqname&quot;:&quot;dsjc.dsjc.cme-mygdonus-dsjc-34vcpu-inta-409-dsjc&quot;,&quot;mediaControlApiUrl&quot;:&quot;&quot;,&quot;mediaServiceIDs&quot;:[&quot;edonus&quot;,&quot;mygdon&quot;],&quot;mediaSetupWebsocketUrl&quot;:&quot;wss://...&quot;,&quot;reachability&quot;:&quot;PUBLIC&quot;,&quot;reregistrationIntervalSecs&quot;:60,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;statusCode&quot;:0,&quot;url&quot;:&quot;https://...&quot;}]} ====&gt;
+<span class="lineNum">     429 </span>            :  *      ====&gt; {&quot;dsjc&quot;:&quot;2 CME nodes&quot;}
+<span class="lineNum">     430 </span>            :  */
+<span class="lineNum">     431 </span><span class="lineCov">        266 : void SumUpCmeNodeListFromOrpheus(std::string&amp; ioMessage)</span>
+<span class="lineNum">     432 </span>            : {
+<span class="lineNum">     433 </span><span class="lineCov">        266 :         std::string mediaServiceIDs = &quot;mediaServiceIDs&quot;;</span>
+<span class="lineNum">     434 </span><span class="lineCov">        266 :         std::string mediaSetupWebsocketUrl = &quot;mediaSetupWebsocketUrl&quot;;</span>
+<span class="lineNum">     435 </span><span class="lineCov">        266 :         std::size_t start = ioMessage.find(mediaServiceIDs);</span>
+<span class="lineNum">     436 </span><span class="lineCov">        266 :         if (start == std::string::npos)</span>
+<span class="lineNum">     437 </span>            :                 return;
+<span class="lineNum">     438 </span><span class="lineCov">          4 :         start = ioMessage.find(mediaSetupWebsocketUrl, start + mediaServiceIDs.length());</span>
+<span class="lineNum">     439 </span><span class="lineCov">          2 :         if (start == std::string::npos)</span>
+<span class="lineNum">     440 </span>            :                 return;
+<span class="lineNum">     441 </span>            : 
+<span class="lineNum">     442 </span><span class="lineCov">          4 :         JsonValue jsonMessage;</span>
+<span class="lineNum">     443 </span><span class="lineCov">          2 :         JsonReader().parse(ioMessage, jsonMessage);</span>
+<span class="lineNum">     444 </span><span class="lineCov">          4 :         auto members = jsonMessage.getMemberNames();</span>
+<span class="lineNum">     445 </span><span class="lineCov">          2 :         bool isJsonChanged = false;</span>
+<span class="lineNum">     446 </span><span class="lineCov">         11 :         for (const auto&amp; member : members)</span>
+<span class="lineNum">     447 </span>            :         {
+<span class="lineNum">     448 </span><span class="lineCov">          4 :                 if (!jsonMessage[member].isArray())</span>
+<span class="lineNum">     449 </span>            :                         continue;
+<span class="lineNum">     450 </span><span class="lineCov">          4 :                 uint32_t cmeNodeNum = jsonMessage[member].size();</span>
+<span class="lineNum">     451 </span><span class="lineCov">          4 :                 if (cmeNodeNum &gt; 0)</span>
+<span class="lineNum">     452 </span>            :                 {
+<span class="lineNum">     453 </span>            :                         /* Make sure it is a CME node JSON object */
+<span class="lineNum">     454 </span><span class="lineCov">          2 :                         auto jsonCmeNode = jsonMessage[member][0];</span>
+<span class="lineNum">     455 </span><span class="lineCov">          2 :                         if (!jsonCmeNode[mediaServiceIDs].isArray() || !jsonCmeNode[mediaSetupWebsocketUrl].isString())</span>
+<span class="lineNum">     456 </span>            :                         {
+<span class="lineNum">     457 </span><span class="lineCov">          1 :                                 isJsonChanged = false;</span>
+<span class="lineNum">     458 </span><span class="lineCov">          1 :                                 break;</span>
+<span class="lineNum">     459 </span><span class="lineCov">          1 :                         }</span>
+<span class="lineNum">     460 </span>            :                 }
+<span class="lineNum">     461 </span><span class="lineCov">          9 :                 jsonMessage[member] = std::to_string(cmeNodeNum) + &quot; CME nodes&quot;;</span>
+<span class="lineNum">     462 </span><span class="lineCov">          3 :                 isJsonChanged = true;</span>
+<span class="lineNum">     463 </span>            :         }
+<span class="lineNum">     464 </span><span class="lineCov">          2 :         if (isJsonChanged)</span>
+<span class="lineNum">     465 </span>            :         {
+<span class="lineNum">     466 </span><span class="lineCov">          2 :                 ioMessage = JsonWriter().write(jsonMessage);</span>
+<span class="lineNum">     467 </span>            :         }
+<span class="lineNum">     468 </span>            : }
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span><span class="lineCov">        266 : std::string Desensitize(const std::string&amp; inMessage)</span>
+<span class="lineNum">     471 </span>            : {
+<span class="lineNum">     472 </span><span class="lineCov">        266 :         auto copyMessage = inMessage;</span>
+<span class="lineNum">     473 </span><span class="lineCov">        266 :         SumUpWssUrlsUnderCompositingEngineList(copyMessage);</span>
+<span class="lineNum">     474 </span><span class="lineCov">        266 :         SumUpCmeNodeListFromOrpheus(copyMessage);</span>
+<span class="lineNum">     475 </span><span class="lineCov">        798 :         return HideCiToken(HideUrl(copyMessage));</span>
+<span class="lineNum">     476 </span>            : }
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span><span class="lineCov">        266 : std::string HideUrl(const std::string&amp; inMessage)</span>
+<span class="lineNum">     479 </span>            : {
+<span class="lineNum">     480 </span><span class="lineCov">        266 :         auto copyMessage = inMessage;</span>
+<span class="lineNum">     481 </span><span class="lineCov">        266 :         auto hideUrl = true;</span>
+<span class="lineNum">     482 </span><span class="lineCov">        532 :         CSafariConfig::GetBoolValue(&quot;common.debug.logHideUrl&quot;, hideUrl, true);</span>
+<span class="lineNum">     483 </span><span class="lineCov">        266 :         if (hideUrl)</span>
+<span class="lineNum">     484 </span>            :         {
+<span class="lineNum">     485 </span>            :                 std::size_t start = 0;
+<span class="lineNum">     486 </span>            :                 std::size_t end = 0;
+<span class="lineNum">     487 </span>            :                 do {
+<span class="lineNum">     488 </span><span class="lineCov">        275 :                         if ((start = copyMessage.find(&quot;://&quot;, start)) == std::string::npos)</span>
+<span class="lineNum">     489 </span>            :                                 break;
+<span class="lineNum">     490 </span><span class="lineCov">          9 :                         start += 3;</span>
+<span class="lineNum">     491 </span><span class="lineCov">          9 :                         end = copyMessage.find_first_of(&quot; ,;)]}\&quot;\'\t\r\n&quot;, start);</span>
+<span class="lineNum">     492 </span><span class="lineCov">          9 :                         if (end == std::string::npos)</span>
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                                 end = copyMessage.length();</span>
+<span class="lineNum">     494 </span><span class="lineCov">          9 :                         auto endAlternative = copyMessage.find(&quot;\\\\n&quot;, start);</span>
+<span class="lineNum">     495 </span><span class="lineCov">          9 :                         if (endAlternative &lt; end)</span>
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :                                 end = endAlternative;</span>
+<span class="lineNum">     497 </span><span class="lineCov">          9 :                         endAlternative = copyMessage.find(&quot;\\n&quot;, start);</span>
+<span class="lineNum">     498 </span><span class="lineCov">          9 :                         if (endAlternative &lt; end)</span>
+<span class="lineNum">     499 </span><span class="lineNoCov">          0 :                                 end = endAlternative;</span>
+<span class="lineNum">     500 </span>            : 
+<span class="lineNum">     501 </span><span class="lineCov">          9 :                         copyMessage.replace(start, end - start, &quot;*&quot;);</span>
+<span class="lineNum">     502 </span><span class="lineCov">          9 :                         ++start; // Move forward an octet of &quot;*&quot;. </span>
+<span class="lineNum">     503 </span><span class="lineCov">          9 :                 } while(true);</span>
+<span class="lineNum">     504 </span>            :         }
+<span class="lineNum">     505 </span><span class="lineCov">        532 :         if (copyMessage[copyMessage.length() - 1] == '\n')</span>
+<span class="lineNum">     506 </span><span class="lineCov">        476 :                 copyMessage = copyMessage.substr(0, copyMessage.length() - 1);</span>
+<span class="lineNum">     507 </span><span class="lineCov">        266 :         return copyMessage;</span>
+<span class="lineNum">     508 </span>            : }
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineCov">       1632 : void ReplaceStringValueWithAsterisk(std::string&amp; ioMessage, const std::string&amp; inKey)</span>
+<span class="lineNum">     511 </span>            : {
+<span class="lineNum">     512 </span><span class="lineCov">       6528 :         auto pos = ioMessage.find(&quot;\&quot;&quot; + inKey + &quot;\&quot;&quot;); </span>
+<span class="lineNum">     513 </span><span class="lineCov">       1632 :         if (pos == ioMessage.npos)</span>
+<span class="lineNum">     514 </span>            :                 return;
+<span class="lineNum">     515 </span>            : 
+<span class="lineNum">     516 </span><span class="lineCov">          6 :         pos += inKey.length() + 2;</span>
+<span class="lineNum">     517 </span><span class="lineCov">         18 :         while (ioMessage[pos] == ' ' || ioMessage[pos] == '\t')</span>
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 :                 ++pos;</span>
+<span class="lineNum">     519 </span><span class="lineCov">          6 :         if (ioMessage[pos] != ':')</span>
+<span class="lineNum">     520 </span>            :                 return;
+<span class="lineNum">     521 </span>            : 
+<span class="lineNum">     522 </span><span class="lineCov">          6 :         ++pos;</span>
+<span class="lineNum">     523 </span><span class="lineCov">         18 :         while (ioMessage[pos] == ' ' || ioMessage[pos] == '\t')</span>
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :                 ++pos;</span>
+<span class="lineNum">     525 </span><span class="lineCov">          6 :         if (ioMessage[pos] != '\&quot;')</span>
+<span class="lineNum">     526 </span>            :                 return;
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span><span class="lineCov">          6 :         auto start = pos + 1;</span>
+<span class="lineNum">     529 </span><span class="lineCov">          6 :         auto end = ioMessage.find(&quot;\&quot;&quot;, start);</span>
+<span class="lineNum">     530 </span><span class="lineCov">          6 :         if (end == ioMessage.npos)</span>
+<span class="lineNum">     531 </span>            :                 return;
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span><span class="lineCov">          6 :         ioMessage.replace(start, end - start, &quot;*&quot;);</span>
+<span class="lineNum">     534 </span>            : }
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span><span class="lineCov">        272 : std::string HideCiToken(const std::string&amp; inMessage)</span>
+<span class="lineNum">     537 </span>            : {
+<span class="lineNum">     538 </span><span class="lineCov">        272 :         auto copyMessage = inMessage;</span>
+<span class="lineNum">     539 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;BearerToken&quot;);</span>
+<span class="lineNum">     540 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;bearer_token&quot;);</span>
+<span class="lineNum">     541 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;AccessToken&quot;);</span>
+<span class="lineNum">     542 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;access_token&quot;);</span>
+<span class="lineNum">     543 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;RefreshToken&quot;);</span>
+<span class="lineNum">     544 </span><span class="lineCov">        544 :         ReplaceStringValueWithAsterisk(copyMessage, &quot;refresh_token&quot;);</span>
+<span class="lineNum">     545 </span><span class="lineCov">        272 :         return copyMessage;</span>
+<span class="lineNum">     546 </span>            : }
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span><span class="lineCov">         13 : bool Base64Encode( const std::string&amp; input, std::string&amp; output )</span>
+<span class="lineNum">     549 </span>            : {
+<span class="lineNum">     550 </span>            :         using namespace std;
+<span class="lineNum">     551 </span>            :         typedef base64_from_binary&lt;transform_width&lt;string::const_iterator, 6, 8&gt;&gt; Base64EncodeIterator;
+<span class="lineNum">     552 </span><span class="lineCov">         13 :         std::stringstream result;</span>
+<span class="lineNum">     553 </span>            :         try {
+<span class="lineNum">     554 </span><span class="lineCov">         13 :                 std::copy( Base64EncodeIterator( input.begin() ), Base64EncodeIterator( input.end() ), std::ostream_iterator&lt;char&gt;( result ) );</span>
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :         } catch ( ... ) {</span>
+<span class="lineNum">     556 </span>            :                 return false;
+<span class="lineNum">     557 </span>            :         }
+<span class="lineNum">     558 </span><span class="lineCov">         13 :         size_t equal_count = (3 - input.length() % 3) % 3;</span>
+<span class="lineNum">     559 </span><span class="lineCov">         16 :         for ( size_t i = 0; i &lt; equal_count; i++ )</span>
+<span class="lineNum">     560 </span>            :         {
+<span class="lineNum">     561 </span><span class="lineCov">          3 :                 result.put( '=' );</span>
+<span class="lineNum">     562 </span>            :         }
+<span class="lineNum">     563 </span><span class="lineCov">         13 :         output = result.str();</span>
+<span class="lineNum">     564 </span><span class="lineCov">         13 :         return output.empty() == false;</span>
+<span class="lineNum">     565 </span>            : }
+<span class="lineNum">     566 </span>            : 
+<span class="lineNum">     567 </span>            : 
+<span class="lineNum">     568 </span><span class="lineCov">         44 : bool Base64Decode( const std::string &amp; input, std::string&amp; output )</span>
+<span class="lineNum">     569 </span>            : {
+<span class="lineNum">     570 </span>            :         using namespace std;
+<span class="lineNum">     571 </span>            :         typedef transform_width&lt;binary_from_base64&lt;string::const_iterator&gt;, 8, 6&gt; Base64DecodeIterator;
+<span class="lineNum">     572 </span><span class="lineCov">         44 :         stringstream result;</span>
+<span class="lineNum">     573 </span>            :         try {
+<span class="lineNum">     574 </span><span class="lineCov">         44 :                 std::string real = input.substr(0,input.find_first_of(&quot;=&quot;));</span>
+<span class="lineNum">     575 </span><span class="lineCov">         88 :                 std::copy( Base64DecodeIterator( real.begin() ), Base64DecodeIterator( real.end() ), ostream_iterator&lt;char&gt;( result ) );</span>
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 :         } catch ( ... ) {</span>
+<span class="lineNum">     577 </span>            :                 return false;
+<span class="lineNum">     578 </span>            :         }
+<span class="lineNum">     579 </span><span class="lineCov">         44 :         output = result.str();</span>
+<span class="lineNum">     580 </span><span class="lineCov">         44 :         return output.empty() == false;</span>
+<span class="lineNum">     581 </span>            : }
+<span class="lineNum">     582 </span>            : 
+<span class="lineNum">     583 </span><span class="lineCov">          1 : std::string CreateRandomString(uint32_t inLength)</span>
+<span class="lineNum">     584 </span>            : {
+<span class="lineNum">     585 </span>            :         std::string randomString;
+<span class="lineNum">     586 </span><span class="lineCov">          6 :         for (uint32_t i = 0; i &lt; inLength; ++i)</span>
+<span class="lineNum">     587 </span>            :         {
+<span class="lineNum">     588 </span><span class="lineCov">          5 :         unsigned int randValue = 0;</span>
+<span class="lineNum">     589 </span><span class="lineCov">          5 :         RAND_bytes((unsigned char*)&amp;randValue, sizeof(randValue));</span>
+<span class="lineNum">     590 </span><span class="lineCov">          5 :                 uint8_t modValue = randValue % 62;</span>
+<span class="lineNum">     591 </span>            : 
+<span class="lineNum">     592 </span><span class="lineCov">          5 :                 if (modValue &lt; 10)</span>
+<span class="lineNum">     593 </span>            :                 {
+<span class="lineNum">     594 </span><span class="lineNoCov">          0 :                         RAND_bytes((unsigned char*)&amp;randValue, sizeof(randValue));</span>
+<span class="lineNum">     595 </span><span class="lineNoCov">          0 :                         randomString += '0' + randValue % 10;</span>
+<span class="lineNum">     596 </span>            :                 }
+<span class="lineNum">     597 </span><span class="lineCov">          5 :                 else if (modValue &lt; 36)</span>
+<span class="lineNum">     598 </span>            :                 {
+<span class="lineNum">     599 </span><span class="lineCov">          2 :                         RAND_bytes((unsigned char*)&amp;randValue, sizeof(randValue));</span>
+<span class="lineNum">     600 </span><span class="lineCov">          2 :                         randomString += 'a' + randValue % 26;</span>
+<span class="lineNum">     601 </span>            :                 }
+<span class="lineNum">     602 </span>            :                 else
+<span class="lineNum">     603 </span>            :                 {
+<span class="lineNum">     604 </span><span class="lineCov">          3 :                         RAND_bytes((unsigned char*)&amp;randValue, sizeof(randValue));</span>
+<span class="lineNum">     605 </span><span class="lineCov">          3 :                         randomString += 'A' + randValue % 26;</span>
+<span class="lineNum">     606 </span>            :                 }
+<span class="lineNum">     607 </span>            :         }
+<span class="lineNum">     608 </span><span class="lineCov">          1 :         return randomString;</span>
+<a name="609"><span class="lineNum">     609 </span>            : }</a>
+<span class="lineNum">     610 </span>            : 
+<a name="611"><span class="lineNum">     611 </span><span class="lineNoCov">          0 : char FourBits2Char(uint8_t inFourBits)</span></a>
+<span class="lineNum">     612 </span>            : {
+<span class="lineNum">     613 </span><span class="lineCov">        104 :     if (inFourBits &lt; 10)</span>
+<span class="lineNum">     614 </span><span class="lineCov">         80 :         return inFourBits + '0';</span>
+<span class="lineNum">     615 </span>            :     else
+<span class="lineNum">     616 </span><span class="lineCov">         24 :         return inFourBits + 'a' - 10;</span>
+<span class="lineNum">     617 </span>            : }
+<span class="lineNum">     618 </span>            : 
+<span class="lineNum">     619 </span><span class="lineCov">         52 : std::string Byte2HexString(uint8_t inByte)</span>
+<span class="lineNum">     620 </span>            : {
+<span class="lineNum">     621 </span><span class="lineCov">         52 :     uint8_t first = inByte &gt;&gt; 4;</span>
+<span class="lineNum">     622 </span><span class="lineCov">         52 :     uint8_t second = inByte &amp; 0xF;</span>
+<span class="lineNum">     623 </span><span class="lineCov">        156 :     return {FourBits2Char(first), FourBits2Char(second)};</span>
+<span class="lineNum">     624 </span>            : }
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span><span class="lineCov">          5 : std::string BitString2HexString(const std::string&amp; inBitString)</span>
+<span class="lineNum">     627 </span>            : {
+<span class="lineNum">     628 </span>            :     std::string hexString;
+<span class="lineNum">     629 </span><span class="lineCov">        114 :     for (std::size_t i = 0; i &lt; inBitString.length(); ++i)</span>
+<span class="lineNum">     630 </span><span class="lineCov">        156 :         hexString += Byte2HexString(inBitString[i]) + &quot; &quot;;</span>
+<span class="lineNum">     631 </span><span class="lineCov">          5 :     return hexString;</span>
+<a name="632"><span class="lineNum">     632 </span>            : }</a>
+<span class="lineNum">     633 </span>            : 
+<span class="lineNum">     634 </span><span class="lineCov">          4 : std::string JsonToNoLineFeedString(const JsonValue&amp; inValue)</span>
+<span class="lineNum">     635 </span>            : {
+<span class="lineNum">     636 </span><span class="lineCov">          4 :     JsonWriter writer;</span>
+<span class="lineNum">     637 </span><span class="lineCov">          4 :     writer.omitEndingLineFeed();</span>
+<span class="lineNum">     638 </span><span class="lineCov">          4 :     return writer.write(inValue);</span>
+<span class="lineNum">     639 </span>            : }
+<span class="lineNum">     640 </span>            : 
+<span class="lineNum">     641 </span><span class="lineCov">          8 : std::vector&lt;std::string&gt; GetLocalAddressList(bool inNumeric)</span>
+<span class="lineNum">     642 </span>            : {
+<span class="lineNum">     643 </span>            :         std::vector&lt;std::string&gt; localAddressList;
+<span class="lineNum">     644 </span>            : 
+<span class="lineNum">     645 </span>            :         struct ifaddrs *ifaddr, *ifa;
+<span class="lineNum">     646 </span>            :         int family, s;
+<span class="lineNum">     647 </span>            :         char host[NI_MAXHOST];
+<span class="lineNum">     648 </span>            : 
+<span class="lineNum">     649 </span><span class="lineCov">          8 :         if (::getifaddrs(&amp;ifaddr) == -1) </span>
+<span class="lineNum">     650 </span>            :         {
+<span class="lineNum">     651 </span><span class="lineNoCov">          0 :                 std::cout &lt;&lt; &quot;::GetLocalAddressList, ::getifaddrs failed! errno:&quot; &lt;&lt; LINUX_ERROR_MESSAGE(errno) &lt;&lt; std::endl;</span>
+<span class="lineNum">     652 </span><span class="lineNoCov">          0 :                 return localAddressList;</span>
+<span class="lineNum">     653 </span>            :         }
+<span class="lineNum">     654 </span>            : 
+<span class="lineNum">     655 </span>            :         /* Walk through linked list, maintaining head pointer so we can free list later */
+<span class="lineNum">     656 </span>            : 
+<span class="lineNum">     657 </span><span class="lineCov">        120 :         for (ifa = ifaddr; ifa != nullptr; ifa = ifa-&gt;ifa_next) </span>
+<span class="lineNum">     658 </span>            :         {
+<span class="lineNum">     659 </span><span class="lineCov">        112 :                 if (ifa-&gt;ifa_addr == nullptr)</span>
+<span class="lineNum">     660 </span>            :                         continue;
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span><span class="lineCov">        112 :                 family = ifa-&gt;ifa_addr-&gt;sa_family;</span>
+<span class="lineNum">     663 </span>            : 
+<span class="lineNum">     664 </span>            :                 /* For an AF_INET* interface address, get the name info */
+<span class="lineNum">     665 </span>            : 
+<span class="lineNum">     666 </span><span class="lineCov">        112 :                 if (family == AF_INET || family == AF_INET6) </span>
+<span class="lineNum">     667 </span>            :                 {
+<span class="lineNum">     668 </span>            :                         s = ::getnameinfo(ifa-&gt;ifa_addr,
+<span class="lineNum">     669 </span>            :                                 (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+<span class="lineNum">     670 </span><span class="lineCov">         40 :                                 host, NI_MAXHOST, NULL, 0, inNumeric ? NI_NUMERICHOST : 0);</span>
+<span class="lineNum">     671 </span><span class="lineCov">         40 :                         if (s != 0) </span>
+<span class="lineNum">     672 </span>            :                         {
+<span class="lineNum">     673 </span><span class="lineNoCov">          0 :                                 std::cout &lt;&lt; &quot;::GetLocalAddressList,, ::getnameinfo failed! msg:&quot; &lt;&lt; gai_strerror(s) &lt;&lt; std::endl;</span>
+<span class="lineNum">     674 </span>            :                                 break;
+<span class="lineNum">     675 </span>            :                         }
+<span class="lineNum">     676 </span><span class="lineCov">         80 :                         localAddressList.push_back(host);</span>
+<span class="lineNum">     677 </span>            :                 }
+<span class="lineNum">     678 </span>            :         }
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span><span class="lineCov">          8 :         freeifaddrs(ifaddr);</span>
+<span class="lineNum">     681 </span><span class="lineCov">          8 :         return localAddressList;</span>
+<span class="lineNum">     682 </span>            : }
+<span class="lineNum">     683 </span>            : 
+<span class="lineNum">     684 </span><span class="lineCov">        164 : std::string GetCurrentTimestamp()</span>
+<span class="lineNum">     685 </span>            : {
+<span class="lineNum">     686 </span>            :         struct timeval tv;
+<span class="lineNum">     687 </span><span class="lineCov">        164 :         ::gettimeofday(&amp;tv, nullptr);</span>
+<span class="lineNum">     688 </span><span class="lineCov">        164 :         const unsigned MAX_TIME_STR_LEN = 256;</span>
+<span class="lineNum">     689 </span><span class="lineCov">        164 :         char timestr[MAX_TIME_STR_LEN]={0};</span>
+<span class="lineNum">     690 </span><span class="lineCov">        164 :         ::strftime(timestr, MAX_TIME_STR_LEN, &quot;%F %T&quot;, ::gmtime(&amp;tv.tv_sec));</span>
+<span class="lineNum">     691 </span><span class="lineCov">        164 :         char ms[64] = {0};</span>
+<span class="lineNum">     692 </span><span class="lineCov">        164 :         snprintf(ms, 64, &quot;.%03ld&quot;, tv.tv_usec / 1000);</span>
+<span class="lineNum">     693 </span><span class="lineCov">        328 :         return std::string(timestr) + ms;</span>
+<span class="lineNum">     694 </span>            : }
+<span class="lineNum">     695 </span>            : 
+<span class="lineNum">     696 </span><span class="lineCov">         28 : JsonValue GetFeatureToggleValue(const JsonValue&amp; inFeatureToggles, const std::string&amp; inKey)</span>
+<span class="lineNum">     697 </span>            : {
+<span class="lineNum">     698 </span><span class="lineCov">         28 :         if (!JSON_IS_A_VALID_ARRAY(inFeatureToggles))</span>
+<span class="lineNum">     699 </span><span class="lineCov">         10 :                 return JsonValue();</span>
+<span class="lineNum">     700 </span>            : 
+<span class="lineNum">     701 </span><span class="lineCov">         91 :         for (JsonValue::ArrayIndex idx = 0; idx &lt; inFeatureToggles.size(); ++idx)</span>
+<span class="lineNum">     702 </span>            :         {
+<span class="lineNum">     703 </span><span class="lineCov">        428 :                 if (JSON_IS_A_VALID_STRING(inFeatureToggles[idx][&quot;key&quot;]) &amp;&amp; inFeatureToggles[idx][&quot;key&quot;].asString() == inKey)</span>
+<span class="lineNum">     704 </span>            :                 {
+<span class="lineNum">     705 </span><span class="lineCov">         16 :                         return inFeatureToggles[idx][&quot;val&quot;];</span>
+<span class="lineNum">     706 </span>            :                 }
+<a name="707"><span class="lineNum">     707 </span>            :         }</a>
+<span class="lineNum">     708 </span><span class="lineCov">          2 :         return JsonValue();</span>
+<span class="lineNum">     709 </span><span class="lineCov">        123 : }</span>
+<span class="lineNum">     710 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
